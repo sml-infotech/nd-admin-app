@@ -52,4 +52,26 @@ Future<void> validOtp(String email) async {
    
     }
   }
+
+
+  Future<void> resendOtp(String email,String password) async {
+    try {
+      final response = await authService.loginUser(
+          email, password);
+      if (response.message?.isNotEmpty == true) {
+        print("->>> $response");
+        message = response.message ?? "success";
+      
+              notifyListeners();
+
+      } else {
+        message = response.error ?? "some error occurred";
+        print("message $message");
+      }
+      notifyListeners();
+    } catch (e) {
+      notifyListeners();
+   
+    }
+  }
 }

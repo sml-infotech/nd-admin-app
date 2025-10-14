@@ -83,7 +83,7 @@ class _OtpScreenState extends State<OtpScreen> {
           const SizedBox(height: 20),
           Row(children: [
             const SizedBox(width: 20),
-            resendCodeText(),
+            resendCodeText(widget.arguments.email, widget.arguments.password),
           Spacer(),
           timerTextWidget(timerText),
           const SizedBox(width: 20),
@@ -178,13 +178,19 @@ Widget verifyButton(String _otp,) {
         );
   }
 
-Widget resendCodeText() {
+Widget resendCodeText(String email,String password) {
     return  GestureDetector(
-      onTap: remainingSeconds == 0 ? () {
-        setState(() {
+      onTap: remainingSeconds == 0 ? () async {
+        setState(()  {
           remainingSeconds = widget.seconds;
         });
         startTimer();
+                await  viewModel.resendOtp(email, password);
+      Fluttertoast.showToast(msg: viewModel.message,);
+        setState(() {
+          viewModel.message = '';
+        });
+
       } : null,
       child:
     Text(

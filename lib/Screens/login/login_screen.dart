@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
           viewModel.message = '';
           if (viewModel.isLoginSuccess) {
-          Navigator.pushNamed(context, StringsRoute.otpScreen,arguments: OtpArguments(email: viewModel.emailController.text,));
+          Navigator.pushNamed(context, StringsRoute.otpScreen,arguments: OtpArguments(email: viewModel.emailController.text,password: viewModel.passwordController.text,));
           }
     });
           },
@@ -165,5 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class OtpArguments {
   final String email;
-  OtpArguments({required this.email, });
+ final String password;
+  OtpArguments({required this.email,required this.password});
 }
