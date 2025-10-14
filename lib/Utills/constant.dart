@@ -22,6 +22,8 @@ class StringConstant {
   static const String wowtracker = "Seva & WOW Tracker";
   static const String templeDetail = "Temples Details";
   static const String edit = "edit";
+  static const String phone = "Phone";
+  static const String email = "Email";
 
 
 }

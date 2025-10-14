@@ -38,4 +38,31 @@ class AppTextStyles {
     color: Colors.black,
     fontFamily: font
   );
+
+  static final TextStyle templeNameDetailsStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+    fontFamily: font
+  );
+
+  static final TextStyle templeContactStyle = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: Color(0xff121417),
+    fontFamily: font
+  );
+  static final TextStyle tabTextStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: Color(0xffF38739),
+    fontFamily: font
+  );
+
+  static final TextStyle unTabTextStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: Colors.grey,
+    fontFamily: font
+  );
 }

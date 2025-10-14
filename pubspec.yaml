@@ -13,7 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.0.5
   fluttertoast: ^8.2.6
-  carousel_slider: 4.2.0
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +36,11 @@ flutter:
     - assets/audit.png
     - assets/logout.png
     - assets/backbutton.png
+    - assets/phone.png
+    - assets/message.png
+    - assets/map.png
+    - assets/about.png
+    - assets/event.png
 
 
   fonts:
