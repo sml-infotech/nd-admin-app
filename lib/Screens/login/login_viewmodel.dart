@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/service/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
   bool isChecked = false;
+  bool isLoading = false;
   String message = '';
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  var authService = AuthService();
 
   void toggleCheckbox(bool? value) {
     isChecked = value ?? false;
     notifyListeners();
   }
 
-  void validateLogin() {
+ Future <void> validateLogin() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
@@ -31,10 +34,39 @@ class LoginViewModel extends ChangeNotifier {
      else if (!isChecked) {
       message = "Please accept terms and conditions";
     } else {
-      message = "Login Successful";
+    await login();
     }
 
-    notifyListeners(); // Important: notify the UI
+    notifyListeners();
+  }
+
+
+
+  Future<void> login() async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await authService.loginUser(
+          emailController.text, passwordController.text);
+      if (response.message?.isNotEmpty == true) {
+        print("->>> $response");
+        message = response.message ?? "success";
+        print("message $message");
+        isLoading = false;
+              notifyListeners();
+
+      } else {
+        message = response.error ?? "some error occurred";
+        isLoading = false;
+        print("message $message");
+      }
+      notifyListeners();
+    } catch (e) {
+      message = "User not found.";
+      isLoading = false;
+      notifyListeners();
+   
+    }
   }
 bool isValidEmail(String email) {
   final regex = RegExp(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_detail_viewmodel.dart';
@@ -37,7 +38,7 @@ class ProviderWidget extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: initialRoute,
-          home: TempleScreen(),
+          home: OtpScreen(),
           onGenerateRoute: router.route),
     );
   }

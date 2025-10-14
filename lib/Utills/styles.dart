@@ -65,4 +65,24 @@ class AppTextStyles {
     color: Colors.grey,
     fontFamily: font
   );
+
+  static final TextStyle otpDetailHeadingStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+    fontFamily: font
+  );
+
+  static final TextStyle otpSubHeadingStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+    fontFamily: font
+  );
+  static final TextStyle otpEmailStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w300,
+    color: Colors.black,
+    fontFamily: font
+  );
 }

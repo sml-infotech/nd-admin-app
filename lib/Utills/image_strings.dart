@@ -16,4 +16,5 @@ class ImageStrings {
   static const String mapicon = 'assets/map.png';
   static const String abouticon = 'assets/about.png';
   static const String eventicon = 'assets/event.png';
+  static const String otpImage = 'assets/otpimage.png';
 }

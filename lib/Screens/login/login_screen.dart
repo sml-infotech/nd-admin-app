@@ -20,7 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     viewModel = Provider.of<LoginViewModel>(context);
     return Scaffold(
-      body: Column(
+      body: Stack(
+        children: [
+       Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -50,6 +52,19 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 30),
           ],
         ),
+            if (viewModel.isLoading)
+      Positioned.fill(
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      ),
+         ],
+      ),
       );
     
   }
@@ -61,8 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-         viewModel.validateLogin();           
+          onPressed: () async {
+       await  viewModel.validateLogin();           
     Fluttertoast.showToast(               
       msg: viewModel.message,
       backgroundColor: Colors.black87,
@@ -70,6 +85,9 @@ class _LoginScreenState extends State<LoginScreen> {
       gravity: ToastGravity.BOTTOM,
       toastLength: Toast.LENGTH_SHORT,
     );
+    setState(() {
+          viewModel.message = '';
+    });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: ColorConstant.buttonColor,
