@@ -1,7 +1,8 @@
 import 'package:nammadaiva_dashboard/model/login_model/login_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
+import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
-import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class AuthService {
@@ -17,6 +18,22 @@ class AuthService {
       );
 
       return LoginResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<OtpResponse> verifyOtp(String emailId, String otp) async {
+    try {
+      final otpRequest = OtpRequest(email: emailId, otp: otp);
+print(  "otp request ${otpRequest.toJson()}");
+      final data = await apiService.post(
+        UrlConstant.otpUrl,
+        otpRequest.toJson(),
+      );
+print("otp response data $data");
+      return OtpResponse.fromJson(data);
     } catch (e) {
       print("Auth service decode fails: $e");
       throw Exception('API failed: $e');

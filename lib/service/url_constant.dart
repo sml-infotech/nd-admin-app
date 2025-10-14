@@ -15,5 +15,6 @@ String baseUrlString() {
 class UrlConstant {
   UrlConstant._();
   static String loginUrl = "${baseUrlString()}login-dashboard-user";
+  static  String otpUrl = "${baseUrlString()}verify-dashboard-user-otp";
  
 }

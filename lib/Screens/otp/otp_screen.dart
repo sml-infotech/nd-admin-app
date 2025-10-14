@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_viewmodel.dart';
@@ -21,20 +22,19 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-    late OtpViewmodel viewModel;
+     OtpViewmodel viewModel=OtpViewmodel();
     late int remainingSeconds;
 
   @override
   void initState() {
     super.initState();
-    viewModel = OtpViewmodel();
     remainingSeconds = widget.seconds;
     startTimer();
   }
 
   void startTimer() {
    viewModel. timer?.cancel();
-  viewModel.  timer = Timer.periodic(const Duration(seconds: 1), (t) {
+   viewModel.  timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (remainingSeconds > 0) {
         setState(() {
           remainingSeconds--;
@@ -53,9 +53,12 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+        viewModel = Provider.of<OtpViewmodel>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Stack(children: [
+ Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center,
           
           children: [
@@ -70,7 +73,6 @@ class _OtpScreenState extends State<OtpScreen> {
           const SizedBox(height: 30),
          OtpInputField(
          onChanged: (otp) {
-         print("Entered OTP: $otp");
           setState(() {
           viewModel.  otp = otp;
           });
@@ -85,11 +87,23 @@ class _OtpScreenState extends State<OtpScreen> {
           Spacer(),
           timerTextWidget(timerText),
           const SizedBox(width: 20),
- ],)
-
-        ]),
-      
+            ],)
+            ]),
       ),
+       if (viewModel.isLoading)
+      Positioned.fill(
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      ),
+      ],)
+      
+     
     );
   }
 
@@ -127,7 +141,7 @@ Widget timerTextWidget(String timerText) {
     );
   }
 
-Widget verifyButton(String _otp) {
+Widget verifyButton(String _otp,) {
     return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: SizedBox(
@@ -142,12 +156,21 @@ Widget verifyButton(String _otp) {
       ),
     ),
     onPressed: _otp.length == 4
-        ? () {
-            print("OTP Verified: $_otp");
+        ? () async {
+     await  viewModel.validOtp(widget.arguments.email);
+     Fluttertoast.showToast(msg: viewModel.message,
+      backgroundColor: Colors.black87,
+      textColor: Colors.white,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_SHORT,
+    );
+    setState(() {
+      viewModel.message = '';
+    });
           }
         : null, 
     child: Text(
-      'Verify',
+     StringConstant.verify ,
       style: AppTextStyles.buttonTextStyle,
     ),
   ),
