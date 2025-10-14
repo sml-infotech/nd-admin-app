@@ -5,6 +5,7 @@ class LoginViewModel extends ChangeNotifier {
   bool isChecked = false;
   bool isLoading = false;
   String message = '';
+  bool isLoginSuccess = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -51,6 +52,7 @@ class LoginViewModel extends ChangeNotifier {
       if (response.message?.isNotEmpty == true) {
         print("->>> $response");
         message = response.message ?? "success";
+        isLoginSuccess = true;
         print("message $message");
         isLoading = false;
               notifyListeners();

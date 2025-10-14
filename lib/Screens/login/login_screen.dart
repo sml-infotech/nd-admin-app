@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -87,6 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     setState(() {
           viewModel.message = '';
+          if (viewModel.isLoginSuccess) {
+          Navigator.pushNamed(context, StringsRoute.otpScreen,arguments: OtpArguments(email: viewModel.emailController.text,));
+          }
     });
           },
           style: ElevatedButton.styleFrom(
@@ -157,4 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
  
+}
+
+class OtpArguments {
+  final String email;
+  OtpArguments({required this.email, });
 }

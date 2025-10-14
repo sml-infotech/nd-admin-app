@@ -2,35 +2,39 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
+import 'package:nammadaiva_dashboard/Screens/otp/otp_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart' show ImageStrings;
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:provider/provider.dart';
 
 class OtpScreen extends StatefulWidget {
     final int seconds;
+    final OtpArguments arguments;
 
-  const OtpScreen({super.key, this.seconds = 10});
+  const OtpScreen({super.key, this.seconds = 10,required this.arguments});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  String _otp = "";
-  late int remainingSeconds;
-  Timer? timer;
+    late OtpViewmodel viewModel;
+    late int remainingSeconds;
 
   @override
   void initState() {
     super.initState();
+    viewModel = OtpViewmodel();
     remainingSeconds = widget.seconds;
     startTimer();
   }
 
   void startTimer() {
-    timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+   viewModel. timer?.cancel();
+  viewModel.  timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (remainingSeconds > 0) {
         setState(() {
           remainingSeconds--;
@@ -62,18 +66,18 @@ class _OtpScreenState extends State<OtpScreen> {
           const SizedBox(height: 20),
           otpSubTitle(),
           const SizedBox(height: 10),
-          userEmailText(),
+          userEmailText(widget.arguments.email),
           const SizedBox(height: 30),
          OtpInputField(
          onChanged: (otp) {
          print("Entered OTP: $otp");
           setState(() {
-            _otp = otp;
+          viewModel.  otp = otp;
           });
           },
         ),
           const SizedBox(height: 30),
-          verifyButton(_otp),
+          verifyButton(viewModel. otp),
           const SizedBox(height: 20),
           Row(children: [
             const SizedBox(width: 20),
@@ -111,8 +115,8 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 
-  Widget userEmailText() {
-    return Text("abc@gmail.com", style:AppTextStyles.otpEmailStyle ,
+  Widget userEmailText(String email) {
+    return Text(email, style:AppTextStyles.otpEmailStyle ,
       );
 }
 
