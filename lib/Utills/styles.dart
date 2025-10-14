@@ -85,4 +85,17 @@ class AppTextStyles {
     color: Colors.black,
     fontFamily: font
   );
+
+  static final TextStyle resendCodeStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+    fontFamily: font
+  );
+  static final TextStyle resendEnableCodeStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: ColorConstant.buttonColor,
+    fontFamily: font
+  );
 }
