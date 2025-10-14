@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Utills/constant.dart';
+
+class CommonDropdownField extends StatefulWidget {
+  final String hintText;
+  final String labelText;
+  final List<String> items;
+  final String? selectedValue;
+  final Function(String?)? onChanged;
+
+  const CommonDropdownField({
+    super.key,
+    required this.hintText,
+    required this.labelText,
+    required this.items,
+    this.selectedValue,
+    this.onChanged,
+  });
+
+  @override
+  State<CommonDropdownField> createState() => _CommonDropdownFieldState();
+}
+
+class _CommonDropdownFieldState extends State<CommonDropdownField> {
+  String? _currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentValue = widget.selectedValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: DropdownButtonFormField<String>(
+          value: _currentValue,
+          onChanged: (value) {
+            setState(() {
+              _currentValue = value;
+            });
+            if (widget.onChanged != null) widget.onChanged!(value);
+          },
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            labelText: widget.labelText,
+            labelStyle: TextStyle(fontFamily: font, color: Colors.black),
+            hintStyle: TextStyle(fontFamily: font, color: Colors.black),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(13),
+              borderSide: const BorderSide(color: ColorConstant.primaryColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(13),
+              borderSide: const BorderSide(color: ColorConstant.primaryColor),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+          ),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+          items: widget.items
+              .map((e) => DropdownMenuItem<String>(
+                    value: e,
+                    child: Text(
+                      e,
+                      style: TextStyle(fontFamily: font),
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
+    );
+  }
+}

@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     viewModel = Provider.of<LoginViewModel>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
        Column(
@@ -50,7 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
             loginButton(viewModel),
             const SizedBox(height: 15),
             forgotPasswordText(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
+        
           ],
         ),
             if (viewModel.isLoading)
@@ -118,6 +120,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+ 
 
   Widget loginImage() {
     return Center(

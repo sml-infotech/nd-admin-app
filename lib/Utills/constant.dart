@@ -28,6 +28,7 @@ class StringConstant {
   static const String otpSubTitle = "4 digits code was sent to ";
   static const String resend = "Resend Code";
   static const String verify = "Verify";
+  static const String createAcc = " Create User";
 
 
 }

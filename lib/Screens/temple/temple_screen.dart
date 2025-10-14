@@ -95,9 +95,10 @@ class _TempleScreenState extends State<TempleScreen> {
     );
   }
 
+  
+
   Widget nammaDaivaAppBar(){
   return Center(child: 
-  
   Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,
     children: [
     Spacer(),
@@ -109,9 +110,6 @@ class _TempleScreenState extends State<TempleScreen> {
           },
         )
   ],));
-  
-  
-   
   }
 
   Widget welcomeText() {

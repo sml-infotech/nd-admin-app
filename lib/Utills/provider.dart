@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Screens/createuser/create_user_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
@@ -33,6 +35,9 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => OtpViewmodel(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CreateUserViewmodel(),
+        ),
       ],
       child: MaterialApp(
           theme: ThemeData(
@@ -42,7 +47,7 @@ class ProviderWidget extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: initialRoute,
-          home: LoginScreen(),
+          home: CreateUserScreen(),
           onGenerateRoute: router.route),
     );
   }
