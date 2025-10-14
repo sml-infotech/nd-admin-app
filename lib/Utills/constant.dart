@@ -1,0 +1,52 @@
+import 'dart:ui';
+
+class StringConstant {
+  StringConstant._();
+  static const String nammDaivaTitleText = "NAMMA DAIVA";
+  static const String userName = "Username";
+  static const String password = "Password";
+  static const String enterUserName = "Enter your email";
+  static const String enterPassword = "Enter valid password";
+  static const String termsAndCondition = "I agree to theTerms & conditions and Privacy policy";
+  static const String login = "Login";
+  static const String forgotPassword = "Forgot Password?";
+  static const String welcomeBack = "Welcome";
+  static const String nammaDaivaSmall = "Namma Daiva";
+  static const String templeDetailText = "Temple Details & History";
+  static const String sevaText = "Seva/Pooja Calendar";
+  static const String onlineSeva = "Online Seva & Harake Bookings";
+  static const String donationText = "Donation Tracking";
+  static const String ritualText = "Ritual & Event Promotion";
+  static const String audittext = "Audit & Committee Reports";
+  static const String transactionText = "Transaction Reports";
+  static const String wowtracker = "Seva & WOW Tracker";
+  static const String templeDetail = "Temples Details";
+  static const String edit = "edit";
+
+
+}
+
+class ColorConstant {
+  ColorConstant._();
+    static const Color primaryColor = Color(0xff770425);
+    static const Color eyeColor = Color(0xffcdcdcd);
+    static const Color buttonColor = Color(0xffF38739);
+
+}
+
+
+
+String font = 'Nunito';
+class Fonts {
+  Fonts._();
+  static TextStyle Regular =
+      TextStyle(fontFamily: font, fontWeight: FontWeight.w400,);
+  static TextStyle Medium =
+      TextStyle(fontFamily: font, fontWeight: FontWeight.w500);
+  static TextStyle SemiBold =
+      TextStyle(fontFamily: font, fontWeight: FontWeight.w600);
+  static TextStyle Bold =
+      TextStyle(fontFamily: font, fontWeight: FontWeight.w700);
+  static TextStyle ExtraBold =
+      TextStyle(fontFamily: font, fontWeight: FontWeight.w800);
+}
