@@ -20,120 +20,136 @@ class CreateUserScreen extends StatefulWidget {
 
 class _CreateUserScreenState extends State<CreateUserScreen> {
   late CreateUserViewmodel viewModel;
-@override
-void initState() {
-  super.initState();
-}
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize ViewModel here if needed
+  }
+
   @override
   Widget build(BuildContext context) {
-    viewModel = Provider.of<CreateUserViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
-   viewModel.role.text = StringConstant.temple;
 
-    return FocusDetector(
-      onFocusGained: () async {
-       await viewModel.getTemples();
-      },
-      child: 
-     Scaffold(
-      backgroundColor: ColorConstant.buttonColor, 
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: ColorConstant.buttonColor,
-        elevation: 0,
-        title: nammaDaivaCreateAppBar(),
-      ),
-      body: 
-      
-      
-      Stack(
-        children: [
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
+    return ChangeNotifierProvider(
+      create: (_) => CreateUserViewmodel(),
+      child: Consumer<CreateUserViewmodel>(
+        builder: (context, viewModel, _) {
+          return FocusDetector(
+            onFocusGained: () async {
+              await viewModel.getTemples(reset: true);
+            },
+            child: Scaffold(
+              backgroundColor: ColorConstant.buttonColor,
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: ColorConstant.buttonColor,
+                elevation: 0,
+                title: nammaDaivaCreateAppBar(),
+              ),
+              body: Stack(
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(height: screenHeight * 0.02),
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(24),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: SingleChildScrollView(
+                              physics: const ClampingScrollPhysics(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  CommonTextField(
+                                    hintText: StringConstant.enterName,
+                                    labelText: StringConstant.userName,
+                                    isFromPassword: false,
+                                    controller: viewModel.nameController,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CommonTextField(
+                                    hintText: StringConstant.email,
+                                    labelText: StringConstant.email,
+                                    isFromPassword: false,
+                                    controller: viewModel.emailController,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CommonTextField(
+                                    hintText: StringConstant.password,
+                                    labelText: StringConstant.password,
+                                    isFromPassword: true,
+                                    controller: viewModel.passwordController,
+                                  ),
+                                  const SizedBox(height: 20),
+                                 CommonDropdownField(
+                                  hintText: StringConstant.selectedRole,
+                                  labelText: StringConstant.role,
+                                  items: StringConstant.roles,
+                                  selectedValue: StringConstant.roles.contains(viewModel.role.text)
+                                   ? viewModel.role.text
+                                 : null,
+                                 onChanged: (value) {
+                                 viewModel.role.text = value ?? "";
+                                 viewModel.notifyListeners();
+                                  },
+                                  ),
+                                  if (viewModel.role.text  == "Temple"|| viewModel.role.text  == "Agent") ...[
+                                    const SizedBox(height: 20),
+                                    CommonDropdownField(
+                                      hintText: StringConstant.selectTemples,
+                                      labelText: StringConstant.temples,
+                                      items: viewModel.templeList,
+                                      selectedValue: viewModel.selectedTempleName,
+                                      onChanged: (value) {
+                                        viewModel.selectTemple(value);
+                                      },
+                                    ),
+                                  ],
+                                  const SizedBox(height: 100),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            CommonTextField(
-                              hintText: StringConstant.enterName,
-                              labelText: StringConstant.userName,
-                              isFromPassword: false,
-                              controller: viewModel.nameController,
-                            ),
-                            const SizedBox(height: 20),
-                            CommonTextField(
-                              hintText: StringConstant.email,
-                              labelText: StringConstant.email,
-                              isFromPassword: false,
-                              controller: viewModel.emailController,
-                            ),
-                            const SizedBox(height: 20),
-                            CommonTextField(
-                              hintText: StringConstant.password,
-                              labelText: StringConstant.password,
-                              isFromPassword: true,
-                              controller: viewModel.passwordController,
-                            ),
-                            const SizedBox(height: 20),
-                            CommonDropdownField(
-                              hintText: StringConstant.selectedRole,
-                              labelText: StringConstant.role,
-                              items: StringConstant.roles,
-                              selectedValue: viewModel.role.text,
-                              onChanged: (value) {
-                           viewModel.role.text=value??"";
-                              },
-                            ),
-                            const SizedBox(height: 100),
-                          ],
+                      Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(16.0),
+                        child: SafeArea(
+                          top: false,
+                          child: createUserButton(viewModel),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  if (viewModel.isLoading)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.4),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: ColorConstant.buttonColor,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-
-                Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(16.0),
-                  child: SafeArea(
-                    top: false,
-                    child: createUserButton(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          if (viewModel.isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
-                  ),
-                ),
+                ],
               ),
             ),
-        ],
+          );
+        },
       ),
-    ));
+    );
   }
 
   Widget nammaDaivaCreateAppBar() {
@@ -155,13 +171,14 @@ void initState() {
     );
   }
 
-  Widget createUserButton() {
+  Widget createUserButton(CreateUserViewmodel viewModel) {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
         onPressed: () async {
           await viewModel.validateUser();
+
           if (viewModel.message.isNotEmpty) {
             Fluttertoast.showToast(
               msg: viewModel.message,
@@ -170,14 +187,23 @@ void initState() {
               gravity: ToastGravity.BOTTOM,
               toastLength: Toast.LENGTH_SHORT,
             );
-            setState(() {
-              viewModel.message = "";
-            });
+            viewModel.message = "";
           }
-          if(viewModel.isCreateUserSuccess){
-                      Navigator.pushNamed(context, StringsRoute.otpScreen,arguments: OtpArguments(email: viewModel.emailController.text,password: viewModel.passwordController.text,isFromCreateUser: true));
 
+          if (viewModel.isCreateUserSuccess) {
+            Navigator.pushNamed(
+              context,
+              StringsRoute.otpScreen,
+              arguments: OtpArguments(
+                email: viewModel.emailController.text,
+                password: viewModel.passwordController.text,
+                isFromCreateUser: true,
+              ),
+            );
           }
+          setState(() {
+            viewModel.isCreateUserSuccess=false;
+          });
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,

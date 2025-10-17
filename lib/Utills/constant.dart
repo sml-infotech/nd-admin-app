@@ -32,6 +32,8 @@ class StringConstant {
   static const String createAcc = " Create User";
   static const String selectedRole = "Select Role";
   static const String role = "Role";
+  static const String temples = "Temples";
+  static const String selectTemples = "Select Temple";
   static const List<String> roles=["Temple", "Agent", "Admin"];
   static const String temple = "Temple";
   static const String create = "Create";
