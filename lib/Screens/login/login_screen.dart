@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -167,8 +168,3 @@ class _LoginScreenState extends State<LoginScreen> {
  
 }
 
-class OtpArguments {
-  final String email;
- final String password;
-  OtpArguments({required this.email,required this.password});
-}

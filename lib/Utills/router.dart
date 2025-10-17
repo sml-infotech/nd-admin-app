@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_details_screen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 
 
 class AppRouter {

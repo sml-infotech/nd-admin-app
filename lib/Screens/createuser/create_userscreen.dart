@@ -76,18 +76,15 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             const SizedBox(height: 20,),
 
             CommonDropdownField(
-  hintText: "Select Role",
-  labelText: "Role",
-  items: ["Temple", "Agent", "Admin"],
-  selectedValue: "Temple",
-  onChanged: (value) {
-    print("Selected: $value");
-  },
+           hintText:StringConstant.selectedRole ,
+           labelText:StringConstant.role ,
+           items:StringConstant.roles ,
+           selectedValue:StringConstant.temple ,
+           onChanged: (value) {
+          print("Selected: $value");
+  } ,
 )
-
-
-                  ])))))
-  
+           ])))))
 
       ],)
     );

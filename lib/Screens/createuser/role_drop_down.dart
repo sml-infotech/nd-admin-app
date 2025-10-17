@@ -60,6 +60,9 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
           ),
           icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+          dropdownColor: Colors.white,
+          
+          
           items: widget.items
               .map((e) => DropdownMenuItem<String>(
                     value: e,
