@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -178,6 +180,22 @@ class _UserListScreenState extends State<UserListScreen> {
                   const SizedBox(height: 12),
                   _textField(emailController, "Email"),
                   const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: 
+                    CommonDropdownField(
+                                  hintText: StringConstant.selectedRole,
+                                  labelText: StringConstant.role,
+                                  items: StringConstant.roles,
+                                  selectedValue: StringConstant.roles.contains(viewModel.role.text)
+                                   ? viewModel.role.text
+                                 : null,
+                                 onChanged: (value) {
+                                 viewModel.role.text = value ?? "";
+                                 viewModel.notifyListeners();
+                                  },
+                  )),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -211,16 +229,10 @@ class _UserListScreenState extends State<UserListScreen> {
                         borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () async {
-                    final updatedUser = UserModel(
-                      id: user.id,
-                      fullName: fullNameController.text,
-                      email: emailController.text,
-                      role: user.role,
-                      associatedTempleId: user.associatedTempleId,
-                      isActive: isActive,
-                      createdAt: user.createdAt,
+                    final updatedUser = EditUsermodel(id:user.id , fullName: fullNameController.text
+                  , role: user.role, isActive: true
                     );
-                    // await viewModel.updateUser(updatedUser);
+                // await viewModel.updateUser(updatedUser);
                     Navigator.pop(context);
                   },
                   child: Text("Save",
@@ -236,6 +248,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
   TextField _textField(TextEditingController controller, String label) {
     return TextField(
+      style:AppTextStyles.resendCodeStyle ,
       controller: controller,
       decoration: InputDecoration(
         labelText: label,

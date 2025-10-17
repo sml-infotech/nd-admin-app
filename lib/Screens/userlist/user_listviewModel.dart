@@ -5,6 +5,7 @@ import 'package:nammadaiva_dashboard/service/auth_service.dart';
 
 class UserViewModel extends ChangeNotifier {
   final AuthService authService = AuthService();
+  final TextEditingController role = TextEditingController();
 
   List<UserModel> userData = [];
   List<UserModel> get users => userData;

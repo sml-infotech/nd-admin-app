@@ -29,7 +29,8 @@ class UserModel {
   final String role;
   final String? associatedTempleId;
   final bool isActive;
-  final DateTime createdAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   UserModel({
     required this.id,
@@ -38,18 +39,24 @@ class UserModel {
     required this.role,
     this.associatedTempleId,
     required this.isActive,
-    required this.createdAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json["id"],
-      fullName: json["full_name"],
-      email: json["email"],
-      role: json["role"],
+      id: json["id"] ?? "",
+      fullName: json["full_name"] ?? "",
+      email: json["email"] ?? "",
+      role: json["role"] ?? "",
       associatedTempleId: json["associated_temple_id"],
-      isActive: json["is_active"],
-      createdAt: DateTime.parse(json["created_at"]),
+      isActive: json["is_active"] ?? false,
+      createdAt: json["created_at"] != null
+          ? DateTime.tryParse(json["created_at"])
+          : null,
+      updatedAt: json["updated_at"] != null
+          ? DateTime.tryParse(json["updated_at"])
+          : null,
     );
   }
 
@@ -60,6 +67,8 @@ class UserModel {
         "role": role,
         "associated_temple_id": associatedTempleId,
         "is_active": isActive,
-        "created_at": createdAt.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
       };
 }
+
