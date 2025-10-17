@@ -6,6 +6,7 @@ class StringConstant {
   static const String userName = "Username";
   static const String password = "Password";
   static const String enterUserName = "Enter your email";
+  static const String enterName ="Enter Name";
   static const String enterPassword = "Enter valid password";
   static const String termsAndCondition = "I agree to theTerms & conditions and Privacy policy";
   static const String login = "Login";
@@ -33,6 +34,7 @@ class StringConstant {
   static const String role = "Role";
   static const List<String> roles=["Temple", "Agent", "Admin"];
   static const String temple = "Temple";
+  static const String create = "Create";
 
 
 }

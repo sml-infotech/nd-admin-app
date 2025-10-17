@@ -47,7 +47,7 @@ class ProviderWidget extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: initialRoute,
-          home: CreateUserScreen(),
+          home: LoginScreen(),
           onGenerateRoute: router.route),
     );
   }

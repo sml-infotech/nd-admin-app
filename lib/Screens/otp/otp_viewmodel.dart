@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpViewmodel extends ChangeNotifier{
 
@@ -32,13 +33,15 @@ Future<void> validOtp(String email) async {
           email, otp);
       if (response.message?.isNotEmpty == true) {
         print("->>> $response");
+         final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', response.token!);
+        print("✅ Token saved: ${response.token}");
         message = response.message ?? "success";
         isOtpSuccess = true;
         print("message $message");
         isLoading = false;
-        
+      
          notifyListeners();
-
       } else {
         message = response.error ?? "some error occurred";
         isLoading = false;

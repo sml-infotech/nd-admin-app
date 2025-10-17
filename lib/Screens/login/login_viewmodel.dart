@@ -72,9 +72,10 @@ class LoginViewModel extends ChangeNotifier {
   }
 bool isValidEmail(String email) {
   final regex = RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
   return regex.hasMatch(email);
 }
+
 
   @override
   void dispose() {

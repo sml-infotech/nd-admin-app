@@ -15,10 +15,13 @@ class HttpApiService {
     String url,
     Map<String, dynamic> data,
   ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
     final response = await http.post(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
       },
       body: json.encode(data),
     );
@@ -46,7 +49,7 @@ class HttpApiService {
   ) async {
     print(url);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("SharedPreferenceConstant.jwtToken");
+    var token = prefs.getString("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTVhOGM4Yi1kMjNjLTQ3ZjctYTNjOC0yZjhlZTE4ZDNkODciLCJpYXQiOjE3NjA1OTQ2NDd9.FNjwWnNVJniQGhx4OuVQbiFBa-z9eGfhID0rlD9c6cE");
     final response = await http.get(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'

@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart' show ImageStrings;
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:provider/provider.dart';
@@ -164,6 +165,13 @@ Widget verifyButton(String _otp,) {
       gravity: ToastGravity.BOTTOM,
       toastLength: Toast.LENGTH_SHORT,
     );
+   if(viewModel.isOtpSuccess){
+Navigator.pushNamedAndRemoveUntil(
+  context, 
+  StringsRoute.templeScreen, 
+  (Route<dynamic> route) => false, 
+);
+   }
     setState(() {
       viewModel.message = '';
     });

@@ -79,7 +79,10 @@ class _TempleScreenState extends State<TempleScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         contaierWidgets(ImageStrings.transaction,StringConstant.transactionText,(){}),
-                        contaierWidgets(ImageStrings.wowtracker,StringConstant.wowtracker,(){}),
+                        contaierWidgets(ImageStrings.wowtracker,StringConstant.wowtracker,(){
+                                    Navigator.pushNamed(context, StringsRoute.createUser);
+
+                        }),
                       ],
 
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_screen.dart';
@@ -30,6 +31,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => TempleDetailsScreen(),
+        );
+
+         case StringsRoute.createUser:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateUserScreen(),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');
