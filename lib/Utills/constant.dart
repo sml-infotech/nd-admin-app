@@ -30,6 +30,7 @@ class StringConstant {
   static const String resend = "Resend Code";
   static const String verify = "Verify";
   static const String createAcc = " Create User";
+  static const String userDetails = "User Details";
   static const String selectedRole = "Select Role";
   static const String role = "Role";
   static const String temples = "Temples";

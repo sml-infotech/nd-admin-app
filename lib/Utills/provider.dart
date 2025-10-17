@@ -8,6 +8,8 @@ import 'package:nammadaiva_dashboard/Screens/otp/otp_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_detail_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
+import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/router.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +40,9 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => CreateUserViewmodel(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => UserViewModel(),
+        ),
       ],
       child: MaterialApp(
           theme: ThemeData(
@@ -47,8 +52,8 @@ class ProviderWidget extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: initialRoute,
-          home: CreateUserScreen(),
-          onGenerateRoute: router.route),
-    );
+          home: UserListScreen(),
+          onGenerateRoute: router.route));
+    
   }
 }

@@ -5,6 +5,7 @@ import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
@@ -70,4 +71,17 @@ class AuthService {
   }
 }
 
+
+
+ Future<UserListResponse> getUserDetails() async {
+  try {
+    final url = '${UrlConstant.userListUrl}';
+    print('Fetching temples: $url');
+    dynamic data = await apiService.get(url);
+    return UserListResponse.fromJson(data);
+  } catch (e) {
+    print("Temple service decode fails: $e");
+    throw Exception('API failed: $e');
+  }
+}
 }

@@ -1,0 +1,65 @@
+import 'dart:convert';
+
+class UserListResponse {
+  final List<UserModel> users;
+
+  UserListResponse({required this.users});
+
+  factory UserListResponse.fromJson(Map<String, dynamic> json) {
+    return UserListResponse(
+      users: (json['users'] as List<dynamic>)
+          .map((e) => UserModel.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "users": users.map((e) => e.toJson()).toList(),
+      };
+
+  /// Optional helper for direct parsing from API response string
+  static UserListResponse fromJsonString(String str) =>
+      UserListResponse.fromJson(json.decode(str));
+}
+
+class UserModel {
+  final String id;
+  final String fullName;
+  final String email;
+  final String role;
+  final String? associatedTempleId;
+  final bool isActive;
+  final DateTime createdAt;
+
+  UserModel({
+    required this.id,
+    required this.fullName,
+    required this.email,
+    required this.role,
+    this.associatedTempleId,
+    required this.isActive,
+    required this.createdAt,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json["id"],
+      fullName: json["full_name"],
+      email: json["email"],
+      role: json["role"],
+      associatedTempleId: json["associated_temple_id"],
+      isActive: json["is_active"],
+      createdAt: DateTime.parse(json["created_at"]),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "full_name": fullName,
+        "email": email,
+        "role": role,
+        "associated_temple_id": associatedTempleId,
+        "is_active": isActive,
+        "created_at": createdAt.toIso8601String(),
+      };
+}

@@ -189,18 +189,6 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             );
             viewModel.message = "";
           }
-
-          if (viewModel.isCreateUserSuccess) {
-            Navigator.pushNamed(
-              context,
-              StringsRoute.otpScreen,
-              arguments: OtpArguments(
-                email: viewModel.emailController.text,
-                password: viewModel.passwordController.text,
-                isFromCreateUser: true,
-              ),
-            );
-          }
           setState(() {
             viewModel.isCreateUserSuccess=false;
           });
