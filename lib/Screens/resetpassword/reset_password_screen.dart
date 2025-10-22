@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
-import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
-import 'package:nammadaiva_dashboard/Utills/styles.dart'; 
+import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  late ForgotViewmodel viewmodel ;
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  late ResetViewmodel viewmodel;
+
   @override
   Widget build(BuildContext context) {
-    viewmodel = Provider.of<ForgotViewmodel>(context);
-        final screenHeight = MediaQuery.of(context).size.height;
+    viewmodel = Provider.of<ResetViewmodel>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
@@ -43,19 +44,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                forgotImage(),
-                const SizedBox(height: 30),
-                const SizedBox(height: 12),
-                forgotSubText(),
+                _resetImage(),
+                const SizedBox(height: 20),
+                _resetSubText(),
+                const SizedBox(height: 28),
+                CommonTextField(
+                  hintText: StringConstant.password,
+                  labelText: StringConstant.enterPassword,
+                  isFromPassword: true,
+                  controller: viewmodel.password,
+                ),
                 const SizedBox(height: 18),
-                CommonTextField(hintText: StringConstant.email, labelText: StringConstant.enterUserName, isFromPassword: false, controller: viewmodel.emailController),
-                const SizedBox(height: 25),
-                resetButton(viewmodel),
-                 SizedBox(height: 40),
-
-
+                CommonTextField(
+                  hintText: StringConstant.password,
+                  labelText: StringConstant.enterConfirmPassword,
+                  isFromPassword: true,
+                  controller: viewmodel.confirmPassword,
+                ),
+                const SizedBox(height: 30),
+                _resetButton(viewmodel),
               ],
             ),
           ),
@@ -64,8 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-
- Widget _buildAppBar() {
+  Widget _buildAppBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -74,13 +81,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.forgotPassword1, style: AppTextStyles.appBarTitleStyle),
+        Text(StringConstant.reset, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         const SizedBox(width: 48),
       ],
     );
   }
-  Widget forgotImage() {
+
+  Widget _resetImage() {
     return Image.asset(
       ImageStrings.loginImage,
       height: 70,
@@ -89,10 +97,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-
-  Widget forgotSubText() {
+  Widget _resetSubText() {
     return Text(
-    StringConstant.fogotSubtext  ,
+      StringConstant.resetSubText,
       style: AppTextStyles.otpSubHeadingStyle.copyWith(
         fontSize: 16,
         color: Colors.black54,
@@ -102,24 +109,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-   
-}
-Widget resetButton(ForgotViewmodel viewmodel) {
-  final isButtonEnabled = viewmodel.validateEmail();
+  Widget _resetButton(ResetViewmodel viewmodel) {
+    final isButtonEnabled = viewmodel.validatePasswords();
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: SizedBox(
+    return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
         onPressed: isButtonEnabled
             ? () async {
-               
-
-
-              
-
               }
             : null,
         style: ElevatedButton.styleFrom(
@@ -129,11 +127,11 @@ Widget resetButton(ForgotViewmodel viewmodel) {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child:  Text(
-                StringConstant.verify,
-                style: AppTextStyles.buttonTextStyle,
-              ),
+        child: Text(
+          StringConstant.reset,
+          style: AppTextStyles.buttonTextStyle,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
