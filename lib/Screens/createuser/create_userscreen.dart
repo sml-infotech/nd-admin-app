@@ -91,6 +91,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                   ),
                                   const SizedBox(height: 20),
                                  CommonDropdownField(
+                                  paddingSize: 20,
                                   hintText: StringConstant.selectedRole,
                                   labelText: StringConstant.role,
                                   items: StringConstant.roles,
@@ -105,6 +106,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                   if (viewModel.role.text  == "Temple"|| viewModel.role.text  == "Agent") ...[
                                     const SizedBox(height: 20),
                                     CommonDropdownField(
+                                      paddingSize: 20,
                                       hintText: StringConstant.selectTemples,
                                       labelText: StringConstant.temples,
                                       items: viewModel.templeList,

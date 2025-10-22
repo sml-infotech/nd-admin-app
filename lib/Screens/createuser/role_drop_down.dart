@@ -7,6 +7,7 @@ class CommonDropdownField extends StatefulWidget {
   final List<String> items;
   final String? selectedValue;
   final Function(String?)? onChanged;
+  final double paddingSize;
 
   const CommonDropdownField({
     super.key,
@@ -15,6 +16,7 @@ class CommonDropdownField extends StatefulWidget {
     required this.items,
     this.selectedValue,
     this.onChanged,
+    required this.paddingSize
   });
 
   @override
@@ -35,7 +37,7 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
     return SizedBox(
       height: 60,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:  EdgeInsets.symmetric(horizontal: widget.paddingSize),
         child: DropdownButtonFormField<String>(
           value: _currentValue,
           onChanged: (value) {

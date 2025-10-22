@@ -184,6 +184,7 @@ class _UserListScreenState extends State<UserListScreen> {
                     width: double.infinity,
                     child: 
                     CommonDropdownField(
+                      paddingSize: 0,
                                   hintText: StringConstant.selectedRole,
                                   labelText: StringConstant.role,
                                   items: StringConstant.roles,
