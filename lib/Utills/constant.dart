@@ -38,6 +38,8 @@ class StringConstant {
   static const List<String> roles=["Temple", "Agent", "Admin"];
   static const String temple = "Temple";
   static const String create = "Create";
+  static const String editUser = "Edit User";
+
 
 
 }
