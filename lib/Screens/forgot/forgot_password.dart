@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
+import 'package:nammadaiva_dashboard/Screens/forgot/forgot_otpdialog.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart'; 
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:provider/provider.dart'; 
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -52,7 +55,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 const SizedBox(height: 18),
                 CommonTextField(hintText: StringConstant.email, labelText: StringConstant.enterUserName, isFromPassword: false, controller: viewmodel.emailController),
                 const SizedBox(height: 25),
-                resetButton(viewmodel),
+                resetButton(viewmodel,context),
                  SizedBox(height: 40),
 
 
@@ -104,7 +107,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
    
 }
-Widget resetButton(ForgotViewmodel viewmodel) {
+void _showOtpDialog(BuildContext context, ForgotViewmodel viewmodel) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return  OtpDialog(email: '', password: '',);
+           
+          
+        
+  
+    },
+  );
+}
+Widget resetButton(ForgotViewmodel viewmodel,BuildContext context) {
   final isButtonEnabled = viewmodel.validateEmail();
 
   return Padding(
@@ -117,6 +133,7 @@ Widget resetButton(ForgotViewmodel viewmodel) {
             ? () async {
                
 
+                _showOtpDialog(context, viewmodel);
 
               
 
