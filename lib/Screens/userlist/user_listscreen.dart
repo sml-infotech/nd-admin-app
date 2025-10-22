@@ -9,6 +9,7 @@ import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:intl/intl.dart';
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
@@ -131,9 +132,12 @@ class _UserListScreenState extends State<UserListScreen> {
               "Associated Temple: ${user.associatedTempleId ?? 'N/A'}",
               style: AppTextStyles.templeNameDetailsStyle),
           Text("Active: ${user.isActive ? "Yes" : "No"}",
-              style: AppTextStyles.templeNameDetailsStyle),
-          Text("Created At: ${user.createdAt}",
-              style: AppTextStyles.templeNameDetailsStyle),
+              style: AppTextStyles.templeNameDetailsStyle,),
+          Text(
+  "Created At: ${user.createdAt != null ? DateFormat('dd-MM-yyyy').format(user.createdAt!) : (user.updatedAt != null ? DateFormat('dd-MM-yyyy').format(user.updatedAt!) : '')}",
+  style: AppTextStyles.templeNameDetailsStyle,
+),
+
         ],
       ),
       )  );
@@ -154,98 +158,147 @@ class _UserListScreenState extends State<UserListScreen> {
       ],
     );
   }
+void _showEditDialog(UserModel user, UserViewModel viewModel) {
+  final fullNameController = TextEditingController(text: user.fullName);
+  final emailController = TextEditingController(text: user.email);
+  bool isActive = user.isActive;
 
-  void _showEditDialog(UserModel user, UserViewModel viewModel) {
-    final fullNameController = TextEditingController(text: user.fullName);
-    final emailController = TextEditingController(text: user.email);
-    bool isActive = user.isActive;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: AlertDialog(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: Text("Edit User",
-                  style: AppTextStyles.loginTitleStyle.copyWith(
-                      fontSize: 18, color: Colors.black)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+  showDialog(
+    context: context,
+    barrierDismissible: false, 
+    builder: (context) {
+      return AnimatedBuilder(
+        animation: viewModel,
+        builder: (context, _) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Stack(
                 children: [
-                  _textField(fullNameController, "Full Name"),
-                  const SizedBox(height: 12),
-                  _textField(emailController, "Email"),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: 
-                    CommonDropdownField(
-                      paddingSize: 0,
-                                  hintText: StringConstant.selectedRole,
-                                  labelText: StringConstant.role,
-                                  items: StringConstant.roles,
-                                  selectedValue: StringConstant.roles.contains(viewModel.role.text)
-                                   ? viewModel.role.text
-                                 : null,
-                                 onChanged: (value) {
-                                 viewModel.role.text = value ?? "";
-                                 viewModel.notifyListeners();
-                                  },
-                  )),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Is Active",
-                          style: AppTextStyles.otpSubHeadingStyle
-                              .copyWith(fontWeight: FontWeight.w600)),
-                      StatefulBuilder(
-                        builder: (context, setStateSB) {
-                          return Switch(
-                            value: isActive,
-                            activeColor: ColorConstant.buttonColor,
-                            onChanged: (val) => setStateSB(() => isActive = val),
-                          );
-                        },
+                  AlertDialog(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    title: Text(
+                      "Edit User",
+                      style: AppTextStyles.loginTitleStyle.copyWith(
+                          fontSize: 18, color: Colors.black),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _textField(fullNameController, "Full Name"),
+                        const SizedBox(height: 12),
+                        _textField(emailController, "Email"),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CommonDropdownField(
+                            paddingSize: 0,
+                            hintText: StringConstant.selectedRole,
+                            labelText: StringConstant.role,
+                            items: StringConstant.roles,
+                            selectedValue: StringConstant.roles
+                                    .contains(viewModel.role.text)
+                                ? viewModel.role.text
+                                : user.role,
+                            onChanged: (value) {
+                              viewModel.role.text = value ?? user.role;
+                              viewModel.notifyListeners();
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Is Active",
+                              style: AppTextStyles.otpSubHeadingStyle
+                                  .copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            StatefulBuilder(
+                              builder: (context, setStateSB) {
+                                return Switch(
+                                  value: isActive,
+                                  activeColor: ColorConstant.buttonColor,
+                                  onChanged: (val) =>
+                                      setStateSB(() => isActive = val),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: viewModel.editloading
+                            ? null
+                            : () => Navigator.pop(context),
+                        child: Text(
+                          "Cancel",
+                          style: AppTextStyles.buttonTextStyle
+                              .copyWith(color: Colors.grey.shade600),
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorConstant.buttonColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                        onPressed: viewModel.editloading
+                            ? null
+                            : () async {
+                                final updatedUser = EditUsermodel(
+                                  id: user.id,
+                                  fullName: fullNameController.text,
+                                  role: viewModel.role.text.isNotEmpty
+                                      ? viewModel.role.text
+                                      : user.role,
+                                  isActive: isActive,
+                                );
+
+                                await viewModel.editUser(
+                                    user.id, fullNameController.text, isActive);
+
+                                if (!viewModel.editloading) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                        child: Text(
+                          "Save",
+                          style: AppTextStyles.buttonTextStyle
+                              .copyWith(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
+                  if (viewModel.editloading)
+                    Container(
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black38,
+                  
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                 ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Cancel",
-                      style: AppTextStyles.buttonTextStyle
-                          .copyWith(color: Colors.grey.shade600)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorConstant.buttonColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onPressed: () async {
-                    final updatedUser = EditUsermodel(id:user.id , fullName: fullNameController.text
-                  , role: user.role, isActive: true
-                    );
-                // await viewModel.updateUser(updatedUser);
-                    Navigator.pop(context);
-                  },
-                  child: Text("Save",
-                      style: AppTextStyles.buttonTextStyle.copyWith(color: Colors.white)),
-                ),
-              ],
             ),
-          ),
-        );
-      },
-    );
-  }
+          );
+        },
+      );
+    },
+  );
+}
+
 
   TextField _textField(TextEditingController controller, String label) {
     return TextField(

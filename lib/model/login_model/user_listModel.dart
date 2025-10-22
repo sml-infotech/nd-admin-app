@@ -17,7 +17,6 @@ class UserListResponse {
         "users": users.map((e) => e.toJson()).toList(),
       };
 
-  /// Optional helper for direct parsing from API response string
   static UserListResponse fromJsonString(String str) =>
       UserListResponse.fromJson(json.decode(str));
 }

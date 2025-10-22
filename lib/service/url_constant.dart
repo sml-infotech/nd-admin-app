@@ -19,5 +19,7 @@ class UrlConstant {
   static String createUser = "${baseUrlString()}create-dashboard-user";
   static String templeUser ="${baseUrlString()}list-temples";
   static String userListUrl ="${baseUrlString()}list-dashboard-users";
+  static String userEditUrl ="${baseUrlString()}edit-dashboard-user";
+
  
 }

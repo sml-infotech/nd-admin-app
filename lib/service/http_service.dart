@@ -65,25 +65,7 @@ class HttpApiService {
     }
   }
 
-  // Future<Map<String, dynamic>> dioGet(
-  //   String url,
-  //   CancelToken? cancelToken,
-  // ) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var token = prefs.getString(SharedPreferenceConstant.jwtToken);
-  //   print("jwt token in header $token");
-  //   dynamic response = await dio.get(url,
-  //       options: Options(
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': 'Bearer $token'
-  //         },
-  //       ),
-  //       cancelToken: cancelToken);
-  //   dynamic data = jsonDecode(response.toString());
-  //   print(data);
-  //   return data;
-  // }
+
 
   Future<Map<String, dynamic>> put(
     String url,
@@ -91,7 +73,7 @@ class HttpApiService {
   ) async {
     print(data);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("SharedPreferenceConstant.jwtToken");
+    var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0MDNmZGE2Zi0xZTI4LTRmMzItYTdhMC0xZWI2NzdjNzEyN2MiLCJpYXQiOjE3NjA1MDk1ODN9.IppHypvh09N-XqgNZYGVrXqONdDqTSoRbPN961YSnfw";
     final response = await http.put(
       Uri.parse(url),
       headers: {

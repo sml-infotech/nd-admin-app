@@ -1,5 +1,7 @@
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
@@ -84,4 +86,25 @@ class AuthService {
     throw Exception('API failed: $e');
   }
 }
+
+Future<EditUserResponse> editUser(String id, String name, String role, bool isActive) async {
+  try {
+    var editData = EditUsermodel(
+      id: id,
+      fullName: name,
+      role: role,
+      isActive: isActive,
+    );
+
+    final url = UrlConstant.userEditUrl;
+    dynamic data = await apiService.put(url, editData.toJson());
+    return EditUserResponse.fromJson(data);
+  } catch (e) {
+    print("Edit user API failed: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
+
+
 }
