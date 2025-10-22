@@ -73,43 +73,60 @@ class _LoginScreenState extends State<LoginScreen> {
     
   }
 
-  Widget loginButton(LoginViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: () async {
-       await  viewModel.validateLogin();           
-    Fluttertoast.showToast(               
-      msg: viewModel.message,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
-      gravity: ToastGravity.BOTTOM,
-      toastLength: Toast.LENGTH_SHORT,
-    );
-    setState(() {
-          viewModel.message = '';
-          if (viewModel.isLoginSuccess) {
-          Navigator.pushNamed(context, StringsRoute.otpScreen,arguments: OtpArguments(email: viewModel.emailController.text,password: viewModel.passwordController.text, isFromCreateUser: false,));
-          }
-    });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: ColorConstant.buttonColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: Text(
-            StringConstant.login,
-            style: AppTextStyles.buttonTextStyle,
+ Widget loginButton(LoginViewModel viewModel) {
+  final isButtonEnabled = viewModel.validateLogin();
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: isButtonEnabled
+            ? () async {
+                await viewModel.login(); // ✅ call login method, not validateLogin()
+
+                Fluttertoast.showToast(
+                  msg: viewModel.message,
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white,
+                  gravity: ToastGravity.BOTTOM,
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+
+                if (viewModel.isLoginSuccess) {
+                  Navigator.pushNamed(
+                    context,
+                    StringsRoute.otpScreen,
+                    arguments: OtpArguments(
+                      email: viewModel.emailController.text,
+                      password: viewModel.passwordController.text,
+                      isFromCreateUser: false,
+                    ),
+                  );
+                }
+
+                viewModel.message = '';
+              }
+            : null, // ✅ disables the button if invalid
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isButtonEnabled ? ColorConstant.buttonColor : Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
+        child: viewModel.isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                StringConstant.login,
+                style: AppTextStyles.buttonTextStyle,
+              ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget forgotPasswordText() {
     return Text(

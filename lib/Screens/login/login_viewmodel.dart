@@ -16,29 +16,21 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
- Future <void> validateLogin() async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+ LoginViewModel() {
+    // Rebuild the button reactively whenever the user types
+    emailController.addListener(() => notifyListeners());
+    passwordController.addListener(() => notifyListeners());
+  }
 
-    if (email.isEmpty) {
-      message = "Please enter username";
-    } 
-    else if(!isValidEmail(email) ){
-      message = "Please enter valid email";
-    }
-    else if (password.isEmpty) {
-      message = "Please enter password";
-    }
-    else if (password.length < 6) {
-      message = "Password must be at least 6 characters";
-    }
-     else if (!isChecked) {
-      message = "Please accept terms and conditions";
-    } else {
-    await login();
-    }
+  bool validateLogin() {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-    notifyListeners();
+    return email.isNotEmpty &&
+        isValidEmail(email) &&
+        password.isNotEmpty &&
+        password.length > 6 &&
+        isChecked;
   }
 
 

@@ -52,7 +52,7 @@ class ProviderWidget extends StatelessWidget {
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: initialRoute,
-          home: UserListScreen(),
+          home: LoginScreen(),
           onGenerateRoute: router.route));
     
   }
