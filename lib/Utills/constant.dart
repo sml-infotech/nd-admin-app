@@ -13,6 +13,8 @@ class StringConstant {
   static const String termsAndCondition = "I agree to the Terms & Conditions and Privacy policy";
   static const String login = "Login";
   static const String reset = "Reset";
+    static const String resetPassword = "Reset Password";
+
   static const String resetSubText = "Enter a new password and confirm it.";
   static const String fogotSubtext="Enter your registered email address and we’ll send you an OTP to reset your password.";
   static const String forgotPassword1 = "Forgot Password";

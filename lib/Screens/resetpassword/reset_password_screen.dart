@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:provider/provider.dart';
@@ -67,6 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
                 const SizedBox(height: 30),
                 _resetButton(viewmodel),
+                      const SizedBox(height: 60),
               ],
             ),
           ),
@@ -100,7 +102,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.reset, style: AppTextStyles.appBarTitleStyle),
+        Text(StringConstant.resetPassword, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         const SizedBox(width: 48),
       ],
@@ -134,11 +136,20 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return SizedBox(
       width: double.infinity,
       height: 50,
-      child: ElevatedButton(
+      child:Padding(padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),child: 
+      
+       ElevatedButton(
         onPressed: isButtonEnabled
             ? () async {
               await viewmodel.resetPassword();
               Fluttertoast.showToast(msg: viewmodel.message);
+              if(viewmodel.isPasswordUpdated){
+Navigator.popUntil(context, (route) {
+  print(route.settings.name); // debug: see all route names
+  return route.settings.name == StringsRoute.login;
+});
+
+              }
               setState(() {
                 viewmodel.message="";
               });
@@ -156,6 +167,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           style: AppTextStyles.buttonTextStyle,
         ),
       ),
-    );
+    ));
   }
 }

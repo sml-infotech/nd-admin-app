@@ -2,19 +2,30 @@ import 'dart:convert';
 
 class UserListResponse {
   final List<UserModel> users;
+  final int totalCount;
+  final int totalPages;
+  final int currentPage;
 
-  UserListResponse({required this.users});
+
+
+  UserListResponse({required this.users,required this.totalCount,required this.totalPages,required this.currentPage});
 
   factory UserListResponse.fromJson(Map<String, dynamic> json) {
     return UserListResponse(
       users: (json['users'] as List<dynamic>)
           .map((e) => UserModel.fromJson(e))
           .toList(),
+          totalCount: json['totalCount'],
+          totalPages:json['totalPages'],
+          currentPage:json['currentPage']
     );
   }
 
   Map<String, dynamic> toJson() => {
         "users": users.map((e) => e.toJson()).toList(),
+        "totalCount":totalCount,
+        "totalPages":totalPages,
+        "currentPage":currentPage
       };
 
   static UserListResponse fromJsonString(String str) =>

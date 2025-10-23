@@ -19,6 +19,42 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   final Map<String, bool> expandedMap = {};
+  final ScrollController _scrollController = ScrollController();
+
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final viewModel = Provider.of<UserViewModel>(context, listen: false);
+
+    // 🔹 Load first page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.getUsers(reset: true);
+    });
+
+    // 🔹 Scroll listener for pagination
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !_isLoadingMore &&
+          viewModel.hasMore) {
+        _loadMoreUsers(viewModel);
+      }
+    });
+  }
+
+  Future<void> _loadMoreUsers(UserViewModel viewModel) async {
+    setState(() => _isLoadingMore = true);
+    await viewModel.fetchMoreUsers();
+    setState(() => _isLoadingMore = false);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +62,28 @@ class _UserListScreenState extends State<UserListScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return FocusDetector(
-      onFocusGained: () async => await viewModel.getUsers(),
+      onFocusGained: () async {
+        if (viewModel.userData.isEmpty) {
+          // await viewModel.getUsers(reset: true);
+        }
+      },
       child: Scaffold(
-        backgroundColor: viewModel.isLoading ? Colors.white : ColorConstant.buttonColor,
+        backgroundColor:
+            viewModel.isLoading ? Colors.white : ColorConstant.buttonColor,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: ColorConstant.buttonColor,
           elevation: 0,
           title: _buildAppBar(),
         ),
-        body: viewModel.isLoading
-            ? _buildShimmerList()
-            : Column(
+          body: viewModel.isLoading && viewModel.page==1
+              ? _buildFullShimmerList()
+              : Column(
                 children: [
                   SizedBox(height: screenHeight * 0.02),
-                  Expanded(child: _buildUserList(viewModel)),
+                  Expanded(
+                    child: _buildUserList(viewModel),
+                  ),
                 ],
               ),
       ),
@@ -63,7 +106,8 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  Widget _buildShimmerList() {
+  /// 🔹 Full shimmer (for initial page)
+  Widget _buildFullShimmerList() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: 9,
@@ -71,32 +115,44 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
+  /// 🔹 Actual user list + small shimmer at bottom
   Widget _buildUserList(UserViewModel viewModel) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+        borderRadius:
+            BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
       ),
       padding: const EdgeInsets.all(16),
       child: ListView.builder(
-        itemCount: viewModel.userData.length,
+        controller: _scrollController,
+        itemCount: viewModel.userData.length + (_isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
-          final user = viewModel.userData[index];
-          final isExpanded = expandedMap[user.id] ?? false;
-          return Card(
-            elevation: 1,
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white.withOpacity(0.5)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                _buildUserTile(user, isExpanded, viewModel),
-                if (isExpanded) _buildUserDetails(user),
-              ],
-            ),
+          if (index < viewModel.userData.length) {
+            final user = viewModel.userData[index];
+            final isExpanded = expandedMap[user.id] ?? false;
+
+            return Card(
+              elevation: 1,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white.withOpacity(0.5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  _buildUserTile(user, isExpanded, viewModel),
+                  if (isExpanded) _buildUserDetails(user),
+                ],
+              ),
+            );
+          }
+
+      
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: ShimmerUserCard(),
           );
         },
       ),
@@ -115,7 +171,10 @@ class _UserListScreenState extends State<UserListScreen> {
             onPressed: () => _showEditDialog(user, viewModel),
           ),
           IconButton(
-            icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, color: Colors.black54),
+            icon: Icon(
+              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: Colors.black54,
+            ),
             onPressed: () {
               setState(() {
                 expandedMap[user.id] = !isExpanded;
@@ -128,30 +187,32 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _buildUserDetails(UserModel user) {
-    return Align(alignment: Alignment.topLeft,child: 
-    
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Role: ${user.role}", style: AppTextStyles.templeNameDetailsStyle),
-          Text("Associated Temple: ${user.associatedTempleId ?? 'N/A'}", style: AppTextStyles.templeNameDetailsStyle),
-          Text(
-            "Active: ${user.isActive ? "Yes" : "No"}",
-            style: TextStyle(
-              fontFamily: font,
-              fontSize: 16,
-              color: user.isActive ? Colors.green : Colors.red,
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Role: ${user.role}", style: AppTextStyles.templeNameDetailsStyle),
+            Text("Associated Temple: ${user.associatedTempleId ?? 'N/A'}",
+                style: AppTextStyles.templeNameDetailsStyle),
+            Text(
+              "Active: ${user.isActive ? "Yes" : "No"}",
+              style: TextStyle(
+                fontFamily: font,
+                fontSize: 16,
+                color: user.isActive ? Colors.green : Colors.red,
+              ),
             ),
-          ),
-          Text(
-            "Created At: ${_formatDate(user.createdAt ?? user.updatedAt)}",
-            style: AppTextStyles.templeNameDetailsStyle,
-          ),
-        ],
+            Text(
+              "Created At: ${_formatDate(user.createdAt ?? user.updatedAt)}",
+              style: AppTextStyles.templeNameDetailsStyle,
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   String _formatDate(DateTime? date) {
@@ -161,7 +222,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
   void _showEditDialog(UserModel user, UserViewModel viewModel) {
     final fullNameController = TextEditingController(text: user.fullName);
-    final emailController =TextEditingController(text: user.email);
+    final emailController = TextEditingController(text: user.email);
 
     viewModel.setTempActive(user.id, user.isActive);
 
@@ -177,7 +238,12 @@ class _UserListScreenState extends State<UserListScreen> {
                 constraints: const BoxConstraints(maxWidth: 400),
                 child: Stack(
                   children: [
-                    _buildAlertDialog(user, viewModel, fullNameController,emailController),
+                    _buildAlertDialog(
+                      user,
+                      viewModel,
+                      fullNameController,
+                      emailController,
+                    ),
                     if (viewModel.editLoading) _buildLoadingIndicator(),
                   ],
                 ),
@@ -189,13 +255,19 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  Widget _buildAlertDialog(UserModel user, UserViewModel viewModel, TextEditingController fullNameController,TextEditingController emailController) {
+  Widget _buildAlertDialog(
+    UserModel user,
+    UserViewModel viewModel,
+    TextEditingController fullNameController,
+    TextEditingController emailController,
+  ) {
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         StringConstant.editUser,
-        style: AppTextStyles.loginTitleStyle.copyWith(fontSize: 18, color: Colors.black),
+        style: AppTextStyles.loginTitleStyle
+            .copyWith(fontSize: 18, color: Colors.black),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -203,9 +275,8 @@ class _UserListScreenState extends State<UserListScreen> {
         children: [
           _buildTextField(fullNameController, "Full Name"),
           const SizedBox(height: 16),
-           _buildTextField(emailController, "Email"),
+          _buildTextField(emailController, "Email"),
           const SizedBox(height: 16),
-
           CommonDropdownField(
             paddingSize: 0,
             hintText: StringConstant.selectedRole,
@@ -223,7 +294,9 @@ class _UserListScreenState extends State<UserListScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Is Active", style: AppTextStyles.otpSubHeadingStyle.copyWith(fontWeight: FontWeight.w600)),
+              Text("Is Active",
+                  style: AppTextStyles.otpSubHeadingStyle
+                      .copyWith(fontWeight: FontWeight.w600)),
               StatefulBuilder(
                 builder: (context, setStateSB) {
                   bool currentActive = viewModel.getTempActive(user.id);
@@ -232,7 +305,7 @@ class _UserListScreenState extends State<UserListScreen> {
                     activeColor: Colors.green,
                     onChanged: (val) {
                       viewModel.setTempActive(user.id, val);
-                      setStateSB(() {}); // rebuild only the switch
+                      setStateSB(() {});
                     },
                   );
                 },
@@ -243,22 +316,32 @@ class _UserListScreenState extends State<UserListScreen> {
       ),
       actions: [
         TextButton(
-          onPressed: viewModel.editLoading ? null : () => Navigator.pop(context),
-          child: Text("Cancel", style: AppTextStyles.buttonTextStyle.copyWith(color: Colors.grey.shade600)),
+          onPressed:
+              viewModel.editLoading ? null : () => Navigator.pop(context),
+          child: Text(
+            "Cancel",
+            style: AppTextStyles.buttonTextStyle
+                .copyWith(color: Colors.grey.shade600),
+          ),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: ColorConstant.buttonColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           onPressed: viewModel.editLoading
               ? null
               : () async {
                   final isActive = viewModel.getTempActive(user.id);
-                  await viewModel.editUser(user.id, fullNameController.text, isActive);
+                  await viewModel.editUser(
+                      user.id, fullNameController.text, isActive);
                   if (!viewModel.editLoading) Navigator.pop(context);
                 },
-          child: Text("Save", style: AppTextStyles.buttonTextStyle.copyWith(color: Colors.white)),
+          child: Text(
+            "Save",
+            style: AppTextStyles.buttonTextStyle.copyWith(color: Colors.white),
+          ),
         ),
       ],
     );
@@ -267,8 +350,10 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget _buildLoadingIndicator() {
     return Container(
       height: double.infinity,
-      decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(16)),
-      child: const Center(child: CircularProgressIndicator(color: Colors.white)),
+      decoration: BoxDecoration(
+          color: Colors.black38, borderRadius: BorderRadius.circular(16)),
+      child:
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
     );
   }
 
@@ -292,6 +377,7 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 }
 
+/// 🔹 Full card shimmer (first load)
 class ShimmerUserCard extends StatelessWidget {
   const ShimmerUserCard({super.key});
 
@@ -301,11 +387,34 @@ class ShimmerUserCard extends StatelessWidget {
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
-          height: 50,
-          width: double.infinity,
-          color: Colors.black,
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 🔹 Small shimmer shown at bottom for pagination
+class BottomShimmerLoader extends StatelessWidget {
+  const BottomShimmerLoader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        height: 60,
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );

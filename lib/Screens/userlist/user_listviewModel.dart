@@ -17,37 +17,58 @@ class UserViewModel extends ChangeNotifier {
   bool isLoading = true;
   bool editLoading = false;
 
+  /// Pagination fields
+  bool hasMore = true;
+  int page = 1;
+  final int _pageSize = 10;
+
   /// Map to temporarily hold active state for each user while editing
   final Map<String, bool> _tempActiveMap = {};
-
   bool getTempActive(String userId) => _tempActiveMap[userId] ?? false;
-
   void setTempActive(String userId, bool value) {
     _tempActiveMap[userId] = value;
     notifyListeners();
   }
 
-  /// Fetch users from API
+  /// Fetch initial users or reset list
   Future<void> getUsers({bool reset = false}) async {
+    if (reset) {
+      page = 1;
+      hasMore = true;
+      userData.clear();
+    }
+
+    if (!hasMore) return;
+
     isLoading = true;
     notifyListeners();
 
     try {
-      final response = await authService.getUserDetails();
+      final response = await authService.getUserDetails(page: page, pageSize: _pageSize);
 
       if (response.users.isNotEmpty) {
-        if (reset) {
-          userData = response.users;
+        userData.addAll(response.users);
+        if (response.users.length < _pageSize) {
+          hasMore = false; // no more pages
         } else {
-          userData.addAll(response.users);
+          page++; // next page
         }
+      } else {
+        hasMore = false;
       }
     } catch (e) {
       print("Error fetching users: $e");
+      hasMore = false;
     }
 
     isLoading = false;
     notifyListeners();
+  }
+
+  /// Fetch more users (pagination)
+  Future<void> fetchMoreUsers() async {
+    if (!hasMore) return;
+    await getUsers();
   }
 
   /// Edit user API call

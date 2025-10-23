@@ -8,6 +8,7 @@ bool isLoading=false;
   var authService = AuthService();
   bool isChecked = false;
   String message="";
+  bool isPasswordUpdated = false;
 
   ResetViewmodel() {
     password.addListener(notifyListeners);
@@ -38,7 +39,7 @@ bool isLoading=false;
         message = response.message ?? "success";
         print("message $message");
         isLoading = false;
-      
+      isPasswordUpdated=true;
          notifyListeners();
       }
       else if(response.code==400){

@@ -100,4 +100,9 @@ Future<void> forgotPasswordApi() async {
     }
   }
 
+
+  void reset(){
+    emailController.text="";
+  }
+
 }

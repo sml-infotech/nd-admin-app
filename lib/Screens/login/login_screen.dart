@@ -129,14 +129,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   Widget forgotPasswordText() {
-    return Text(
+    return  GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, StringsRoute.forgotPassword);
+      },
+      child: 
+    
+     Text(
       StringConstant.forgotPassword,
       style: TextStyle(
         fontFamily: font,
         fontSize: 12,
         color: Colors.black,
       ),
-    );
+    ));
   }
 
  

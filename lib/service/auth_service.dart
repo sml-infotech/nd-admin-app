@@ -78,18 +78,20 @@ class AuthService {
 }
 
 
-
- Future<UserListResponse> getUserDetails() async {
+Future<UserListResponse> getUserDetails({int page = 1, int pageSize = 10}) async {
   try {
-    final url = '${UrlConstant.userListUrl}';
-    print('Fetching temples: $url');
+    final url = '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize';
+    print('Fetching users: $url');
+
     dynamic data = await apiService.get(url);
+
     return UserListResponse.fromJson(data);
   } catch (e) {
-    print("Temple service decode fails: $e");
+    print("User service decode fails: $e");
     throw Exception('API failed: $e');
   }
 }
+
 
 Future<EditUserResponse> editUser(String id, String name, String role, bool isActive) async {
   try {

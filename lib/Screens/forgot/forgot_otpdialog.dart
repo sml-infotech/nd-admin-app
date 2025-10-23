@@ -64,11 +64,14 @@ class _OtpDialogState extends State<OtpDialog> {
       textColor: Colors.white,
     );
 
-    if (viewModel.isOtpSuccess) {
-      Navigator.of(context).pop();
-      Navigator.pushNamed(context, StringsRoute.resetPassword);
-      viewModel.isOtpSuccess = false;
-    }
+   if (viewModel.isOtpSuccess) {
+  Navigator.of(context).pop();
+  Future.microtask(() {
+    Navigator.pushNamed(context, StringsRoute.resetPassword);
+  });
+  viewModel.isOtpSuccess = false;
+}
+
 
     setState(() {
       viewModel.message = '';

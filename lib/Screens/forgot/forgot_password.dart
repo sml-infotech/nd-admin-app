@@ -19,6 +19,8 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late ForgotViewmodel viewmodel ;
+
+  
   @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<ForgotViewmodel>(context);
@@ -29,6 +31,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: _buildAppBar(),
       ),
       body: Stack(children: [
