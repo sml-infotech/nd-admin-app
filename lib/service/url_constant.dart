@@ -20,7 +20,8 @@ class UrlConstant {
   static String templeUser ="${baseUrlString()}list-temples";
   static String userListUrl ="${baseUrlString()}list-dashboard-users";
   static String userEditUrl ="${baseUrlString()}edit-dashboard-user";
-    static String forgotPasswordUrl ="${baseUrlString()}forget-dashboard-user-password";
+  static String forgotPasswordUrl ="${baseUrlString()}forget-dashboard-user-password";
+  static String resetPasswordUrl ="${baseUrlString()}reset-dashboard-user-password";
 
 
 

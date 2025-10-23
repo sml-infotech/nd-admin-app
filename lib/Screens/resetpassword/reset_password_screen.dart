@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
@@ -29,7 +30,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         automaticallyImplyLeading: false,
         title: _buildAppBar(),
       ),
-      body: SafeArea(
+      body:Stack(children: [
+   SafeArea(
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           child: Container(
@@ -70,6 +72,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           ),
         ),
       ),
+
+      if(viewmodel.isLoading)
+       Positioned.fill(
+                child: Container(
+                 color: Colors.black.withOpacity(0.4),
+                child: Center(
+                 child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      )
+      ],)
+      
+      
+    
     );
   }
 
@@ -119,6 +137,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       child: ElevatedButton(
         onPressed: isButtonEnabled
             ? () async {
+              await viewmodel.resetPassword();
+              Fluttertoast.showToast(msg: viewmodel.message);
+              setState(() {
+                viewmodel.message="";
+              });
               }
             : null,
         style: ElevatedButton.styleFrom(

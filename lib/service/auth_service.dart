@@ -8,6 +8,8 @@ import 'package:nammadaiva_dashboard/model/login_model/login_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/resetmodel/reset_requestmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/resetmodel/reset_responsemodel.dart' show ResetResponsemodel;
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -123,7 +125,21 @@ Future<EditUserResponse> editUser(String id, String name, String role, bool isAc
       throw Exception('API failed: $e');
     }
   }
-
+    Future<ResetResponsemodel> resetPassword(String password) async {
+    try {
+      final Request = ResetRequestmodel(new_password: password);
+      
+      final data = await apiService.post(
+        UrlConstant.resetPasswordUrl,
+        Request.toJson(),
+      );
+      print("1111111111$data");
+      return ResetResponsemodel.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
 
 
 }
