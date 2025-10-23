@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_otpdialog.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
@@ -131,12 +132,18 @@ Widget resetButton(ForgotViewmodel viewmodel,BuildContext context) {
       child: ElevatedButton(
         onPressed: isButtonEnabled
             ? () async {
-               
-
+           await  viewmodel.  forgotPasswordApi();
+             Fluttertoast.showToast(
+                  msg: viewmodel.message,
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white,
+                  gravity: ToastGravity.BOTTOM,
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+             if(viewmodel.code==200){
                 _showOtpDialog(context, viewmodel);
-
-              
-
+                viewmodel.code=0;
+               }
               }
             : null,
         style: ElevatedButton.styleFrom(

@@ -2,6 +2,8 @@ import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_respon
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
+import 'package:nammadaiva_dashboard/model/login_model/forgotmodel/forgot_requestmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/forgotmodel/forgot_responsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
@@ -104,6 +106,23 @@ Future<EditUserResponse> editUser(String id, String name, String role, bool isAc
     throw Exception('API failed: $e');
   }
 }
+
+
+    Future<ForgotResponsemodel> forgotPassword(String email) async {
+    try {
+      final otpRequest = ForgotRequestmodel(email: email);
+      
+      final data = await apiService.post(
+        UrlConstant.forgotPasswordUrl,
+        otpRequest.toJson(),
+      );
+      print("1111111111$data");
+      return ForgotResponsemodel.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
 
 
 
