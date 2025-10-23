@@ -400,23 +400,3 @@ class ShimmerUserCard extends StatelessWidget {
   }
 }
 
-/// 🔹 Small shimmer shown at bottom for pagination
-class BottomShimmerLoader extends StatelessWidget {
-  const BottomShimmerLoader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      child: Container(
-        height: 60,
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-}

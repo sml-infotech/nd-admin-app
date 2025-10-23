@@ -116,9 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: viewModel.isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
+        child: Text(
                 StringConstant.login,
                 style: AppTextStyles.buttonTextStyle,
               ),

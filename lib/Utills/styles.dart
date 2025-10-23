@@ -98,4 +98,18 @@ class AppTextStyles {
     color: ColorConstant.buttonColor,
     fontFamily: font
   );
+
+  static final TextStyle templeNameTitleBoldStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+    fontFamily: font
+  );
+
+static final TextStyle templeNameDetailsAddressStyle = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+    fontFamily: font
+  );
 }

@@ -41,7 +41,7 @@ class LoginViewModel extends ChangeNotifier {
       notifyListeners();
       final response = await authService.loginUser(
           emailController.text, passwordController.text);
-      if (response.message?.isNotEmpty == true) {
+      if (response.code==200) {
         print("->>> $response");
         message = response.message ?? "success";
         isLoginSuccess = true;
@@ -49,7 +49,13 @@ class LoginViewModel extends ChangeNotifier {
         isLoading = false;
               notifyListeners();
 
-      } else {
+      }
+      else if(response.code==401){
+        message = response.message ?? "Invalid email or password.";
+        isLoading = false;
+      }
+      
+       else {
         message = response.error ?? "some error occurred";
         isLoading = false;
         print("message $message");

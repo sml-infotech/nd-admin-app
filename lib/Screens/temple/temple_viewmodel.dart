@@ -1,7 +1,5 @@
-
-
 import 'package:flutter/material.dart';
 
-class TempleViewmodel extends ChangeNotifier {
-
+class TempleViewmodel extends ChangeNotifier{
+  
 }

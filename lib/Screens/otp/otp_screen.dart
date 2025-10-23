@@ -168,7 +168,7 @@ Widget verifyButton(String _otp,) {
    if(viewModel.isOtpSuccess){
 Navigator.pushNamedAndRemoveUntil(
   context, 
-  StringsRoute.templeScreen, 
+  StringsRoute.dashboard, 
   (Route<dynamic> route) => false, 
 );
    }
