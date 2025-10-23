@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
@@ -19,15 +20,14 @@ class OtpDialog extends StatefulWidget {
 }
 
 class _OtpDialogState extends State<OtpDialog> {
-  late OtpViewmodel viewModel;
-  String otp = '';
+  late ForgotViewmodel viewModel;
   int remainingSeconds = 60;
   Timer? timer;
 
   @override
   void initState() {
     super.initState();
-    viewModel = Provider.of<OtpViewmodel>(context, listen: false);
+    viewModel = Provider.of<ForgotViewmodel>(context, listen: false);
     startTimer();
   }
 
@@ -79,23 +79,25 @@ class _OtpDialogState extends State<OtpDialog> {
                       textAlign: TextAlign.center),
                   const SizedBox(height: 20),
                   OtpInputField(
-                    onChanged: (value) => setState(() => otp = value),
+                    onChanged: (value) => setState(() => viewModel.otp = value),
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: otp.length == 4
+                      onPressed:viewModel. otp.length == 4
                           ? () async {
-                              // await viewModel.validOtp(widget.email, otp);
+                            viewModel.isVerifyLoading=true;
+                              await viewModel.validOtp(widget.email,);
                               Fluttertoast.showToast(
                                   msg: viewModel.message,
                                   backgroundColor: Colors.black87,
                                   textColor: Colors.white);
                               if (viewModel.isOtpSuccess) {
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, StringsRoute.templeScreen, (route) => false);
+                                Navigator.of(context).pop();
+                               Navigator.pushNamed(context, StringsRoute.resetPassword);
+                               viewModel.isOtpSuccess=false;
                               }
                               setState(() {
                                 viewModel.message = '';
@@ -104,7 +106,7 @@ class _OtpDialogState extends State<OtpDialog> {
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            otp.length == 4 ? const Color(0xffF38739) : Colors.grey,
+                            viewModel.otp.length == 4 ? ColorConstant.buttonColor : Colors.grey,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                       ),
@@ -120,7 +122,7 @@ class _OtpDialogState extends State<OtpDialog> {
                         onTap: remainingSeconds == 0
                             ? () async {
                                 startTimer();
-                                await viewModel.resendOtp(widget.email, widget.password);
+                           await viewModel.forgotPasswordApi();
                                 Fluttertoast.showToast(msg: viewModel.message);
                                 setState(() {
                                   viewModel.message = '';
@@ -152,6 +154,19 @@ class _OtpDialogState extends State<OtpDialog> {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
+
+
+          if(viewModel.isVerifyLoading)
+                Positioned.fill(
+                child: Container(
+                 color: Colors.black.withOpacity(0.4),
+                child: Center(
+                 child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      )
         ],
       ),
     );

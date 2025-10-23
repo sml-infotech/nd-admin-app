@@ -31,7 +31,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         elevation: 0,
         title: _buildAppBar(),
       ),
-      body: SafeArea(
+      body: Stack(children: [
+SafeArea(
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           child: Container(
@@ -58,13 +59,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 const SizedBox(height: 25),
                 resetButton(viewmodel,context),
                  SizedBox(height: 40),
-
-
+              
               ],
             ),
           ),
         ),
       ),
+ if(viewmodel.isLoading)
+                Positioned.fill(
+                child: Container(
+                 color: Colors.black.withOpacity(0.4),
+                child: Center(
+                 child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      )
+
+      ],)
+      
+      
+      
     );
   }
 
@@ -113,7 +129,7 @@ void _showOtpDialog(BuildContext context, ForgotViewmodel viewmodel) {
     context: context,
     barrierDismissible: false,
     builder: (context) {
-      return  OtpDialog(email: '', password: '',);
+      return  OtpDialog(email:viewmodel.emailController.text, password: '',);
            
           
         

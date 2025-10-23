@@ -26,6 +26,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: _buildAppBar(),
       ),
       body: SafeArea(

@@ -7,7 +7,11 @@ class ForgotViewmodel extends ChangeNotifier{
   TextEditingController emailController=TextEditingController();
   String message="";
   int? code ;
+  bool isLoading=false;
+   bool isVerifyLoading=false;
   var authService = AuthService();
+  String otp = '';
+  bool isOtpSuccess=false;
 
  ForgotViewmodel() {
     emailController.addListener(() => notifyListeners());
@@ -26,6 +30,8 @@ class ForgotViewmodel extends ChangeNotifier{
 }
 
 Future<void> forgotPasswordApi() async {
+  isLoading=true;
+  notifyListeners();
     try {
       final response = await authService.forgotPassword(
           emailController.text,);
@@ -33,24 +39,65 @@ Future<void> forgotPasswordApi() async {
         code=response.code;
         print("->>> $response");
         message = response.message ?? "success";
+        isLoading=false;
         notifyListeners();
       } 
       else if(response.code==401){
          message = response.message ?? "user not Found";
-      
-              notifyListeners();
+        isLoading=false;
+        notifyListeners();
       }
       else {
+        isLoading=false;
+        notifyListeners();
         message =  "some error occurred";
         print("message $message");
       }
-      notifyListeners();
     } catch (e) {
+      isLoading=false;
       notifyListeners();
    
     }
   }
 
 
+  Future<void> validOtp(String email) async {
+    try {
+      print("valid otp called");
+      isVerifyLoading = true;
+      notifyListeners();
+      final response = await authService.verifyOtp(
+          email, otp);
+      if (response.code==200) {
+        print("->>> $response");
+   
+        print("✅ Token saved: ${response.token}");
+        message = response.message ?? "success";
+        isOtpSuccess = true;
+        print("message $message");
+        isVerifyLoading = false;
+      
+         notifyListeners();
+      }
+      else if(response.code==401){
+        isVerifyLoading = false;
+        message = response.message ?? "Invalid OTP.";
+
+
+      }
+      
+       else {
+        message = response.error ?? "some error occurred";
+        isVerifyLoading = false;
+        print("message $message");
+      }
+      notifyListeners();
+    } catch (e) {
+      message = "Something went wrong";
+      isVerifyLoading = false;
+      notifyListeners();
+   
+    }
+  }
 
 }
