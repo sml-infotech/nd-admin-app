@@ -48,6 +48,11 @@ class StringConstant {
   static const String temple = "Temple";
   static const String create = "Create";
   static const String editUser = "Edit User";
+  static const String city = "City:";
+  static const String state = "State:";
+  static const String architecture = "Architecture:";
+  static const String address = "Address:";
+
 
 
 

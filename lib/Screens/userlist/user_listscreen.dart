@@ -132,7 +132,6 @@ class _UserListScreenState extends State<UserListScreen> {
           if (index < viewModel.userData.length) {
             final user = viewModel.userData[index];
             final isExpanded = expandedMap[user.id] ?? false;
-
             return Card(
               elevation: 1,
               color: Colors.white,
