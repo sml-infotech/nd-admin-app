@@ -4,7 +4,9 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,7 +22,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     viewModel = Provider.of<LoginViewModel>(context);
     return Scaffold(
-      body: Column(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+       Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -47,55 +52,98 @@ class _LoginScreenState extends State<LoginScreen> {
             loginButton(viewModel),
             const SizedBox(height: 15),
             forgotPasswordText(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
+        
           ],
         ),
+            if (viewModel.isLoading)
+      Positioned.fill(
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      ),
+         ],
+      ),
       );
     
   }
 
-  Widget loginButton(LoginViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: () {
-         viewModel.validateLogin();           
-    Fluttertoast.showToast(               
-      msg: viewModel.message,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
-      gravity: ToastGravity.BOTTOM,
-      toastLength: Toast.LENGTH_SHORT,
-    );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: ColorConstant.buttonColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: Text(
-            StringConstant.login,
-            style: AppTextStyles.buttonTextStyle,
+ Widget loginButton(LoginViewModel viewModel) {
+  final isButtonEnabled = viewModel.validateLogin();
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: isButtonEnabled
+            ? () async {
+                await viewModel.login(); // ✅ call login method, not validateLogin()
+
+                Fluttertoast.showToast(
+                  msg: viewModel.message,
+                  backgroundColor: Colors.black87,
+                  textColor: Colors.white,
+                  gravity: ToastGravity.BOTTOM,
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+
+                if (viewModel.isLoginSuccess) {
+                  Navigator.pushNamed(
+                    context,
+                    StringsRoute.otpScreen,
+                    arguments: OtpArguments(
+                      email: viewModel.emailController.text,
+                      password: viewModel.passwordController.text,
+                      isFromCreateUser: false,
+                    ),
+                  );
+                }
+
+                viewModel.message = '';
+              }
+            : null, // ✅ disables the button if invalid
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isButtonEnabled ? ColorConstant.buttonColor : Colors.grey,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
+        child: Text(
+                StringConstant.login,
+                style: AppTextStyles.buttonTextStyle,
+              ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget forgotPasswordText() {
-    return Text(
+    return  GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, StringsRoute.forgotPassword);
+      },
+      child: 
+    
+     Text(
       StringConstant.forgotPassword,
       style: TextStyle(
         fontFamily: font,
         fontSize: 12,
         color: Colors.black,
       ),
-    );
+    ));
   }
+
+ 
 
   Widget loginImage() {
     return Center(
@@ -140,3 +188,4 @@ class _LoginScreenState extends State<LoginScreen> {
   }
  
 }
+

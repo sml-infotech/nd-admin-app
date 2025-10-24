@@ -1,14 +1,49 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.idea/
+*.iml
+
+# Gradle
+.gradle/
 gradle-wrapper.jar
-/.gradle
-/captures/
-/gradlew
-/gradlew.bat
+gradlew
+gradlew.bat
 /local.properties
-GeneratedPluginRegistrant.java
+
+# Android specific
+/captures/
+**/GeneratedPluginRegistrant.java
 .cxx/
 
-# Remember to never publicly share your keystore.
-# See https://flutter.dev/to/reference-keystore
+# iOS specific
+Pods/
+DerivedData/
+*.xcworkspace
+*.xcconfig
+*.plist
+*.hmap
+*.ipa
+
+# Keystore
+# Never publicly share your keystore
 key.properties
 **/*.keystore
 **/*.jks
+
+# VS Code / IntelliJ
+.vscode/
+*.log
+
+# Others
+*.lock
+*.class
+*.jar
+*.apk
+*.aab
+*.so
+*.dylib
+*.db
+*.DS_Store
