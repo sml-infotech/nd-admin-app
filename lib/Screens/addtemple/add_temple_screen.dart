@@ -175,21 +175,30 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: templeViewmodel.validateAddTemple()
-                ? () async {
-                  templeViewmodel.isLoading=true;
-                  await templeViewmodel.presignedUrl();
-                  if(templeViewmodel.templeAdded==true){
-                    Navigator.pushNamed(context, StringsRoute.templeScreen);
-                    setState(() {
-                    templeViewmodel.templeAdded=false;
-                    });
-                    Fluttertoast.showToast(msg: templeViewmodel.message??"");
-                    templeViewmodel.message="";
-                    templeViewmodel.dispose();
-                  }
-                  }
-                : null, 
+            onPressed:  () async {
+              if (templeViewmodel.validateAddTemple()) {
+                templeViewmodel.isLoading = true;
+                await templeViewmodel.presignedUrl();
+                  Fluttertoast.showToast(msg: templeViewmodel.message ?? "");
+
+                if (templeViewmodel.templeAdded == true) {
+                  Navigator.pushNamed(context, StringsRoute.templeScreen);
+                  setState(() {
+                    templeViewmodel.templeAdded = false;
+                  });
+                  templeViewmodel.message = "";
+                  templeViewmodel.dispose();
+                }
+              } else {
+                Fluttertoast.showToast(
+                  msg: templeViewmodel.message,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+             
+                  textColor: Colors.white,
+                );
+              }
+            }, 
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorConstant.buttonColor,
               shape: RoundedRectangleBorder(

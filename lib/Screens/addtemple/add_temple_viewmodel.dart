@@ -61,20 +61,64 @@ void _onChange() {
     notifyListeners();
   }
 
-  bool validateAddTemple() {
-    return templeName.text.trim().isNotEmpty &&
-        address.text.trim().isNotEmpty &&
-        city.text.trim().isNotEmpty &&
-        state.text.trim().isNotEmpty &&
-        pincode.text.trim().isNotEmpty &&
-        architecture.text.trim().isNotEmpty &&
-        email.text.trim().isNotEmpty &&
-        isValidEmail(email.text) &&
-        phone.text.trim().isNotEmpty &&
-        phone.text.length==10&&
-        temples.isNotEmpty&&images.isNotEmpty&&
-        description.text.trim().isNotEmpty;
+ bool validateAddTemple() {
+  if (templeName.text.trim().isEmpty) {
+    message = "Temple name cannot be empty";
+    return false;
   }
+  if (address.text.trim().isEmpty) {
+    message = "Address cannot be empty";
+    return false;
+  }
+  if (city.text.trim().isEmpty) {
+    message = "City cannot be empty";
+    return false;
+  }
+  if (state.text.trim().isEmpty) {
+    message = "State cannot be empty";
+    return false;
+  }
+  if (pincode.text.trim().isEmpty) {
+    message = "Pincode cannot be empty";
+    return false;
+  }
+  if (architecture.text.trim().isEmpty) {
+    message = "Architecture cannot be empty";
+    return false;
+  }
+  if (email.text.trim().isEmpty) {
+    message = "Email cannot be empty";
+    return false;
+  }
+  if (!isValidEmail(email.text.trim())) {
+    message = "Invalid email address";
+    return false;
+  }
+  if (phone.text.trim().isEmpty) {
+    message = "Phone number cannot be empty";
+    return false;
+  }
+  if (phone.text.trim().length != 10) {
+    message = "Phone number must be 10 digits";
+    return false;
+  }
+  if (temples.isEmpty) {
+    message = "Please add at least one deity";
+    return false;
+  }
+  if (images.isEmpty) {
+    message = "Please upload at least one image";
+    return false;
+  }
+  if (description.text.trim().isEmpty) {
+    message = "Description cannot be empty";
+    return false;
+  }
+
+  
+  return true;
+}
+
   bool isValidEmail(String email) {
   final regex = RegExp(
       r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -136,7 +180,7 @@ Future<void> addTempleApi() async {
         email.text.trim(),
         description.text.trim(),
         temples,
-        images.map((file) => file.path).toList(),
+        [presignedURL],
       );
       if (response.code==201) {
         print("->>> $response");
@@ -148,6 +192,7 @@ Future<void> addTempleApi() async {
       else if(response.code==409){
         isLoading=false;
         message = response.message ?? "user not Found";
+        print(">>>>>>>>?????${message}");
         notifyListeners();
       }
       else {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,7 +70,7 @@ class ProviderWidget extends StatelessWidget {
             ),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const AddTempleScreen() : const LoginScreen(),
+            home: hasToken ? const TempleScreen() : const LoginScreen(),
           );
         },
       ),

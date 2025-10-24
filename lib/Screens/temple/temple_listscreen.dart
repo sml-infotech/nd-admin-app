@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
 import 'temple_viewmodel.dart';
@@ -105,7 +106,7 @@ Widget _buildAppBar() {
   Widget _templeCard(Temple temple) {
     return GestureDetector(onTap: () {
       
-      Navigator.pushNamed(context, StringsRoute.templeDetail);
+      Navigator.pushNamed(context, StringsRoute.templeDetail,arguments:TempleDetailsArguments(name: temple.name, address: temple.address, city: temple.city, state: temple.state, pincode: temple.pincode, architecture: temple.architecture, phoneNumber: temple.phoneNumber, email: temple.email, description: temple.description, deities: temple.deities!, images: []) );
     },child: 
     
     Card(
