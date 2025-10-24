@@ -1,4 +1,4 @@
-class Temple {
+class AddTemple {
   final String name;
   final String address;
   final String city;
@@ -8,10 +8,10 @@ class Temple {
   final String phoneNumber;
   final String email;
   final String description;
-  final List<String> deities;
-  final List<String> images;
+  final List<String>? deities;
+  final List<String>? images;
 
-  Temple({
+  AddTemple({
     required this.name,
     required this.address,
     required this.city,
@@ -21,13 +21,13 @@ class Temple {
     required this.phoneNumber,
     required this.email,
     required this.description,
-    required this.deities,
-    required this.images,
+     this.deities,
+     this.images,
   });
 
   // From JSON
-  factory Temple.fromJson(Map<String, dynamic> json) {
-    return Temple(
+  factory AddTemple.fromJson(Map<String, dynamic> json) {
+    return AddTemple(
       name: json['name'] ?? '',
       address: json['address'] ?? '',
       city: json['city'] ?? '',

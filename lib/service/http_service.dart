@@ -16,7 +16,8 @@ class HttpApiService {
     Map<String, dynamic> data,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
+    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTVhOGM4Yi1kMjNjLTQ3ZjctYTNjOC0yZjhlZTE4ZDNkODciLCJpYXQiOjE3NjA0NDQ5Mjd9.OWI4qFTgcBwyPfVm6SmhlfF1rJrbZDI8J8Mi6Pxuhdc";
+    // prefs.getString('authToken');
     final response = await http.post(
       Uri.parse(url),
       headers: {

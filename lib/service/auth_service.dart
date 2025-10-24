@@ -1,5 +1,7 @@
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
 import 'package:nammadaiva_dashboard/model/login_model/forgotmodel/forgot_requestmodel.dart';
@@ -82,9 +84,7 @@ Future<UserListResponse> getUserDetails({int page = 1, int pageSize = 10}) async
   try {
     final url = '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize';
     print('Fetching users: $url');
-
     dynamic data = await apiService.get(url);
-
     return UserListResponse.fromJson(data);
   } catch (e) {
     print("User service decode fails: $e");
@@ -142,6 +142,50 @@ Future<EditUserResponse> editUser(String id, String name, String role, bool isAc
       throw Exception('API failed: $e');
     }
   }
+Future<CreateTempleResponse> addTemple(
+  String name,
+  String address,
+  String city,
+  String state,
+  String pincode,
+  String architecture,
+  String phoneNumber,
+  String email,
+  String description,
+  List<String> deities,
+  List<String> images,
+) async {
+  try {
+    final request = AddTemple(
+      name: name,
+      address: address,
+      city: city,
+      state: state,
+      pincode: pincode,
+      architecture: architecture,
+      phoneNumber: phoneNumber,
+      email: email,
+      description: description,
+      deities: deities,
+      images: images,
+    );
 
+    // Print the request as JSON
+    print(">>>>>>>>>>>>>>> Request JSON >>>>>>>>>>>");
+    print(request.toJson());
+    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+    final data = await apiService.post(
+      UrlConstant.addTempleUrl,
+      request.toJson(),
+    );
+
+    print("API Response >>>> $data");
+    return CreateTempleResponse.fromJson(data);
+  } catch (e) {
+    print("Auth service decode fails: $e");
+    throw Exception('API failed: $e');
+  }
+}
 
 }

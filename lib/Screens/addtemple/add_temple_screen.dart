@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_image_selector.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
@@ -24,7 +25,9 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     templeViewmodel = Provider.of<AddTempleViewmodel>(context);
 
-    return Scaffold(
+    return 
+    
+    Scaffold(
       backgroundColor: ColorConstant.buttonColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -32,7 +35,8 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
         elevation: 0,
         title: nammaDaivaCreateAppBar(),
       ),
-      body: Container(
+      body:Stack(children: [
+         Container(
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -127,6 +131,20 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
           ),
         ),
       ),
+      if(templeViewmodel.isLoading)
+       Positioned.fill(
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorConstant.buttonColor,
+            ),
+          ),
+        ),
+      )
+      ],)
+      
+      ,
     );
   }
 
@@ -159,6 +177,17 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
           child: ElevatedButton(
             onPressed: templeViewmodel.validateAddTemple()
                 ? () async {
+                  templeViewmodel.isLoading=true;
+                  await templeViewmodel.addTempleApi();
+                  if(templeViewmodel.templeAdded==true){
+                    Navigator.pushNamed(context, StringsRoute.templeScreen);
+                    setState(() {
+                    templeViewmodel.templeAdded=false;
+                    });
+                    Fluttertoast.showToast(msg: templeViewmodel.message??"");
+                    templeViewmodel.message="";
+                    templeViewmodel.dispose();
+                  }
                   }
                 : null, 
             style: ElevatedButton.styleFrom(

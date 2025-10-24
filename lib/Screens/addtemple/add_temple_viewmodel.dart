@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/service/auth_service.dart';
 
 class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController templeName = TextEditingController();
@@ -14,9 +15,13 @@ class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController phone = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController templeController = TextEditingController();
+  var authService = AuthService();
 
+  bool isLoading=false;
+  String message="";
   final List<String> temples = [];
   final List<File> images = [];
+  bool templeAdded=false;
 AddTempleViewmodel() {
   templeName.addListener(_onChange);
   address.addListener(_onChange);
@@ -74,4 +79,67 @@ void _onChange() {
   return regex.hasMatch(email);
 }
 
+
+
+Future<void> addTempleApi() async {
+
+    try {
+        isLoading=true;
+        notifyListeners();
+      final response = await authService.addTemple(
+        templeName.text.trim(),
+        address.text.trim(),
+        city.text.trim(),
+        state.text.trim(),
+        pincode.text.trim(),
+        architecture.text.trim(),
+        phone.text.trim(),
+        email.text.trim(),
+        description.text.trim(),
+        temples,
+        images.map((file) => file.path).toList(),
+      );
+      if (response.code==201) {
+        print("->>> $response");
+        message = response.message ?? "success";
+        isLoading=false;
+        templeAdded=true;
+        notifyListeners();
+      } 
+      else if(response.code==409){
+        isLoading=false;
+        message = response.message ?? "user not Found";
+        notifyListeners();
+      }
+      else {
+        isLoading=false;
+        notifyListeners();
+        message =  "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading=false;
+      notifyListeners();
+   
+    }
+  }
+
+   @override
+  void dispose() {
+  templeName.clear();
+  address.clear();
+  city.clear();
+  state.clear();
+  pincode.clear();
+  architecture.clear();
+  email.clear();
+  phone.clear();
+  description.clear();
+  templeController.clear();
+  temples.clear();
+  images.clear();
+  notifyListeners();
+
+
+  }
 }
