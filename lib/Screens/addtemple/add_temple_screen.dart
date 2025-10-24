@@ -178,7 +178,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
             onPressed: templeViewmodel.validateAddTemple()
                 ? () async {
                   templeViewmodel.isLoading=true;
-                  await templeViewmodel.addTempleApi();
+                  await templeViewmodel.presignedUrl();
                   if(templeViewmodel.templeAdded==true){
                     Navigator.pushNamed(context, StringsRoute.templeScreen);
                     setState(() {

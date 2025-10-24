@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/model/login_model/login_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/login_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_request.dart';
 import 'package:nammadaiva_dashboard/model/login_model/otpmodel/otp_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/resetmodel/reset_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/resetmodel/reset_responsemodel.dart' show ResetResponsemodel;
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
@@ -127,6 +128,23 @@ Future<EditUserResponse> editUser(String id, String name, String role, bool isAc
       throw Exception('API failed: $e');
     }
   }
+  Future<PresignedUrlResponse> presignedUrl(String filename,String contentType) async {
+    try {
+      final otpRequest = TempleImage(filename: filename, contentType:contentType );
+      
+      final data = await apiService.post(
+        UrlConstant.presignedUrl,
+        otpRequest.toJson(),
+      );
+      print("1111111111$data");
+      return PresignedUrlResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+
     Future<ResetResponsemodel> resetPassword(String password) async {
     try {
       final Request = ResetRequestmodel(new_password: password);

@@ -19,6 +19,8 @@ class AddTempleViewmodel extends ChangeNotifier {
 
   bool isLoading=false;
   String message="";
+  String presignedURL="";
+
   final List<String> temples = [];
   final List<File> images = [];
   bool templeAdded=false;
@@ -78,6 +80,43 @@ void _onChange() {
       r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
   return regex.hasMatch(email);
 }
+
+Future<void> presignedUrl() async {
+
+    try {
+        isLoading=true;
+        notifyListeners();
+      final response = await authService.presignedUrl(
+        temples.first,temples.first
+      );
+      if (response.message.isNotEmpty) {
+        print("->>> $response");
+        presignedURL=response.url;
+        message = response.message ?? "success";
+        await addTempleApi();
+        notifyListeners();
+      } 
+      // else if(response.code==409){
+      //   isLoading=false;
+      //   message = response.message ?? "user not Found";
+      //   notifyListeners();
+      // }
+      else {
+        isLoading=false;
+        notifyListeners();
+        message =  "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading=false;
+      notifyListeners();
+   
+    }
+  }
+
+
+
+
 
 
 

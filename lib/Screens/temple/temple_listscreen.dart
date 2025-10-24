@@ -78,9 +78,9 @@ class _TempleScreenState extends State<TempleScreen> {
                     ),
                   )),
                   if (viewModel.isLoadingMore)
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: _buildShimmer(),
                     ),
                 ],
               ),
