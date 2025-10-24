@@ -39,8 +39,11 @@ class StringConstant {
   static const String resend = "Resend Code";
   static const String verify = "Verify";
   static const String createAcc = " Create User";
-    static const String addTemple = "Add Temple";
-
+  static const String addTemple = "Add Temple";
+  static const String templeName = "Temple Name";
+  static const String pincode = "pincode";
+  static const String deities = "deities";
+  static const String images = "images";
   static const String userDetails = "User Details";
   static const String selectedRole = "Select Role";
   static const String role = "Role";
@@ -54,9 +57,11 @@ class StringConstant {
   static const String state = "State:";
   static const String architecture = "Architecture:";
   static const String address = "Address:";
-
-
-
+    static const String cityy = "City";
+  static const String statee = "State";
+  static const String architecturee = "Architecture";
+  static const String addresss = "Address";
+  static const String description = "description";
 
 }
 
