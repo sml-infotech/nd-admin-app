@@ -51,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         contaierWidgets(ImageStrings.templeImage, StringConstant.templeDetailText,(){
-                          Navigator.pushNamed(context, StringsRoute.templeDetail);
+                          Navigator.pushNamed(context, StringsRoute.templeScreen);
                         }),
                         contaierWidgets(ImageStrings.sevaimg,StringConstant.sevaText,(){
                         Navigator.pushNamed(context, StringsRoute.userDetails);

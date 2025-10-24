@@ -150,7 +150,7 @@ Widget verifyButton(String _otp,) {
             height: 50,
             child:ElevatedButton(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xffF38739), 
+      backgroundColor: ColorConstant.buttonColor, 
       disabledBackgroundColor: Colors.grey,   
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

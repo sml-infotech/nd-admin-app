@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
 import 'temple_viewmodel.dart';
@@ -46,6 +47,7 @@ class _TempleScreenState extends State<TempleScreen> {
       return Scaffold(
         backgroundColor: ColorConstant.buttonColor,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: ColorConstant.buttonColor,
           elevation: 0,
           centerTitle: true,
@@ -101,7 +103,12 @@ Widget _buildAppBar() {
     );
   }
   Widget _templeCard(Temple temple) {
-    return Card(
+    return GestureDetector(onTap: () {
+      
+      Navigator.pushNamed(context, StringsRoute.templeDetail);
+    },child: 
+    
+    Card(
       elevation: 2,
       color: Colors.white,
       shadowColor: Colors.black,
@@ -171,7 +178,7 @@ Widget _buildAppBar() {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildShimmer() {

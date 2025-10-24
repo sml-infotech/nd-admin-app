@@ -49,9 +49,9 @@ class AuthService {
   }
 
 
-    Future<UserResponse> createUser(String name ,String email,String password,String role) async {
+    Future<UserResponse> createUser(String name ,String email,String password,String role,String? templeId) async {
     try {
-      final otpRequest = CreateUsermodel(full_name:name , email:email, password:password , role: role);
+      final otpRequest = CreateUsermodel(full_name:name , email:email, password:password , role: role,associated_temple_id: templeId);
       
       final data = await apiService.post(
         UrlConstant.createUser,

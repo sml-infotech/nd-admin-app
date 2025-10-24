@@ -7,11 +7,9 @@ import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpViewmodel extends ChangeNotifier{
-
   String otp = "";
-
   Timer? timer;
-    bool _isLoading = false;
+  bool _isLoading = false;
 
   String message = '';
   bool isOtpSuccess = false;
@@ -34,13 +32,13 @@ Future<void> validOtp(String email) async {
       if (response.message?.isNotEmpty == true) {
         print("->>> $response");
          final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', response.token!);
+         await prefs.setString('authToken', response.token!);
+         await prefs.setString('userRole', response.user?.role??"");
         print("✅ Token saved: ${response.token}");
         message = response.message ?? "success";
         isOtpSuccess = true;
         print("message $message");
         isLoading = false;
-      
          notifyListeners();
       } else {
         message = response.error ?? "some error occurred";
@@ -64,9 +62,7 @@ Future<void> validOtp(String email) async {
       if (response.message?.isNotEmpty == true) {
         print("->>> $response");
         message = response.message ?? "success";
-      
-              notifyListeners();
-
+        notifyListeners();
       } else {
         message = response.error ?? "some error occurred";
         print("message $message");

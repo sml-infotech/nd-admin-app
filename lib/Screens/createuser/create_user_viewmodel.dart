@@ -55,7 +55,6 @@ class CreateUserViewmodel extends ChangeNotifier {
     return regex.hasMatch(email);
   }
 
-  // Create user API call
   Future<void> createUser() async {
     try {
       isLoading = true;
@@ -65,7 +64,7 @@ class CreateUserViewmodel extends ChangeNotifier {
         nameController.text,
         emailController.text,
         passwordController.text,
-        role.text,
+        role.text,selectedTempleId
       );
 
       if (response.message?.isNotEmpty == true) {

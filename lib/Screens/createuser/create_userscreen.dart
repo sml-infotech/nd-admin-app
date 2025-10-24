@@ -191,6 +191,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             );
             viewModel.message = "";
           }
+          if(viewModel.isCreateUserSuccess){
+              Navigator.pushReplacementNamed(context, StringsRoute.userDetails);
+          }
           setState(() {
             viewModel.isCreateUserSuccess=false;
           });

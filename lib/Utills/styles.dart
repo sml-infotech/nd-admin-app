@@ -55,7 +55,7 @@ class AppTextStyles {
   static final TextStyle tabTextStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    color: Color(0xffF38739),
+    color: ColorConstant.buttonColor,
     fontFamily: font
   );
 
