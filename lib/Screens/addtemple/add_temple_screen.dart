@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_image_selector.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
@@ -109,7 +110,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
               Padding(padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),child: 
               TempleInputWidget()),
               SizedBox(height: 10),
-              ImagePicker(),
+              TempleImagePickerWidget(),
               SizedBox(height: 10),
               CommonTextField(
                 hintText: StringConstant.description,
@@ -119,6 +120,9 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                 isFromDescription: true,
               ),
               SizedBox(height: 10),
+              addTempleButton(),
+              SizedBox(height: 10),
+
             ],
           ),
         ),
@@ -144,4 +148,34 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
       ],
     );
   }
+   Widget addTempleButton() {
+  return Consumer<AddTempleViewmodel>(
+    builder: (context, templeViewmodel, child) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: templeViewmodel.validateAddTemple()
+                ? () async {
+                  }
+                : null, 
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ColorConstant.buttonColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              StringConstant.addTemple,
+              style: AppTextStyles.buttonTextStyle,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 }
