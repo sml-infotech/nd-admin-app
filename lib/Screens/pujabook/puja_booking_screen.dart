@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
-import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
-import 'package:provider/provider.dart';
 
 class PujaBookingScreen extends StatefulWidget {
   const PujaBookingScreen({super.key});
@@ -18,6 +20,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   late PujaBookingViewmodel viewmodel;
 
   String? selectedSlot;
+  String? selectedCutOff;
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   TimeOfDay? fromTime;
@@ -28,10 +31,24 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   bool specialReq = false;
   bool hideActive = false;
 
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _selectedImages;
+
+  Future<void> _pickImages() async {
+    try {
+      final images = await _picker.pickMultiImage(imageQuality: 80);
+      if (images != null && images.isNotEmpty) {
+        setState(() => _selectedImages = images);
+      }
+    } catch (e) {
+      debugPrint("Error picking images: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     viewmodel = Provider.of<PujaBookingViewmodel>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
@@ -56,6 +73,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Puja Name
                     CommonTextField(
                       hintText: StringConstant.addPuja,
                       labelText: StringConstant.addPuja,
@@ -63,28 +81,36 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                       isFromPassword: false,
                     ),
                     const SizedBox(height: 12),
+
+                    // Description
                     CommonTextField(
                       hintText: StringConstant.description,
                       labelText: StringConstant.description,
                       controller: viewmodel.description,
                       isFromPassword: false,
                     ),
+                    const SizedBox(height: 12),
+
+                    // Slot Dropdown
                     SlotDropdown(
                       selectedSlot: selectedSlot,
                       onChanged: (value) =>
                           setState(() => selectedSlot = value),
                     ),
 
+                    // Cutoff Checkbox + Dropdown
+
+                    // Date Pickers
                     Row(
                       children: [
                         DatePickerField(
-                          title: StringConstant.fromDate ,
+                          title: StringConstant.fromDate,
                           selectedDate: selectedStartDate,
                           onDatePicked: (date) =>
                               setState(() => selectedStartDate = date),
                         ),
                         DatePickerField(
-                          title:StringConstant.toDate ,
+                          title: StringConstant.toDate,
                           selectedDate: selectedEndDate,
                           onDatePicked: (date) =>
                               setState(() => selectedEndDate = date),
@@ -92,38 +118,89 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                       ],
                     ),
 
+                    // Time Pickers
                     TimePickerRow(
                       fromTime: fromTime,
                       toTime: toTime,
                       onFromPicked: (t) => setState(() => fromTime = t),
                       onToPicked: (t) => setState(() => toTime = t),
                     ),
-                    SizedBox(height: 10),
+
+                    const SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.enterPuja,
                       labelText: StringConstant.duration,
                       controller: viewmodel.duration,
                       isFromPassword: false,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.cost,
                       labelText: StringConstant.fees,
                       controller: viewmodel.fee,
                       isFromPassword: false,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.maxDevote,
                       labelText: StringConstant.maxNoDevote,
                       controller: viewmodel.maxDevotees,
                       isFromPassword: false,
                     ),
-                    UploadImageBox(onTap: () {}),
-                    CheckBoxRow(
-                      label: StringConstant.cutOffText,
-                      value: bookingCutoff,
-                      onChanged: (v) => setState(() => bookingCutoff = v!),
+
+                    // Upload Image Box
+                    UploadImageBox(onTap: _pickImages),
+                    const SizedBox(height: 10),
+
+                    if (_selectedImages != null && _selectedImages!.isNotEmpty)
+                      Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),child: 
+                      
+                      SizedBox(
+                        height: 100,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _selectedImages!.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
+                          itemBuilder: (context, index) {
+                            return 
+                            
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                File(_selectedImages![index].path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
+                      )),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CheckBoxRow(
+                            label: StringConstant.cutOffText,
+                            value: bookingCutoff,
+                            onChanged: (v) =>
+                                setState(() => bookingCutoff = v!),
+                          ),
+                        ),
+                        // Expanded(
+                        //   child: IgnorePointer(
+                        //     ignoring: !bookingCutoff,
+                        //     child: Opacity(
+                        //       opacity: bookingCutoff ? 1 : 0.5,
+                        //       child: CutOffDropDown(
+                        //         selectedCutOff: selectedCutOff,
+                        //         onChanged: (v) =>
+                        //             setState(() => selectedCutOff = v),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
                     ),
                     CheckBoxRow(
                       label: StringConstant.priestText,
@@ -139,11 +216,14 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                       value: hideActive,
                       onChanged: (v) => setState(() => hideActive = v),
                     ),
+
+              
                   ],
                 ),
               ),
             ),
           ),
+          
         ],
       ),
     );
@@ -163,7 +243,38 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       ],
     );
   }
+
+
+  Widget _resetButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+        child: ElevatedButton(
+          onPressed: () async {               
+                }
+           ,
+          style: ElevatedButton.styleFrom(
+            backgroundColor:  ColorConstant.buttonColor
+              ,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            StringConstant.reset,
+            style: AppTextStyles.buttonTextStyle,
+          ),
+        ),
+      ),
+    );
+  }
 }
+
+// -------------------------
+// Dropdowns & Pickers
+// -------------------------
 
 class SlotDropdown extends StatelessWidget {
   final String? selectedSlot;
@@ -223,6 +334,66 @@ class SlotDropdown extends StatelessWidget {
   }
 }
 
+class CutOffDropDown extends StatelessWidget {
+  final String? selectedCutOff;
+  final ValueChanged<String?> onChanged;
+
+  const CutOffDropDown({
+    super.key,
+    this.selectedCutOff,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(StringConstant.slot, style: AppTextStyles.editTempleTitleStyle),
+          const SizedBox(height: 4),
+          DropdownButtonFormField<String>(
+            value: selectedCutOff,
+            hint: Text(
+              StringConstant.selectSlot,
+              style: TextStyle(fontFamily: font, color: Colors.grey),
+            ),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            items: [
+              DropdownMenuItem(
+                value: "1",
+                child: Text("1", style: TextStyle(fontFamily: font)),
+              ),
+              DropdownMenuItem(
+                value: "2",
+                child: Text("2", style: TextStyle(fontFamily: font)),
+              ),
+              DropdownMenuItem(
+                value: "3",
+                child: Text("3", style: TextStyle(fontFamily: font)),
+              ),
+            ],
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// -------------------------
+// Date & Time Pickers
+// -------------------------
+
 class DatePickerField extends StatelessWidget {
   final DateTime? selectedDate;
   final ValueChanged<DateTime> onDatePicked;
@@ -232,18 +403,17 @@ class DatePickerField extends StatelessWidget {
     super.key,
     required this.selectedDate,
     required this.onDatePicked,
-    required this.title
+    required this.title,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding:  EdgeInsets.fromLTRB(16, 12, 16, 0),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             const SizedBox(height: 4),
             GestureDetector(
               onTap: () async {
@@ -370,6 +540,10 @@ class TimePickerRow extends StatelessWidget {
   }
 }
 
+// -------------------------
+// Upload Image Box
+// -------------------------
+
 class UploadImageBox extends StatelessWidget {
   final VoidCallback onTap;
 
@@ -398,11 +572,11 @@ class UploadImageBox extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                   Image.asset(ImageStrings.uploadImg),
+                  Image.asset(ImageStrings.uploadImg),
                   const SizedBox(height: 8),
                   Text(
                     StringConstant.uploadImageSeva,
-                    style: TextStyle(fontFamily:font,color: Colors.black),
+                    style: TextStyle(fontFamily: font, color: Colors.black),
                   ),
                 ],
               ),
@@ -413,6 +587,10 @@ class UploadImageBox extends StatelessWidget {
     );
   }
 }
+
+// -------------------------
+// Checkboxes & Switch
+// -------------------------
 
 class CheckBoxRow extends StatelessWidget {
   final String label;
