@@ -3,6 +3,7 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   late PujaBookingViewmodel viewmodel;
 
   String? selectedSlot;
-  DateTime? selectedDate;
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
   TimeOfDay? fromTime;
   TimeOfDay? toTime;
 
@@ -69,34 +71,48 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                     ),
                     SlotDropdown(
                       selectedSlot: selectedSlot,
-                      onChanged: (value) => setState(() => selectedSlot = value),
+                      onChanged: (value) =>
+                          setState(() => selectedSlot = value),
                     ),
-                    DatePickerField(
-                      selectedDate: selectedDate,
-                      onDatePicked: (date) => setState(() => selectedDate = date),
+
+                    Row(
+                      children: [
+                        DatePickerField(
+                          title: StringConstant.fromDate ,
+                          selectedDate: selectedStartDate,
+                          onDatePicked: (date) =>
+                              setState(() => selectedStartDate = date),
+                        ),
+                        DatePickerField(
+                          title:StringConstant.toDate ,
+                          selectedDate: selectedEndDate,
+                          onDatePicked: (date) =>
+                              setState(() => selectedEndDate = date),
+                        ),
+                      ],
                     ),
+
                     TimePickerRow(
                       fromTime: fromTime,
                       toTime: toTime,
                       onFromPicked: (t) => setState(() => fromTime = t),
                       onToPicked: (t) => setState(() => toTime = t),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.enterPuja,
                       labelText: StringConstant.duration,
                       controller: viewmodel.duration,
                       isFromPassword: false,
                     ),
-                                        SizedBox(height: 10,),
-
+                    SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.cost,
                       labelText: StringConstant.fees,
                       controller: viewmodel.fee,
                       isFromPassword: false,
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     CommonTextField(
                       hintText: StringConstant.maxDevote,
                       labelText: StringConstant.maxNoDevote,
@@ -105,18 +121,17 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                     ),
                     UploadImageBox(onTap: () {}),
                     CheckBoxRow(
-                      label:StringConstant.cutOffText ,
+                      label: StringConstant.cutOffText,
                       value: bookingCutoff,
                       onChanged: (v) => setState(() => bookingCutoff = v!),
                     ),
                     CheckBoxRow(
-                      label:StringConstant.priestText ,
+                      label: StringConstant.priestText,
                       value: priestDakshina,
                       onChanged: (v) => setState(() => priestDakshina = v!),
                     ),
                     CheckBoxRow(
-                      label:
-                        StringConstant.specialReq  ,
+                      label: StringConstant.specialReq,
                       value: specialReq,
                       onChanged: (v) => setState(() => specialReq = v!),
                     ),
@@ -149,6 +164,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 }
+
 class SlotDropdown extends StatelessWidget {
   final String? selectedSlot;
   final ValueChanged<String?> onChanged;
@@ -166,20 +182,38 @@ class SlotDropdown extends StatelessWidget {
           const SizedBox(height: 4),
           DropdownButtonFormField<String>(
             value: selectedSlot,
-            hint: Text(StringConstant.selectSlot,style: TextStyle(fontFamily: font),),
+            hint: Text(
+              StringConstant.selectSlot,
+              style: TextStyle(fontFamily: font, color: Colors.grey),
+            ),
             decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            items: const [
-              DropdownMenuItem(value: "Daily", child: Text("Daily")),
+            items: [
               DropdownMenuItem(
-                  value: "Festival days", child: Text("Festival days")),
+                value: "Daily",
+                child: Text("Daily", style: TextStyle(fontFamily: font)),
+              ),
               DropdownMenuItem(
-                  value: "Special Occasion", child: Text("Special Occasion")),
+                value: "Festival days",
+                child: Text(
+                  "Festival days",
+                  style: TextStyle(fontFamily: font),
+                ),
+              ),
+              DropdownMenuItem(
+                value: "Special Occasion",
+                child: Text(
+                  "Special Occasion",
+                  style: TextStyle(fontFamily: font),
+                ),
+              ),
             ],
             onChanged: onChanged,
           ),
@@ -192,58 +226,68 @@ class SlotDropdown extends StatelessWidget {
 class DatePickerField extends StatelessWidget {
   final DateTime? selectedDate;
   final ValueChanged<DateTime> onDatePicked;
+  final String title;
 
   const DatePickerField({
     super.key,
     required this.selectedDate,
     required this.onDatePicked,
+    required this.title
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(StringConstant.date, style: AppTextStyles.editTempleTitleStyle),
-          const SizedBox(height: 4),
-          GestureDetector(
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2030),
-              );
-              if (picked != null) onDatePicked(picked);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    selectedDate == null
-                        ? "Select Date"
-                        : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-                    style: TextStyle(fontFamily: font),
-                  ),
-                  Image.asset(ImageStrings.calendar, height: 22),
-                ],
+    return Expanded(
+      child: Padding(
+        padding:  EdgeInsets.fromLTRB(16, 12, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            
+            const SizedBox(height: 4),
+            GestureDetector(
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                );
+                if (picked != null) onDatePicked(picked);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      selectedDate == null
+                          ? title
+                          : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                      style: TextStyle(
+                        fontFamily: font,
+                        fontSize: 15,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Image.asset(ImageStrings.calendar, height: 22),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
 
 class TimePickerRow extends StatelessWidget {
   final TimeOfDay? fromTime;
@@ -266,19 +310,33 @@ class TimePickerRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _buildPicker(context, "From time", fromTime, onFromPicked),
+            child: _buildPicker(
+              context,
+              StringConstant.fromTime,
+              fromTime,
+              onFromPicked,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: _buildPicker(context, "To time", toTime, onToPicked),
+            child: _buildPicker(
+              context,
+              StringConstant.toTime,
+              toTime,
+              onToPicked,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPicker(BuildContext context, String label, TimeOfDay? time,
-      ValueChanged<TimeOfDay> onPick) {
+  Widget _buildPicker(
+    BuildContext context,
+    String label,
+    TimeOfDay? time,
+    ValueChanged<TimeOfDay> onPick,
+  ) {
     return GestureDetector(
       onTap: () async {
         final picked = await showTimePicker(
@@ -298,7 +356,11 @@ class TimePickerRow extends StatelessWidget {
           children: [
             Text(
               time == null ? label : time.format(context),
-              style: TextStyle(fontFamily: font),
+              style: TextStyle(
+                fontFamily: font,
+                fontSize: 15,
+                color: Colors.grey,
+              ),
             ),
             const Icon(Icons.access_time, color: Colors.grey),
           ],
@@ -320,8 +382,10 @@ class UploadImageBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(StringConstant.uploadText,
-              style: AppTextStyles.editTempleTitleStyle),
+          Text(
+            StringConstant.uploadText,
+            style: AppTextStyles.editTempleTitleStyle,
+          ),
           const SizedBox(height: 8),
           GestureDetector(
             onTap: onTap,
@@ -334,12 +398,11 @@ class UploadImageBox extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.upload_rounded,
-                      size: 40, color: Colors.grey),
+                   Image.asset(ImageStrings.uploadImg),
                   const SizedBox(height: 8),
                   Text(
                     StringConstant.uploadImageSeva,
-                    style: AppTextStyles.templeContactStyle,
+                    style: TextStyle(fontFamily:font,color: Colors.black),
                   ),
                 ],
               ),
@@ -350,7 +413,6 @@ class UploadImageBox extends StatelessWidget {
     );
   }
 }
-
 
 class CheckBoxRow extends StatelessWidget {
   final String label;
@@ -383,7 +445,11 @@ class ActiveFlagSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const ActiveFlagSwitch({super.key, required this.value, required this.onChanged});
+  const ActiveFlagSwitch({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

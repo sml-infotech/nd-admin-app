@@ -82,16 +82,13 @@ class StringConstant {
   static const String uploadImageSeva= "Upload Image (puja/seva)";
   static const String cutOffText= "Booking Cutoff / Notice";
   static const String priestText= "Priest Dakshina (Optional)";
+  static const String fromTime= "From time";
+  static const String toTime= "To time";
+  static const String fromDate= "from Date";
+  static const String toDate= "to Date";
+
+
   static const String specialReq=  "Special Requirements (allow user to add special requirements)";
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -100,7 +97,6 @@ class ColorConstant {
     static const Color primaryColor = Color(0xff770425);
     static const Color eyeColor = Color(0xffcdcdcd);
     static const Color buttonColor = Color(0xff770425);
-
 }
 
 

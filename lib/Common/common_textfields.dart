@@ -50,7 +50,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.labelText,
-            labelStyle: TextStyle(fontFamily: font, color: Colors.black),
+            labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
             hintStyle: TextStyle(fontFamily: font, color: Colors.black),
             suffixIcon: widget.isFromPassword
                 ? IconButton(
