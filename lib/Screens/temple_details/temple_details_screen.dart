@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 
@@ -319,7 +320,10 @@ default:
           const Spacer(),
           Text(StringConstant.templeDetail, style: AppTextStyles.appBarTitleStyle),
           const Spacer(),
-          Text(StringConstant.edit, style: AppTextStyles.appBarTitleStyle),
+          GestureDetector(onTap: () {
+            Navigator.pushNamed(context,StringsRoute.updateTempleDetails,arguments: TempleDetailsArguments(name: widget.arguments.name, address: widget.arguments.address, city: widget.arguments.city, state: widget.arguments.state, pincode: widget.arguments.pincode, architecture: widget.arguments.architecture, phoneNumber: widget.arguments.phoneNumber, email: widget.arguments.email, description: widget.arguments.description, deities: widget.arguments.deities, images: widget.arguments.images) );
+          },child:
+          Text(StringConstant.edit, style: AppTextStyles.appBarTitleStyle)),
         ],
       ),
     );

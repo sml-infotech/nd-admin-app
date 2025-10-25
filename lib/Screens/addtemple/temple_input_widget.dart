@@ -23,12 +23,11 @@ class TempleInputWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Temple input text field
             TextField(
               controller: vm.templeController,
               decoration: InputDecoration(
-                hintText: "Enter temple",
-                labelText: "Enter temple",
+                hintText: "Add Deities",
+                labelText: "Add Deities",
                 labelStyle:
                      TextStyle(fontFamily: font, color: Colors.black),
                 hintStyle:

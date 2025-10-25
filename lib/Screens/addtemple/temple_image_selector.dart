@@ -19,7 +19,7 @@ class TempleImagePickerWidget extends StatelessWidget {
     if (result != null && result.files.isNotEmpty) {
       for (var file in result.files) {
         if (file.path != null) {
-          vm.addImage(File(file.path!)); // ✅ Automatically triggers notifyListeners()
+          vm.addImage(File(file.path!));
         }
       }
     }

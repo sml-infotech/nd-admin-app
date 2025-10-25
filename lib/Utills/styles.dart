@@ -112,4 +112,11 @@ static final TextStyle templeNameDetailsAddressStyle = TextStyle(
     color: Colors.black,
     fontFamily: font
   );
+
+  static final TextStyle editTempleTitleStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+    fontFamily: font
+  );
 }
