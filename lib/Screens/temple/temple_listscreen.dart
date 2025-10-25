@@ -22,8 +22,7 @@ class _TempleScreenState extends State<TempleScreen> {
   @override
   void initState() {
     super.initState();
-    final viewModel =
-        Provider.of<TempleViewModel>(context, listen: false);
+    final viewModel = Provider.of<TempleViewModel>(context, listen: false);
     viewModel.fetchTemples();
 
     _scrollController.addListener(() {
@@ -44,51 +43,55 @@ class _TempleScreenState extends State<TempleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TempleViewModel>(builder: (context, viewModel, _) {
-      return Scaffold(
-        backgroundColor: ColorConstant.buttonColor,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
+    return Consumer<TempleViewModel>(
+      builder: (context, viewModel, _) {
+        return Scaffold(
           backgroundColor: ColorConstant.buttonColor,
-          elevation: 0,
-          centerTitle: true,
-          title:_buildAppBar(),
-        ),
-        body: 
-        
-        
-        viewModel.isLoading && viewModel.temples.isEmpty
-            ? _buildShimmer()
-            : Column(
-                children: [
-                  Expanded(
-                    child:Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: ListView.separated(
-                      controller: _scrollController,
-                      itemCount: viewModel.temples.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
-                      itemBuilder: (_, index) =>
-                          _templeCard(viewModel.temples[index]),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: ColorConstant.buttonColor,
+            elevation: 0,
+            centerTitle: true,
+            title: _buildAppBar(),
+          ),
+          body: viewModel.isLoading && viewModel.temples.isEmpty
+              ? _buildShimmer()
+              : Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: ListView.separated(
+                          controller: _scrollController,
+                          itemCount: viewModel.temples.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (_, index) =>
+                              _templeCard(viewModel.temples[index]),
+                        ),
+                      ),
                     ),
-                  )),
-                  if (viewModel.isLoadingMore)
-                     Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: _buildShimmer(),
-                    ),
-                ],
-              ),
-      );
-    });
+                    if (viewModel.isLoadingMore)
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: _buildShimmer(),
+                      ),
+                  ],
+                ),
+        );
+      },
+    );
   }
-Widget _buildAppBar() {
+
+  Widget _buildAppBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -103,83 +106,104 @@ Widget _buildAppBar() {
       ],
     );
   }
+
   Widget _templeCard(Temple temple) {
-    return GestureDetector(onTap: () {
-      
-      Navigator.pushNamed(context, StringsRoute.templeDetail,arguments:TempleDetailsArguments(name: temple.name, address: temple.address, city: temple.city, state: temple.state, pincode: temple.pincode, architecture: temple.architecture, phoneNumber: temple.phoneNumber, email: temple.email, description: temple.description, deities: temple.deities!, images: []) );
-    },child: 
-    
-    Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: false
-                      ? Image.network(
-                          temple.images!.first,
-                          width: 110,
-                          height: 110,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          ImageStrings.loginImage,
-                          width: 110,
-                          height: 110,
-                          fit: BoxFit.cover,
-                        ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        temple.name,
-                        style: AppTextStyles.templeNameTitleBoldStyle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "${StringConstant.city} ${temple.city}",
-                        style: AppTextStyles.templeNameDetailsStyle,
-                      ),
-                      Text(
-                        "${StringConstant.state} ${temple.state}",
-                        style: AppTextStyles.templeNameDetailsStyle,
-                      ),
-                      Text(
-                        "${StringConstant.architecture} ${temple.architecture}",
-                        style: AppTextStyles.templeNameDetailsStyle,
-                      ),
-                    ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          StringsRoute.templeDetail,
+          arguments: TempleDetailsArguments(
+            name: temple.name,
+            address: temple.address,
+            city: temple.city,
+            state: temple.state,
+            pincode: temple.pincode,
+            architecture: temple.architecture,
+            phoneNumber: temple.phoneNumber,
+            email: temple.email,
+            description: temple.description,
+            deities: temple.deities!,
+            images: [],
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: false
+                        ? Image.network(
+                            temple.images!.first,
+                            width: 110,
+                            height: 110,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            ImageStrings.loginImage,
+                            width: 110,
+                            height: 110,
+                            fit: BoxFit.cover,
+                          ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "${StringConstant.address} ${temple.address}, ${temple.pincode}",
-              style: AppTextStyles.templeNameDetailsAddressStyle,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+                  const SizedBox(width: 16),
+                  Expanded(child: templeDetails(temple)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              address(temple),
+            ],
+          ),
         ),
       ),
-    ));
+    );
+  }
+
+  Widget templeDetails(Temple temple) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          temple.name,
+          style: AppTextStyles.templeNameTitleBoldStyle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "${StringConstant.city} ${temple.city}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
+        Text(
+          "${StringConstant.state} ${temple.state}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
+        Text(
+          "${StringConstant.architecture} ${temple.architecture}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
+      ],
+    );
+  }
+
+  Widget address(Temple temple) {
+    return Text(
+      "${StringConstant.address} ${temple.address}, ${temple.pincode}",
+      style: AppTextStyles.templeNameDetailsAddressStyle,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
   Widget _buildShimmer() {
@@ -187,27 +211,28 @@ Widget _buildAppBar() {
       width: double.infinity,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
       ),
       padding: const EdgeInsets.all(16),
-      child:
-    
-    ListView.separated(
-      itemCount: 6,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: Container(
-          height: 140,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(12),
+      child: ListView.separated(
+        itemCount: 6,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 140,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 }

@@ -28,12 +28,10 @@ class _UserListScreenState extends State<UserListScreen> {
     super.initState();
     final viewModel = Provider.of<UserViewModel>(context, listen: false);
 
-    // 🔹 Load first page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.getUsers(reset: true);
     });
 
-    // 🔹 Scroll listener for pagination
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -64,7 +62,6 @@ class _UserListScreenState extends State<UserListScreen> {
     return FocusDetector(
       onFocusGained: () async {
         if (viewModel.userData.isEmpty) {
-          // await viewModel.getUsers(reset: true);
         }
       },
       child: Scaffold(
@@ -106,7 +103,6 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  /// 🔹 Full shimmer (for initial page)
   Widget _buildFullShimmerList() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -115,7 +111,6 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  /// 🔹 Actual user list + small shimmer at bottom
   Widget _buildUserList(UserViewModel viewModel) {
     return Container(
       width: double.infinity,
@@ -376,7 +371,6 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 }
 
-/// 🔹 Full card shimmer (first load)
 class ShimmerUserCard extends StatelessWidget {
   const ShimmerUserCard({super.key});
 

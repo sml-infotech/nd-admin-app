@@ -47,6 +47,7 @@ flutter:
     - assets/about.png
     - assets/event.png
     - assets/otpimage.png
+    - assets/calendar.png
 
 
   fonts:

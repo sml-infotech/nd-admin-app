@@ -67,6 +67,32 @@ class StringConstant {
   static const String templeemail = "Temple Email";
   static const String deitiestemple = "Deities";
   static const String templearchitecture = "Temple Architecture";
+  static const String addPuja = "Add Puja / Seva";
+  static const String addSevaAndPuja="Add Seva / puja name";
+  static const String slot="Slot";
+  static const String selectSlot="Select Slot";
+  static const String date="Date";
+  static const String enterPuja="Enter Puja / Seva duration time";
+  static const String duration="Duration";
+  static const String cost="Enter Cost";
+  static const String fees="Fees";
+  static const String maxDevote="Enter the maximum devotees allowed for puja / seva";
+  static const String maxNoDevote="Maximum number of Devotees";
+  static const String uploadText= "Upload Image (Optional)";
+  static const String uploadImageSeva= "Upload Image (puja/seva)";
+  static const String cutOffText= "Booking Cutoff / Notice";
+  static const String priestText= "Priest Dakshina (Optional)";
+  static const String specialReq=  "Special Requirements (allow user to add special requirements)";
+
+
+
+
+
+
+
+
+
+
 }
 
 class ColorConstant {

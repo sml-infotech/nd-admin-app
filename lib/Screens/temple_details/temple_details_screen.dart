@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TempleDetailsScreen extends StatefulWidget {
       final TempleDetailsArguments arguments;
@@ -19,24 +20,36 @@ class TempleDetailsScreen extends StatefulWidget {
 class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   int _currentIndex = 0;
   int _selectedTab = 0;
+  String? _token;
+  String? _role;
 
   final List<String> templeImages = [
     "https://picsum.photos/id/1011/800/400",
     "https://picsum.photos/id/1015/800/400",
     "https://picsum.photos/id/1016/800/400",
   ];
-
   final List<String> tabTitles = ["Map", "About", "Events",];
 
+ @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+    Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _token = prefs.getString('authToken');
+      _role = prefs.getString('userRole');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     print(">>>>>>${widget.arguments.address}");
     print(">>>>>>${widget.arguments.architecture}");
     print(">>>>>>${widget.arguments.city}");
     print(">>>>>>${widget.arguments.description}");
-    
-
     final screenHeight = MediaQuery.of(context).size.height;
+   
 
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
@@ -308,24 +321,55 @@ default:
   }
 
   Widget nammaDaivaDetailAppBar() {
-    return Center(
-      child: Row(
-        children: [
-          IconButton(
-            icon: Image.asset(ImageStrings.backbutton),
-            onPressed: () {
-              Navigator.pop(context);
+  return Center(
+    child: Row(
+      children: [
+        IconButton(
+          icon: Image.asset(ImageStrings.backbutton),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        const Spacer(),
+        Text(
+          StringConstant.templeDetail,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
+        if (_role == "Temple") ...[
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                StringsRoute.updateTempleDetails,
+                arguments: TempleDetailsArguments(
+                  name: widget.arguments.name,
+                  address: widget.arguments.address,
+                  city: widget.arguments.city,
+                  state: widget.arguments.state,
+                  pincode: widget.arguments.pincode,
+                  architecture: widget.arguments.architecture,
+                  phoneNumber: widget.arguments.phoneNumber,
+                  email: widget.arguments.email,
+                  description: widget.arguments.description,
+                  deities: widget.arguments.deities,
+                  images: widget.arguments.images,
+                ),
+              );
             },
+            child: Text(
+              StringConstant.edit,
+              style: AppTextStyles.appBarTitleStyle,
+            ),
           ),
-          const Spacer(),
-          Text(StringConstant.templeDetail, style: AppTextStyles.appBarTitleStyle),
-          const Spacer(),
-          GestureDetector(onTap: () {
-            Navigator.pushNamed(context,StringsRoute.updateTempleDetails,arguments: TempleDetailsArguments(name: widget.arguments.name, address: widget.arguments.address, city: widget.arguments.city, state: widget.arguments.state, pincode: widget.arguments.pincode, architecture: widget.arguments.architecture, phoneNumber: widget.arguments.phoneNumber, email: widget.arguments.email, description: widget.arguments.description, deities: widget.arguments.deities, images: widget.arguments.images) );
-          },child:
-          Text(StringConstant.edit, style: AppTextStyles.appBarTitleStyle)),
         ],
-      ),
-    );
-  }
+         if (_role == "Temple") ...[
+         ]
+         else
+         Spacer()
+      ],
+    ),
+  );
+}
+
 }

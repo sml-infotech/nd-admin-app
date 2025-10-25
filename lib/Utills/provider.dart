@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
@@ -50,6 +52,8 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
         ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
+        ChangeNotifierProvider(create: (context) => PujaBookingViewmodel()),
+
 
 
         
@@ -74,7 +78,7 @@ class ProviderWidget extends StatelessWidget {
             ),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const TempleScreen() : const LoginScreen(),
+            home: hasToken ? const PujaBookingScreen() : const LoginScreen(),
           );
         },
       ),

@@ -24,7 +24,6 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize ViewModel here if needed
   }
 
   @override
