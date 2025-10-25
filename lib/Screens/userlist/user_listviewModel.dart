@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class UserViewModel extends ChangeNotifier {
-  final AuthService authService = AuthService();
+  final UserService authService = UserService();
   final TextEditingController role = TextEditingController();
 
   List<UserModel> userData = [];

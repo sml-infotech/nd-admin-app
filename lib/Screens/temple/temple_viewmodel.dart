@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
-import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class TempleViewModel extends ChangeNotifier {
   List<Temple> temples = [];
@@ -8,7 +8,7 @@ class TempleViewModel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMore = true;
 
-  final AuthService authService = AuthService();
+  final TempleService authService = TempleService();
 
   int page = 1;
   final int limit = 10;

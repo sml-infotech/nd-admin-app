@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
+import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController templeName = TextEditingController();
@@ -15,7 +17,8 @@ class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController phone = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController templeController = TextEditingController();
-  var authService = AuthService();
+  var authService = TempleService();
+  var userService=UserService();
 
   bool isLoading=false;
   String message="";
@@ -130,7 +133,7 @@ Future<void> presignedUrl() async {
     try {
         isLoading=true;
         notifyListeners();
-      final response = await authService.presignedUrl(
+      final response = await userService.presignedUrl(
         temples.first,temples.first
       );
       if (response.message.isNotEmpty) {

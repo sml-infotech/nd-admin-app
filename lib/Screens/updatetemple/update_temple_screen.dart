@@ -43,8 +43,6 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeCity.text = widget.arguments.city??"";
     viewModel.templeState.text = widget.arguments.state??"";
     viewModel.templePincode.text = widget.arguments.pincode??"";
-
-
   }
 
   @override
