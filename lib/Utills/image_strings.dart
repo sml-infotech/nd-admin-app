@@ -17,4 +17,8 @@ class ImageStrings {
   static const String abouticon = 'assets/about.png';
   static const String eventicon = 'assets/event.png';
   static const String otpImage = 'assets/otpimage.png';
+  static const String calendar = 'assets/calendar.png';
+  static const String uploadImg = 'assets/uploadimg.png';
+
+
 }

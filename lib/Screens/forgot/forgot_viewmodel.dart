@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart' show AuthService;
+import 'package:nammadaiva_dashboard/service/password_service.dart';
 
 class ForgotViewmodel extends ChangeNotifier{
 
@@ -10,6 +11,7 @@ class ForgotViewmodel extends ChangeNotifier{
   bool isLoading=false;
    bool isVerifyLoading=false;
   var authService = AuthService();
+  var passwordService=PasswordService();
   String otp = '';
   bool isOtpSuccess=false;
 
@@ -33,7 +35,7 @@ Future<void> forgotPasswordApi() async {
   isLoading=true;
   notifyListeners();
     try {
-      final response = await authService.forgotPassword(
+      final response = await passwordService.forgotPassword(
           emailController.text,);
       if (response.code==200) {
         code=response.code;

@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TempleDetailsScreen extends StatefulWidget {
-  const TempleDetailsScreen({super.key});
+      final TempleDetailsArguments arguments;
+
+  const TempleDetailsScreen({super.key,required this.arguments});
 
   @override
   State<TempleDetailsScreen> createState() => _TempleDetailsScreenState();
@@ -15,18 +20,36 @@ class TempleDetailsScreen extends StatefulWidget {
 class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   int _currentIndex = 0;
   int _selectedTab = 0;
+  String? _token;
+  String? _role;
 
   final List<String> templeImages = [
     "https://picsum.photos/id/1011/800/400",
     "https://picsum.photos/id/1015/800/400",
     "https://picsum.photos/id/1016/800/400",
   ];
-
   final List<String> tabTitles = ["Map", "About", "Events",];
 
+ @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+    Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _token = prefs.getString('authToken');
+      _role = prefs.getString('userRole');
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    print(">>>>>>${widget.arguments.address}");
+    print(">>>>>>${widget.arguments.architecture}");
+    print(">>>>>>${widget.arguments.city}");
+    print(">>>>>>${widget.arguments.description}");
     final screenHeight = MediaQuery.of(context).size.height;
+   
 
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
@@ -55,16 +78,16 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                     carouselWidget(),
                     const SizedBox(height: 2),
                     carouselDotWidget(),
-                    templeNameWidget(),
+                    templeNameWidget(widget.arguments.name),
                     const SizedBox(height: 8),
-                    templeDetailContactWidget(StringConstant.phone, "+91 9876543210", ImageStrings.phone),
-                    templeDetailContactWidget(StringConstant.email, "info@svtemple.org", ImageStrings.phone),
+                    templeDetailContactWidget(StringConstant.phone, widget.arguments.phoneNumber, ImageStrings.phone),
+                    templeDetailContactWidget(StringConstant.email, widget.arguments.email, ImageStrings.phone),
                     contentWidgets(),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
-                      child: getSelectedTabContent(_selectedTab),
+                      child: getSelectedTabContent(_selectedTab,widget.arguments),
                     ),
                   ],
                 ),
@@ -144,10 +167,10 @@ default:
 }
 
 
-  Widget getSelectedTabContent(int index) {
+  Widget getSelectedTabContent(int index,TempleDetailsArguments widget) {
     switch (index) {
       case 0:
-        return mapTab();
+        return mapTab(widget);
       case 1:
         return aboutTab();
     default:
@@ -157,18 +180,18 @@ default:
     }
   }
 
-  Widget mapTab() => Padding(
+  Widget mapTab(TempleDetailsArguments widget) => Padding(
         key: const ValueKey("Map"),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Image.network(
-              "https://maps.googleapis.com/maps/api/staticmap?center=Madurai,India&zoom=13&size=600x300&key=YOUR_API_KEY",
-              height: 200,
-              fit: BoxFit.cover,
-            ),
+            // Image.network(
+            //   "https://maps.googleapis.com/maps/api/staticmap?center=Madurai,India&zoom=13&size=600x300&key=YOUR_API_KEY",
+            //   height: 200,
+            //   fit: BoxFit.cover,
+            // ),
             const SizedBox(height: 10),
-            const Text("Madurai Main, Madurai\nTamil Nadu"),
+             Text(widget.address),
             const SizedBox(height: 5),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -251,13 +274,13 @@ default:
     );
   }
 
-  Widget templeNameWidget() {
+  Widget templeNameWidget(String templeName) {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          "Arulmigu Arunachaleswarar Temple",
+          templeName,
           style: AppTextStyles.templeNameDetailsStyle,
         ),
       ),
@@ -298,21 +321,55 @@ default:
   }
 
   Widget nammaDaivaDetailAppBar() {
-    return Center(
-      child: Row(
-        children: [
-          IconButton(
-            icon: Image.asset(ImageStrings.backbutton),
-            onPressed: () {
-              Navigator.pop(context);
+  return Center(
+    child: Row(
+      children: [
+        IconButton(
+          icon: Image.asset(ImageStrings.backbutton),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        const Spacer(),
+        Text(
+          StringConstant.templeDetail,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
+        if (_role == "Temple") ...[
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                StringsRoute.updateTempleDetails,
+                arguments: TempleDetailsArguments(
+                  name: widget.arguments.name,
+                  address: widget.arguments.address,
+                  city: widget.arguments.city,
+                  state: widget.arguments.state,
+                  pincode: widget.arguments.pincode,
+                  architecture: widget.arguments.architecture,
+                  phoneNumber: widget.arguments.phoneNumber,
+                  email: widget.arguments.email,
+                  description: widget.arguments.description,
+                  deities: widget.arguments.deities,
+                  images: widget.arguments.images,
+                ),
+              );
             },
+            child: Text(
+              StringConstant.edit,
+              style: AppTextStyles.appBarTitleStyle,
+            ),
           ),
-          const Spacer(),
-          Text(StringConstant.templeDetail, style: AppTextStyles.appBarTitleStyle),
-          const Spacer(),
-          Text(StringConstant.edit, style: AppTextStyles.appBarTitleStyle),
         ],
-      ),
-    );
-  }
+         if (_role == "Temple") ...[
+         ]
+         else
+         Spacer()
+      ],
+    ),
+  );
+}
+
 }

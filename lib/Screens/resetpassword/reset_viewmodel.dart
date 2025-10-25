@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/password_service.dart';
 
 class ResetViewmodel extends ChangeNotifier {
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
 bool isLoading=false;
-  var authService = AuthService();
+  var authService = PasswordService();
   bool isChecked = false;
   String message="";
   bool isPasswordUpdated = false;

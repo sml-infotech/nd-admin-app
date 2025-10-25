@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
@@ -7,9 +8,11 @@ import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_password_screen
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_details_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
+import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 
 
 class AppRouter {
@@ -32,9 +35,11 @@ class AppRouter {
           builder: (_) => DashboardScreen(),
         );
          case StringsRoute.templeDetail:
+          TempleDetailsArguments args = settings.arguments as TempleDetailsArguments; 
+
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => TempleDetailsScreen(),
+          builder: (_) => TempleDetailsScreen(arguments: args,),
         );
 
          case StringsRoute.createUser:
@@ -62,6 +67,18 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => TempleScreen(),
+        );
+          case StringsRoute.addTempleScreen:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => AddTempleScreen(),
+        );
+
+         case StringsRoute.updateTempleDetails:
+            TempleDetailsArguments args = settings.arguments as TempleDetailsArguments; 
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => TempleUpdateScreen(arguments: args,),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');
