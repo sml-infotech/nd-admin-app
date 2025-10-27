@@ -46,6 +46,7 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
             });
             if (widget.onChanged != null) widget.onChanged!(value);
           },
+          style:TextStyle(fontFamily: font, color: Colors.black,fontSize: 15) ,
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.labelText,

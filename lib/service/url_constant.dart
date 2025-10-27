@@ -24,6 +24,8 @@ class UrlConstant {
   static String resetPasswordUrl ="${baseUrlString()}reset-dashboard-user-password";
   static String addTempleUrl ="${baseUrlString()}create-temple";
   static String presignedUrl ="${baseUrlString()}get-presigned-url/upload";
+  static String createPujaUrl ="${baseUrlString()}create-puja";
+
 
 
 

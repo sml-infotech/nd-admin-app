@@ -52,7 +52,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
         ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
-        ChangeNotifierProvider(create: (context) => PujaBookingViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
 
 
 
