@@ -38,7 +38,6 @@ class PujaService {
         timeSlots: time_slots,
       );
 
-      // 🧾 Print request data before API call
       print("📦 ------------------- CREATE PUJA REQUEST -------------------");
       print("Temple ID: $id");
       print("Puja Name: $pujaName");

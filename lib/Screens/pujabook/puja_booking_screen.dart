@@ -30,16 +30,17 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   final formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _pickImages() async {
-    try {
-      final images = await _picker.pickMultiImage(imageQuality: 80);
-      if (images.isNotEmpty) {
-        setState(() => viewmodel.selectedImages = images);
-      }
-    } catch (e) {
-      debugPrint("Error picking images: $e");
-    }
+ Future<void> _pickImages() async {
+  final picker = ImagePicker();
+  final pickedFiles = await picker.pickMultiImage();
+
+  if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    setState(() {
+      viewmodel.selectedImages = [...?viewmodel.selectedImages, ...pickedFiles];
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,9 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                   child: Container(
                     decoration: const BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(24),
+                      ),
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -71,9 +74,9 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                             _buildTempleDropdown(),
                             const SizedBox(height: 15),
                             _buildDeitiesDropdown(),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 18),
                             _buildPujaDetails(),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 18),
                             _buildSlotSection(),
                             const SizedBox(height: 10),
                             _buildDurationAndFee(),
@@ -92,6 +95,17 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
               ],
             ),
             _buildResetButton(),
+             if (viewmodel.isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.4),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: ColorConstant.buttonColor,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -118,31 +132,32 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 
- Widget _buildTempleDropdown() {
-  return CommonDropdownField(
-    hintText: StringConstant.temple,
-    labelText: StringConstant.temple,
-    items: viewmodel.templeData.map((t) => t.name).toList(),
-    paddingSize: 16,
-    onChanged: (value) {
-      if (value == null) return;
-      final selectedTemple =
-          viewmodel.templeData.firstWhere((t) => t.name == value);
-      setState(() {
-        viewmodel.deities.clear();
-        viewmodel.selectedDeityId = selectedTemple.id;
-        viewmodel.setSelectedTemple(selectedTemple);
-      });
-    },
-  );
-}
-
+  Widget _buildTempleDropdown() {
+    return CommonDropdownField(
+      hintText: StringConstant.temple,
+      labelText: StringConstant.temple,
+      items: viewmodel.templeData.map((t) => t.name).toList(),
+      paddingSize: 16,
+      onChanged: (value) {
+        if (value == null) return;
+        final selectedTemple = viewmodel.templeData.firstWhere(
+          (t) => t.name == value,
+        );
+        setState(() {
+          viewmodel.deities.clear();
+          viewmodel.selectedDeityId = selectedTemple.id;
+          viewmodel.setSelectedTemple(selectedTemple);
+        });
+      },
+    );
+  }
 
   Widget _buildDeitiesDropdown() {
     return DeitiesDropdown(
       items: viewmodel.deitiesList,
       selectedItems: viewmodel.deities,
-      onSelectionChanged: (selected) => setState(() => viewmodel.deities = selected),
+      onSelectionChanged: (selected) =>
+          setState(() => viewmodel.deities = selected),
     );
   }
 
@@ -155,11 +170,12 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           controller: viewmodel.pujaName,
           isFromPassword: false,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
         CommonTextField(
           hintText: StringConstant.description,
           labelText: StringConstant.description,
           controller: viewmodel.description,
+          isFromDescription: true,
           isFromPassword: false,
         ),
       ],
@@ -172,33 +188,46 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Text(StringConstant.slot, style: AppTextStyles.editTempleTitleStyle),
+          child: Text(
+            StringConstant.slot,
+            style: AppTextStyles.editTempleTitleStyle,
+          ),
         ),
         const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.only(left: 16),
           child: DaysSelector(
             initialDays: viewmodel.selectedDays,
-            onChanged: (value) => setState(() => viewmodel.selectedDays = value),
+            onChanged: (value) =>
+                setState(() => viewmodel.selectedDays = value),
           ),
         ),
-        Row(
-          children: [
-            DatePickerField(
-              title: StringConstant.fromDate,
-              selectedDate: viewmodel.selectedStartDate,
-              onDatePicked: (date) => setState(() => viewmodel.selectedStartDate = date),
-            ),
-            DatePickerField(
-              title: StringConstant.toDate,
-              selectedDate: viewmodel.selectedEndDate,
-              onDatePicked: (date) => setState(() => viewmodel.selectedEndDate = date),
-            ),
-          ],
-        ),
+       Row(
+  children: [
+    DatePickerField(
+      title: "From Date",
+      selectedDate: viewmodel.selectedStartDate,
+      onDatePicked: (date) => setState(() {
+        viewmodel.selectedStartDate = date;
+        viewmodel.selectedEndDate = null; 
+      }),
+    ),
+    DatePickerField(
+      title: "To Date",
+      selectedDate: viewmodel.selectedEndDate,
+      fromDate: viewmodel.selectedStartDate, 
+      onDatePicked: (date) => setState(() {
+        viewmodel.selectedEndDate = date;
+      }),
+    ),
+  ],
+),
+
         TimePickerRow(
           fromTime: viewmodel.fromTime,
           toTime: viewmodel.toTime,
+          fromDate: viewmodel.selectedStartDate,
+          toDate: viewmodel.selectedEndDate,
           onFromPicked: (t) => setState(() => viewmodel.fromTime = t),
           onToPicked: (t) => setState(() => viewmodel.toTime = t),
         ),
@@ -209,7 +238,6 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   Widget _buildDurationAndFee() {
     return Column(
       children: [
-      
         const SizedBox(height: 10),
         CommonTextField(
           hintText: StringConstant.cost,
@@ -223,39 +251,28 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           hintText: StringConstant.maxDevote,
           labelText: StringConstant.maxNoDevote,
           controller: viewmodel.maxDevotees,
-          isFromPassword: false,          isFromPhone: true,
-
+          isFromPassword: false,
+          isFromPhone: true,
         ),
       ],
     );
   }
 
   Widget _buildImagePicker() {
-    return Column(
-      children: [
-        UploadImageBox(onTap: _pickImages),
-        if (viewmodel.selectedImages != null && viewmodel.selectedImages!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: SizedBox(
-              height: 100,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: viewmodel.selectedImages!.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final image = viewmodel.selectedImages![index];
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(File(image.path), width: 100, height: 100, fit: BoxFit.cover),
-                  );
-                },
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  final images = viewmodel.selectedImages ?? [];
+
+  return MultiImagePickerSection(
+    imagePaths: images.map((img) => img.path).toList(),
+    onAddImages: _pickImages,
+    onRemoveImage: (index) {
+      setState(() {
+        images.removeAt(index);
+      });
+    },
+  );
+}
+
+
 
   Widget _buildCheckboxSection() {
     return Column(
@@ -288,7 +305,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
               onPressed: () async {
                 final isValid = viewmodel.validateForm();
                 Fluttertoast.showToast(msg: viewmodel.message);
-                if (isValid) {
+                if (viewmodel.pujaCreated) {
+                  viewmodel.resetForm();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -297,7 +315,10 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(StringConstant.addPuja, style: AppTextStyles.buttonTextStyle),
+              child: Text(
+                StringConstant.addPuja,
+                style: AppTextStyles.buttonTextStyle,
+              ),
             ),
           ),
         ),
@@ -305,4 +326,3 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 }
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Utills/constant.dart';
 
 class DaysSelector extends StatefulWidget {
   final Map<String, bool> initialDays;
@@ -17,7 +18,15 @@ class DaysSelector extends StatefulWidget {
 class _DaysSelectorState extends State<DaysSelector> {
   late Map<String, bool> selectedDays;
 
-  final List<String> daysOrder = ['M', 'Th', 'W', 'Tu', 'F', 'S', 'Su'];
+  final List<String> daysOrder = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
 
   @override
   void initState() {
@@ -45,23 +54,16 @@ class _DaysSelectorState extends State<DaysSelector> {
             width: 30,
             height: 30,
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.orange : Colors.grey[200],
+              color: isSelected ? ColorConstant.buttonColor : Colors.grey[200],
               borderRadius: BorderRadius.circular(100),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.4),
-                        blurRadius: 6,
-                      ),
-                    ]
-                  : [],
+              
             ),
             child: Text(
               day,
               style: TextStyle(
-                fontWeight: FontWeight.w100,
+                fontWeight: FontWeight.w400,
                 color: isSelected ? Colors.white : Colors.black87,
               ),
             ),

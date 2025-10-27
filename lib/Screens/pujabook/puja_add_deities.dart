@@ -49,15 +49,16 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           GestureDetector(
             onTap: _toggleDropdown,
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
               decoration: BoxDecoration(
+
                 borderRadius: BorderRadius.circular(13), 
-                border: Border.all(color: ColorConstant.primaryColor),
+                border: Border.all(color:Colors.grey,),
                 color: Colors.white,
               ),
               child: Row(

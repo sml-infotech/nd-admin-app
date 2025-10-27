@@ -37,7 +37,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
           keyboardType: widget.isFromDescription == true
               ? TextInputType.multiline
               : (widget.isFromPhone ?? false ? TextInputType.phone : TextInputType.text),
-          maxLines: widget.isFromDescription == true ? null : 1, 
+          maxLines: widget.isFromDescription == true ? 5 : 1, 
           inputFormatters: widget.isFromPhone == true
               ? [
                   FilteringTextInputFormatter.digitsOnly,

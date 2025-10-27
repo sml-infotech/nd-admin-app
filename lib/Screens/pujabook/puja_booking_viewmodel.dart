@@ -14,11 +14,18 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final TextEditingController deitiesController = TextEditingController();
 
   final PujaService pujaService = PujaService();
+  final TempleService templeService = TempleService();
 
   List<XFile> selectedImages = [];
   List<String> deities = [];
-  Temple? selectedTemple;
   List<String> deitiesList = [];
+  List<Temple> templeData = [];
+  List<String> templeList = [];
+
+  Temple? selectedTemple;
+  String message = "";
+  String selectedDeities = "";
+  String selectedDeityId = "";
 
   bool bookingCutoff = false;
   bool priestDakshina = false;
@@ -26,18 +33,15 @@ class CreatePujaViewmodel extends ChangeNotifier {
   bool hideActive = false;
   bool isLoading = false;
   bool isValid = false;
+  bool pujaCreated = false;
+
   int page = 1;
   final int limit = 10;
-  final TempleService templeService = TempleService();
+
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   TimeOfDay? fromTime;
   TimeOfDay? toTime;
-List<Temple> templeData = [];
-  List<String> templeList = [];  
-  String message = "";
-  String selectedDeities="";
-  String selectedDeityId="";
 
   Map<String, bool> selectedDays = {
     "Mon": false,
@@ -61,20 +65,16 @@ List<Temple> templeData = [];
   void _onChange() => validateForm(auto: true);
 
   bool validateForm({bool auto = false}) {
-   if(templeData.isEmpty){
+    if (selectedTemple == null) {
       message = "Please select Temple";
-   }
-   else if(deities.isEmpty){
+    } else if (deities.isEmpty) {
       message = "Please select Deities";
-   }
-   else  if (pujaName.text.trim().isEmpty) {
+    } else if (pujaName.text.trim().isEmpty) {
       message = "Please enter Puja name";
     } else if (description.text.trim().isEmpty) {
       message = "Please enter description";
     } else if (!selectedDays.containsValue(true)) {
       message = "Select at least one day";
-    } else if (duration.text.trim().isEmpty) {
-      message = "Please enter puja duration";
     } else if (fee.text.trim().isEmpty || double.tryParse(fee.text) == null) {
       message = "Enter a valid fee";
     } else if (maxDevotees.text.trim().isEmpty ||
@@ -86,8 +86,6 @@ List<Temple> templeData = [];
       message = "Please select an end date";
     } else if (fromTime == null || toTime == null) {
       message = "Please select both From and To time";
-    } else if (selectedImages.isEmpty) {
-      message = "Please upload at least one image";
     } else {
       createPuja();
       isValid = true;
@@ -121,10 +119,8 @@ List<Temple> templeData = [];
     return "$hour:$minute:00";
   }
 
-
   Future<void> getTemples({bool reset = false}) async {
     if (isLoading) return;
-
     isLoading = true;
     notifyListeners();
 
@@ -156,10 +152,10 @@ List<Temple> templeData = [];
         toTime: formatTimeOfDay(toTime!),
       );
 
+      // ✅ Convert days to ["Mon", "Wed", "Fri"]
       final requestDays =
           selectedDays.entries.where((e) => e.value).map((e) => e.key).toList();
 
-      // Debug print
       print("""
 --- Creating Puja ---
 Temple ID: $selectedDeityId
@@ -168,9 +164,8 @@ Description: ${description.text}
 Deities: $deities
 Fee: ${fee.text}
 Max Devotees: ${maxDevotees.text}
-Special Req: $specialReq
 Days: $requestDays
-From: ${selectedStartDate.toString()} To: ${selectedEndDate.toString()}
+From: $selectedStartDate To: $selectedEndDate
 Images: ${selectedImages.map((e) => e.path).toList()}
 ---------------------
 """);
@@ -178,7 +173,7 @@ Images: ${selectedImages.map((e) => e.path).toList()}
       final response = await pujaService.cretaPuja(
         selectedDeityId,
         pujaName.text,
-        deities,
+        deitiesList,
         description.text,
         int.parse(maxDevotees.text),
         int.parse(fee.text),
@@ -194,6 +189,9 @@ Images: ${selectedImages.map((e) => e.path).toList()}
       if (response.code == 201) {
         message = response.message ?? "Success";
         print("✅ Puja created successfully: ${response.toJson()}");
+       pujaCreated=true;
+        // 🔄 Reset form after successful API call
+        resetForm();
       } else {
         message = "❌ Error: ${response.message ?? "Unknown error"}";
         print("Error response: ${response.toJson()}");
@@ -207,6 +205,53 @@ Images: ${selectedImages.map((e) => e.path).toList()}
     }
   }
 
+  /// ✅ Reset form after successful submission
+  void resetForm() {
+    pujaName.clear();
+    description.clear();
+    duration.clear();
+    fee.clear();
+    maxDevotees.clear();
+    deitiesController.clear();
+
+    selectedImages.clear();
+    deities.clear();
+    deitiesList.clear();
+    selectedTemple = null;
+    selectedDeities = "";
+    selectedDeityId = "";
+
+    bookingCutoff = false;
+    priestDakshina = false;
+    specialReq = false;
+    hideActive = false;
+
+    selectedStartDate = null;
+    selectedEndDate = null;
+    fromTime = null;
+    toTime = null;
+
+    selectedDays.updateAll((key, value) => false);
+
+    message = "";
+    isValid = false;
+    isLoading = false;
+
+    notifyListeners();
+  }
+
+  void setSelectedTemple(Temple temple) {
+    selectedTemple = temple;
+
+    if (temple.deities != null && temple.deities!.isNotEmpty) {
+      deitiesList = List<String>.from(temple.deities!);
+    } else {
+      deitiesList = [];
+    }
+
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     pujaName.dispose();
@@ -217,17 +262,4 @@ Images: ${selectedImages.map((e) => e.path).toList()}
     deitiesController.dispose();
     super.dispose();
   }
-void setSelectedTemple(Temple temple) {
-  selectedTemple = temple;
-  
-  // Suppose each temple has deities list
-  if (temple.deities != null && temple.deities!.isNotEmpty) {
-    deitiesList = List<String>.from(temple.deities!);
-  } else {
-    deitiesList = [];
-  }
-
-  notifyListeners();
-}
-  
 }
