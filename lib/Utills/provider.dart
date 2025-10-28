@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
@@ -29,7 +30,7 @@ class ProviderWidget extends StatelessWidget {
   Future<bool> _checkToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-     final role = prefs.getString('userRole');
+    final role = prefs.getString('userRole');
     print(">>>>>>>>>>$token");
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
@@ -53,19 +54,13 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
-
-
-
-        
       ],
       child: FutureBuilder<bool>(
         future: _checkToken(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const MaterialApp(
-              home: Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
+              home: Scaffold(body: Center(child: CircularProgressIndicator())),
             );
           }
 
@@ -73,12 +68,10 @@ class ProviderWidget extends StatelessWidget {
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              textTheme: const TextTheme(),
-            ),
+            theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const PujaBookingScreen() : const LoginScreen(),
+            home: hasToken ? const PujaList() : const LoginScreen(),
           );
         },
       ),

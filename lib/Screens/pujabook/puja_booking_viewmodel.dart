@@ -271,8 +271,9 @@ Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
     notifyListeners();
 
     selectedImages.clear();
-    deities.clear();
-    deitiesList.clear();
+    deities=[];
+    deitiesList=[];
+    notifyListeners();
     selectedTemple = null;
     selectedDeities = "";
     selectedDeityId = "";
