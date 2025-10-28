@@ -30,16 +30,13 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   final formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
- Future<void> _pickImages() async {
-  final picker = ImagePicker();
-  final pickedFiles = await picker.pickMultiImage();
-
-  if (pickedFiles != null && pickedFiles.isNotEmpty) {
-    setState(() {
-      viewmodel.selectedImages = [...?viewmodel.selectedImages, ...pickedFiles];
-    });
+ Future<void> _pickImages( ) async {
+    final pickedFiles = await _picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
+      final imagePaths = pickedFiles.map((e) => e.path).toList();
+      viewmodel.addImages(imagePaths);
+    }
   }
-}
 
 
   @override
@@ -263,12 +260,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
   return MultiImagePickerSection(
     imagePaths: images.map((img) => img.path).toList(),
-    onAddImages: _pickImages,
-    onRemoveImage: (index) {
-      setState(() {
-        images.removeAt(index);
-      });
-    },
+     onAddImages: () => _pickImages(),
+              onRemoveImage: (index) => viewmodel.removeImage(index),
   );
 }
 

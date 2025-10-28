@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/puja_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
+import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class CreatePujaViewmodel extends ChangeNotifier {
   final TextEditingController pujaName = TextEditingController();
@@ -15,6 +17,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   final PujaService pujaService = PujaService();
   final TempleService templeService = TempleService();
+  final UserService userService=UserService();
 
   List<XFile> selectedImages = [];
   List<String> deities = [];
@@ -26,6 +29,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   String message = "";
   String selectedDeities = "";
   String selectedDeityId = "";
+  String ? presignedURL;
 
   bool bookingCutoff = false;
   bool priestDakshina = false;
@@ -53,16 +57,6 @@ class CreatePujaViewmodel extends ChangeNotifier {
     "Sun": false,
   };
 
-  CreatePujaViewmodel() {
-    pujaName.addListener(_onChange);
-    description.addListener(_onChange);
-    duration.addListener(_onChange);
-    fee.addListener(_onChange);
-    maxDevotees.addListener(_onChange);
-    deitiesController.addListener(_onChange);
-  }
-
-  void _onChange() => validateForm(auto: true);
 
   bool validateForm({bool auto = false}) {
     if (selectedTemple == null) {
@@ -87,16 +81,28 @@ class CreatePujaViewmodel extends ChangeNotifier {
     } else if (fromTime == null || toTime == null) {
       message = "Please select both From and To time";
     } else {
+        if (selectedImages.isEmpty) {
       createPuja();
-      isValid = true;
-      if (!auto) notifyListeners();
-      return true;
+      message = "Creating puja without images...";
+    } 
+    // ✅ If images exist → call presigned URL first, then create puja
+    else {
+      presignedUrl();
     }
 
-    isValid = false;
+    isValid = true;
     if (!auto) notifyListeners();
-    return false;
+    return true;
   }
+
+  isValid = false;
+  if (!auto) notifyListeners();
+  return false;
+    
+
+   
+  }
+  
 
   void toggleDay(String day) {
     selectedDays[day] = !(selectedDays[day] ?? false);
@@ -107,7 +113,16 @@ class CreatePujaViewmodel extends ChangeNotifier {
     deities.add(name);
     notifyListeners();
   }
+  void addImages(List<String> newImages) {
+    selectedImages.addAll(newImages.map((path) => XFile(path)));
+    print(">>>>>>>>>${selectedImages}");
+    notifyListeners();
+  }
 
+  void removeImage(int index) {
+    selectedImages.removeAt(index);
+    notifyListeners();
+  }
   void removeDeity(int index) {
     deities.removeAt(index);
     notifyListeners();
@@ -177,7 +192,7 @@ Images: ${selectedImages.map((e) => e.path).toList()}
         description.text,
         int.parse(maxDevotees.text),
         int.parse(fee.text),
-        selectedImages.map((x) => x.path).toList(),
+      [presignedURL??""],
         2,
         specialReq,
         selectedStartDate.toString(),
@@ -186,12 +201,13 @@ Images: ${selectedImages.map((e) => e.path).toList()}
         [timeSlot],
       );
 
-      if (response.code == 201) {
+      if (response.code == 200) {
         message = response.message ?? "Success";
         print("✅ Puja created successfully: ${response.toJson()}");
        pujaCreated=true;
-        // 🔄 Reset form after successful API call
-        resetForm();
+       await Future.delayed(const Duration(milliseconds: 200));
+      resetForm();
+
       } else {
         message = "❌ Error: ${response.message ?? "Unknown error"}";
         print("Error response: ${response.toJson()}");
@@ -204,8 +220,72 @@ Images: ${selectedImages.map((e) => e.path).toList()}
       notifyListeners();
     }
   }
+Future<void> presignedUrl() async {
+  try {
+    isLoading = true;
+    notifyListeners();
 
-  /// ✅ Reset form after successful submission
+    // Get presigned URL from backend
+    final response = await userService.presignedUrl(
+      selectedImages.first.name,
+      selectedImages.first.path,
+    );
+
+    if (response.url != null && response.url!.isNotEmpty) {
+      presignedURL = response.url;
+
+      // Upload file to S3
+      final uploadedImageUrl = await uploadToS3(response.url!, selectedImages.first);
+
+      if (uploadedImageUrl != null) {
+        presignedURL = uploadedImageUrl; // final image URL to send with createPuja
+        await createPuja();
+        resetForm();
+      } else {
+        message = "Image upload failed";
+      }
+    } else {
+      message = response.message ?? "Failed to get presigned URL";
+    }
+  } catch (e) {
+    print("⚠️ presignedUrl error: $e");
+    message = "Something went wrong";
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
+}
+
+Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
+  try {
+    final fileBytes = await imageFile.readAsBytes();
+
+    final response = await http.put(
+      Uri.parse(presignedUrl),
+      body: fileBytes,
+      headers: {
+        'Content-Type': 'image/jpeg', 
+      },
+    );
+    if (response.statusCode == 200) {
+      final imageUrl = presignedUrl.split('?').first;
+      print("✅ Uploaded successfully: $imageUrl");
+      return imageUrl;
+    } else {
+      print("❌ Upload failed: ${response.statusCode}");
+      return null;
+    }
+  } catch (e) {
+    print("⚠️ Error uploading to S3: $e");
+    return null;
+  }
+}
+
+
+
+
+
+
   void resetForm() {
     pujaName.clear();
     description.clear();
@@ -213,6 +293,7 @@ Images: ${selectedImages.map((e) => e.path).toList()}
     fee.clear();
     maxDevotees.clear();
     deitiesController.clear();
+    notifyListeners();
 
     selectedImages.clear();
     deities.clear();
@@ -220,16 +301,19 @@ Images: ${selectedImages.map((e) => e.path).toList()}
     selectedTemple = null;
     selectedDeities = "";
     selectedDeityId = "";
+    notifyListeners();
 
     bookingCutoff = false;
     priestDakshina = false;
     specialReq = false;
     hideActive = false;
+    notifyListeners();
 
     selectedStartDate = null;
     selectedEndDate = null;
     fromTime = null;
     toTime = null;
+    notifyListeners();
 
     selectedDays.updateAll((key, value) => false);
 
