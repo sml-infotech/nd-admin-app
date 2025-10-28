@@ -24,6 +24,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   List<String> deitiesList = [];
   List<Temple> templeData = [];
   List<String> templeList = [];
+  List<String> uploadedImageUrls = []; // final URLs after upload
 
   Temple? selectedTemple;
   String message = "";
@@ -81,15 +82,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     } else if (fromTime == null || toTime == null) {
       message = "Please select both From and To time";
     } else {
-        if (selectedImages.isEmpty) {
       createPuja();
-      message = "Creating puja without images...";
-    } 
-    // ✅ If images exist → call presigned URL first, then create puja
-    else {
-      presignedUrl();
-    }
-
     isValid = true;
     if (!auto) notifyListeners();
     return true;
@@ -113,11 +106,41 @@ class CreatePujaViewmodel extends ChangeNotifier {
     deities.add(name);
     notifyListeners();
   }
-  void addImages(List<String> newImages) {
+Future<void> addImages(List<String> newImages) async {
+  try {
+    isLoading = true;
+    notifyListeners();
     selectedImages.addAll(newImages.map((path) => XFile(path)));
-    print(">>>>>>>>>${selectedImages}");
+    print("🖼 Selected Images: ${selectedImages.map((e) => e.path).toList()}");
+    for (final file in selectedImages) {
+      print("📤 Getting presigned URL for ${file.name}");
+      final response = await userService.presignedUrl(file.name, file.path);
+      if (response.url != null && response.url!.isNotEmpty) {
+        final presignedUrlForFile = response.url!;
+        print("✅ Got presigned URL for ${file.name}");
+        final uploadedUrl = await uploadToS3(presignedUrlForFile, file);
+        if (uploadedUrl != null) {
+          uploadedImageUrls.add(uploadedUrl);
+          print("✅ Uploaded ${file.name} -> $uploadedUrl");
+        } else {
+          print("❌ Upload failed for ${file.name}");
+          message = "Upload failed for ${file.name}";
+        }
+      } else {
+        print("⚠️ Failed to get presigned URL for ${file.name}");
+        message = response.message ?? "Failed to get presigned URL for ${file.name}";
+      }
+    }
+
+  } catch (e) {
+    print("❌ Error in addImages: $e");
+    message = "Something went wrong: $e";
+  } finally {
+    isLoading = false;
     notifyListeners();
   }
+}
+
 
   void removeImage(int index) {
     selectedImages.removeAt(index);
@@ -167,23 +190,9 @@ class CreatePujaViewmodel extends ChangeNotifier {
         toTime: formatTimeOfDay(toTime!),
       );
 
-      // ✅ Convert days to ["Mon", "Wed", "Fri"]
       final requestDays =
           selectedDays.entries.where((e) => e.value).map((e) => e.key).toList();
 
-      print("""
---- Creating Puja ---
-Temple ID: $selectedDeityId
-Puja Name: ${pujaName.text}
-Description: ${description.text}
-Deities: $deities
-Fee: ${fee.text}
-Max Devotees: ${maxDevotees.text}
-Days: $requestDays
-From: $selectedStartDate To: $selectedEndDate
-Images: ${selectedImages.map((e) => e.path).toList()}
----------------------
-""");
 
       final response = await pujaService.cretaPuja(
         selectedDeityId,
@@ -192,7 +201,7 @@ Images: ${selectedImages.map((e) => e.path).toList()}
         description.text,
         int.parse(maxDevotees.text),
         int.parse(fee.text),
-      [presignedURL??""],
+        uploadedImageUrls,
         2,
         specialReq,
         selectedStartDate.toString(),
@@ -220,41 +229,7 @@ Images: ${selectedImages.map((e) => e.path).toList()}
       notifyListeners();
     }
   }
-Future<void> presignedUrl() async {
-  try {
-    isLoading = true;
-    notifyListeners();
 
-    // Get presigned URL from backend
-    final response = await userService.presignedUrl(
-      selectedImages.first.name,
-      selectedImages.first.path,
-    );
-
-    if (response.url != null && response.url!.isNotEmpty) {
-      presignedURL = response.url;
-
-      // Upload file to S3
-      final uploadedImageUrl = await uploadToS3(response.url!, selectedImages.first);
-
-      if (uploadedImageUrl != null) {
-        presignedURL = uploadedImageUrl; // final image URL to send with createPuja
-        await createPuja();
-        resetForm();
-      } else {
-        message = "Image upload failed";
-      }
-    } else {
-      message = response.message ?? "Failed to get presigned URL";
-    }
-  } catch (e) {
-    print("⚠️ presignedUrl error: $e");
-    message = "Something went wrong";
-  } finally {
-    isLoading = false;
-    notifyListeners();
-  }
-}
 
 Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
   try {

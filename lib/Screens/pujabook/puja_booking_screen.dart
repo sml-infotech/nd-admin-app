@@ -35,6 +35,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     if (pickedFiles.isNotEmpty) {
       final imagePaths = pickedFiles.map((e) => e.path).toList();
       viewmodel.addImages(imagePaths);
+      
     }
   }
 
