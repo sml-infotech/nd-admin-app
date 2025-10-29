@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
+import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
@@ -54,6 +55,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
         ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
+        ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
       ],
       child: FutureBuilder<bool>(
         future: _checkToken(),

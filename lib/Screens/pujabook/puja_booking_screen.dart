@@ -35,7 +35,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     if (pickedFiles.isNotEmpty) {
       final imagePaths = pickedFiles.map((e) => e.path).toList();
       viewmodel.addImages(imagePaths);
-      
+
     }
   }
 
@@ -296,13 +296,20 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
-              onPressed: () async {
-                final isValid = viewmodel.validateForm();
-                Fluttertoast.showToast(msg: viewmodel.message);
-                if (viewmodel.pujaCreated) {
-                  viewmodel.resetForm();
-                }
-              },
+            onPressed: () async {
+  final isValid =await viewmodel.validateForm();
+  if (!isValid) {
+    Fluttertoast.showToast(msg: "Form is not valid!");
+    return;
+  }
+  if (viewmodel.pujaCreated) {
+    print("Puja successfully created! Resetting form...");
+    Navigator.pop(context);
+  } else {
+    Fluttertoast.showToast(msg: "Puja creation failed. Try again.");
+  }
+}
+,
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,
                 shape: RoundedRectangleBorder(

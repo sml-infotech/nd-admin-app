@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/puja_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
@@ -59,7 +60,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   };
 
 
-  bool validateForm({bool auto = false}) {
+  Future<bool> validateForm({bool auto = false}) async {
     if (selectedTemple == null) {
       message = "Please select Temple";
     } else if (deities.isEmpty) {
@@ -82,7 +83,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     } else if (fromTime == null || toTime == null) {
       message = "Please select both From and To time";
     } else {
-      createPuja();
+     await createPuja();
     isValid = true;
     if (!auto) notifyListeners();
     return true;
@@ -211,14 +212,14 @@ Future<void> addImages(List<String> newImages) async {
       );
 
       if (response.code == 200) {
-        message = response.message ?? "Success";
+       message = response.message ?? "Success";
         print("✅ Puja created successfully: ${response.toJson()}");
        pujaCreated=true;
-       await Future.delayed(const Duration(milliseconds: 200));
-      resetForm();
+
+       notifyListeners();
 
       } else {
-        message = "❌ Error: ${response.message ?? "Unknown error"}";
+       message = "❌ Error: ${response.message ?? "Unknown error"}";
         print("Error response: ${response.toJson()}");
       }
     } catch (e) {
@@ -261,7 +262,7 @@ Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
 
 
 
-  void resetForm() {
+  Future<void> resetForm() async {
     pujaName.clear();
     description.clear();
     duration.clear();
@@ -311,6 +312,9 @@ Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
 
     notifyListeners();
   }
+
+
+
 
   @override
   void dispose() {

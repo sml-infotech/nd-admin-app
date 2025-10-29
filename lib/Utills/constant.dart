@@ -68,6 +68,8 @@ class StringConstant {
   static const String deitiestemple = "Deities";
   static const String templearchitecture = "Temple Architecture";
   static const String addPuja = "Add Puja / Seva";
+    static const String pujaList = "Pujas";
+
   static const String addSevaAndPuja="Add Seva / puja name";
   static const String slot="Slot";
   static const String selectSlot="Select Slot";

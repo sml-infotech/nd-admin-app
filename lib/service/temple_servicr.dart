@@ -1,5 +1,7 @@
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
@@ -66,4 +68,20 @@ Future<CreateTempleResponse> addTemple(
     throw Exception('API failed: $e');
   }
 }
+
+
+
+
+ Future<PujaListResponse> getPujas(String templeId) async {
+  try {
+    final url = '${UrlConstant.getPujas}?temple_id=$templeId';
+    print('Fetching getPujas: $url');
+    dynamic data = await apiService.get(url);
+    return PujaListResponse.fromJson(data);
+  } catch (e) {
+    print("getPujas service decode fails: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
   }
