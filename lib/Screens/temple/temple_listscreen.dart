@@ -124,7 +124,7 @@ class _TempleScreenState extends State<TempleScreen> {
             email: temple.email,
             description: temple.description,
             deities: temple.deities!,
-            images: [],
+            images: [], templeId: temple.id,
           ),
         );
       },

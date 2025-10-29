@@ -64,14 +64,18 @@ class _PujaListState extends State<PujaList> {
                           Row(
                             children: [
                               _buildTempleDropdown(),
-                              Expanded(child: 
-                              IconButton(
-                                iconSize: 20,
-                                onPressed: () {
-                                  Navigator.pushNamed(context, StringsRoute.addPuja);
-                                },
-                                icon: Icon(Icons.add),
-                              )),
+                              Expanded(
+                                child: IconButton(
+                                  iconSize: 20,
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.addPuja,
+                                    );
+                                  },
+                                  icon: Icon(Icons.add),
+                                ),
+                              ),
                             ],
                           ),
                           Column(children: _buildPujaList()),
@@ -99,7 +103,10 @@ class _PujaListState extends State<PujaList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 300),
-            Text("No pujas available", style: TextStyle(fontFamily: font)),
+            Text(
+              StringConstant.noPujaAvailable,
+              style: TextStyle(fontFamily: font),
+            ),
           ],
         ),
       ];
@@ -193,7 +200,8 @@ class _PujaListState extends State<PujaList> {
               SizedBox(height: 8),
               availableTimeSlots(activeTimes: formattedTimes),
               SizedBox(height: 6),
-              viewImageWidget(imageUrls: puja.sampleImages, context: context),
+              if (puja.sampleImages.isNotEmpty)
+                viewImageWidget(imageUrls: puja.sampleImages, context: context),
               SizedBox(height: 10),
             ],
           ),
@@ -256,7 +264,7 @@ class _PujaListState extends State<PujaList> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: "Deities: ",
+              text: StringConstant.deitiesText,
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -275,7 +283,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 13, 0),
       child: ExpandableText(
-        label: "Description : ",
+        label: StringConstant.descriptionText,
         text: desscription,
         maxLines: 2,
         style: AppTextStyles.templeNameDetailsStyle,
@@ -295,14 +303,12 @@ class _PujaListState extends State<PujaList> {
           items: viewmodel.templeData.map((t) => t.name).toList(),
           paddingSize: 16,
           onChanged: (value) {
-            // Find the selected temple's index by name
             final idx = viewmodel.templeData.indexWhere(
               (temple) => temple.name == value,
             );
             if (idx != -1) {
               final selectedTemple = viewmodel.templeData[idx];
               viewmodel.selectedTemple = selectedTemple.name;
-              // Call fetchPujas with the selected temple's ID
               viewmodel.fetchPujas(templeId: selectedTemple.id);
             }
           },
@@ -321,7 +327,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "From: ",
+                  text: StringConstant.from,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -337,7 +343,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "To: ",
+                  text: StringConstant.to,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -358,7 +364,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       child: Text(
-        isActive ? "Active" : "Inactive",
+        isActive ? StringConstant.active : StringConstant.inActive,
         style: TextStyle(
           color: isActive ? Colors.green : Colors.grey,
           fontFamily: font,
@@ -378,7 +384,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Fee: ",
+                  text: StringConstant.fee,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -394,7 +400,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Max Devotees: ",
+                  text: StringConstant.maxDevotee,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -411,9 +417,7 @@ class _PujaListState extends State<PujaList> {
     );
   }
 
-  Widget availableDays({
-    required List<String> activeDays, // e.g. ['Mon', 'Wed', 'Fri']
-  }) {
+  Widget availableDays({required List<String> activeDays}) {
     final allDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return Row(
@@ -451,7 +455,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(
-        "Available Days :",
+        StringConstant.availableDays,
         style: AppTextStyles.templeNameDetailsStyle.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -463,7 +467,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(
-        "Available Time Slots :",
+        StringConstant.availableslot,
         style: AppTextStyles.templeNameDetailsStyle.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -539,7 +543,7 @@ class _PujaListState extends State<PujaList> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
         child: Text(
-          "View Images",
+          StringConstant.viewImg,
           style: AppTextStyles.templeNameDetailsStyle.copyWith(
             fontWeight: FontWeight.bold,
             color: ColorConstant.buttonColor,
@@ -553,7 +557,7 @@ class _PujaListState extends State<PujaList> {
     if (activeTimes.isEmpty) {
       return Center(
         child: Text(
-          "No available time slots",
+          StringConstant.noAvailableSlot,
           style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: font),
         ),
       );

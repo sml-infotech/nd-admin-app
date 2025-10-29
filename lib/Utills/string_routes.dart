@@ -12,6 +12,8 @@ class StringsRoute {
   static const String addTempleScreen ='/addTempleScreen';
   static const String updateTempleDetails ='/updateTempleDetails';
   static const String addPuja ='/addPuja';
+  static const String pujaList ='/pujaList';
+
 
 
 

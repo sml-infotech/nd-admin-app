@@ -68,8 +68,8 @@ class StringConstant {
   static const String deitiestemple = "Deities";
   static const String templearchitecture = "Temple Architecture";
   static const String addPuja = "Add Puja / Seva";
-    static const String pujaList = "Pujas";
-
+  static const String pujaList = "Pujas";
+  static const String fee = "Fee: ";
   static const String addSevaAndPuja="Add Seva / puja name";
   static const String slot="Slot";
   static const String selectSlot="Select Slot";
@@ -88,6 +88,25 @@ class StringConstant {
   static const String toTime= "To time";
   static const String fromDate= "from Date";
   static const String toDate= "to Date";
+  static const String noPujaAvailable= "No pujas available";
+  static const String deitiesText= "Deities: ";
+  static const String descriptionText= "Description : ";
+  static const String from="From: ";
+  static const String to="To: ";
+  static const String active="Active";
+  static const String inActive="Inactive";
+  static const String maxDevotee="Max Devotees: ";
+  static const String availableDays="Available Days :";
+  static const String availableslot="Available Time Slots :";
+  static const String viewImg="View Images";
+ static const String noAvailableSlot="No available time slots";
+
+
+
+
+
+
+
 
 
   static const String specialReq=  "Special Requirements (allow user to add special requirements)";

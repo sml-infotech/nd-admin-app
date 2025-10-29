@@ -56,6 +56,7 @@ String? selectedTemple;
     if (response.data != null && response.data!.isNotEmpty) {
       templeData.addAll(response.data!);
       templeId=response.data!.first.id;
+      selectedTemple=response.data!.first.name;
       templeList = templeData.map((t) => t.name).toList();
       page++;
     }

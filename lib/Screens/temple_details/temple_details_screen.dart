@@ -343,6 +343,7 @@ default:
                 context,
                 StringsRoute.updateTempleDetails,
                 arguments: TempleDetailsArguments(
+                  templeId: widget.arguments.templeId,
                   name: widget.arguments.name,
                   address: widget.arguments.address,
                   city: widget.arguments.city,

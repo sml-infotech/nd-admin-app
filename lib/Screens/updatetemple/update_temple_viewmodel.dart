@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeName = TextEditingController();
@@ -11,8 +12,10 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeCity = TextEditingController();
   TextEditingController templeState = TextEditingController();
   TextEditingController templePincode = TextEditingController();
-
-  String message = "";
+  TempleService templeService=TempleService();
+bool isLoading=false;
+bool templeUpdated=false;
+String message = "";
 
   bool validateUpdateTemple() {
     final name = templeName.text.trim();
@@ -89,6 +92,56 @@ class UpdateTempleViewmodel extends ChangeNotifier {
     message = "";
     return true;
   }
+
+Future<void> updateTemple(String templeId) async {
+
+    try {
+        isLoading=true;
+        notifyListeners();
+      final response = await templeService.updateTemple(
+          templeId,
+          templeName.text.trim(),
+          templeLocation.text.trim(),
+          templeDescription.text.trim(),
+          templePhoneNumber.text.trim(),
+          templeEmail.text.trim(),
+          templeDeities.text.trim(),
+          templeArchitecture.text.trim(),
+          templeCity.text.trim(),
+          templeState.text.trim(),
+          [templePincode.text.trim()],[]
+       
+      );
+      if (response.code==201) {
+        print("->>> $response");
+        message = response.message ?? "success";
+        isLoading=false;
+        templeUpdated=true;
+        notifyListeners();
+      } 
+      else if(response.code==409){
+        isLoading=false;
+        message = response.message ?? "user not Found";
+        print(">>>>>>>>?????${message}");
+        notifyListeners();
+      }
+      else {
+        isLoading=false;
+        notifyListeners();
+        message =  "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading=false;
+      notifyListeners();
+   
+    }
+}
+
+
+
+
+
 
   bool isValidEmail(String email) {
     final regex = RegExp(r'^[\w-\.]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$');

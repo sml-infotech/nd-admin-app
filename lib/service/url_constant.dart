@@ -26,6 +26,8 @@ class UrlConstant {
   static String presignedUrl ="${baseUrlString()}get-presigned-url/upload";
   static String createPujaUrl ="${baseUrlString()}create-puja";
   static String getPujas ="${baseUrlString()}list-pujas";
+  static String updateTempleUrl ="${baseUrlString()}temple-update-requests";
+
 
 
 

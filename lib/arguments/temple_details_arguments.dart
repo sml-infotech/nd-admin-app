@@ -1,4 +1,5 @@
 class TempleDetailsArguments {
+  final String templeId;
   final String name;
   final String address;
   final String city;
@@ -12,6 +13,7 @@ class TempleDetailsArguments {
   final List<String> images; 
 
   TempleDetailsArguments({
+    required this.templeId,
     required this.name,
     required this.address,
     required this.city,

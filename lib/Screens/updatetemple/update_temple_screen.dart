@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart'
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:provider/provider.dart';
@@ -172,6 +173,17 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
               ),
             ],
           ),
+           if (viewModel.isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.4),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: ColorConstant.buttonColor,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -193,8 +205,17 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
           const Spacer(),
           GestureDetector(
             onTap: () 
-            {
-if(viewModel.validateUpdateTemple()){
+            async {
+         if(viewModel.validateUpdateTemple()){
+          await viewModel.updateTemple(widget.arguments.templeId);
+          Fluttertoast.showToast(msg: viewModel.message);
+        if(viewModel.templeUpdated){
+         Navigator.popUntil(context, (route) {
+                      print(route.settings.name); 
+                      return route.settings.name == StringsRoute.templeScreen;
+                    });
+              }
+
 
 }else{
   Fluttertoast.showToast(msg: viewModel.message);

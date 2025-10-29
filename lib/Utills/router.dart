@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_password_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
@@ -78,6 +79,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => PujaBookingScreen(),
+        );
+
+        case StringsRoute.pujaList:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => PujaList(),
         );
          case StringsRoute.updateTempleDetails:
             TempleDetailsArguments args = settings.arguments as TempleDetailsArguments; 
