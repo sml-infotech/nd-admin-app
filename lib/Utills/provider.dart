@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart'
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
+import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
@@ -73,7 +74,7 @@ class ProviderWidget extends StatelessWidget {
             theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const DashboardScreen() : const LoginScreen(),
+            home: hasToken ? const UpdateRequests() : const LoginScreen(),
           );
         },
       ),
