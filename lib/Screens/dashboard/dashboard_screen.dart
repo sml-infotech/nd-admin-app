@@ -54,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Navigator.pushNamed(context, StringsRoute.templeScreen);
                         }),
                         contaierWidgets(ImageStrings.sevaimg,StringConstant.sevaText,(){
-                        Navigator.pushNamed(context, StringsRoute.userDetails);
+                        Navigator.pushNamed(context, StringsRoute.pujaList);
 
                         }),
                       ],

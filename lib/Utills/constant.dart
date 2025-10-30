@@ -9,16 +9,13 @@ class StringConstant {
   static const String enterName ="Enter Name";
   static const String enterPassword = "Enter valid password";
   static const String enterConfirmPassword = "Enter Confirm password";
-
   static const String termsAndCondition = "I agree to the Terms & Conditions and Privacy policy";
   static const String login = "Login";
   static const String reset = "Reset";
-    static const String resetPassword = "Reset Password";
-
+  static const String resetPassword = "Reset Password";
   static const String resetSubText = "Enter a new password and confirm it.";
   static const String fogotSubtext="Enter your registered email address and we’ll send you an OTP to reset your password.";
   static const String forgotPassword1 = "Forgot Password";
-
   static const String forgotPassword = "Forgot Password?";
   static const String welcomeBack = "Welcome";
   static const String nammaDaivaSmall = "Namma Daiva";
@@ -39,6 +36,11 @@ class StringConstant {
   static const String resend = "Resend Code";
   static const String verify = "Verify";
   static const String createAcc = " Create User";
+  static const String addTemple = "Add Temple";
+  static const String templeName = "Temple Name";
+  static const String pincode = "pincode";
+  static const String deities = "deities";
+  static const String images = "images";
   static const String userDetails = "User Details";
   static const String selectedRole = "Select Role";
   static const String role = "Role";
@@ -52,9 +54,73 @@ class StringConstant {
   static const String state = "State:";
   static const String architecture = "Architecture:";
   static const String address = "Address:";
+  static const String cityy = "City";
+  static const String statee = "State";
+  static const String architecturee = "Architecture";
+  static const String addresss = "Address";
+  static const String description = "description";
+  static const String save = "Save";
+  static const String templename = "Temple Name";
+  static const String templelocation = "Temple Location";
+  static const String templedescription = "Temple Description";
+  static const String templephonenumber = "Temple Phone Number";
+  static const String templeemail = "Temple Email";
+  static const String deitiestemple = "Deities";
+  static const String templearchitecture = "Temple Architecture";
+  static const String editImages = "Edit Images";
+
+  static const String addPuja = "Add Puja / Seva";
+  static const String pujaList = "Pujas";
+  static const String updateRequests = "updateRequests";
+  static const String fee = "Fee: ";
+  static const String addSevaAndPuja="Add Seva / puja name";
+  static const String slot="Slot";
+  static const String selectSlot="Select Slot";
+  static const String date="Date";
+  static const String enterPuja="Enter Puja / Seva duration time";
+  static const String duration="Duration";
+  static const String cost="Enter Cost";
+  static const String fees="Fees";
+  static const String maxDevote="Enter the maximum devotees allowed for puja / seva";
+  static const String maxNoDevote="Maximum number of Devotees";
+  static const String uploadText= "Upload Image (Optional)";
+  static const String uploadImageSeva= "Upload Image (puja/seva)";
+  static const String cutOffText= "Booking Cutoff / Notice";
+  static const String priestText= "Priest Dakshina (Optional)";
+  static const String fromTime= "From time";
+  static const String toTime= "To time";
+  static const String fromDate= "from Date";
+  static const String toDate= "to Date";
+  static const String noPujaAvailable= "No pujas available";
+  static const String deitiesText= "Deities: ";
+  static const String descriptionText= "Description : ";
+  static const String from="From: ";
+  static const String to="To: ";
+  static const String active="Active";
+  static const String inActive="Inactive";
+  static const String maxDevotee="Max Devotees: ";
+  static const String availableDays="Available Days :";
+  static const String availableslot="Available Time Slots :";
+  static const String viewImg="View Images";
+ static const String noAvailableSlot="No available time slots";
+  static const String hideDetails="Hide Details";
+  static const String viewAndApprove="View & Approve";
+  static const String previousData="Previous Data";
+  static const String changesData="Changes Data";
+    static const String reason="Reason";
 
 
 
+
+
+
+
+
+
+
+
+
+  static const String specialReq=  "Special Requirements (allow user to add special requirements)";
 
 }
 
@@ -63,7 +129,6 @@ class ColorConstant {
     static const Color primaryColor = Color(0xff770425);
     static const Color eyeColor = Color(0xffcdcdcd);
     static const Color buttonColor = Color(0xff770425);
-
 }
 
 

@@ -9,6 +9,14 @@ class StringsRoute {
   static const String resetPassword ='/resetPassword';
   static const String userDetails ='/userDetails';
   static const String templeScreen ='/templeScreen';
+  static const String addTempleScreen ='/addTempleScreen';
+  static const String updateTempleDetails ='/updateTempleDetails';
+  static const String addPuja ='/addPuja';
+  static const String pujaList ='/pujaList';
+
+
+
+
 
 
 

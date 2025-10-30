@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TempleDetailsScreen extends StatefulWidget {
-  const TempleDetailsScreen({super.key});
+  final TempleDetailsArguments arguments;
+
+  const TempleDetailsScreen({super.key, required this.arguments});
 
   @override
   State<TempleDetailsScreen> createState() => _TempleDetailsScreenState();
@@ -15,17 +20,31 @@ class TempleDetailsScreen extends StatefulWidget {
 class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   int _currentIndex = 0;
   int _selectedTab = 0;
+  String? _token;
+  String? _role;
 
-  final List<String> templeImages = [
-    "https://picsum.photos/id/1011/800/400",
-    "https://picsum.photos/id/1015/800/400",
-    "https://picsum.photos/id/1016/800/400",
-  ];
+  final List<String> tabTitles = ["Map", "About", "Events"];
 
-  final List<String> tabTitles = ["Map", "About", "Events",];
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _token = prefs.getString('authToken');
+      _role = prefs.getString('userRole');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(">>>>>>${widget.arguments.address}");
+    print(">>>>>>${widget.arguments.architecture}");
+    print(">>>>>>${widget.arguments.city}");
+    print(">>>>>>1111${widget.arguments.images}");
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -55,16 +74,27 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                     carouselWidget(),
                     const SizedBox(height: 2),
                     carouselDotWidget(),
-                    templeNameWidget(),
+                    templeNameWidget(widget.arguments.name),
                     const SizedBox(height: 8),
-                    templeDetailContactWidget(StringConstant.phone, "+91 9876543210", ImageStrings.phone),
-                    templeDetailContactWidget(StringConstant.email, "info@svtemple.org", ImageStrings.phone),
+                    templeDetailContactWidget(
+                      StringConstant.phone,
+                      widget.arguments.phoneNumber,
+                      ImageStrings.phone,
+                    ),
+                    templeDetailContactWidget(
+                      StringConstant.email,
+                      widget.arguments.email,
+                      ImageStrings.phone,
+                    ),
                     contentWidgets(),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
-                      child: getSelectedTabContent(_selectedTab),
+                      child: getSelectedTabContent(
+                        _selectedTab,
+                        widget.arguments,
+                      ),
                     ),
                   ],
                 ),
@@ -76,128 +106,124 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     );
   }
 
+  Widget contentWidgets() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: List.generate(tabTitles.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 60.0),
 
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Column(
+                spacing: 4,
+                children: [
+                  _getTabIcon(index),
 
-Widget contentWidgets(){
-  return   Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.start, 
-    children: List.generate(tabTitles.length, (index) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 60.0,), 
-        
-          child: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: Column(
-            spacing: 4,
-            children: [
-                 _getTabIcon(index),
-                  
-              Text(
-                tabTitles[index],
-                style:_selectedTab == index ? AppTextStyles.tabTextStyle :AppTextStyles.unTabTextStyle,
+                  Text(
+                    tabTitles[index],
+                    style: _selectedTab == index
+                        ? AppTextStyles.tabTextStyle
+                        : AppTextStyles.unTabTextStyle,
+                  ),
+                ],
               ),
-             
-            ],
-          ) ,
               onPressed: () {
-                  setState(() {
-                    _selectedTab = index;
-                  });
-                },
-          
-        
-      ));
-    }),
-  ));
-}
-
-
-
-
-Widget _getTabIcon(int index) {
-  switch (index) {
-    case 0:
-      return Image.asset(
-        ImageStrings.mapicon,
-        width: 24,
-        height: 24,
-        color: _selectedTab == index ? ColorConstant.buttonColor : Colors.grey,
-      );
-    case 1:
-      return Image.asset(
-         ImageStrings.abouticon,
-        width: 24,
-        height: 24,
-         color: _selectedTab == index ? ColorConstant.buttonColor : Colors.grey,
-      );
-default:
-      return Image.asset(
-        ImageStrings.eventicon,
-        width: 24,
-        height: 24,
-         color: _selectedTab == index ? ColorConstant.buttonColor : Colors.grey,
-      );
-   
+                setState(() {
+                  _selectedTab = index;
+                });
+              },
+            ),
+          );
+        }),
+      ),
+    );
   }
-}
 
-
-  Widget getSelectedTabContent(int index) {
+  Widget _getTabIcon(int index) {
     switch (index) {
       case 0:
-        return mapTab();
+        return Image.asset(
+          ImageStrings.mapicon,
+          width: 24,
+          height: 24,
+          color: _selectedTab == index
+              ? ColorConstant.buttonColor
+              : Colors.grey,
+        );
       case 1:
-        return aboutTab();
-    default:
-        return eventsTab();
-      
-      
+        return Image.asset(
+          ImageStrings.abouticon,
+          width: 24,
+          height: 24,
+          color: _selectedTab == index
+              ? ColorConstant.buttonColor
+              : Colors.grey,
+        );
+      default:
+        return Image.asset(
+          ImageStrings.eventicon,
+          width: 24,
+          height: 24,
+          color: _selectedTab == index
+              ? ColorConstant.buttonColor
+              : Colors.grey,
+        );
     }
   }
 
-  Widget mapTab() => Padding(
-        key: const ValueKey("Map"),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+  Widget getSelectedTabContent(int index, TempleDetailsArguments widget) {
+    switch (index) {
+      case 0:
+        return mapTab(widget);
+      case 1:
+        return aboutTab();
+      default:
+        return eventsTab();
+    }
+  }
+
+  Widget mapTab(TempleDetailsArguments widget) => Padding(
+    key: const ValueKey("Map"),
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      children: [
+        // Image.network(
+        //   "https://maps.googleapis.com/maps/api/staticmap?center=Madurai,India&zoom=13&size=600x300&key=YOUR_API_KEY",
+        //   height: 200,
+        //   fit: BoxFit.cover,
+        // ),
+        const SizedBox(height: 10),
+        Text(widget.address),
+        const SizedBox(height: 5),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-              "https://maps.googleapis.com/maps/api/staticmap?center=Madurai,India&zoom=13&size=600x300&key=YOUR_API_KEY",
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height: 10),
-            const Text("Madurai Main, Madurai\nTamil Nadu"),
-            const SizedBox(height: 5),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.location_on, color: Colors.red),
-                Text("8.2 km"),
-              ],
-            )
+            Icon(Icons.location_on, color: Colors.red),
+            Text("8.2 km"),
           ],
         ),
-      );
+      ],
+    ),
+  );
 
   Widget aboutTab() => Padding(
-        key: const ValueKey("About"),
-        padding: const EdgeInsets.all(16.0),
-        child: const Text("About the temple goes here."),
-      );
+    key: const ValueKey("About"),
+    padding: const EdgeInsets.all(16.0),
+    child: const Text("About the temple goes here."),
+  );
 
   Widget eventsTab() => Padding(
-        key: const ValueKey("Events"),
-        padding: const EdgeInsets.all(16.0),
-        child: const Text("Upcoming events go here."),
-      );
-
-
+    key: const ValueKey("Events"),
+    padding: const EdgeInsets.all(16.0),
+    child: const Text("Upcoming events go here."),
+  );
 
   Widget carouselWidget() {
     return CarouselSlider(
-      items: templeImages
+      items: widget.arguments.images
           .map(
             (image) => ClipRRect(
               borderRadius: BorderRadius.circular(15),
@@ -230,7 +256,7 @@ default:
   Widget carouselDotWidget() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: templeImages.asMap().entries.map((entry) {
+      children: widget.arguments.images.asMap().entries.map((entry) {
         return GestureDetector(
           onTap: () => setState(() {
             _currentIndex = entry.key;
@@ -251,27 +277,25 @@ default:
     );
   }
 
-  Widget templeNameWidget() {
+  Widget templeNameWidget(String templeName) {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          "Arulmigu Arunachaleswarar Temple",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
+        child: Text(templeName, style: AppTextStyles.templeNameDetailsStyle),
       ),
     );
   }
 
-  Widget templeDetailContactWidget(String title, String subtitle, String image) {
+  Widget templeDetailContactWidget(
+    String title,
+    String subtitle,
+    String image,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: Row(
-        children: [
-          imageWidget(image),
-          templeContacts(title, subtitle),
-        ],
+        children: [imageWidget(image), templeContacts(title, subtitle)],
       ),
     );
   }
@@ -308,10 +332,42 @@ default:
             },
           ),
           const Spacer(),
-          Text(StringConstant.templeDetail, style: AppTextStyles.appBarTitleStyle),
-          const Spacer(),
-          Text(StringConstant.edit, style: AppTextStyles.appBarTitleStyle),
-        ],
+          Text(
+            StringConstant.templeDetail,
+            style: AppTextStyles.appBarTitleStyle,
+          ),
+          
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.updateTempleDetails,
+                  arguments: TempleDetailsArguments(
+                    templeId: widget.arguments.templeId,
+                    name: widget.arguments.name,
+                    address: widget.arguments.address,
+                    city: widget.arguments.city,
+                    state: widget.arguments.state,
+                    pincode: widget.arguments.pincode,
+                    architecture: widget.arguments.architecture,
+                    phoneNumber: widget.arguments.phoneNumber,
+                    email: widget.arguments.email,
+                    description: widget.arguments.description,
+                    deities: widget.arguments.deities,
+                    images: widget.arguments.images,
+                  ),
+                );
+              },
+              child: Text(
+                StringConstant.edit,
+                style: AppTextStyles.appBarTitleStyle,
+              ),
+            ),
+       
+       
+        ]
+      
       ),
     );
   }
