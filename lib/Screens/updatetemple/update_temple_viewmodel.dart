@@ -12,7 +12,6 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UpdateTempleViewmodel extends ChangeNotifier {
-  // 🧩 Controllers
   TextEditingController templeName = TextEditingController();
   TextEditingController templeLocation = TextEditingController();
   TextEditingController templeDescription = TextEditingController();
@@ -24,18 +23,15 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeState = TextEditingController();
   TextEditingController templePincode = TextEditingController();
 
-  // 🧩 Services
   TempleService templeService = TempleService();
   UserService userService = UserService();
 
-  // 🧩 States
   bool isLoading = false;
   bool templeUpdated = false;
   String message = "";
   List<String> images = [];
   TempleDetailsArguments? originalTempleData;
 
-  // 🧩 Validation
   bool validateUpdateTemple() {
     final name = templeName.text.trim();
     final location = templeLocation.text.trim();
@@ -102,7 +98,6 @@ class UpdateTempleViewmodel extends ChangeNotifier {
     return true;
   }
 
-  // 🖼 Image Upload Logic
   List<XFile> selectedImages = [];
   List<String> uploadedImageUrls = [];
 
@@ -112,7 +107,9 @@ class UpdateTempleViewmodel extends ChangeNotifier {
       notifyListeners();
 
       selectedImages.addAll(newImages.map((path) => XFile(path)));
-      debugPrint("🖼 Selected Images: ${selectedImages.map((e) => e.path).toList()}");
+      debugPrint(
+        "🖼 Selected Images: ${selectedImages.map((e) => e.path).toList()}",
+      );
 
       for (final file in selectedImages) {
         debugPrint("📤 Getting presigned URL for ${file.name}");
@@ -130,7 +127,9 @@ class UpdateTempleViewmodel extends ChangeNotifier {
             message = "Upload failed for ${file.name}";
           }
         } else {
-          message = response.message ?? "Failed to get presigned URL for ${file.name}";
+          message =
+              response.message ??
+              "Failed to get presigned URL for ${file.name}";
         }
       }
     } catch (e, st) {
@@ -143,13 +142,12 @@ class UpdateTempleViewmodel extends ChangeNotifier {
     }
   }
 
-void removeImage(int index) {
-  if (index >= 0 && index < images.length) {
-    images.removeAt(index);
-    notifyListeners();
+  void removeImage(int index) {
+    if (index >= 0 && index < images.length) {
+      images.removeAt(index);
+      notifyListeners();
+    }
   }
-}
-
 
   Future<void> updateTemple(String templeId) async {
     final prefs = await SharedPreferences.getInstance();
@@ -163,7 +161,8 @@ void removeImage(int index) {
       final listEquals = const ListEquality().equals;
 
       bool isChanged(dynamic oldVal, dynamic newVal) {
-        return newVal != null && newVal.toString().trim() != oldVal?.toString().trim();
+        return newVal != null &&
+            newVal.toString().trim() != oldVal?.toString().trim();
       }
 
       if (isChanged(originalTempleData?.name, templeName.text.trim())) {
@@ -174,7 +173,10 @@ void removeImage(int index) {
         changes["address"] = templeLocation.text.trim();
       }
 
-      if (isChanged(originalTempleData?.description, templeDescription.text.trim())) {
+      if (isChanged(
+        originalTempleData?.description,
+        templeDescription.text.trim(),
+      )) {
         changes["description"] = templeDescription.text.trim();
       }
 
@@ -190,7 +192,10 @@ void removeImage(int index) {
         changes["pincode"] = templePincode.text.trim();
       }
 
-      if (isChanged(originalTempleData?.phoneNumber, templePhoneNumber.text.trim())) {
+      if (isChanged(
+        originalTempleData?.phoneNumber,
+        templePhoneNumber.text.trim(),
+      )) {
         changes["phone_number"] = templePhoneNumber.text.trim();
       }
 
@@ -198,26 +203,29 @@ void removeImage(int index) {
         changes["email"] = templeEmail.text.trim();
       }
 
-      if (isChanged(originalTempleData?.architecture, templeArchitecture.text.trim())) {
+      if (isChanged(
+        originalTempleData?.architecture,
+        templeArchitecture.text.trim(),
+      )) {
         changes["architecture"] = templeArchitecture.text.trim();
       }
 
-      // 🛕 Compare deities
-      final newDeities =
-          templeDeities.text.trim().split(',').map((e) => e.trim()).toList();
+      final newDeities = templeDeities.text
+          .trim()
+          .split(',')
+          .map((e) => e.trim())
+          .toList();
       if (!listEquals(originalTempleData?.deities ?? [], newDeities)) {
         changes["deities"] = newDeities;
       }
 
-     // 🖼 Compare images (handle nulls and ordering)
-final oldImages = List<String>.from(originalTempleData?.images ?? []);
-final newImages = List<String>.from(images);
+      final oldImages = List<String>.from(originalTempleData?.images ?? []);
+      final newImages = List<String>.from(images);
 
-if (oldImages.length != newImages.length ||
-    !const ListEquality().equals(oldImages, newImages)) {
-  changes["images"] = newImages;
-}
-
+      if (oldImages.length != newImages.length ||
+          !const ListEquality().equals(oldImages, newImages)) {
+        changes["images"] = newImages;
+      }
 
       if (changes.isEmpty) {
         message = "No changes detected.";
@@ -229,7 +237,6 @@ if (oldImages.length != newImages.length ||
       debugPrint("📦 Changes to send: $changes");
 
       if (userRole == "Super Admin" || userRole == "Admin") {
-        // Full overwrite (Admin mode)
         final updateTempleDataByAdmin = AddTemple(
           templeId: templeId,
           name: templeName.text.trim(),
@@ -241,24 +248,30 @@ if (oldImages.length != newImages.length ||
           phoneNumber: templePhoneNumber.text.trim(),
           email: templeEmail.text.trim(),
           description: templeDescription.text.trim(),
-          deities: ["dsfsdf"],images: newImages
+          deities: ["dsfsdf"],
+          images: newImages,
         );
-        final response =
-            await templeService.updateTemplebyAdmin(updateTempleDataByAdmin);
+        final response = await templeService.updateTemplebyAdmin(
+          updateTempleDataByAdmin,
+        );
 
-        templeUpdated = response.message=="Temple updated successfully";
-        message = response.message ?? (templeUpdated
-            ? "Temple updated successfully."
-            : "Temple update failed.");
+        templeUpdated = response.message == "Temple updated successfully";
+        message =
+            response.message ??
+            (templeUpdated
+                ? "Temple updated successfully."
+                : "Temple update failed.");
       } else {
         final payload = {"temple_id": templeId, "changes": changes};
         debugPrint("📤 Sending payload: $payload");
 
         final response = await templeService.updateTemple(payload);
         templeUpdated = response.code == 201;
-        message = response.message ?? (templeUpdated
-            ? "Temple updated successfully."
-            : "Temple update failed.");
+        message =
+            response.message ??
+            (templeUpdated
+                ? "Temple updated successfully."
+                : "Temple update failed.");
       }
     } catch (e, st) {
       debugPrint("❌ Update failed: $e");
@@ -271,13 +284,11 @@ if (oldImages.length != newImages.length ||
     }
   }
 
-  // 🧩 Email validation helper
   bool isValidEmail(String email) {
     final regex = RegExp(r'^[\w-\.]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$');
     return regex.hasMatch(email);
   }
 
-  // 🖼 Upload to S3 Helper
   Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
     try {
       final fileBytes = await imageFile.readAsBytes();

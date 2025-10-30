@@ -203,7 +203,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
        Row(
   children: [
     DatePickerField(
-      title: "From Date",
+      title: StringConstant.fromDate,
       selectedDate: viewmodel.selectedStartDate,
       onDatePicked: (date) => setState(() {
         viewmodel.selectedStartDate = date;
@@ -211,7 +211,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       }),
     ),
     DatePickerField(
-      title: "To Date",
+      title: StringConstant.toTime,
       selectedDate: viewmodel.selectedEndDate,
       fromDate: viewmodel.selectedStartDate, 
       onDatePicked: (date) => setState(() {
@@ -220,15 +220,15 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     ),
   ],
 ),
+Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 0),child: 
+TimeSlotSelector(
+  initialSlots: viewmodel.timeSlots,
+  onChanged: (updatedSlots) {
+    setState(() => viewmodel.timeSlots = updatedSlots);
+  },
+),)
 
-        TimePickerRow(
-          fromTime: viewmodel.fromTime,
-          toTime: viewmodel.toTime,
-          fromDate: viewmodel.selectedStartDate,
-          toDate: viewmodel.selectedEndDate,
-          onFromPicked: (t) => setState(() => viewmodel.fromTime = t),
-          onToPicked: (t) => setState(() => viewmodel.toTime = t),
-        ),
+
       ],
     );
   }

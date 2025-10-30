@@ -59,6 +59,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     "Sun": false,
   };
 
+  List<TimeSlot> timeSlots = [];
 
   Future<bool> validateForm({bool auto = false}) async {
     if (selectedTemple == null) {
@@ -80,9 +81,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       message = "Please select a start date";
     } else if (selectedEndDate == null) {
       message = "Please select an end date";
-    } else if (fromTime == null || toTime == null) {
-      message = "Please select both From and To time";
-    } else {
+    }  else {
      await createPuja();
     isValid = true;
     if (!auto) notifyListeners();
@@ -186,11 +185,13 @@ Future<void> addImages(List<String> newImages) async {
       isLoading = true;
       notifyListeners();
 
-      final timeSlot = TimeSlot(
-        fromTime: formatTimeOfDay(fromTime!),
-        toTime: formatTimeOfDay(toTime!),
-      );
-
+   
+if (timeSlots.isEmpty) {
+      message = "Please add at least one time slot";
+      isLoading = false;
+      notifyListeners();
+      return;
+    }
       final requestDays =
           selectedDays.entries.where((e) => e.value).map((e) => e.key).toList();
 
@@ -208,7 +209,7 @@ Future<void> addImages(List<String> newImages) async {
         selectedStartDate.toString(),
         selectedEndDate.toString(),
         requestDays,
-        [timeSlot],
+        timeSlots,
       );
 
       if (response.code == 200) {

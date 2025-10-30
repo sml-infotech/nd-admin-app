@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class Puja {
@@ -9,11 +8,11 @@ class Puja {
   final int maximumNoOfDevotees;
   final double fee;
   final List<String> sampleImages;
-  final int bookingCutoffNotice; 
+  final int bookingCutoffNotice;
   final bool allowsSpecialRequirements;
   final String fromDate;
   final String toDate;
-  final List<String> days; 
+  final List<String> days;
   final List<TimeSlot> timeSlots;
 
   Puja({
@@ -36,13 +35,17 @@ class Puja {
     return Puja(
       templeId: json['temple_id'] as String,
       pujaName: json['puja_name'] as String,
-      deitiesName: (json['deities_name'] as List<dynamic>).map((e) => e as String).toList(),
+      deitiesName: (json['deities_name'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       description: json['description'] as String,
       maximumNoOfDevotees: json['maximumNoOfDevotees'] is int
           ? json['maximumNoOfDevotees'] as int
           : (json['maximumNoOfDevotees'] as num).toInt(),
       fee: (json['fee'] as num).toDouble(),
-      sampleImages: (json['sample_images'] as List<dynamic>).map((e) => e as String).toList(),
+      sampleImages: (json['sample_images'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       bookingCutoffNotice: json['booking_cutoff_notice'] is int
           ? json['booking_cutoff_notice'] as int
           : (json['booking_cutoff_notice'] as num).toInt(),
@@ -51,10 +54,11 @@ class Puja {
       toDate: json['to_date'] as String,
       days: (json['days'] as List<dynamic>).map((e) => e as String).toList(),
       timeSlots: json['time_slots'] != null
-          ? (json['time_slots'] as List<dynamic>)
-              .map((ts) => TimeSlot.fromJson(ts as Map<String, dynamic>))
-              .toList()
-          : <TimeSlot>[],
+    ? (json['time_slots'] as List<dynamic>)
+        .map((ts) => TimeSlot.fromJson(ts as Map<String, dynamic>))
+        .toList()
+    : <TimeSlot>[],
+
     );
   }
 
@@ -76,38 +80,31 @@ class Puja {
     };
   }
 
-  static String _formatDate(DateTime dt) => "${dt.toIso8601String().split('T').first}"; 
+  static String _formatDate(DateTime dt) =>
+      "${dt.toIso8601String().split('T').first}";
 }
 
 class TimeSlot {
   final String fromTime; 
-  final String toTime; 
+  final String toTime;   
 
-  TimeSlot({required this.fromTime, required this.toTime});
+  TimeSlot({
+    required this.fromTime,
+    required this.toTime,
+  });
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
     return TimeSlot(
-      fromTime: json['fromTime'] as String,
-      toTime: json['toTime'] as String,
+      fromTime: json['fromTime'] as String? ?? '',
+      toTime: json['toTime'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'fromTime': fromTime,
-      'toTime': toTime,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'fromTime': fromTime,
+        'toTime': toTime,
+      };
 
-  TimeOfDay toTimeOfDayFrom() => _parseToTimeOfDay(fromTime);
-  TimeOfDay toTimeOfDayTo() => _parseToTimeOfDay(toTime);
-
-  static TimeOfDay _parseToTimeOfDay(String value) {
-    final parts = value.split(':').map((s) => int.tryParse(s) ?? 0).toList();
-    final hour = parts.isNotEmpty ? parts[0] : 0;
-    final minute = parts.length > 1 ? parts[1] : 0;
-    return TimeOfDay(hour: hour, minute: minute);
-  }
+  @override
+  String toString() => '$fromTime - $toTime';
 }
-
-
