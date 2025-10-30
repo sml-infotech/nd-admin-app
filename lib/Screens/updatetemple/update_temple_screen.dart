@@ -35,6 +35,8 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
   }
 
   void _setInitialData() {
+      viewModel.originalTempleData = widget.arguments; 
+
     viewModel.templeName.text = widget.arguments.name ?? '';
     viewModel.templeLocation.text = widget.arguments.address ?? '';
     viewModel.templeDescription.text = widget.arguments.description ?? '';
@@ -45,7 +47,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeCity.text = widget.arguments.city ?? "";
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
-    viewModel.images = widget.arguments.images ?? [];
+   viewModel.images = List<String>.from(widget.arguments.images ?? []);
   }
 
   @override
@@ -219,6 +221,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                     print(route.settings.name);
                     return route.settings.name == StringsRoute.templeScreen;
                   });
+                  viewModel.templeUpdated=false;
                 }
               } else {
                 Fluttertoast.showToast(msg: viewModel.message);

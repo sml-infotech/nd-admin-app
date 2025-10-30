@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
@@ -23,7 +24,7 @@ class _TempleScreenState extends State<TempleScreen> {
   void initState() {
     super.initState();
     final viewModel = Provider.of<TempleViewModel>(context, listen: false);
-    viewModel.fetchTemples();
+    // viewModel.fetchTemples();
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -45,7 +46,12 @@ class _TempleScreenState extends State<TempleScreen> {
   Widget build(BuildContext context) {
     return Consumer<TempleViewModel>(
       builder: (context, viewModel, _) {
-        return Scaffold(
+        return FocusDetector(onFocusGained: () async {
+          print(">>>>>><<<<<<");
+          await         viewModel.fetchTemples(refresh: true);
+
+        },child: 
+        Scaffold(
           backgroundColor: ColorConstant.buttonColor,
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -86,7 +92,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       ),
                   ],
                 ),
-        );
+         ) );
       },
     );
   }

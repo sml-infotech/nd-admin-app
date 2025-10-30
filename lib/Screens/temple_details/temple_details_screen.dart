@@ -336,7 +336,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
             StringConstant.templeDetail,
             style: AppTextStyles.appBarTitleStyle,
           ),
-          if (_role == "Temple") ...[
+          
             const Spacer(),
             GestureDetector(
               onTap: () {
@@ -364,11 +364,10 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                 style: AppTextStyles.appBarTitleStyle,
               ),
             ),
-          ],
-          if (_role == "Temple") ...[
-         ]
-         else Spacer(),
-        ],
+       
+       
+        ]
+      
       ),
     );
   }

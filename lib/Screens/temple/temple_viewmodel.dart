@@ -14,15 +14,10 @@ class TempleViewModel extends ChangeNotifier {
   final int limit = 10;
 
   /// Fetch temples with pagination
-  Future<void> fetchTemples({bool reset = false}) async {
-    if (reset) {
-      page = 1;
-      hasMore = true;
-      temples.clear();
-      notifyListeners();
-    }
-
-    if (!hasMore) return;
+  Future<void> fetchTemples({bool refresh = false}) async {
+  
+    try {
+        if (isLoading) return;
 
     if (page == 1) {
       isLoading = true;
@@ -30,8 +25,12 @@ class TempleViewModel extends ChangeNotifier {
       isLoadingMore = true;
     }
     notifyListeners();
-
-    try {
+      if (refresh) {
+        temples.clear();
+        page = 1;
+        hasMore = true;
+      }
+     
       final response = await authService.getTemples(page: page, limit: limit);
 
       if (response.data != null && response.data!.isNotEmpty) {

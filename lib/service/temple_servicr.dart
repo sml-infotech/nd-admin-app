@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_temple_admin/admin_update_templemodal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -89,41 +90,41 @@ Future<CreateTempleResponse> addTemple(
 
 
 
-Future<TempleUpdateResponse> updateTemple(
-  String templeId,
-  String name,
-  String address,
-  String city,
-  String state,
-  String pincode,
-  String architecture,
-  String phoneNumber,
-  String email,
-  String description,
-  List<String> deities,
-  List<String> images,
-) async {
+Future<TempleUpdateResponse> updateTemple(Map<String, dynamic> payload) async {
   try {
-final templeChanges=TempleChanges(name:name ,address:address ,city:city ,state:state ,pincode:pincode ,phoneNumber:phoneNumber ,email:email ,deities:deities ,description:description ,);
-
-    final request = TempleUpdatePayload(templeId:templeId ,changes: templeChanges);
-    
-    print(">>>>>>>>>>>>>>> Request JSON >>>>>>>>>>>");
-    print(request.toJson());
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    print(">>>>>>>>>>>>>>> Temple Update Request JSON >>>>>>>>>>>");
+    print(payload);
+    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     final data = await apiService.post(
       UrlConstant.updateTempleUrl,
+      payload,
+    );
+
+    print("✅ Temple Update API Response >>>> $data");
+    return TempleUpdateResponse.fromJson(data);
+  } catch (e) {
+    print("❌ Temple Update service failed: $e");
+    throw Exception('Temple update API failed: $e');
+  }
+}
+
+Future<AdminTempleUpdateResponse> updateTemplebyAdmin(AddTemple datas) async {
+  try {
+  final request=datas;
+    final data = await apiService.put(
+      UrlConstant.updateTempleAdminUrl,
       request.toJson(),
     );
 
-    print("API Response >>>> $data");
-    return TempleUpdateResponse.fromJson(data);
+    print("✅ Temple Update API Response >>>> $data");
+    return AdminTempleUpdateResponse.fromJson(data);
   } catch (e) {
-    print("temple Update service decode fails: $e");
-    throw Exception('API failed: $e');
+    print("❌ Temple Update service failed: $e");
+    throw Exception('Temple update API failed: $e');
   }
 }
+
 
 
 Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limit = 10}) async {

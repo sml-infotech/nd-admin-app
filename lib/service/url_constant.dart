@@ -28,14 +28,6 @@ class UrlConstant {
   static String getPujas ="${baseUrlString()}list-pujas";
   static String updateTempleUrl ="${baseUrlString()}temple-update-requests";
   static String updateTempleRequestUrl ="${baseUrlString()}list-temple-update-requests";
-
-
-
-
-
-
-
-
-
+  static String updateTempleAdminUrl ="${baseUrlString()}update-temple";
  
 }

@@ -34,6 +34,7 @@ class TempleChanges {
   String? email;
   List<String>? deities;
   String? architecture;
+  List<String>? images;
 
   TempleChanges({
     this.name,
@@ -46,6 +47,7 @@ class TempleChanges {
     this.email,
     this.deities,
     this.architecture,
+    this.images,
   });
 
   factory TempleChanges.fromJson(Map<String, dynamic> json) {
@@ -62,6 +64,7 @@ class TempleChanges {
           ? List<String>.from(json['deities'])
           : [],
       architecture: json['architecture'],
+      images: json['images'],
     );
   }
 
@@ -77,6 +80,7 @@ class TempleChanges {
     data['email'] = email;
     data['deities'] = deities;
     data['architecture'] = architecture;
+    data['images'] = images;
     return data;
   }
 }
