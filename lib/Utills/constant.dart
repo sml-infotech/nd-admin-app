@@ -101,6 +101,14 @@ class StringConstant {
   static const String availableslot="Available Time Slots :";
   static const String viewImg="View Images";
  static const String noAvailableSlot="No available time slots";
+  static const String hideDetails="Hide Details";
+  static const String viewAndApprove="View & Approve";
+  static const String previousData="Previous Data";
+  static const String changesData="Changes Data";
+    static const String reason="Reason";
+
+
+
 
 
 

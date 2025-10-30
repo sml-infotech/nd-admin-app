@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
+import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
+import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class UpdateRequests extends StatefulWidget {
   const UpdateRequests({super.key});
@@ -11,70 +16,84 @@ class UpdateRequests extends StatefulWidget {
 }
 
 class _UpdateRequestsState extends State<UpdateRequests> {
-  final List<Map<String, dynamic>> requests = [
-    {
-      "templeName": "Sri Murugan Temple",
-      "email": "temple@gmail.com",
-      "address": "Maruthamalai Temple, Near Vellode",
-      "pincode": "638112",
-      "previousData": {
-        "city": "Coimbatore",
-        "state": "Tamil Nadu",
-        "phone_number": "9876543210",
-        "description": "Old temple data example",
-      },
-      "changesData": {
-        "city": "Erode",
-        "state": "Tamil Nadu",
-        "phone_number": "9999999999",
-        "description":
-            "Updated temple d vbnhnnlkmnhlknlkghhnkghlkkmnlkghnklnfghkln knlfghknlkfghfgh klnfghngfhata exampl e",
-      },
-    },
-  ];
-
-  int? expandedIndex;
-
-  /// Track rejected fields and reasons for each request
-  final Map<int, Map<String, String>> rejectedReasons = {};
-
-  /// ✅ Track approved fields for each request
-  final Map<int, Set<String>> approvedFields = {};
+  late UpdateRequestViewModel viewmodel;
 
   @override
   Widget build(BuildContext context) {
+    viewmodel = Provider.of<UpdateRequestViewModel>(context);
+
     final screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          SizedBox(height: screenHeight * 0.02),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: List.generate(
-                      requests.length,
-                      (index) => _buildUpdateRequestCard(index),
+    return FocusDetector(
+      onFocusGained: () async {
+        await viewmodel.fetchUpdateRequests();
+      },
+      child: Scaffold(
+        backgroundColor: ColorConstant.buttonColor,
+        appBar: _buildAppBar(),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: List.generate(
+                            viewmodel.requests.length,
+                            (index) => _buildUpdateRequestCard(index),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
+            ),
+            if (viewmodel.isLoading) _buildShimmer(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: ListView.separated(
+        itemCount: 6,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 140,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -103,8 +122,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   }
 
   Widget _buildUpdateRequestCard(int index) {
-    final request = requests[index];
-    final isExpanded = expandedIndex == index;
+    final request = viewmodel.requests[index];
+    final isExpanded = viewmodel.expandedIndex == index;
 
     return AnimatedContainer(
       width: double.infinity,
@@ -122,54 +141,69 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           children: [
             commonTitleAndSubtitle(
               "${StringConstant.templeName}: ",
-              request["templeName"],
+              request.templeDetails.name,
             ),
             commonTitleAndSubtitle(
               "${StringConstant.email}: ",
-              request["email"],
+              request.templeDetails.email,
             ),
             commonTitleAndSubtitle(
               "${StringConstant.address}: ",
-              request["address"],
+              request.templeDetails.address,
             ),
             commonTitleAndSubtitle(
               "${StringConstant.pincode}: ",
-              request["pincode"],
+              request.templeDetails.pincode,
             ),
             const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  expandedIndex = isExpanded ? null : index;
-                });
-              },
-              child: Text(
-                isExpanded ? "Hide Details" : "View & Approve",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontFamily: font,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (isExpanded) ...[
-              const SizedBox(height: 16),
-              _buildDataSection(
-                "Previous Data",
-                request["previousData"],
-                isChangeSection: false,
-              ),
-              const SizedBox(height: 12),
-              _buildDataSection(
-                "Changes Data",
-                request["changesData"],
-                requestIndex: index,
-                isChangeSection: true,
-              ),
-            ],
+            expandWidgets(isExpanded, index, request),
           ],
         ),
       ),
+    );
+  }
+
+  Widget expandWidgets(bool isExpanded, int index, TempleRequest request) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              viewmodel.expandedIndex = isExpanded ? null : index;
+            });
+          },
+          child: Text(
+            isExpanded
+                ? StringConstant.hideDetails
+                : StringConstant.viewAndApprove,
+            style: TextStyle(
+              color: Colors.blue,
+              fontFamily: font,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        if (isExpanded) ...[
+          const SizedBox(height: 16),
+          _buildDataSection(
+            StringConstant.previousData,
+            Map.fromEntries(
+              request.templeDetails.toJson().entries.where(
+                (e) => request.changes.keys.contains(e.key),
+              ),
+            ),
+            isChangeSection: false,
+          ),
+          const SizedBox(height: 12),
+          _buildDataSection(
+            StringConstant.changesData,
+            request.changes,
+            requestIndex: index,
+            isChangeSection: true,
+          ),
+        ],
+      ],
     );
   }
 
@@ -232,10 +266,10 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             final key = entry.key;
             final value = entry.value.toString();
 
-            final reason = rejectedReasons[requestIndex]?[key];
+            final reason = viewmodel.rejectedReasons[requestIndex]?[key];
             final bool isRejected = reason != null;
             final bool isApproved =
-                approvedFields[requestIndex]?.contains(key) ?? false;
+                viewmodel.approvedFields[requestIndex]?.contains(key) ?? false;
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
@@ -245,57 +279,87 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          "$key : $value",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: font,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
+                      titleText(key, value),
                       if (isChangeSection)
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  approvedFields[requestIndex!] ??= {};
-                                  if (isApproved) {
-                                    approvedFields[requestIndex]!.remove(key);
-                                  } else {
-                                    approvedFields[requestIndex]!.add(key);
-                                  }
-                                  rejectedReasons[requestIndex]?.remove(key);
-                                });
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Approved change for $key ✅"),
-                                    backgroundColor: Colors.green,
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              },
-                              child: Icon(
-                                Icons.check_circle,
-                                color: isApproved ? Colors.green : Colors.grey,
-                                size: 22,
-                              ),
-                            ),
+                            approveFields(isApproved, requestIndex, key),
 
                             const SizedBox(width: 8),
+                            rejectFields(isRejected,requestIndex,key),
+                          ],
+                        ),
+                    ],
+                  ),
 
+                  if (isRejected)
+                  reasonTextField(requestIndex,key),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget titleText(String key, String value) {
+    return Expanded(
+      child: Text(
+        "$key : ${value.replaceAll('[', '').replaceAll(']', '')}",
+        style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.black87),
+      ),
+    );
+  }
+
+  Widget approveFields(bool isApproved, int? requestIndex, String key) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          viewmodel.approvedFields[requestIndex!] ??= {};
+          if (isApproved) {
+            viewmodel.approvedFields[requestIndex]!.remove(key);
+          } else {
+            viewmodel.approvedFields[requestIndex]!.add(key);
+          }
+          viewmodel.rejectedReasons[requestIndex]?.remove(key);
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Approved change for $key ✅"),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      },
+      child: Icon(
+        Icons.check_circle,
+        color: isApproved ? Colors.green : Colors.grey,
+        size: 22,
+      ),
+    );
+  }
+
+
+  
+  Widget rejectFields(bool isRejected,int? requestIndex,String key){
+    return 
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  rejectedReasons[requestIndex ?? 0] ??= {};
+                                  viewmodel.rejectedReasons[requestIndex ??
+                                          0] ??=
+                                      {};
                                   if (isRejected) {
-                                    rejectedReasons[requestIndex]!.remove(key);
+                                    viewmodel.rejectedReasons[requestIndex]!
+                                        .remove(key);
                                   } else {
-                                    rejectedReasons[requestIndex]![key] = "";
-                                    approvedFields[requestIndex]?.remove(key);
+                                    viewmodel
+                                            .rejectedReasons[requestIndex]![key] =
+                                        "";
+                                    viewmodel.approvedFields[requestIndex]
+                                        ?.remove(key);
                                   }
                                 });
                               },
@@ -304,27 +368,25 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                                 color: isRejected ? Colors.red : Colors.grey,
                                 size: 20,
                               ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
+                            );
+  }
 
-                  if (isRejected)
-                    Padding(
+  Widget reasonTextField(int ?requestIndex,String key){
+    return   Padding(
                       padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
                       child: SizedBox(
                         height: 36,
                         child: TextField(
                           onChanged: (val) {
                             setState(() {
-                              rejectedReasons[requestIndex]![key] = val;
+                              viewmodel.rejectedReasons[requestIndex]![key] =
+                                  val;
                             });
                           },
                           style: TextStyle(fontSize: 13, fontFamily: font),
                           cursorColor: Colors.blue,
                           decoration: InputDecoration(
-                            hintText: "Reason",
+                            hintText: StringConstant.reason,
                             hintStyle: TextStyle(
                               fontSize: 12,
                               fontFamily: font,
@@ -350,13 +412,6 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                           ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
+                    );
   }
 }

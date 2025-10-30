@@ -3,6 +3,7 @@ import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -120,6 +121,19 @@ final templeChanges=TempleChanges(name:name ,address:address ,city:city ,state:s
     return TempleUpdateResponse.fromJson(data);
   } catch (e) {
     print("temple Update service decode fails: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
+
+Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limit = 10}) async {
+  try {
+    final url = '${UrlConstant.updateTempleRequestUrl}?page=$page&limit=$limit';
+    print('Fetching updateTemple: $url');
+    dynamic data = await apiService.get(url);
+    return TempleUpdateRequestListModel.fromJson(data);
+  } catch (e) {
+    print("updateTemple service decode fails: $e");
     throw Exception('API failed: $e');
   }
 }
