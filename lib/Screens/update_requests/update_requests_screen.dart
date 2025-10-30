@@ -17,15 +17,36 @@ class UpdateRequests extends StatefulWidget {
 
 class _UpdateRequestsState extends State<UpdateRequests> {
   late UpdateRequestViewModel viewmodel;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !viewmodel.isLoadingMore &&
+          viewmodel.hasMore) {
+        viewmodel.fetchUpdateRequests();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<UpdateRequestViewModel>(context);
-
     final screenHeight = MediaQuery.of(context).size.height;
+
     return FocusDetector(
       onFocusGained: () async {
-        await viewmodel.fetchUpdateRequests();
+        await viewmodel.fetchUpdateRequests(reset: true);
       },
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
@@ -45,28 +66,43 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                         topRight: Radius.circular(20),
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: List.generate(
-                            viewmodel.requests.length,
-                            (index) => _buildUpdateRequestCard(index),
+                    child: viewmodel.isLoading
+                        ? _buildShimmer()
+                        : RefreshIndicator(
+                            onRefresh: () =>
+                                viewmodel.fetchUpdateRequests(reset: true),
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              padding: const EdgeInsets.all(16),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: viewmodel.requests.length +
+                                  (viewmodel.isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index < viewmodel.requests.length) {
+                                  return _buildUpdateRequestCard(index);
+                                } else {
+                                  return _buildLoadingMoreIndicator();
+                                }
+                              },
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ],
             ),
-            if (viewmodel.isLoading) _buildShimmer(),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildLoadingMoreIndicator() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Center(child: CircularProgressIndicator(color: Colors.grey,)),
+    );
+  }
+
 
   Widget _buildShimmer() {
     return Container(
