@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
+import 'package:nammadaiva_dashboard/Screens/updatetemple/update_image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
@@ -41,9 +42,10 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeEmail.text = widget.arguments.email ?? '';
     viewModel.templeArchitecture.text = widget.arguments.architecture ?? '';
     viewModel.templeDeities.text = widget.arguments.deities.join(', ');
-    viewModel.templeCity.text = widget.arguments.city??"";
-    viewModel.templeState.text = widget.arguments.state??"";
-    viewModel.templePincode.text = widget.arguments.pincode??"";
+    viewModel.templeCity.text = widget.arguments.city ?? "";
+    viewModel.templeState.text = widget.arguments.state ?? "";
+    viewModel.templePincode.text = widget.arguments.pincode ?? "";
+    viewModel.images = widget.arguments.images ?? [];
   }
 
   @override
@@ -81,7 +83,6 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          imageWidget(),
                           const SizedBox(height: 16),
                           titleTextWidget(StringConstant.templeName),
                           const SizedBox(height: 8),
@@ -150,7 +151,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                           ),
                           titleTextWidget(StringConstant.deitiestemple),
                           const SizedBox(height: 8),
-                           CommonTextField(
+                          CommonTextField(
                             hintText: "",
                             labelText: "",
                             isFromPassword: false,
@@ -164,6 +165,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                             isFromPassword: false,
                             controller: viewModel.templeArchitecture,
                           ),
+                          titleTextWidget(StringConstant.editImages),
+                          const SizedBox(height: 8),
+                          UpdateImagepickerWidget(),
                           const SizedBox(height: 30),
                         ],
                       ),
@@ -173,7 +177,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
               ),
             ],
           ),
-           if (viewModel.isLoading)
+          if (viewModel.isLoading)
             Positioned.fill(
               child: Container(
                 color: Colors.black.withOpacity(0.4),
@@ -200,42 +204,32 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
             },
           ),
           const Spacer(),
-          Text(StringConstant.templeDetail,
-              style: AppTextStyles.appBarTitleStyle),
+          Text(
+            StringConstant.templeDetail,
+            style: AppTextStyles.appBarTitleStyle,
+          ),
           const Spacer(),
           GestureDetector(
-            onTap: () 
-            async {
-         if(viewModel.validateUpdateTemple()){
-          await viewModel.updateTemple(widget.arguments.templeId);
-          Fluttertoast.showToast(msg: viewModel.message);
-        if(viewModel.templeUpdated){
-         Navigator.popUntil(context, (route) {
-                      print(route.settings.name); 
-                      return route.settings.name == StringsRoute.templeScreen;
-                    });
+            onTap: () async {
+              if (viewModel.validateUpdateTemple()) {
+                await viewModel.updateTemple(widget.arguments.templeId);
+                Fluttertoast.showToast(msg: viewModel.message);
+                if (viewModel.templeUpdated) {
+                  Navigator.popUntil(context, (route) {
+                    print(route.settings.name);
+                    return route.settings.name == StringsRoute.templeScreen;
+                  });
+                }
+              } else {
+                Fluttertoast.showToast(msg: viewModel.message);
               }
-
-
-}else{
-  Fluttertoast.showToast(msg: viewModel.message);
-}
             },
-            child: Text(StringConstant.save,
-                style: AppTextStyles.appBarTitleStyle),
+            child: Text(
+              StringConstant.save,
+              style: AppTextStyles.appBarTitleStyle,
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget imageWidget() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: Image.network(
-        "https://picsum.photos/id/1016/800/400",
-        fit: BoxFit.fill,
-        width: double.infinity,
       ),
     );
   }
@@ -243,10 +237,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
   Widget titleTextWidget(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
-      child: Text(
-        title,
-        style: AppTextStyles.editTempleTitleStyle,
-      ),
+      child: Text(title, style: AppTextStyles.editTempleTitleStyle),
     );
   }
 }

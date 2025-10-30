@@ -124,7 +124,8 @@ class _TempleScreenState extends State<TempleScreen> {
             email: temple.email,
             description: temple.description,
             deities: temple.deities!,
-            images: [], templeId: temple.id,
+            images:temple.images??[],
+            templeId: temple.id,
           ),
         );
       },
@@ -143,7 +144,7 @@ class _TempleScreenState extends State<TempleScreen> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: false
+                    child: temple.images?.isNotEmpty ?? false
                         ? Image.network(
                             temple.images!.first,
                             width: 110,
