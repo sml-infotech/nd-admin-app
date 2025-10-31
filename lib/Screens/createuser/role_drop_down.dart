@@ -32,6 +32,17 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
     _currentValue = widget.selectedValue;
   }
 
+  // 👇 This ensures UI updates when parent updates selectedValue
+  @override
+  void didUpdateWidget(CommonDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedValue != oldWidget.selectedValue) {
+      setState(() {
+        _currentValue = widget.selectedValue;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -44,9 +55,13 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
             setState(() {
               _currentValue = value;
             });
-            if (widget.onChanged != null) widget.onChanged!(value);
+            widget.onChanged?.call(value);
           },
-          style:TextStyle(fontFamily: font, color: Colors.black,fontSize: 15) ,
+          style: TextStyle(
+            fontFamily: font,
+            color: Colors.black,
+            fontSize: 15,
+          ),
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.labelText,
@@ -60,14 +75,11 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               borderRadius: BorderRadius.circular(13),
               borderSide: const BorderSide(color: ColorConstant.primaryColor),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 18,
-            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
           ),
           icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
           dropdownColor: Colors.white,
-
           items: widget.items
               .map(
                 (e) => DropdownMenuItem<String>(

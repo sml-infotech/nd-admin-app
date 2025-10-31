@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -70,8 +71,7 @@ class _PujaListState extends State<PujaList> {
                                   onPressed: () {
                                     Navigator.pushNamed(
                                       context,
-                                      StringsRoute.addPuja,
-                                    );
+                                      StringsRoute.addPuja,arguments: PujaArguments(puja_id: '', puja_name: '', description: '', maximumNoOfDevotees: 0, fee: 0, booking_cutoff_notice: '', allows_special_requirements: true, from_date: '', to_date: '', days: [], deities_name: [], sample_images: [], templeId: '' ));
                                   },
                                   icon: Icon(Icons.add),
                                 ),
@@ -168,7 +168,7 @@ class _PujaListState extends State<PujaList> {
                       });
                     },
                   ),
-                  editButton(),
+                  editButton(puja),
                 ],
               ),
               isActiveTextWidget(isActive),
@@ -253,8 +253,15 @@ class _PujaListState extends State<PujaList> {
     );
   }
 
-  Widget editButton() {
-    return IconButton(onPressed: () {}, icon: Icon(Icons.edit));
+  Widget editButton(PujaData puja) {
+    return IconButton(onPressed: () {
+      Navigator.pushNamed(context, StringsRoute.addPuja,arguments:PujaArguments(puja_id: puja.id, puja_name: puja.pujaName, description: puja.description, maximumNoOfDevotees: puja.maximumNoOfDevotees, fee: 422, booking_cutoff_notice:puja.bookingCutoffNotice.toString(), allows_special_requirements: puja.allowsSpecialRequirements, from_date: puja.fromDate.toString(), to_date:puja.toDate.toString(),
+      templeId: puja.templeId,
+      days: puja.days.entries
+        .where((e) => e.value)
+        .map((e) => e.key)
+        .toList(), deities_name:puja.deitiesName, sample_images: puja.sampleImages) );
+    }, icon: Icon(Icons.edit));
   }
 
   Widget deitiesName(List<String> deitiesName) {

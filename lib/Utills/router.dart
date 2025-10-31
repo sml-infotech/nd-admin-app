@@ -14,7 +14,9 @@ import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.d
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
+import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 
 
 class AppRouter {
@@ -76,9 +78,10 @@ class AppRouter {
           builder: (_) => AddTempleScreen(),
         );
        case StringsRoute.addPuja:
+        PujaArguments args = settings.arguments as PujaArguments; 
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => PujaBookingScreen(),
+          builder: (_) => PujaBookingScreen(pujaArgumrnts: args,),
         );
 
         case StringsRoute.pujaList:

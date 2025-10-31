@@ -32,6 +32,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   String selectedDeities = "";
   String selectedDeityId = "";
   String ? presignedURL;
+  String ?selectedTempleId;
 
   bool bookingCutoff = false;
   bool priestDakshina = false;
@@ -298,6 +299,8 @@ Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
     message = "";
     isValid = false;
     isLoading = false;
+
+    uploadedImageUrls.clear();
 
     notifyListeners();
   }

@@ -31,7 +31,17 @@ class _DaysSelectorState extends State<DaysSelector> {
   @override
   void initState() {
     super.initState();
-    selectedDays = Map<String, bool>.from(widget.initialDays);
+    selectedDays = Map.from(widget.initialDays);
+  }
+
+  @override
+  void didUpdateWidget(covariant DaysSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialDays != widget.initialDays) {
+      setState(() {
+        selectedDays = Map.from(widget.initialDays);
+      });
+    }
   }
 
   void toggleDay(String day) {
@@ -58,13 +68,14 @@ class _DaysSelectorState extends State<DaysSelector> {
             decoration: BoxDecoration(
               color: isSelected ? ColorConstant.buttonColor : Colors.grey[200],
               borderRadius: BorderRadius.circular(100),
-              
             ),
-            child: Text(
-              day,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                color: isSelected ? Colors.white : Colors.black87,
+            child: Center(
+              child: Text(
+                day,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
               ),
             ),
           ),
