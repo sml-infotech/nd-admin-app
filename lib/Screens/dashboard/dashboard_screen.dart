@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
@@ -12,6 +13,26 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  String? token;
+  String? role;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData(); // ✅ Fetch SharedPreferences data when screen loads
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.getString('authToken');
+    final storedRole = prefs.getString('userRole');
+
+    setState(() {
+      token = storedToken;
+      role = storedRole;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -19,109 +40,125 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
       appBar: AppBar(
-        backgroundColor:  ColorConstant.buttonColor,
+        backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
         title: nammaDaivaAppBar(),
       ),
       body: Column(
         children: [
           SizedBox(height: screenHeight * 0.02),
+
+          // ✅ Expanded section
           Expanded(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: 
-            Container(
+            child: Container(
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children:  [
-                    welcomeText(),
-                    SizedBox(height: 15),
-                    templeNameText(),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        contaierWidgets(ImageStrings.templeImage, StringConstant.templeDetailText,(){
-                          Navigator.pushNamed(context, StringsRoute.templeScreen);
-                        }),
-                        contaierWidgets(ImageStrings.sevaimg,StringConstant.sevaText,(){
-                        Navigator.pushNamed(context, StringsRoute.pujaList);
 
-                        }),
-                      ],
-                    ),
-                                        SizedBox(height: 20),
-                   Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        contaierWidgets(ImageStrings.onlineseva,StringConstant.onlineSeva,(){}),
-                        contaierWidgets(ImageStrings.donation,StringConstant.donationText,(){}),
-                      ],
-                    ),
-                                                            SizedBox(height: 20),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      welcomeText(),
+                      const SizedBox(height: 15),
+                      templeNameText(),
+                      const SizedBox(height: 10),
 
-                        Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        contaierWidgets(ImageStrings.ritual,StringConstant.ritualText,(){}),
-                        contaierWidgets(ImageStrings.audit,StringConstant.audittext,(){}),
-                      ],
-                    ),
-                                                            SizedBox(height: 20),
-
-                        Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        contaierWidgets(ImageStrings.transaction,StringConstant.transactionText,(){}),
-                        contaierWidgets(ImageStrings.wowtracker,StringConstant.wowtracker,(){
-                                    Navigator.pushNamed(context, StringsRoute.createUser);
-
-                        }),
+                      if (token != null && role != null) ...[
+                        Text(
+                          "Role: $role",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                       
+                        const SizedBox(height: 20),
                       ],
 
-                    ),
-                    SizedBox(height: 25),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          
+                          contaierWidgets(
+                            ImageStrings.templeImage,
+                            StringConstant.templeDetailText,
+                            () {
+                              Navigator.pushNamed(
+                                  context, StringsRoute.templeScreen);
+                            },
+                          ),
+                          contaierWidgets(
+                            ImageStrings.sevaimg,
+                            StringConstant.sevaText,
+                            () {
+                              Navigator.pushNamed(
+                                  context, StringsRoute.pujaList);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
 
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if(role=="Super Admin"||role =="Admin")
+                          contaierWidgets(
+                            ImageStrings.onlineseva,
+                            StringConstant.createUser,
+                            () {
+                              Navigator.pushNamed(context,StringsRoute.createUser );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),)
+          ),
         ],
       ),
     );
   }
 
-  
-
-  Widget nammaDaivaAppBar(){
-  return Center(child: 
-  Row(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-    Spacer(),
-    Text(StringConstant.nammaDaivaSmall,style:AppTextStyles.appBarTitleStyle ,),
-    Spacer(),
-    IconButton(
+  // 🔹 AppBar
+  Widget nammaDaivaAppBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Spacer(),
+        Text(
+          StringConstant.nammaDaivaSmall,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
+        const Spacer(),
+        IconButton(
           icon: Image.asset(ImageStrings.logout),
-          onPressed: () {
-          },
-        )
-  ],));
+          onPressed: () {},
+        ),
+      ],
+    );
   }
 
+  // 🔹 Text Widgets
   Widget welcomeText() {
     return Text(
       StringConstant.welcomeBack,
       style: AppTextStyles.welcomeStyle,
+      textAlign: TextAlign.center,
     );
   }
 
@@ -129,29 +166,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Text(
       "Arulmigu Arunachaleswarar Temple",
       style: AppTextStyles.templeNameStyle,
+      textAlign: TextAlign.center,
     );
   }
 
-  Widget contaierWidgets(
-    String image, String title,Function ()? onTap
-  ){
+  // 🔹 Container Widget
+  Widget contaierWidgets(String image, String title, Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
-      child:
-    
-    Container(
-      height: 156,
-      width: 170,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(10),
+      child: Container(
+        height: 156,
+        width: 170,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(image, height: 60, width: 60),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Text(
+                  title,
+                  style: AppTextStyles.templeNameStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Center(child: Column(children: [
-        SizedBox(height: 10),
-        Image.asset(image,height: 60,width: 60,),
-        SizedBox(height: 10),
-        Padding(padding: EdgeInsetsGeometry.fromLTRB(14, 0, 14, 0),child:         Text(title,style:AppTextStyles. templeNameStyle,textAlign: TextAlign.center,)
-     ) ],)),
-    ));
+    );
   }
 }

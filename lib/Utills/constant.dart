@@ -22,6 +22,8 @@ class StringConstant {
   static const String templeDetailText = "Temple Details & History";
   static const String sevaText = "Seva/Pooja Calendar";
   static const String onlineSeva = "Online Seva & Harake Bookings";
+  static const String createUser = "createUser";
+
   static const String donationText = "Donation Tracking";
   static const String ritualText = "Ritual & Event Promotion";
   static const String audittext = "Audit & Committee Reports";

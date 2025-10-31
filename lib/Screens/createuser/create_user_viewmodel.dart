@@ -13,17 +13,17 @@ class CreateUserViewmodel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController role = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
   List<Temple> _templeData = [];
-  List<String> templeList = [];  
+List<Map<String, dynamic>> templeList = []; // ✅ store id + name both
   String? selectedTempleName;
   String? selectedTempleId;
-
+List<String> selectedTempleIds = [];
   int page = 1;
   final int limit = 10;
   final UserService userService = UserService();
   final TempleService templeService = TempleService();
-
 
   Future<void> validateUser() async {
     String email = emailController.text.trim();
@@ -35,21 +35,20 @@ class CreateUserViewmodel extends ChangeNotifier {
       message = "Please enter valid email";
     } else if (password.isEmpty) {
       message = "Please enter password";
-    } else if (password.length < 6) {
-      message = "Password must be at least 6 characters";
-    } else if(role.text.isEmpty){
-      message="Role is Mandaratory";
+    } else if (password.length < 8) {
+      message = "Password must be at least 8 characters";
+    } else if (phoneController.text.isEmpty) {
+      message = "Please enter Phone Number";
+    } else if (role.text.isEmpty) {
+      message = "Role is Mandaratory";
+    } else if ((role.text == "Temple" || role.text == "Agent") &&
+        (templeList == null || templeList.isEmpty)) {
+      message = "Select Temple";
+    } else {
+      message = "";
+      await createUser();
+      return;
     }
-      else if ((role.text == "Temple" || role.text == "Agent") &&
-           (selectedTempleName == null || selectedTempleName!.isEmpty)) {
-    message = "Select Temple";
-  } 
-
-  else {
-    message = "";
-    await createUser();
-    return;
-  }
 
     notifyListeners();
   }
@@ -64,12 +63,25 @@ class CreateUserViewmodel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
+
+print("${ nameController.text}");
+print("${ emailController.text}");
+print("${ passwordController.text}");
+print("${ role.text}");
+print("${ selectedTempleId}");
+print("${ phoneController.text}");
+
       final response = await userService.createUser(
         nameController.text,
         emailController.text,
         passwordController.text,
-        role.text,selectedTempleId
+        role.text,
+       selectedTempleIds,
+        phoneController.text,
       );
+
+
+
 
       if (response.message?.isNotEmpty == true) {
         message = response.message!;
@@ -103,8 +115,12 @@ class CreateUserViewmodel extends ChangeNotifier {
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
-      templeList = _templeData.map((t) => t.name).toList();
-      page++;
+templeList = _templeData
+        .map((t) => {
+              "id": t.id.toString(),
+              "name": t.name.toString(),
+            })
+        .toList();      page++;
     }
 
     isLoading = false;

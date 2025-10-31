@@ -8,7 +8,6 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
-import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:provider/provider.dart';
 
 class CreateUserScreen extends StatefulWidget {
@@ -20,11 +19,6 @@ class CreateUserScreen extends StatefulWidget {
 
 class _CreateUserScreenState extends State<CreateUserScreen> {
   late CreateUserViewmodel viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +48,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                       Expanded(
                         child: Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(24),
                               topRight: Radius.circular(24),
                             ),
@@ -89,32 +83,52 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                     controller: viewModel.passwordController,
                                   ),
                                   const SizedBox(height: 20),
-                                 CommonDropdownField(
-                                  paddingSize: 20,
-                                  hintText: StringConstant.selectedRole,
-                                  labelText: StringConstant.role,
-                                  items: StringConstant.roles,
-                                  selectedValue: StringConstant.roles.contains(viewModel.role.text)
-                                   ? viewModel.role.text
-                                 : null,
-                                 onChanged: (value) {
-                                 viewModel.role.text = value ?? "";
-                                 viewModel.notifyListeners();
-                                  },
+                                  CommonTextField(
+                                    hintText: StringConstant.phone,
+                                    labelText: StringConstant.phone,
+                                    isFromPassword: false,
+                                    isFromPhone: true,
+                                    controller: viewModel.phoneController,
                                   ),
-                                  if (viewModel.role.text  == "Temple"|| viewModel.role.text  == "Agent") ...[
+                                  const SizedBox(height: 20),
+
+                                  // 🔹 Role Dropdown
+                                  CommonDropdownField(
+                                    paddingSize: 20,
+                                    hintText: StringConstant.selectedRole,
+                                    labelText: StringConstant.role,
+                                    items: StringConstant.roles,
+                                    selectedValue:
+                                        StringConstant.roles.contains(
+                                          viewModel.role.text,
+                                        )
+                                        ? viewModel.role.text
+                                        : null,
+                                    onChanged: (value) {
+                                      viewModel.role.text = value ?? "";
+                                      viewModel.notifyListeners();
+                                    },
+                                  ),
+                                  if (viewModel.role.text == "Temple" ||
+                                      viewModel.role.text == "Agent") ...[
                                     const SizedBox(height: 20),
                                     CommonDropdownField(
-                                      paddingSize: 20,
                                       hintText: StringConstant.selectTemples,
                                       labelText: StringConstant.temples,
-                                      items: viewModel.templeList,
-                                      selectedValue: viewModel.selectedTempleName,
-                                      onChanged: (value) {
-                                        viewModel.selectTemple(value);
+                                      items: viewModel
+                                          .templeList, 
+                                      selectedIds: viewModel.selectedTempleIds,
+                                      onMultiChanged: (ids) {
+                                        setState(() {
+                                          viewModel.selectedTempleIds = ids;
+                                        });
+                                        debugPrint("Selected Temple IDs: $ids");
                                       },
+                                      isTempleSelection: true,
+                                      paddingSize: 20,
                                     ),
                                   ],
+
                                   const SizedBox(height: 100),
                                 ],
                               ),
@@ -162,10 +176,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(
-          StringConstant.createAcc,
-          style: AppTextStyles.appBarTitleStyle,
-        ),
+        Text(StringConstant.createAcc, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         const SizedBox(width: 48),
       ],
@@ -190,11 +201,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             );
             viewModel.message = "";
           }
-          if(viewModel.isCreateUserSuccess){
-              Navigator.pushReplacementNamed(context, StringsRoute.userDetails);
+          if (viewModel.isCreateUserSuccess) {
+            Navigator.pushReplacementNamed(context, StringsRoute.userDetails);
           }
           setState(() {
-            viewModel.isCreateUserSuccess=false;
+            viewModel.isCreateUserSuccess = false;
           });
         },
         style: ElevatedButton.styleFrom(

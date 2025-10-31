@@ -4,14 +4,16 @@ class CreateUsermodel {
   final String email;
   final String password;
   final String role;
-  final String ?associated_temple_id;
+  final List <String> ?temple_ids;
+  final String? phone_number;
 
   CreateUsermodel({
     required this.full_name,
     required this.email,
     required this.password,
     required this.role,
-    this.associated_temple_id
+    this.temple_ids,
+    this.phone_number,
   });
 
   factory CreateUsermodel.fromJson(Map<String, dynamic> json) {
@@ -20,7 +22,8 @@ class CreateUsermodel {
       email: json['email'] ?? '',
       password: json['password'] ?? '',
       role: json['role'] ?? '',
-      associated_temple_id: json['associated_temple_id']??''
+      temple_ids:List<String>.from(json['temple_ids'] ?? []),
+      phone_number: json['phone_number']??"",
     );
   }
 
@@ -30,7 +33,8 @@ class CreateUsermodel {
       'email': email,
       'password': password,
       'role': role,
-      'associated_temple_id':associated_temple_id
+      'temple_ids':temple_ids,
+      'phone_number':phone_number,
     };
   }
 }
