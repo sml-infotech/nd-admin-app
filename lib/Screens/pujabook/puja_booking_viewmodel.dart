@@ -310,6 +310,7 @@ Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
 
     if (temple.deities != null && temple.deities!.isNotEmpty) {
       deitiesList = List<String>.from(temple.deities!);
+      print("temple.deities ${temple.deities }");
     } else {
       deitiesList = [];
     }

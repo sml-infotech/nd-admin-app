@@ -106,9 +106,11 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       }
 
       if (args.deities_name != null && args.deities_name!.isNotEmpty) {
-        viewmodel.deities = List<String>.from(args.deities_name!);
+        viewmodel.deitiesList = List<String>.from(args.deities_name!);
+
       }
       print("?????>>>>>>?????${widget.pujaArgumrnts?.templeId}");
+      print("?????>>>>>>?????11${viewmodel.deities}");
     }
   }
 
@@ -269,7 +271,10 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: Text(StringConstant.slot, style: AppTextStyles.editTempleTitleStyle),
+          child: Text(
+            StringConstant.slot,
+            style: AppTextStyles.editTempleTitleStyle,
+          ),
         ),
         const SizedBox(height: 8),
         Padding(
