@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
+import 'package:nammadaiva_dashboard/service/puja_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class PujaListViewmodel extends ChangeNotifier {
   List<PujaData> pujaList = [];
-  bool isLoading = true;  // Initially, set to false so it doesn't show loading by default.
+  List<PujaDataForActive> pujaDataForActive = [];
+  bool isLoading = true;  
   final TempleService templeService = TempleService();
+  final PujaService pujaService = PujaService();
 String? selectedTemple;
   List<Temple> templeData = [];
   List<String> templeList = [];
   int page = 1;
   int limit = 10;
   String templeId='';
+  String message = '';
+  String puja_id='';
+  bool ?isActive;
+bool isToggling = false;
+
 
   Future<void> fetchPujas({required String templeId}) async {
     try {
-      // Set loading to true before starting the network request
       isLoading = true;
-      notifyListeners();  // Notify listeners that loading state has changed
+      notifyListeners();  
 
       final response = await templeService.getPujas(templeId);
 
@@ -27,18 +35,17 @@ String? selectedTemple;
         print("pujaList: $pujaList");
       } else {
         print("No Pujas found");
-        pujaList = [];  // Ensure pujaList is empty if no data is returned
+        pujaList = [];
       }
     } catch (e) {
       print("Error fetching pujas: $e");
-      pujaList = [];  // Ensure pujaList is empty in case of an error
+      pujaList = []; 
     } finally {
-      isLoading = false;  // Set loading to false after the request completes
-      notifyListeners();  // Notify listeners that loading has finished
+      isLoading = false;  
+      notifyListeners();  
     }
   }
 
-  // Fetch Temples (for reference, you can apply similar changes to this method)
   Future<void> getTemples({bool reset = false}) async {
    
 
@@ -64,4 +71,27 @@ String? selectedTemple;
     isLoading = false;
     notifyListeners();
   }
+
+   Future<bool> toggleActivate(String pujaId, bool toggle) async {
+  try {
+    final response = await pujaService.activateToggle(pujaId, toggle);
+
+    if (response.code == 200 && response.data != null) {
+      pujaDataForActive=response.data != null ? [response.data!] : [];
+      message = response.message ?? "Updated successfully";
+      isActive = response.data!.isActive ?? toggle; // ✅ sync from backend
+      notifyListeners();
+      return true;
+    } else {
+      message = response.message ?? "Some error occurred";
+      notifyListeners();
+      return false;
+    }
+  } catch (e) {
+    message = "Something went wrong: $e";
+    notifyListeners();
+    return false;
+  }
+}
+
 }

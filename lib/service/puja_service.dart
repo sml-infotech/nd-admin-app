@@ -1,5 +1,6 @@
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
@@ -133,6 +134,37 @@ class PujaService {
     throw Exception('API failed: $e');
   }
 }
+
+
+Future<PujaDeactivateResponse> activateToggle(
+  String pujaId,
+  bool isActive,
+ 
+) async {
+  try {
+    final updatePuja = ToggleActiveModel(puja_id: pujaId, is_active: isActive
+     
+    );
+
+    print("📦 ------------------- UPDATE ToggleActiveModel -------------------");
+    print("Temple ID: $isActive");
+    print("Puja ID: $pujaId");
+    
+
+    final data = await apiService.put(
+      UrlConstant.toggleUrl,
+      updatePuja.toJson(),
+    );
+
+    print("✅ toggle PUJA activate: $data");
+
+    return PujaDeactivateResponse.fromJson(data);
+  } catch (e) {
+    print("❌ toggle: API request failed -> $e");
+    throw Exception('API failed: $e');
+  }
+}
+
 
   
 }

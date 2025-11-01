@@ -178,13 +178,24 @@ class _PujaListState extends State<PujaList> {
                   pujatitleName(puja.pujaName),
                   Spacer(),
                   SmallToggleSwitch(
+                    value: puja.isActive ?? false,
                     onChanged: (bool value) {
-                      print(value);
-                      setState(() {
-                        isActive = value;
+                      Future(() async {
+                        viewmodel.isToggling = true;
+                        final success = await viewmodel.toggleActivate(
+                          puja.id,
+                          value,
+                        );
+                        viewmodel.isToggling = false;
+                        if (success) {
+                          setState(() => puja.isActive = value);
+                        } else {
+                          setState(() => puja.isActive = puja.isActive);
+                        }
                       });
                     },
                   ),
+
                   editButton(puja),
                 ],
               ),

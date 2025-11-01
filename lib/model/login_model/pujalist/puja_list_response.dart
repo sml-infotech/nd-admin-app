@@ -35,6 +35,7 @@ class PujaData {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<PujaTimeSlot> timeSlots;
+   bool? isActive;
 
   PujaData({
     required this.id,
@@ -53,6 +54,7 @@ class PujaData {
     required this.createdAt,
     required this.updatedAt,
     required this.timeSlots,
+    this.isActive,
   });
 
   factory PujaData.fromJson(Map<String, dynamic> json) {
@@ -99,6 +101,7 @@ class PujaData {
                 .map((item) => PujaTimeSlot.fromJson(item))
                 .toList()
           : [],
+      isActive: json['is_active'],
     );
   }
 
@@ -120,6 +123,7 @@ class PujaData {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'time_slots': timeSlots.map((slot) => slot.toJson()).toList(),
+      'is_active': isActive,
     };
   }
 }
