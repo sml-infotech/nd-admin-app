@@ -373,18 +373,31 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 
-  Widget _buildImagePicker() {
-    final allImages = [
-      ...viewmodel.uploadedImageUrls,
-      ...viewmodel.selectedImages.map((e) => e.path),
-    ];
+ Widget _buildImagePicker() {
+  final uploadedCount = viewmodel.uploadedImageUrls.length;
 
-    return MultiImagePickerSection(
-      imagePaths: allImages,
-      onAddImages: _pickImages,
-      onRemoveImage: (index) => viewmodel.removeImage(index),
-    );
-  }
+  final allImages = [
+    ...viewmodel.uploadedImageUrls,
+    ...viewmodel.selectedImages.map((e) => e.path),
+  ];
+
+  return MultiImagePickerSection(
+    imagePaths: allImages,
+    onAddImages: _pickImages,
+    onRemoveImage: (index) {
+      if (index >= uploadedCount) {
+        // Removing from selectedImages
+        final localIndex = index - uploadedCount;
+        viewmodel.removeImage(localIndex);
+      } else {
+        // Removing from uploadedImageUrls
+        viewmodel.uploadedImageUrls.removeAt(index);
+        viewmodel.notifyListeners();
+      }
+    },
+  );
+}
+
 
   Widget _buildCheckboxSection() {
     return Column(
