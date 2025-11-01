@@ -79,8 +79,10 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
           onTap: widget.isTempleSelection ? _showMultiSelectDialog : null,
           child: AbsorbPointer(
             absorbing:
-                widget.isTempleSelection, // disable dropdown tap for multi
-            child: DropdownButtonFormField<String>(
+                widget.isTempleSelection, 
+            child:Flexible(
+  child: DropdownButtonFormField<String>(
+    isExpanded: true,
               value: widget.isTempleSelection ? null : _currentValue,
               onChanged: widget.isTempleSelection
                   ? null
@@ -117,10 +119,10 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               ),
               icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
               dropdownColor: Colors.white,
-              // ✅ For normal dropdowns only
+
               items: !widget.isTempleSelection
                   ? widget.items
-                        .whereType<String>() // safety check
+                        .whereType<String>()
                         .map(
                           (e) => DropdownMenuItem<String>(
                             value: e,
@@ -133,24 +135,24 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
   value: '',
   enabled: false,
   child: ConstrainedBox(
-    constraints: BoxConstraints(
-      maxWidth: MediaQuery.of(context).size.width * 0.8, // prevent overflow
-    ),
-    child: Text(
-      displayText,
-      overflow: TextOverflow.ellipsis,
-      maxLines: 1,
-      softWrap: false,
-      style: TextStyle(fontFamily: font),
-    ),
+  constraints: BoxConstraints(
+    maxWidth: MediaQuery.of(context).size.width * 0.8,
   ),
+  child: Text(
+    displayText,
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+    softWrap: false,
+    style: TextStyle(fontFamily: font),
+  ),
+),
 ),
                     ],
             ),
           ),
         ),
       ),
-    );
+    ));
   }
 
   void _showMultiSelectDialog() async {
