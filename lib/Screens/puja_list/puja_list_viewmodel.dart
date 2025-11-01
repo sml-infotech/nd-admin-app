@@ -30,8 +30,8 @@ bool isToggling = false;
 
       final response = await templeService.getPujas(templeId);
 
-      if (response.data.isNotEmpty) {
-        pujaList = response.data;
+      if (response.code==200) {
+        pujaList = response.data.pujas;
         print("pujaList: $pujaList");
       } else {
         print("No Pujas found");

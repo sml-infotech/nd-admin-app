@@ -35,6 +35,17 @@ List<String> selectedTempleIds = [];
     notifyListeners();
   }
 
+
+void toggleTempleSelection(String id) {
+  if (selectedTempleIds.contains(id)) {
+    selectedTempleIds.remove(id);
+  } else {
+    selectedTempleIds.add(id);
+  }
+  notifyListeners();
+}
+
+
   Future<void> getUsers({bool reset = false}) async {
     if (reset) {
       page = 1;
@@ -75,38 +86,79 @@ List<String> selectedTempleIds = [];
     await getUsers();
   }
 
-  /// Edit user API call
-  Future<void> editUser(String userId, String name, bool isActive) async {
-    editLoading = true;
-    notifyListeners();
+/// Edit user API call
+Future<void> editUser(
+  String userId,
+  String name,
+  bool isActive, {
+  List<String>? selectedTemples,
+}) async {
+  editLoading = true;
+  notifyListeners();
 
-    try {
-      final response = await authService.editUser(userId, name, role.text, isActive);
+  try {
+    // ✅ Send selected temples along with other fields
+    final response = await authService.editUser(
+      userId,
+      name,
+      role.text,
+      isActive,
+      selectedTemples: selectedTemples ?? [],
+    );
 
-      if (response.message.isNotEmpty) {
-        editData.add(response);
+    if (response.message.isNotEmpty) {
+      editData.add(response);
 
-        // Update local user list immediately
-        final index = userData.indexWhere((user) => user.id == userId);
-        if (index != -1) {
-          userData[index] = UserModel(
-            id: userId,
-            fullName: name,
-            email: userData[index].email,
-            role: role.text.isNotEmpty ? role.text : userData[index].role,
-            isActive: isActive,
-           
-            updatedAt:"", phoneNumber: '', createdAt: '', associatedTemples: [],
-          );
-        }
+      // ✅ Update local user list immediately
+      final index = userData.indexWhere((user) => user.id == userId);
+      if (index != -1) {
+        userData[index] = UserModel(
+          id: userId,
+          fullName: name,
+          email: userData[index].email,
+          role: role.text.isNotEmpty ? role.text : userData[index].role,
+          isActive: isActive,
+          createdAt: userData[index].createdAt,
+          updatedAt: DateTime.now().toIso8601String(),
+          phoneNumber: userData[index].phoneNumber,
+          associatedTemples: (selectedTemples ?? [])
+              .map((id) => TempleModel(
+                    id: id,
+                    name: _getTempleNameById(id),
+                    address: '',
+                    city: '',
+                    state: '',
+                    pincode: '',
+                    architecture: '',
+                    phoneNumber: '',
+                    email: '',
+                    description: '',
+                    createdAt: '',
+                    updatedAt: '',
+                    deities: [],
+                    images: [],
+                  ))
+              .toList(),
+        );
       }
-    } catch (e) {
-      print("Error editing user: $e");
     }
-
-    editLoading = false;
-    notifyListeners();
+  } catch (e) {
+    print("❌ Error editing user: $e");
   }
+
+  editLoading = false;
+  notifyListeners();
+}
+
+/// Helper to get temple name from the cached list
+String _getTempleNameById(String id) {
+  final match = templeList.firstWhere(
+    (temple) => temple['id'] == id,
+    orElse: () => {"name": "Unknown"},
+  );
+  return match['name'] ?? "Unknown";
+}
+
 
    Future<void> getTemples({bool reset = false}) async {
 

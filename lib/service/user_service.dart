@@ -60,6 +60,10 @@ class UserService {
     String name,
     String role,
     bool isActive,
+    {
+        List<String>? selectedTemples,
+
+    }
   ) async {
     try {
       var editData = EditUsermodel(
@@ -67,6 +71,7 @@ class UserService {
         fullName: name,
         role: role,
         isActive: isActive,
+       associated_temple_ids:selectedTemples??[],
       );
 
       final url = UrlConstant.userEditUrl;

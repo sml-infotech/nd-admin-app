@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart' show AuthService;
 import 'package:nammadaiva_dashboard/service/password_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ForgotViewmodel extends ChangeNotifier{
 
@@ -72,7 +73,8 @@ Future<void> forgotPasswordApi() async {
           email, otp);
       if (response.code==200) {
         print("->>> $response");
-   
+   final prefs = await SharedPreferences.getInstance();
+         await prefs.setString('authToken', response.token!);
         print("✅ Token saved: ${response.token}");
         message = response.message ?? "success";
         isOtpSuccess = true;

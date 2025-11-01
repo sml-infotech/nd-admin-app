@@ -33,6 +33,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+    Future<void> deleteToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.remove('authToken');
+    final storedRole = prefs.remove('userRole');
+
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -97,6 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   context, StringsRoute.templeScreen);
                             },
                           ),
+                      SizedBox(width: 5),
                           contaierWidgets(
                             ImageStrings.sevaimg,
                             StringConstant.sevaText,
@@ -136,6 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // 🔹 AppBar
   Widget nammaDaivaAppBar() {
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -147,7 +157,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const Spacer(),
         IconButton(
           icon: Image.asset(ImageStrings.logout),
-          onPressed: () {},
+          onPressed: () async {
+        await   deleteToken();
+            Navigator.pushReplacementNamed(context, StringsRoute.login);
+
+          },
         ),
       ],
     );

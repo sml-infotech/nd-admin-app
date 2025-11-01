@@ -4,12 +4,14 @@ class EditUsermodel {
   final String fullName;
   final String role;
   final bool isActive;
+  final List<String> associated_temple_ids;
 
   EditUsermodel({
     required this.id,
     required this.fullName,
     required this.role,
     required this.isActive,
+    this.associated_temple_ids = const [],
   });
 
   factory EditUsermodel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +20,10 @@ class EditUsermodel {
       fullName: json["full_name"] ?? "",
       role: json["role"] ?? "",
       isActive: json["is_active"] ?? false,
+      associated_temple_ids: (json["associated_temple_ids"] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
   }
 

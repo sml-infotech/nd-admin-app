@@ -151,10 +151,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   await viewmodel.resetPassword();
                   Fluttertoast.showToast(msg: viewmodel.message);
                   if (viewmodel.isPasswordUpdated) {
-                    Navigator.popUntil(context, (route) {
-                      print(route.settings.name); 
-                      return route.settings.name == StringsRoute.login;
-                    });
+                    Navigator.pushReplacementNamed(context, StringsRoute.login);
                   }
                   setState(() {
                     viewmodel.message = "";

@@ -4,16 +4,13 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 class CommonDropdownField extends StatefulWidget {
   final String hintText;
   final String labelText;
-
-  /// For single-select: pass List<String>
-  /// For multi-select (temple): pass List<Map<String, dynamic>> with keys 'id' and 'name'
   final List<dynamic> items;
 
   final String? selectedValue;
-  final List<String>? selectedIds; // ✅ for multi-select
+  final List<String>? selectedIds;
   final Function(String?)? onChanged;
-  final Function(List<String>)? onMultiChanged; // ✅ callback for multi-select
-  final bool isTempleSelection; // ✅ enables multi-select dialog
+  final Function(List<String>)? onMultiChanged;
+  final bool isTempleSelection;
   final double paddingSize;
 
   const CommonDropdownField({
@@ -42,117 +39,113 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
     super.initState();
     _currentValue = widget.selectedValue;
     _selectedIds = widget.selectedIds ?? [];
-    print("_selectedIds${_selectedIds}");
   }
 
   @override
   void didUpdateWidget(CommonDropdownField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selectedValue != oldWidget.selectedValue) {
+
+    // Sync single-select
+    if (widget.selectedValue != oldWidget.selectedValue &&
+        widget.selectedValue != _currentValue) {
       setState(() => _currentValue = widget.selectedValue);
     }
-    if (widget.selectedIds != oldWidget.selectedIds) {
+
+    // Sync multi-select
+    if (widget.selectedIds != oldWidget.selectedIds &&
+        widget.selectedIds != _selectedIds) {
       setState(() => _selectedIds = widget.selectedIds ?? []);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Display joined temple names for multi-select, or selected value for normal
     final displayText = widget.isTempleSelection
         ? _selectedIds.isEmpty
-              ? widget.hintText
-              : widget.items
-                    .whereType<Map<String, dynamic>>() // ensure proper type
-                    .where(
-                      (item) => _selectedIds.contains(item['id'].toString()),
-                    )
-                    .map((e) => e['name'].toString())
-                    .join(', ')
+            ? widget.hintText
+            : widget.items
+                .whereType<Map<String, dynamic>>()
+                .where((item) => _selectedIds.contains(item['id'].toString()))
+                .map((e) => e['name'].toString())
+                .join(', ')
         : _currentValue ?? widget.hintText;
 
-    return SizedBox(
-      height: 60,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: widget.paddingSize),
-        child: GestureDetector(
-          onTap: widget.isTempleSelection ? _showMultiSelectDialog : null,
-          child: AbsorbPointer(
-            absorbing:
-                widget.isTempleSelection, 
-            child:Flexible(
-  child: DropdownButtonFormField<String>(
-    isExpanded: true,
-              value: widget.isTempleSelection ? null : _currentValue,
-              onChanged: widget.isTempleSelection
-                  ? null
-                  : (value) {
-                      setState(() => _currentValue = value);
-                      widget.onChanged?.call(value);
-                    },
-              style: TextStyle(
-                fontFamily: font,
-                color: Colors.black,
-                fontSize: 15,
-              ),
-              decoration: InputDecoration(
-                labelText: widget.labelText,
-                hintText: widget.hintText,
-                labelStyle: TextStyle(fontFamily: font, color: Colors.black),
-                hintStyle: TextStyle(fontFamily: font, color: Colors.black),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide: const BorderSide(
-                    color: ColorConstant.primaryColor,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide: const BorderSide(
-                    color: ColorConstant.primaryColor,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 18,
-                ),
-              ),
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-              dropdownColor: Colors.white,
-
-              items: !widget.isTempleSelection
-                  ? widget.items
-                        .whereType<String>()
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e,
-                            child: Text(e, style: TextStyle(fontFamily: font)),
-                          ),
-                        )
-                        .toList()
-                  : [
-                     DropdownMenuItem<String>(
-  value: '',
-  enabled: false,
-  child: ConstrainedBox(
-  constraints: BoxConstraints(
-    maxWidth: MediaQuery.of(context).size.width * 0.8,
-  ),
-  child: Text(
-    displayText,
-    overflow: TextOverflow.ellipsis,
-    maxLines: 1,
-    softWrap: false,
-    style: TextStyle(fontFamily: font),
-  ),
-),
-),
-                    ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: widget.paddingSize),
+      child: GestureDetector(
+        onTap: widget.isTempleSelection ? _showMultiSelectDialog : null,
+        child: AbsorbPointer(
+          absorbing: widget.isTempleSelection,
+          child: DropdownButtonFormField<String>(
+            isExpanded: true,
+            value: widget.isTempleSelection ? null : _currentValue,
+            onChanged: widget.isTempleSelection
+                ? null
+                : (value) {
+                    setState(() => _currentValue = value);
+                    widget.onChanged?.call(value);
+                  },
+            style: TextStyle(
+              fontFamily: font,
+              color: Colors.black,
+              fontSize: 15,
             ),
+            decoration: InputDecoration(
+              labelText: widget.labelText,
+              hintText: widget.hintText,
+              labelStyle: TextStyle(fontFamily: font, color: Colors.black),
+              hintStyle: TextStyle(fontFamily: font, color: Colors.black),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(13),
+                borderSide: const BorderSide(
+                  color: ColorConstant.primaryColor,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(13),
+                borderSide: const BorderSide(
+                  color: ColorConstant.primaryColor,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 18,
+              ),
+            ),
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+            dropdownColor: Colors.white,
+            items: !widget.isTempleSelection
+                ? widget.items
+                    .whereType<String>()
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Text(e, style: TextStyle(fontFamily: font)),
+                      ),
+                    )
+                    .toList()
+                : [
+                    DropdownMenuItem<String>(
+                      value: '',
+                      enabled: false,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.8,
+                        ),
+                        child: Text(
+                          displayText,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: TextStyle(fontFamily: font),
+                        ),
+                      ),
+                    ),
+                  ],
           ),
         ),
       ),
-    ));
+    );
   }
 
   void _showMultiSelectDialog() async {
@@ -166,10 +159,10 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
             return AlertDialog(
               title: Text(widget.labelText, style: TextStyle(fontFamily: font)),
               content: SingleChildScrollView(
-                child: ListBody(
-                  children: widget.items.whereType<Map<String, dynamic>>().map((
-                    item,
-                  ) {
+                child: Column(
+                  children: widget.items
+                      .whereType<Map<String, dynamic>>()
+                      .map((item) {
                     final id = item['id'].toString();
                     final name = item['name'].toString();
                     final isSelected = tempSelectedIds.contains(id);

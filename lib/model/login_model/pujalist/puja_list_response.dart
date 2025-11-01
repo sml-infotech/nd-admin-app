@@ -1,20 +1,62 @@
 class PujaListResponse {
   final int code;
-  final List<PujaData> data;
+  final PujaListData data;
 
-  PujaListResponse({required this.code, required this.data});
+  PujaListResponse({
+    required this.code,
+    required this.data,
+  });
 
   factory PujaListResponse.fromJson(Map<String, dynamic> json) {
     return PujaListResponse(
       code: json['code'] ?? 0,
-      data: (json['data'] as List<dynamic>? ?? [])
+      data: PujaListData.fromJson(json['data'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'code': code,
+      'data': data.toJson(),
+    };
+  }
+}
+
+class PujaListData {
+  final int totalCount;
+  final int totalPages;
+  final int page;
+  final int limit;
+  final List<PujaData> pujas;
+
+  PujaListData({
+    required this.totalCount,
+    required this.totalPages,
+    required this.page,
+    required this.limit,
+    required this.pujas,
+  });
+
+  factory PujaListData.fromJson(Map<String, dynamic> json) {
+    return PujaListData(
+      totalCount: json['totalCount'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+      page: json['page'] ?? 1,
+      limit: json['limit'] ?? 10,
+      pujas: (json['pujas'] as List<dynamic>? ?? [])
           .map((item) => PujaData.fromJson(item))
           .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'code': code, 'data': data.map((item) => item.toJson()).toList()};
+    return {
+      'totalCount': totalCount,
+      'totalPages': totalPages,
+      'page': page,
+      'limit': limit,
+      'pujas': pujas.map((p) => p.toJson()).toList(),
+    };
   }
 }
 
@@ -35,7 +77,7 @@ class PujaData {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<PujaTimeSlot> timeSlots;
-   bool? isActive;
+  bool? isActive;
 
   PujaData({
     required this.id,
@@ -67,7 +109,7 @@ class PujaData {
           : [],
       description: json['description'] ?? '',
       maximumNoOfDevotees: json['maximum_no_of_devotees'] ?? 0,
-      fee: json['fee'] != null ? json['fee'].toString() : '0',
+      fee: json['fee']?.toString() ?? '0',
       sampleImages: json['sample_images'] != null
           ? List<String>.from(json['sample_images'])
           : [],
@@ -82,13 +124,13 @@ class PujaData {
       days: json['days'] != null
           ? Map<String, bool>.from(json['days'])
           : {
-              'Mon': true,
-              'Tue': true,
-              'Wed': true,
-              'Thu': true,
-              'Fri': true,
-              'Sat': true,
-              'Sun': true,
+              'Mon': false,
+              'Tue': false,
+              'Wed': false,
+              'Thu': false,
+              'Fri': false,
+              'Sat': false,
+              'Sun': false,
             },
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
@@ -98,8 +140,8 @@ class PujaData {
           : DateTime.now(),
       timeSlots: json['time_slots'] != null
           ? (json['time_slots'] as List)
-                .map((item) => PujaTimeSlot.fromJson(item))
-                .toList()
+              .map((item) => PujaTimeSlot.fromJson(item))
+              .toList()
           : [],
       isActive: json['is_active'],
     );

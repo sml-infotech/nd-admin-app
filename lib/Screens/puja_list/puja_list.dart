@@ -27,8 +27,8 @@ class _PujaListState extends State<PujaList> {
   @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<PujaListViewmodel>(context);
-
     final screenHeight = MediaQuery.of(context).size.height;
+
     return FocusDetector(
       onFocusGained: () async {
         await viewmodel.getTemples();
@@ -45,9 +45,6 @@ class _PujaListState extends State<PujaList> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    constraints: BoxConstraints(
-                      minHeight: screenHeight - kToolbarHeight,
-                    ),
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -55,55 +52,60 @@ class _PujaListState extends State<PujaList> {
                         topRight: Radius.circular(20),
                       ),
                     ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 15),
+                            if (viewmodel.templeData.isNotEmpty)
 
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 15),
-
-                          Row(
-                            children: [
-                              _buildTempleDropdown(),
-                              Expanded(
-                                child: IconButton(
-                                  iconSize: 20,
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      StringsRoute.addPuja,
-                                      arguments: PujaArguments(
-                                        puja_id: '',
-                                        puja_name: '',
-                                        description: '',
-                                        maximumNoOfDevotees: 0,
-                                        fee: 0,
-                                        booking_cutoff_notice: '',
-                                        allows_special_requirements: true,
-                                        from_date: '',
-                                        to_date: '',
-                                        days: [],
-                                        deities_name: [],
-                                        sample_images: [],
-                                        templeId: '',
-                                        timeSlots: [],
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(Icons.add),
-                                ),
-                              ),
-                            ],
+                        Row(
+  children: [
+    Expanded(
+      flex: 1,
+      child: _buildTempleDropdown(),
+    ),
+    IconButton(
+      iconSize: 20,
+      onPressed: () {
+    
+        Navigator.pushNamed(
+          context,
+          StringsRoute.addPuja,
+          arguments: PujaArguments(
+            puja_id: '',
+            puja_name: '',
+            description: '',
+            maximumNoOfDevotees: 0,
+            fee: 0,
+            booking_cutoff_notice: '',
+            allows_special_requirements: true,
+            from_date: '',
+            to_date: '',
+            days: [],
+            deities_name: [],
+            sample_images: [],
+            templeId: "",
+            timeSlots: [],
+          ),
+        );
+      },
+      icon: const Icon(Icons.add),
+    ),
+  ],
+)
+,
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const ClampingScrollPhysics(),
+                            child: Column(children: _buildPujaList()),
                           ),
-                          Column(children: _buildPujaList()),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
-            if (viewmodel.isLoading) Center(child: _buildShimmer()),
+            if (viewmodel.isLoading) Positioned.fill(child: _buildShimmer()),
           ],
         ),
       ),
@@ -348,11 +350,7 @@ class _PujaListState extends State<PujaList> {
   }
 
   Widget _buildTempleDropdown() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        width: 350,
-        child: CommonDropdownField(
+    return  CommonDropdownField(
           selectedValue: viewmodel.selectedTemple,
           hintText: StringConstant.temple,
           labelText: StringConstant.temple,
@@ -368,8 +366,7 @@ class _PujaListState extends State<PujaList> {
               viewmodel.fetchPujas(templeId: selectedTemple.id);
             }
           },
-        ),
-      ),
+       
     );
   }
 
