@@ -28,7 +28,15 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
     super.initState();
     _selectedItems = List.from(widget.selectedItems);
   }
-
+  @override
+  void didUpdateWidget(covariant DeitiesDropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedItems != oldWidget.selectedItems) {
+      setState(() {
+        _selectedItems = List.from(widget.selectedItems);
+      });
+    }
+  }
   void _toggleDropdown() {
     setState(() => _isExpanded = !_isExpanded);
   }

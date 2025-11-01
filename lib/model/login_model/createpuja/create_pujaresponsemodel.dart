@@ -27,7 +27,7 @@ class PujaResponse {
 
 class PujaData {
   final String id;
-  final String templeId;
+  final String ?templeId;
   final String pujaName;
   final List<String> deitiesName;
   final String description;
@@ -44,7 +44,7 @@ class PujaData {
 
   PujaData({
     required this.id,
-    required this.templeId,
+     this.templeId,
     required this.pujaName,
     required this.deitiesName,
     required this.description,

@@ -273,7 +273,7 @@ class _PujaListState extends State<PujaList> {
   Widget editButton(PujaData puja) {
     return IconButton(
       onPressed: () {
-        print("Editing Puja: ${puja.timeSlots.reversed.toList()}");
+        print("Editing Puja: ${puja.sampleImages}");
         Navigator.pushNamed(
           context,
           StringsRoute.addPuja,

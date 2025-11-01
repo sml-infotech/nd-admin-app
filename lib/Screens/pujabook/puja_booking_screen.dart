@@ -33,6 +33,22 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   bool _isPrefilled = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if (widget.pujaArgumrnts?.timeSlots != null &&
+          widget.pujaArgumrnts!.timeSlots!.isNotEmpty) {
+        setState(() {
+          viewmodel.timeSlots = widget.pujaArgumrnts!.timeSlots!.map((slot) {
+            return TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime);
+          }).toList();
+        });
+      }
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isPrefilled) {
@@ -40,7 +56,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await viewmodel.getTemples(reset: true);
-        await prefillData(); // ✅ Wait for temples before filling data
+        await prefillData();
         setState(() {});
       });
 
@@ -51,7 +67,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   Future<void> prefillData() async {
     final args = widget.pujaArgumrnts;
     if (args == null || args.puja_id.isEmpty) return;
-
+    viewmodel.pujaId = args.puja_id;
+    viewmodel.selectedDeityId = args.templeId;
     viewmodel.pujaName.text = args.puja_name ?? "";
     viewmodel.description.text = args.description ?? "";
     viewmodel.maxDevotees.text = args.maximumNoOfDevotees?.toString() ?? "";
@@ -100,17 +117,20 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       }
 
       if (args.deities_name != null && args.deities_name!.isNotEmpty) {
-        viewmodel.deitiesList = List<String>.from(args.deities_name!);
+        viewmodel.deities = List<String>.from(args.deities_name!);
       }
+
       if (args.timeSlots != null && args.timeSlots!.isNotEmpty) {
-        viewmodel.timeSlots = args.timeSlots!.map((slot) {
-          return TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime);
-        }).toList();
+        setState(() {
+          viewmodel.timeSlots = args.timeSlots!.map((slot) {
+            return TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime);
+          }).toList();
+        });
       }
 
       print("?????>>>>>>?????${viewmodel.timeSlots}");
-      print("?????>>>>>>?????${widget.pujaArgumrnts?.templeId}");
-      print("?????>>>>>>?????11${viewmodel.deities}");
+      print("?????>>>>>>?????${widget.pujaArgumrnts?.sample_images}");
+      print("?????>>>>>>?????11${viewmodel.deitiesList}");
     }
   }
 
@@ -206,7 +226,12 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           const Spacer(),
-          Text(StringConstant.addPuja, style: AppTextStyles.appBarTitleStyle),
+          Text(
+            widget.pujaArgumrnts!.puja_name.isEmpty
+                ? StringConstant.addPuja
+                : StringConstant.updatePuja,
+            style: AppTextStyles.appBarTitleStyle,
+          ),
           const Spacer(),
           const SizedBox(width: 48),
         ],
@@ -223,13 +248,17 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       paddingSize: 16,
       onChanged: (value) {
         if (value == null) return;
+
         final selectedTemple = viewmodel.templeData.firstWhere(
           (t) => t.name == value,
         );
+
         setState(() {
           viewmodel.deities.clear();
-          viewmodel.selectedTempleId = selectedTemple.id; // ✅ fixed key name
-          viewmodel.setSelectedTemple(selectedTemple); // updates deitiesList
+          viewmodel.deitiesList = [];
+          viewmodel.selectedTempleId = selectedTemple.id;
+          viewmodel.setSelectedTemple(selectedTemple);
+          viewmodel.notifyListeners();
         });
       },
     );
@@ -310,6 +339,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
           child: TimeSlotSelector(
+            key: ValueKey(viewmodel.timeSlots.hashCode),
             initialSlots: viewmodel.timeSlots,
             onChanged: (updatedSlots) {
               setState(() => viewmodel.timeSlots = updatedSlots);
@@ -385,17 +415,19 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () async {
-                final isValid = await viewmodel.validateForm();
-                if (!isValid) {
-                  Fluttertoast.showToast(msg: "Form is not valid!");
-                  return;
-                }
+                final isUpdate =
+                    widget.pujaArgumrnts != null &&
+                    widget.pujaArgumrnts!.puja_id.isNotEmpty;
+                final isValid = await viewmodel.validateForm(isUpdate);
+
                 if (viewmodel.pujaCreated) {
-                  Fluttertoast.showToast(msg: "Puja created successfully!");
+                  Fluttertoast.showToast(
+                    msg: viewmodel.message ?? "Puja created successfully.",
+                  );
                   Navigator.pop(context);
                 } else {
                   Fluttertoast.showToast(
-                    msg: "Puja creation failed. Try again.",
+                    msg: viewmodel.message ?? "Failed to create puja.",
                   );
                 }
               },
@@ -406,7 +438,9 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                 ),
               ),
               child: Text(
-                StringConstant.addPuja,
+                widget.pujaArgumrnts!.puja_name.isEmpty
+                    ? StringConstant.addPuja
+                    : StringConstant.updatePuja,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

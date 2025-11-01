@@ -6,15 +6,17 @@ class StringConstant {
   static const String userName = "Username";
   static const String password = "Password";
   static const String enterUserName = "Enter your email";
-  static const String enterName ="Enter Name";
+  static const String enterName = "Enter Name";
   static const String enterPassword = "Enter valid password";
   static const String enterConfirmPassword = "Enter Confirm password";
-  static const String termsAndCondition = "I agree to the Terms & Conditions and Privacy policy";
+  static const String termsAndCondition =
+      "I agree to the Terms & Conditions and Privacy policy";
   static const String login = "Login";
   static const String reset = "Reset";
   static const String resetPassword = "Reset Password";
   static const String resetSubText = "Enter a new password and confirm it.";
-  static const String fogotSubtext="Enter your registered email address and we’ll send you an OTP to reset your password.";
+  static const String fogotSubtext =
+      "Enter your registered email address and we’ll send you an OTP to reset your password.";
   static const String forgotPassword1 = "Forgot Password";
   static const String forgotPassword = "Forgot Password?";
   static const String welcomeBack = "Welcome";
@@ -48,7 +50,7 @@ class StringConstant {
   static const String role = "Role";
   static const String temples = "Temples";
   static const String selectTemples = "Select Temple";
-  static const List<String> roles=["Temple", "Agent", "Admin"];
+  static const List<String> roles = ["Temple", "Agent", "Admin"];
   static const String temple = "Temples";
   static const String create = "Create";
   static const String editUser = "Edit User";
@@ -72,80 +74,81 @@ class StringConstant {
   static const String editImages = "Edit Images";
 
   static const String addPuja = "Add Puja / Seva";
+  static const String updatePuja = "updatePuja";
+
   static const String pujaList = "Pujas";
   static const String updateRequests = "updateRequests";
   static const String fee = "Fee: ";
-  static const String addSevaAndPuja="Add Seva / puja name";
-  static const String slot="Slot";
-  static const String selectSlot="Select Slot";
-  static const String date="Date";
-  static const String enterPuja="Enter Puja / Seva duration time";
-  static const String duration="Duration";
-  static const String cost="Enter Cost";
-  static const String fees="Fees";
-  static const String maxDevote="Enter the maximum devotees allowed for puja / seva";
-  static const String maxNoDevote="Maximum number of Devotees";
-  static const String uploadText= "Upload Image (Optional)";
-  static const String uploadImageSeva= "Upload Image (puja/seva)";
-  static const String cutOffText= "Booking Cutoff / Notice";
-  static const String priestText= "Priest Dakshina (Optional)";
-  static const String fromTime= "From time";
-  static const String toTime= "To time";
-  static const String fromDate= "from Date";
-  static const String toDate= "to Date";
-  static const String noPujaAvailable= "No pujas available";
-  static const String deitiesText= "Deities: ";
-  static const String descriptionText= "Description : ";
-  static const String from="From: ";
-  static const String to="To: ";
-  static const String active="Active";
-  static const String inActive="Inactive";
-  static const String maxDevotee="Max Devotees: ";
-  static const String availableDays="Available Days :";
-  static const String availableslot="Available Time Slots :";
-  static const String viewImg="View Images";
- static const String noAvailableSlot="No available time slots";
-  static const String hideDetails="Hide Details";
-  static const String viewAndApprove="View & Approve";
-  static const String previousData="Previous Data";
-  static const String changesData="Changes Data";
-    static const String reason="Reason";
+  static const String addSevaAndPuja = "Add Seva / puja name";
+  static const String slot = "Slot";
+  static const String selectSlot = "Select Slot";
+  static const String date = "Date";
+  static const String enterPuja = "Enter Puja / Seva duration time";
+  static const String duration = "Duration";
+  static const String cost = "Enter Cost";
+  static const String fees = "Fees";
+  static const String maxDevote =
+      "Enter the maximum devotees allowed for puja / seva";
+  static const String maxNoDevote = "Maximum number of Devotees";
+  static const String uploadText = "Upload Image (Optional)";
+  static const String uploadImageSeva = "Upload Image (puja/seva)";
+  static const String cutOffText = "Booking Cutoff / Notice";
+  static const String priestText = "Priest Dakshina (Optional)";
+  static const String fromTime = "From time";
+  static const String toTime = "To time";
+  static const String fromDate = "from Date";
+  static const String toDate = "to Date";
+  static const String noPujaAvailable = "No pujas available";
+  static const String deitiesText = "Deities: ";
+  static const String descriptionText = "Description : ";
+  static const String from = "From: ";
+  static const String to = "To: ";
+  static const String active = "Active";
+  static const String inActive = "Inactive";
+  static const String maxDevotee = "Max Devotees: ";
+  static const String availableDays = "Available Days :";
+  static const String availableslot = "Available Time Slots :";
+  static const String viewImg = "View Images";
+  static const String noAvailableSlot = "No available time slots";
+  static const String hideDetails = "Hide Details";
+  static const String viewAndApprove = "View & Approve";
+  static const String previousData = "Previous Data";
+  static const String changesData = "Changes Data";
+  static const String reason = "Reason";
 
-
-
-
-
-
-
-
-
-
-
-
-  static const String specialReq=  "Special Requirements (allow user to add special requirements)";
-
+  static const String specialReq =
+      "Special Requirements (allow user to add special requirements)";
 }
 
 class ColorConstant {
   ColorConstant._();
-    static const Color primaryColor = Color(0xff770425);
-    static const Color eyeColor = Color(0xffcdcdcd);
-    static const Color buttonColor = Color(0xff770425);
+  static const Color primaryColor = Color(0xff770425);
+  static const Color eyeColor = Color(0xffcdcdcd);
+  static const Color buttonColor = Color(0xff770425);
 }
 
-
-
 String font = 'Nunito';
+
 class Fonts {
   Fonts._();
-  static TextStyle Regular =
-      TextStyle(fontFamily: font, fontWeight: FontWeight.w400,);
-  static TextStyle Medium =
-      TextStyle(fontFamily: font, fontWeight: FontWeight.w500);
-  static TextStyle SemiBold =
-      TextStyle(fontFamily: font, fontWeight: FontWeight.w600);
-  static TextStyle Bold =
-      TextStyle(fontFamily: font, fontWeight: FontWeight.w700);
-  static TextStyle ExtraBold =
-      TextStyle(fontFamily: font, fontWeight: FontWeight.w800);
+  static TextStyle Regular = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w400,
+  );
+  static TextStyle Medium = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle SemiBold = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w600,
+  );
+  static TextStyle Bold = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w700,
+  );
+  static TextStyle ExtraBold = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w800,
+  );
 }

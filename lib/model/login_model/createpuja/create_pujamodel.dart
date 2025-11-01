@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Puja {
-  final String templeId;
+  final String ?templeId;
+  final String? puja_id;
   final String pujaName;
   final List<String> deitiesName;
   final String description;
@@ -16,7 +17,8 @@ class Puja {
   final List<TimeSlot> timeSlots;
 
   Puja({
-    required this.templeId,
+     this.templeId,
+    this.puja_id,
     required this.pujaName,
     required this.deitiesName,
     required this.description,
@@ -34,6 +36,7 @@ class Puja {
   factory Puja.fromJson(Map<String, dynamic> json) {
     return Puja(
       templeId: json['temple_id'] as String,
+      puja_id: json['puja_id'] as String,
       pujaName: json['puja_name'] as String,
       deitiesName: (json['deities_name'] as List<dynamic>)
           .map((e) => e as String)
@@ -65,6 +68,7 @@ class Puja {
   Map<String, dynamic> toJson() {
     return {
       'temple_id': templeId,
+      'puja_id': puja_id,
       'puja_name': pujaName,
       'deities_name': deitiesName,
       'description': description,
