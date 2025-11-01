@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ImageStrings.onlineseva,
                             StringConstant.createUser,
                             () {
-                              Navigator.pushNamed(context,StringsRoute.createUser );
+                              Navigator.pushNamed(context,StringsRoute.userDetails );
                             },
                           ),
                         ],

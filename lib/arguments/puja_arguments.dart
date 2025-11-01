@@ -1,6 +1,8 @@
+
+import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
+
 class PujaArguments {
   final String templeId;
-
   final String puja_id;
   final String puja_name;
   final String description;
@@ -13,6 +15,7 @@ class PujaArguments {
   final List<String> deities_name;
   final List<String> days;
   final List<String> sample_images;
+  final List<PujaTimeSlot> timeSlots;
 
   PujaArguments({
     required this.templeId,
@@ -28,5 +31,6 @@ class PujaArguments {
     required this.days,
     required this.deities_name,
     required this.sample_images,
+    required this.timeSlots,
   });
 }

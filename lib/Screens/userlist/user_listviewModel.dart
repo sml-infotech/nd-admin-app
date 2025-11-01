@@ -1,16 +1,20 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
+import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserService authService = UserService();
   final TextEditingController role = TextEditingController();
+  final TempleService templeService = TempleService();
 
   List<UserModel> userData = [];
   List<UserModel> get users => userData;
+ List<Map<String, dynamic>> templeList = []; 
 
   List<EditUserResponse> editData = [];
   List<EditUserResponse> get editdata => editData;
@@ -18,12 +22,12 @@ class UserViewModel extends ChangeNotifier {
   bool isLoading = true;
   bool editLoading = false;
 
-  /// Pagination fields
+List<String> selectedTempleIds = [];
   bool hasMore = true;
   int page = 1;
   final int _pageSize = 10;
+  List<Temple> _templeData = [];
 
-  /// Map to temporarily hold active state for each user while editing
   final Map<String, bool> _tempActiveMap = {};
   bool getTempActive(String userId) => _tempActiveMap[userId] ?? false;
   void setTempActive(String userId, bool value) {
@@ -31,7 +35,6 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Fetch initial users or reset list
   Future<void> getUsers({bool reset = false}) async {
     if (reset) {
       page = 1;
@@ -92,8 +95,8 @@ class UserViewModel extends ChangeNotifier {
             email: userData[index].email,
             role: role.text.isNotEmpty ? role.text : userData[index].role,
             isActive: isActive,
-            associatedTempleId: userData[index].associatedTempleId,
-            updatedAt: DateTime.now(),
+           
+            updatedAt:"", phoneNumber: '', createdAt: '', associatedTemples: [],
           );
         }
       }
@@ -104,4 +107,26 @@ class UserViewModel extends ChangeNotifier {
     editLoading = false;
     notifyListeners();
   }
+
+   Future<void> getTemples({bool reset = false}) async {
+
+    isLoading = true;
+    notifyListeners();
+
+    final response = await templeService.getTemples(page: 1, limit: 10);
+
+    if (response.data != null && response.data!.isNotEmpty) {
+      _templeData.addAll(response.data!);
+templeList = _templeData
+        .map((t) => {
+              "id": t.id.toString(),
+              "name": t.name.toString(),
+            })
+        .toList();      page++;
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
 }

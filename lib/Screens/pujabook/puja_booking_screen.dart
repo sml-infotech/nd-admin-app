@@ -1,15 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
-
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
-import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
-
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
@@ -21,6 +16,7 @@ import 'package:nammadaiva_dashboard/Screens/pujabook/time_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import '../../model/login_model/createpuja/create_pujamodel.dart';
 
 class PujaBookingScreen extends StatefulWidget {
   final PujaArguments? pujaArgumrnts;
@@ -79,8 +75,6 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         viewmodel.selectedDays[key] = args.days!.contains(key);
       }
     }
-
-    // ✅ Prefill Temple and Deities
     if (args.templeId != null && args.templeId!.isNotEmpty) {
       final matchedTemple = viewmodel.templeData.firstWhere(
         (t) => t.id == args.templeId,
@@ -102,13 +96,19 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
       if (matchedTemple.id.isNotEmpty) {
         viewmodel.selectedTempleId = matchedTemple.id;
-        viewmodel.setSelectedTemple(matchedTemple); // updates deitiesList
+        viewmodel.setSelectedTemple(matchedTemple);
       }
 
       if (args.deities_name != null && args.deities_name!.isNotEmpty) {
         viewmodel.deitiesList = List<String>.from(args.deities_name!);
-
       }
+      if (args.timeSlots != null && args.timeSlots!.isNotEmpty) {
+        viewmodel.timeSlots = args.timeSlots!.map((slot) {
+          return TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime);
+        }).toList();
+      }
+
+      print("?????>>>>>>?????${viewmodel.timeSlots}");
       print("?????>>>>>>?????${widget.pujaArgumrnts?.templeId}");
       print("?????>>>>>>?????11${viewmodel.deities}");
     }

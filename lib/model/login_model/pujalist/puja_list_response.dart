@@ -14,10 +14,7 @@ class PujaListResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'code': code,
-      'data': data.map((item) => item.toJson()).toList(),
-    };
+    return {'code': code, 'data': data.map((item) => item.toJson()).toList()};
   }
 }
 
@@ -37,7 +34,7 @@ class PujaData {
   final Map<String, bool> days;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<TimeSlot> timeSlots;
+  final List<PujaTimeSlot> timeSlots;
 
   PujaData({
     required this.id,
@@ -83,13 +80,13 @@ class PujaData {
       days: json['days'] != null
           ? Map<String, bool>.from(json['days'])
           : {
-              'Mon': false,
-              'Tue': false,
-              'Wed': false,
-              'Thu': false,
-              'Fri': false,
-              'Sat': false,
-              'Sun': false
+              'Mon': true,
+              'Tue': true,
+              'Wed': true,
+              'Thu': true,
+              'Fri': true,
+              'Sat': true,
+              'Sun': true,
             },
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
@@ -99,8 +96,8 @@ class PujaData {
           : DateTime.now(),
       timeSlots: json['time_slots'] != null
           ? (json['time_slots'] as List)
-              .map((item) => TimeSlot.fromJson(item))
-              .toList()
+                .map((item) => PujaTimeSlot.fromJson(item))
+                .toList()
           : [],
     );
   }
@@ -127,21 +124,21 @@ class PujaData {
   }
 }
 
-class TimeSlot {
+class PujaTimeSlot {
   final String id;
   final String pujaId;
   final String fromTime;
   final String toTime;
 
-  TimeSlot({
+  PujaTimeSlot({
     required this.id,
     required this.pujaId,
     required this.fromTime,
     required this.toTime,
   });
 
-  factory TimeSlot.fromJson(Map<String, dynamic> json) {
-    return TimeSlot(
+  factory PujaTimeSlot.fromJson(Map<String, dynamic> json) {
+    return PujaTimeSlot(
       id: json['id'] ?? '',
       pujaId: json['puja_id'] ?? '',
       fromTime: json['from_time'] ?? '',

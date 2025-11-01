@@ -71,7 +71,24 @@ class _PujaListState extends State<PujaList> {
                                   onPressed: () {
                                     Navigator.pushNamed(
                                       context,
-                                      StringsRoute.addPuja,arguments: PujaArguments(puja_id: '', puja_name: '', description: '', maximumNoOfDevotees: 0, fee: 0, booking_cutoff_notice: '', allows_special_requirements: true, from_date: '', to_date: '', days: [], deities_name: [], sample_images: [], templeId: '' ));
+                                      StringsRoute.addPuja,
+                                      arguments: PujaArguments(
+                                        puja_id: '',
+                                        puja_name: '',
+                                        description: '',
+                                        maximumNoOfDevotees: 0,
+                                        fee: 0,
+                                        booking_cutoff_notice: '',
+                                        allows_special_requirements: true,
+                                        from_date: '',
+                                        to_date: '',
+                                        days: [],
+                                        deities_name: [],
+                                        sample_images: [],
+                                        templeId: '',
+                                        timeSlots: [],
+                                      ),
+                                    );
                                   },
                                   icon: Icon(Icons.add),
                                 ),
@@ -135,7 +152,7 @@ class _PujaListState extends State<PujaList> {
   }
 
   Widget listCard(PujaData puja) {
-    List<String> formatTimeSlots(List<TimeSlot> slots) {
+    List<String> formatTimeSlots(List<PujaTimeSlot> slots) {
       return slots.map((slot) {
         return "${slot.fromTime} → ${slot.toTime}";
       }).toList();
@@ -254,14 +271,35 @@ class _PujaListState extends State<PujaList> {
   }
 
   Widget editButton(PujaData puja) {
-    return IconButton(onPressed: () {
-      Navigator.pushNamed(context, StringsRoute.addPuja,arguments:PujaArguments(puja_id: puja.id, puja_name: puja.pujaName, description: puja.description, maximumNoOfDevotees: puja.maximumNoOfDevotees, fee: 422, booking_cutoff_notice:puja.bookingCutoffNotice.toString(), allows_special_requirements: puja.allowsSpecialRequirements, from_date: puja.fromDate.toString(), to_date:puja.toDate.toString(),
-      templeId: puja.templeId,
-      days: puja.days.entries
-        .where((e) => e.value)
-        .map((e) => e.key)
-        .toList(), deities_name:puja.deitiesName, sample_images: puja.sampleImages) );
-    }, icon: Icon(Icons.edit));
+    return IconButton(
+      onPressed: () {
+        print("Editing Puja: ${puja.timeSlots.reversed.toList()}");
+        Navigator.pushNamed(
+          context,
+          StringsRoute.addPuja,
+          arguments: PujaArguments(
+            puja_id: puja.id,
+            puja_name: puja.pujaName,
+            description: puja.description,
+            maximumNoOfDevotees: puja.maximumNoOfDevotees,
+            fee: 422,
+            booking_cutoff_notice: puja.bookingCutoffNotice.toString(),
+            allows_special_requirements: puja.allowsSpecialRequirements,
+            from_date: puja.fromDate.toString(),
+            to_date: puja.toDate.toString(),
+            templeId: puja.templeId,
+            days: puja.days.entries
+                .where((e) => e.value)
+                .map((e) => e.key)
+                .toList(),
+            deities_name: puja.deitiesName,
+            sample_images: puja.sampleImages,
+            timeSlots: puja.timeSlots,
+          ),
+        );
+      },
+      icon: Icon(Icons.edit),
+    );
   }
 
   Widget deitiesName(List<String> deitiesName) {
