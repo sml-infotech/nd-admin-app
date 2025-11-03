@@ -25,6 +25,10 @@ class StringConstant {
   static const String sevaText = "Seva/Pooja Calendar";
   static const String onlineSeva = "Online Seva & Harake Bookings";
   static const String createUser = "createUser";
+  static const String createEvent = "Create Event";
+    static const String event = "Event Name";
+
+
 
   static const String donationText = "Donation Tracking";
   static const String ritualText = "Ritual & Event Promotion";
@@ -63,6 +67,10 @@ class StringConstant {
   static const String architecturee = "Architecture";
   static const String addresss = "Address";
   static const String description = "description";
+  static const String location = "location";
+    static const String contactName = "contactName";
+
+
   static const String save = "Save";
   static const String templename = "Temple Name";
   static const String templelocation = "Temple Location";
