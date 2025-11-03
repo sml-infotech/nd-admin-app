@@ -33,12 +33,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-    Future<void> deleteToken() async {
+  Future<void> deleteToken() async {
     final prefs = await SharedPreferences.getInstance();
     final storedToken = prefs.remove('authToken');
     final storedRole = prefs.remove('userRole');
-
-    
   }
 
   @override
@@ -89,29 +87,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                       
+
                         const SizedBox(height: 20),
                       ],
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          
                           contaierWidgets(
                             ImageStrings.templeImage,
                             StringConstant.templeDetailText,
                             () {
                               Navigator.pushNamed(
-                                  context, StringsRoute.templeScreen);
+                                context,
+                                StringsRoute.templeScreen,
+                              );
                             },
                           ),
-                      SizedBox(width: 5),
+                          SizedBox(width: 5),
                           contaierWidgets(
                             ImageStrings.sevaimg,
                             StringConstant.sevaText,
                             () {
                               Navigator.pushNamed(
-                                  context, StringsRoute.pujaList);
+                                context,
+                                StringsRoute.pujaList,
+                              );
                             },
                           ),
                         ],
@@ -121,14 +122,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if(role=="Super Admin"||role =="Admin")
-                          contaierWidgets(
-                            ImageStrings.onlineseva,
-                            StringConstant.createUser,
-                            () {
-                              Navigator.pushNamed(context,StringsRoute.userDetails );
-                            },
-                          ),
+                          if (role == "Super Admin" || role == "Admin") ...[
+                            contaierWidgets(
+                              ImageStrings.onlineseva,
+                              StringConstant.createUser,
+                              () {
+                                Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.userDetails,
+                                );
+                              },
+                            ),
+                            SizedBox(width: 5),
+
+                            contaierWidgets(
+                              ImageStrings.ritual,
+                              StringConstant.updateRequests,
+                              () {
+                                Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.updateRequestsUrl,
+                                );
+                              },
+                            ),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 40),
@@ -145,7 +162,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // 🔹 AppBar
   Widget nammaDaivaAppBar() {
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -158,9 +174,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         IconButton(
           icon: Image.asset(ImageStrings.logout),
           onPressed: () async {
-        await   deleteToken();
+            await deleteToken();
             Navigator.pushReplacementNamed(context, StringsRoute.login);
-
           },
         ),
       ],

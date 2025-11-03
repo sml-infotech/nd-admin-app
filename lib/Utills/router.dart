@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_password_screen
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_details_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
@@ -17,7 +18,6 @@ import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
-
 
 class AppRouter {
   Route<dynamic>? route(RouteSettings settings) {
@@ -27,77 +27,83 @@ class AppRouter {
           settings: settings,
           builder: (_) => LoginScreen(),
         );
-          case StringsRoute.otpScreen:
-          OtpArguments args = settings.arguments as OtpArguments; 
+      case StringsRoute.otpScreen:
+        OtpArguments args = settings.arguments as OtpArguments;
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => OtpScreen(arguments: args),
         );
-     case StringsRoute.dashboard:
+      case StringsRoute.dashboard:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => DashboardScreen(),
         );
-         case StringsRoute.templeDetail:
-          TempleDetailsArguments args = settings.arguments as TempleDetailsArguments; 
+      case StringsRoute.templeDetail:
+        TempleDetailsArguments args =
+            settings.arguments as TempleDetailsArguments;
 
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => TempleDetailsScreen(arguments: args,),
+          builder: (_) => TempleDetailsScreen(arguments: args),
         );
 
-         case StringsRoute.createUser:
+      case StringsRoute.createUser:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateUserScreen(),
         );
-         case StringsRoute.forgotPassword:
+      case StringsRoute.forgotPassword:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => ForgotPasswordScreen(),
         );
-         case StringsRoute.resetPassword:
+      case StringsRoute.resetPassword:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => ResetPasswordScreen(),
         );
 
-         case StringsRoute.userDetails:
+      case StringsRoute.userDetails:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => UserListScreen(),
         );
-          case StringsRoute.templeScreen:
+      case StringsRoute.templeScreen:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => TempleScreen(),
         );
-        case StringsRoute.addTempleScreen:
+      case StringsRoute.addTempleScreen:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => AddTempleScreen(),
         );
-       case StringsRoute.addPuja:
-        PujaArguments args = settings.arguments as PujaArguments; 
+      case StringsRoute.addPuja:
+        PujaArguments args = settings.arguments as PujaArguments;
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => PujaBookingScreen(pujaArgumrnts: args,),
+          builder: (_) => PujaBookingScreen(pujaArgumrnts: args),
         );
 
-        case StringsRoute.pujaList:
+      case StringsRoute.pujaList:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => PujaList(),
         );
-         case StringsRoute.updateTempleDetails:
-            TempleDetailsArguments args = settings.arguments as TempleDetailsArguments; 
+      case StringsRoute.updateRequestsUrl:
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => TempleUpdateScreen(arguments: args,),
+          builder: (_) => UpdateRequests(),
+        );
+      case StringsRoute.updateTempleDetails:
+        TempleDetailsArguments args =
+            settings.arguments as TempleDetailsArguments;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => TempleUpdateScreen(arguments: args),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');
     }
   }
 }
-

@@ -115,4 +115,20 @@ class UpdateRequestViewModel extends ChangeNotifier {
       debugPrint("❌ Error approving temple update: $e");
     }
   }
+
+  void reset() {
+    page = 1;
+    int limit = 10;
+    hasMore = true;
+    isLoading = false;
+    isLoadingMore = false;
+    isLoadingForApproval = false;
+    isUpdated = false;
+    message = '';
+
+    expandedIndex = 0;
+    final Map<int, Map<String, String>> rejectedReasons = {};
+    requests = [];
+    final Map<int, Set<String>> approvedFields = {};
+  }
 }

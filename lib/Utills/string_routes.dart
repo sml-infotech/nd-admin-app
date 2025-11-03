@@ -13,6 +13,7 @@ class StringsRoute {
   static const String updateTempleDetails ='/updateTempleDetails';
   static const String addPuja ='/addPuja';
   static const String pujaList ='/pujaList';
+  static const String updateRequestsUrl ='/updateRequests';
 
 
 

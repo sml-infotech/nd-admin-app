@@ -38,6 +38,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+    viewmodel.reset();
+    viewmodel.expandedIndex = null;
   }
 
   @override
