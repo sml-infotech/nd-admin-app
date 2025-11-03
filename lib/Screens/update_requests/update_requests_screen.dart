@@ -46,7 +46,11 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   Widget build(BuildContext context) {
     viewmodel = Provider.of<UpdateRequestViewModel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final visibleRequests = viewmodel.requests
+        .where(
+          (r) => r.status != 'PartiallyReviewed' && r.status != 'Completed',
+        )
+        .toList();
     return FocusDetector(
       onFocusGained: () async {
         await viewmodel.fetchUpdateRequests(reset: true);
@@ -72,6 +76,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                     child: viewmodel.isLoading
                         ? _buildShimmer()
                         : RefreshIndicator(
+                            color: ColorConstant.buttonColor,
                             onRefresh: () =>
                                 viewmodel.fetchUpdateRequests(reset: true),
                             child: ListView.builder(
@@ -79,16 +84,13 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                               padding: const EdgeInsets.all(16),
                               physics: const AlwaysScrollableScrollPhysics(),
                               itemCount:
-                                  viewmodel.requests.length +
+                                  visibleRequests.length +
                                   (viewmodel.isLoadingMore ? 1 : 0),
                               itemBuilder: (context, index) {
-                                if (index < viewmodel.requests.length) {
-                                  final request = viewmodel.requests[index];
-
-                                  return request.status == 'PartiallyReviewed'||
-                                          request.status == 'Completed'
-                                      ?  SizedBox.shrink()
-                                      :_buildUpdateRequestCard(index)  ;
+                                if (index < visibleRequests.length) {
+                                  final originalIndex = viewmodel.requests
+                                      .indexOf(visibleRequests[index]);
+                                  return _buildUpdateRequestCard(originalIndex);
                                 } else {
                                   return _buildLoadingMoreIndicator();
                                 }

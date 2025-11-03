@@ -19,7 +19,11 @@ class UpdateRequestViewModel extends ChangeNotifier {
   List<TempleRequest> requests = [];
   final Map<int, Set<String>> approvedFields = {};
 
+ List<TempleRequest> get visibleRequests =>
+      requests.where((r) => r.status != 'PartiallyReviewed' && r.status != 'Completed').toList();
   Future<void> fetchUpdateRequests({bool reset = false}) async {
+    if (isLoading || isLoadingMore) return;
+
     if (reset) {
       page = 1;
       hasMore = true;
@@ -29,38 +33,77 @@ class UpdateRequestViewModel extends ChangeNotifier {
 
     if (!hasMore) return;
 
-    if (page == 1) {
-      isLoading = true;
-    } else {
-      isLoadingMore = true;
-    }
-    notifyListeners();
+    // Use a loop to fetch enough pages so the visible list is reasonably full.
+    // Safety: cap number of pages to fetch in one call to avoid infinite loops.
+    const int maxExtraPages = 5; // tweak if needed
+    int extraFetchedPages = 0;
 
     try {
-      final response = await _templeService.fetchUpdateRequests(
-        page: page,
-        limit: limit,
-      );
-
-      if (response.data != null && response.data!.requests.isNotEmpty) {
-        requests.addAll(response.data!.requests);
-
-        if (response.data!.requests.length < limit) {
-          hasMore = false;
-        } else {
-          page++;
-        }
+      // If first page, set isLoading, otherwise isLoadingMore (UI difference)
+      if (page == 1) {
+        isLoading = true;
       } else {
-        hasMore = false;
+        isLoadingMore = true;
       }
-    } catch (e) {
-      debugPrint("Error fetching update requests: $e");
-      hasMore = false;
-    }
+      notifyListeners();
 
-    isLoading = false;
-    isLoadingMore = false;
-    notifyListeners();
+      bool continueFetching = true;
+
+      while (continueFetching) {
+        // Prevent concurrent double-calls
+        if (!hasMore) break;
+
+        debugPrint('[fetchUpdateRequests] fetching page: $page');
+
+        final response = await _templeService.fetchUpdateRequests(page: page, limit: limit);
+
+        // If response structure differs, adapt accordingly
+        final newRequests = response.data?.requests ?? <TempleRequest>[];
+
+        if (newRequests.isNotEmpty) {
+          requests.addAll(newRequests);
+
+          // If server returned less than limit => no more pages
+          if (newRequests.length < limit) {
+            hasMore = false;
+          } else {
+            // there might be more pages
+            page++;
+          }
+        } else {
+          // no new items on this page
+          hasMore = false;
+        }
+
+        // After adding, check how many visible requests we have
+        final int visibleCount = visibleRequests.length;
+        debugPrint('[fetchUpdateRequests] visibleCount=$visibleCount, hasMore=$hasMore');
+
+        // Stop fetching if:
+        // - visibleCount >= limit (we have a page full of visible items),
+        // - or there are no more pages,
+        // - or we already fetched the allowed extra pages.
+        extraFetchedPages++;
+        final bool reachedEnoughVisible = visibleCount >= limit;
+        final bool reachedMaxExtra = extraFetchedPages >= maxExtraPages;
+
+        if (reachedEnoughVisible || !hasMore || reachedMaxExtra) {
+          continueFetching = false;
+        } else {
+          // We will loop and fetch next page
+          isLoadingMore = true;
+          notifyListeners();
+        }
+      }
+    } catch (e, st) {
+      debugPrint("Error fetching update requests: $e\n$st");
+      // on error, stop further trying to fetch in this flow
+      hasMore = false;
+    } finally {
+      isLoading = false;
+      isLoadingMore = false;
+      notifyListeners();
+    }
   }
 
   Future<void> approvalTempleUpdate(String requestId, int requestIndex) async {
