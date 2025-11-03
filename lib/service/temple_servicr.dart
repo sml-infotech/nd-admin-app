@@ -5,6 +5,8 @@ import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_respon
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_admin/admin_update_templemodal.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update-temple_approval-response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update_temple_approval_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -143,4 +145,22 @@ Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limi
     throw Exception('API failed: $e');
   }
 }
+
+Future<UpdateTempleApprovalResponse> updateApproval( String requestId,Map<String, String> field_decisions) async {
+  try {
+
+  final request=UpdateTempleApprovalModal(requestId:requestId , fieldDecisions: field_decisions) ;
+    final data = await apiService.put(
+      UrlConstant.templeApprovalUrl,
+      request.toJson(),
+    );
+
+    print("✅ Temple Update API Response >>>> $data");
+    return UpdateTempleApprovalResponse.fromJson(data);
+  } catch (e) {
+    print("❌ Temple Update service failed: $e");
+    throw Exception('Temple update API failed: $e');
+  }
+}
+
 }

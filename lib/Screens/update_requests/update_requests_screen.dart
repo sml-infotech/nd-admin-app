@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -51,42 +52,62 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
         appBar: _buildAppBar(),
-        body: Column(
+        body: Stack(
           children: [
-            SizedBox(height: screenHeight * 0.02),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+            Column(
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: viewmodel.isLoading
+                        ? _buildShimmer()
+                        : RefreshIndicator(
+                            onRefresh: () =>
+                                viewmodel.fetchUpdateRequests(reset: true),
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              padding: const EdgeInsets.all(16),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount:
+                                  viewmodel.requests.length +
+                                  (viewmodel.isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index < viewmodel.requests.length) {
+                                  final request = viewmodel.requests[index];
+
+                                  return request.status == 'PartiallyReviewed'||
+                                          request.status == 'Completed'
+                                      ?  SizedBox.shrink()
+                                      :_buildUpdateRequestCard(index)  ;
+                                } else {
+                                  return _buildLoadingMoreIndicator();
+                                }
+                              },
+                            ),
+                          ),
                   ),
                 ),
-                child: viewmodel.isLoading
-                    ? _buildShimmer()
-                    : RefreshIndicator(
-                        onRefresh: () =>
-                            viewmodel.fetchUpdateRequests(reset: true),
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(16),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount:
-                              viewmodel.requests.length +
-                              (viewmodel.isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index < viewmodel.requests.length) {
-                              return _buildUpdateRequestCard(index);
-                            } else {
-                              return _buildLoadingMoreIndicator();
-                            }
-                          },
-                        ),
-                      ),
-              ),
+              ],
             ),
+            if (viewmodel.isLoadingForApproval)
+              Container(
+                color: Colors.black45,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      ColorConstant.buttonColor,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -277,6 +298,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     bool isRejected,
     int requestIndex,
   ) {
+    final bool isImageField = key.toLowerCase().contains('image');
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Container(
@@ -284,17 +307,25 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         decoration: BoxDecoration(
           color: Colors.grey.shade50,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey.shade400),
+          border: Border.all(color: Colors.grey.shade400, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _dataLabel("${StringConstant.current} $key"),
-            _dataBox(_formatValue(oldValue), const Color(0xFFECCBDD)),
+            isImageField
+                ? _buildImageSection(_formatValue(oldValue))
+                : _dataBox(_formatValue(oldValue), const Color(0xFFECCBDD)),
+
             const SizedBox(height: 8),
+
             _dataLabel("${StringConstant.requested} $key"),
-            _dataBox(_formatValue(newValue), Colors.greenAccent.shade100),
+            isImageField
+                ? _buildImageSection(_formatValue(newValue))
+                : _dataBox(_formatValue(newValue), Colors.greenAccent.shade100),
+
             const SizedBox(height: 10),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -443,6 +474,61 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
+  Widget _buildImageSection(String imageUrl) {
+    final List<String> imageUrls = imageUrl
+        .split(',')
+        .map((url) => url.trim())
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    if (imageUrls.isEmpty) {
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: const Text(
+          "No images available",
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          final image = imageUrls[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                image,
+                width: 120,
+                height: 120,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image, color: Colors.red, size: 40),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: 120,
+                    height: 120,
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _cancelButton(bool isExpanded) {
     return SizedBox(
       height: 30,
@@ -468,7 +554,42 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     return SizedBox(
       height: 30,
       child: ElevatedButton(
-        onPressed: () async {},
+        onPressed: () async {
+          final bool isValid = _validateBeforeSubmit();
+
+          if (!isValid) {
+            Fluttertoast.showToast(
+              msg:
+                  "Please approve or reject all changed fields before submitting.",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+            return;
+          }
+
+          await viewmodel.approvalTempleUpdate(
+            viewmodel.requests[viewmodel.expandedIndex!].id,
+            viewmodel.expandedIndex ?? 0,
+          );
+
+          if (viewmodel.isUpdated) {
+            Fluttertoast.showToast(
+              msg: viewmodel.message.isNotEmpty
+                  ? viewmodel.message
+                  : "Update approved successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+            viewmodel.expandedIndex = null;
+            await viewmodel.fetchUpdateRequests(reset: true);
+          }
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
@@ -479,6 +600,23 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         ),
       ),
     );
+  }
+
+  bool _validateBeforeSubmit() {
+    final int? requestIndex = viewmodel.expandedIndex;
+    if (requestIndex == null) return false;
+
+    final request = viewmodel.requests[requestIndex];
+    final Map<String, dynamic> changedData = request.changes;
+
+    final approved = viewmodel.approvedFields[requestIndex] ?? {};
+    final rejected = viewmodel.rejectedReasons[requestIndex] ?? {};
+    final allChangedKeys = changedData.keys.toList();
+    final allMarkedKeys = {
+      ...approved,
+      ...rejected.keys.where((key) => key != "global_reason"),
+    };
+    return allChangedKeys.every(allMarkedKeys.contains);
   }
 
   String _formatValue(dynamic value) {
