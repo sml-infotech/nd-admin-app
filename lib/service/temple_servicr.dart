@@ -76,10 +76,15 @@ Future<CreateTempleResponse> addTemple(
 
 
 
- Future<PujaListResponse> getPujas(String templeId) async {
+Future<PujaListResponse> getPujas(
+  String templeId, {
+  int page = 1,
+  int limit = 10,
+}) async {
   try {
-    final url = '${UrlConstant.getPujas}?temple_id=$templeId';
+    final url = '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
     print('Fetching getPujas: $url');
+    
     dynamic data = await apiService.get(url);
     return PujaListResponse.fromJson(data);
   } catch (e) {
@@ -138,6 +143,4 @@ Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limi
     throw Exception('API failed: $e');
   }
 }
-
-
-  }
+}

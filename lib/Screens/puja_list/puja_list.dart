@@ -21,8 +21,27 @@ class PujaList extends StatefulWidget {
 }
 
 class _PujaListState extends State<PujaList> {
+  final ScrollController _scrollController = ScrollController();
   bool isActive = false;
   late PujaListViewmodel viewmodel;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        viewmodel.hasMorePujas) {
+      _loadMorePujas();
+    }
+  }
+
+  Future<void> _loadMorePujas() async {
+    await viewmodel.loadMorePujas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,50 +74,56 @@ class _PujaListState extends State<PujaList> {
                     child: Column(
                       children: [
                         const SizedBox(height: 15),
-                            if (viewmodel.templeData.isNotEmpty)
-
-                        Row(
-  children: [
-    Expanded(
-      flex: 1,
-      child: _buildTempleDropdown(),
-    ),
-    IconButton(
-      iconSize: 20,
-      onPressed: () {
-    
-        Navigator.pushNamed(
-          context,
-          StringsRoute.addPuja,
-          arguments: PujaArguments(
-            puja_id: '',
-            puja_name: '',
-            description: '',
-            maximumNoOfDevotees: 0,
-            fee: 0,
-            booking_cutoff_notice: '',
-            allows_special_requirements: true,
-            from_date: '',
-            to_date: '',
-            days: [],
-            deities_name: [],
-            sample_images: [],
-            templeId: "",
-            timeSlots: [],
-          ),
-        );
-      },
-      icon: const Icon(Icons.add),
-    ),
-  ],
-)
-,
-                        Expanded(
-                          child: SingleChildScrollView(
-                            physics: const ClampingScrollPhysics(),
-                            child: Column(children: _buildPujaList()),
+                        if (viewmodel.templeData.isNotEmpty)
+                          Row(
+                            children: [
+                              Expanded(flex: 1, child: _buildTempleDropdown()),
+                              IconButton(
+                                iconSize: 20,
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.addPuja,
+                                    arguments: PujaArguments(
+                                      puja_id: '',
+                                      puja_name: '',
+                                      description: '',
+                                      maximumNoOfDevotees: 0,
+                                      fee: 0,
+                                      booking_cutoff_notice: '',
+                                      allows_special_requirements: true,
+                                      from_date: '',
+                                      to_date: '',
+                                      days: [],
+                                      deities_name: [],
+                                      sample_images: [],
+                                      templeId: "",
+                                      timeSlots: [],
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                              ),
+                            ],
                           ),
-                        ),
+                       Expanded(
+  child: ListView.builder(
+    controller: _scrollController,
+    physics: const AlwaysScrollableScrollPhysics(),
+    itemCount: viewmodel.pujaList.length + (viewmodel.isLoadingMore ? 1 : 0),
+    itemBuilder: (context, index) {
+      if (index < viewmodel.pujaList.length) {
+        return listCard(viewmodel.pujaList[index]);
+      } else {
+        return const Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+    },
+  ),
+),
+
                       ],
                     ),
                   ),
@@ -112,26 +137,7 @@ class _PujaListState extends State<PujaList> {
     );
   }
 
-  List<Widget> _buildPujaList() {
-    if (viewmodel.isLoading) {
-      return [];
-    }
-    if (viewmodel.pujaList.isEmpty) {
-      return [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 300),
-            Text(
-              StringConstant.noPujaAvailable,
-              style: TextStyle(fontFamily: font),
-            ),
-          ],
-        ),
-      ];
-    }
-    return viewmodel.pujaList.map((puja) => listCard(puja)).toList();
-  }
+  
 
   AppBar _buildAppBar() {
     return AppBar(
@@ -350,23 +356,22 @@ class _PujaListState extends State<PujaList> {
   }
 
   Widget _buildTempleDropdown() {
-    return  CommonDropdownField(
-          selectedValue: viewmodel.selectedTemple,
-          hintText: StringConstant.temple,
-          labelText: StringConstant.temple,
-          items: viewmodel.templeData.map((t) => t.name).toList(),
-          paddingSize: 16,
-          onChanged: (value) {
-            final idx = viewmodel.templeData.indexWhere(
-              (temple) => temple.name == value,
-            );
-            if (idx != -1) {
-              final selectedTemple = viewmodel.templeData[idx];
-              viewmodel.selectedTemple = selectedTemple.name;
-              viewmodel.fetchPujas(templeId: selectedTemple.id);
-            }
-          },
-       
+    return CommonDropdownField(
+      selectedValue: viewmodel.selectedTemple,
+      hintText: StringConstant.temple,
+      labelText: StringConstant.temple,
+      items: viewmodel.templeData.map((t) => t.name).toList(),
+      paddingSize: 16,
+      onChanged: (value) {
+        final idx = viewmodel.templeData.indexWhere(
+          (temple) => temple.name == value,
+        );
+        if (idx != -1) {
+          final selectedTemple = viewmodel.templeData[idx];
+          viewmodel.selectedTemple = selectedTemple.name;
+          viewmodel.fetchPujas(templeId: selectedTemple.id, reset: true);
+        }
+      },
     );
   }
 
