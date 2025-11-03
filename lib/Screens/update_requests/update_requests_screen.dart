@@ -51,84 +51,43 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
         appBar: _buildAppBar(),
-        body: Stack(
+        body: Column(
           children: [
-            Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: viewmodel.isLoading
-                        ? _buildShimmer()
-                        : RefreshIndicator(
-                            onRefresh: () =>
-                                viewmodel.fetchUpdateRequests(reset: true),
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              padding: const EdgeInsets.all(16),
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: viewmodel.requests.length +
-                                  (viewmodel.isLoadingMore ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index < viewmodel.requests.length) {
-                                  return _buildUpdateRequestCard(index);
-                                } else {
-                                  return _buildLoadingMoreIndicator();
-                                }
-                              },
-                            ),
-                          ),
+            SizedBox(height: screenHeight * 0.02),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
-              ],
+                child: viewmodel.isLoading
+                    ? _buildShimmer()
+                    : RefreshIndicator(
+                        onRefresh: () =>
+                            viewmodel.fetchUpdateRequests(reset: true),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.all(16),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              viewmodel.requests.length +
+                              (viewmodel.isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index < viewmodel.requests.length) {
+                              return _buildUpdateRequestCard(index);
+                            } else {
+                              return _buildLoadingMoreIndicator();
+                            }
+                          },
+                        ),
+                      ),
+              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingMoreIndicator() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Center(child: CircularProgressIndicator(color: Colors.grey,)),
-    );
-  }
-
-
-  Widget _buildShimmer() {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: ListView.separated(
-        itemCount: 6,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (_, __) => Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          child: Container(
-            height: 140,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
         ),
       ),
     );
@@ -157,49 +116,84 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
+  Widget _buildShimmer() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: ListView.separated(
+        itemCount: 6,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 140,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingMoreIndicator() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Center(child: CircularProgressIndicator(color: Colors.grey)),
+    );
+  }
+
   Widget _buildUpdateRequestCard(int index) {
     final request = viewmodel.requests[index];
     final isExpanded = viewmodel.expandedIndex == index;
 
     return AnimatedContainer(
-      width: double.infinity,
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4)],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _infoRow(StringConstant.templeName, request.templeDetails.name),
+          _infoRow(StringConstant.email, request.templeDetails.email),
+          _infoRow(StringConstant.addresss, request.templeDetails.address),
+          _infoRow(StringConstant.pincode, request.templeDetails.pincode),
+          const SizedBox(height: 8),
+          _expandSection(isExpanded, index, request),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String title, String subtitle) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: RichText(
+        text: TextSpan(
           children: [
-            commonTitleAndSubtitle(
-              "${StringConstant.templeName}: ",
-              request.templeDetails.name,
+            TextSpan(
+              text: "$title: ",
+              style: AppTextStyles.templeNameDetailsStyle.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            commonTitleAndSubtitle(
-              "${StringConstant.email}: ",
-              request.templeDetails.email,
+            TextSpan(
+              text: subtitle,
+              style: AppTextStyles.templeNameDetailsStyle,
             ),
-            commonTitleAndSubtitle(
-              "${StringConstant.address}: ",
-              request.templeDetails.address,
-            ),
-            commonTitleAndSubtitle(
-              "${StringConstant.pincode}: ",
-              request.templeDetails.pincode,
-            ),
-            const SizedBox(height: 8),
-            expandWidgets(isExpanded, index, request),
           ],
         ),
       ),
     );
   }
 
-  Widget expandWidgets(bool isExpanded, int index, TempleRequest request) {
+  Widget _expandSection(bool isExpanded, int index, TempleRequest request) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -223,41 +217,91 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         if (isExpanded) ...[
           const SizedBox(height: 16),
           _buildDataSection(
-            StringConstant.previousData,
             Map.fromEntries(
               request.templeDetails.toJson().entries.where(
                 (e) => request.changes.keys.contains(e.key),
               ),
             ),
-            isChangeSection: false,
+            changedData: Map.fromEntries(
+              request.changes.entries.where(
+                (e) => request.templeDetails.toJson().keys.contains(e.key),
+              ),
+            ),
+            requestIndex: index,
+            isExpanded: isExpanded,
           ),
           const SizedBox(height: 12),
-          _buildDataSection(
-            StringConstant.changesData,
-            request.changes,
-            requestIndex: index,
-            isChangeSection: true,
-          ),
         ],
       ],
     );
   }
 
-  Widget commonTitleAndSubtitle(String title, String subTitle) {
+  Widget _buildDataSection(
+    Map<String, dynamic> previousData, {
+    required Map<String, dynamic> changedData,
+    required int requestIndex,
+    bool isExpanded = true,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...previousData.entries.map((entry) {
+          final key = entry.key;
+          final oldValue = entry.value?.toString() ?? '';
+          final newValue = changedData[key]?.toString() ?? '';
+          final reason = viewmodel.rejectedReasons[requestIndex]?[key];
+          final bool isRejected = reason != null;
+          final bool isApproved =
+              viewmodel.approvedFields[requestIndex]?.contains(key) ?? false;
+
+          return _buildFieldComparison(
+            key,
+            oldValue,
+            newValue,
+            isApproved,
+            isRejected,
+            requestIndex,
+          );
+        }),
+        const SizedBox(height: 16),
+        _buildGlobalReasonSection(requestIndex, isExpanded: isExpanded),
+      ],
+    );
+  }
+
+  Widget _buildFieldComparison(
+    String key,
+    String oldValue,
+    String newValue,
+    bool isApproved,
+    bool isRejected,
+    int requestIndex,
+  ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: RichText(
-        text: TextSpan(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey.shade400),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextSpan(
-              text: title,
-              style: AppTextStyles.templeNameDetailsStyle.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextSpan(
-              text: subTitle,
-              style: AppTextStyles.templeNameDetailsStyle,
+            _dataLabel("${StringConstant.current} $key"),
+            _dataBox(_formatValue(oldValue), const Color(0xFFECCBDD)),
+            const SizedBox(height: 8),
+            _dataLabel("${StringConstant.requested} $key"),
+            _dataBox(_formatValue(newValue), Colors.greenAccent.shade100),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _approveCheckbox(isApproved, requestIndex, key),
+                const SizedBox(width: 12),
+                _rejectCheckbox(isRejected, requestIndex, key),
+              ],
             ),
           ],
         ),
@@ -265,189 +309,184 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
-  Widget _buildDataSection(
-    String title,
-    Map<String, dynamic> data, {
-    bool isChangeSection = false,
-    int? requestIndex,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: title == "Previous Data"
-            ? Colors.grey.shade100
-            : Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: title == "Previous Data"
-              ? Colors.grey.shade400
-              : Colors.blue.shade300,
+  Widget _dataLabel(String label) => Text(
+    label,
+    style: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: font),
+  );
+
+  Widget _dataBox(String value, Color color) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(8),
+    margin: const EdgeInsets.only(top: 4),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(6),
+      border: Border.all(color: Colors.grey.shade400),
+    ),
+    child: Text(
+      value.isEmpty ? '-' : value,
+      style: TextStyle(fontSize: 14, fontFamily: font),
+    ),
+  );
+
+  Widget _approveCheckbox(bool isApproved, int requestIndex, String key) {
+    return Row(
+      children: [
+        Checkbox(
+          value: isApproved,
+          checkColor: Colors.white,
+          activeColor: Colors.greenAccent,
+          onChanged: (value) {
+            setState(() {
+              viewmodel.approvedFields[requestIndex] ??= {};
+              if (value == true) {
+                viewmodel.approvedFields[requestIndex]!.add(key);
+                viewmodel.rejectedReasons[requestIndex]?.remove(key);
+              } else {
+                viewmodel.approvedFields[requestIndex]!.remove(key);
+              }
+            });
+          },
+        ),
+        Text(
+          StringConstant.approve,
+          style: TextStyle(fontSize: 14, fontFamily: font),
+        ),
+      ],
+    );
+  }
+
+  Widget _rejectCheckbox(bool isRejected, int requestIndex, String key) {
+    return Row(
+      children: [
+        Checkbox(
+          value: isRejected,
+          checkColor: Colors.white,
+          activeColor: Colors.redAccent,
+          onChanged: (value) {
+            setState(() {
+              viewmodel.rejectedReasons[requestIndex] ??= {};
+              if (value == true) {
+                viewmodel.rejectedReasons[requestIndex]![key] = "";
+                viewmodel.approvedFields[requestIndex]?.remove(key);
+              } else {
+                viewmodel.rejectedReasons[requestIndex]?.remove(key);
+              }
+            });
+          },
+        ),
+        Text(
+          StringConstant.reject,
+          style: TextStyle(fontSize: 14, fontFamily: font),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlobalReasonSection(int requestIndex, {bool isExpanded = true}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          StringConstant.rejectionComment,
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: font,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        _reasonTextField(requestIndex),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _cancelButton(isExpanded),
+            const SizedBox(width: 10),
+            _submitAllButton(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _reasonTextField(int requestIndex) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
+      child: TextField(
+        onChanged: (val) {
+          setState(() {
+            viewmodel.rejectedReasons[requestIndex]!["global_reason"] = val;
+          });
+        },
+        style: TextStyle(fontSize: 13, fontFamily: font),
+        cursorColor: Colors.blue,
+        keyboardType: TextInputType.text,
+        maxLines: 3,
+        decoration: InputDecoration(
+          hintText: StringConstant.reason,
+          hintStyle: TextStyle(fontSize: 12, fontFamily: font),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.redAccent, width: 1.6),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 8,
+          ),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              fontFamily: font,
-            ),
-          ),
-          const SizedBox(height: 4),
+    );
+  }
 
-          ...data.entries.map((entry) {
-            final key = entry.key;
-            final value = entry.value.toString();
-
-            final reason = viewmodel.rejectedReasons[requestIndex]?[key];
-            final bool isRejected = reason != null;
-            final bool isApproved =
-                viewmodel.approvedFields[requestIndex]?.contains(key) ?? false;
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      titleText(key, value),
-                      if (isChangeSection)
-                        Row(
-                          children: [
-                            approveFields(isApproved, requestIndex, key),
-
-                            const SizedBox(width: 8),
-                            rejectFields(isRejected,requestIndex,key),
-                          ],
-                        ),
-                    ],
-                  ),
-
-                  if (isRejected)
-                  reasonTextField(requestIndex,key),
-                ],
-              ),
-            );
-          }),
-        ],
+  Widget _cancelButton(bool isExpanded) {
+    return SizedBox(
+      height: 30,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            viewmodel.expandedIndex = isExpanded ? null : -1;
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.grey,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+        ),
+        child: Text(
+          StringConstant.cancel,
+          style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.white),
+        ),
       ),
     );
   }
 
-  Widget titleText(String key, String value) {
-    return Expanded(
-      child: Text(
-        "$key : ${value.replaceAll('[', '').replaceAll(']', '')}",
-        style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.black87),
+  Widget _submitAllButton() {
+    return SizedBox(
+      height: 30,
+      child: ElevatedButton(
+        onPressed: () async {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+        ),
+        child: Text(
+          StringConstant.submitAllApprovals,
+          style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.white),
+        ),
       ),
     );
   }
 
-  Widget approveFields(bool isApproved, int? requestIndex, String key) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          viewmodel.approvedFields[requestIndex!] ??= {};
-          if (isApproved) {
-            viewmodel.approvedFields[requestIndex]!.remove(key);
-          } else {
-            viewmodel.approvedFields[requestIndex]!.add(key);
-          }
-          viewmodel.rejectedReasons[requestIndex]?.remove(key);
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Approved change for $key ✅"),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      },
-      child: Icon(
-        Icons.check_circle,
-        color: isApproved ? Colors.green : Colors.grey,
-        size: 22,
-      ),
-    );
-  }
-
-
-  
-  Widget rejectFields(bool isRejected,int? requestIndex,String key){
-    return 
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  viewmodel.rejectedReasons[requestIndex ??
-                                          0] ??=
-                                      {};
-                                  if (isRejected) {
-                                    viewmodel.rejectedReasons[requestIndex]!
-                                        .remove(key);
-                                  } else {
-                                    viewmodel
-                                            .rejectedReasons[requestIndex]![key] =
-                                        "";
-                                    viewmodel.approvedFields[requestIndex]
-                                        ?.remove(key);
-                                  }
-                                });
-                              },
-                              child: Icon(
-                                Icons.cancel,
-                                color: isRejected ? Colors.red : Colors.grey,
-                                size: 20,
-                              ),
-                            );
-  }
-
-  Widget reasonTextField(int ?requestIndex,String key){
-    return   Padding(
-                      padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
-                      child: SizedBox(
-                        height: 36,
-                        child: TextField(
-                          onChanged: (val) {
-                            setState(() {
-                              viewmodel.rejectedReasons[requestIndex]![key] =
-                                  val;
-                            });
-                          },
-                          style: TextStyle(fontSize: 13, fontFamily: font),
-                          cursorColor: Colors.blue,
-                          decoration: InputDecoration(
-                            hintText: StringConstant.reason,
-                            hintStyle: TextStyle(
-                              fontSize: 12,
-                              fontFamily: font,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: Colors.grey,
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 1.6,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 8,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
+  String _formatValue(dynamic value) {
+    if (value == null) return '-';
+    if (value is List) return value.join(', ');
+    if (value is Map) {
+      return value.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    }
+    return value.toString().replaceAll('[', '').replaceAll(']', '').trim();
   }
 }

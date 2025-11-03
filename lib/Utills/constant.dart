@@ -42,7 +42,7 @@ class StringConstant {
   static const String createAcc = " Create User";
   static const String addTemple = "Add Temple";
   static const String templeName = "Temple Name";
-  static const String pincode = "pincode";
+  static const String pincode = "Pincode";
   static const String deities = "deities";
   static const String images = "images";
   static const String userDetails = "User Details";
@@ -72,6 +72,10 @@ class StringConstant {
   static const String deitiestemple = "Deities";
   static const String templearchitecture = "Temple Architecture";
   static const String editImages = "Edit Images";
+  static const String current = "Current";
+  static const String requested = "Requested";
+  static const String cancel = "Cancel";
+  static const String submitAllApprovals = "Submit All Approvals";
 
   static const String addPuja = "Add Puja / Seva";
   static const String updatePuja = "updatePuja";
@@ -112,9 +116,12 @@ class StringConstant {
   static const String noAvailableSlot = "No available time slots";
   static const String hideDetails = "Hide Details";
   static const String viewAndApprove = "View & Approve";
+  static const String approve = "Approve";
+  static const String reject = "Reject";
   static const String previousData = "Previous Data";
   static const String changesData = "Changes Data";
-  static const String reason = "Reason";
+  static const String reason = "Add comment for rejection";
+  static const String rejectionComment = "Rejection Comment (applies to all rejected fields)";
 
   static const String specialReq =
       "Special Requirements (allow user to add special requirements)";
