@@ -1,9 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/time_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, StringConstant;
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -18,6 +24,8 @@ class CreateEvent extends StatefulWidget {
 
 class _CreateEventState extends State<CreateEvent> {
   late CreateEventViewmodel viewmodel;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<CreateEventViewmodel>(context);
@@ -51,12 +59,13 @@ class _CreateEventState extends State<CreateEvent> {
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
 
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         child: Column(
                           children: [
+                            SizedBox(height: screenHeight * 0.02),
                             _buildTempleDropdown(),
                             SizedBox(height: screenHeight * 0.02),
                             eventNameTextField(),
@@ -69,26 +78,11 @@ class _CreateEventState extends State<CreateEvent> {
                             SizedBox(height: screenHeight * 0.02),
                             contactNumberTextField(),
                             SizedBox(height: 8),
-                            Row(
-                              children: [
-                                DatePickerField(
-                                  title: StringConstant.fromDate,
-                                  selectedDate: viewmodel.selectedStartDate,
-                                  onDatePicked: (date) => setState(() {
-                                    viewmodel.selectedStartDate = date;
-                                    viewmodel.selectedEndDate = null;
-                                  }),
-                                ),
-                                DatePickerField(
-                                  title: StringConstant.toTime,
-                                  selectedDate: viewmodel.selectedEndDate,
-                                  fromDate: viewmodel.selectedStartDate,
-                                  onDatePicked: (date) => setState(() {
-                                    viewmodel.selectedEndDate = date;
-                                  }),
-                                ),
-                              ],
-                            ),
+                            dateWidget(),
+                            timePickerWidget(),
+                            SizedBox(height: screenHeight * 0.02),
+                            _buildImagePicker(),
+                            SizedBox(height: screenHeight * 0.06),
                           ],
                         ),
                       ),
@@ -109,8 +103,79 @@ class _CreateEventState extends State<CreateEvent> {
                 ),
               ),
             ),
+
+          eventButton(),
         ],
       ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    final uploadedCount = viewmodel.uploadedImageUrls.length;
+
+    final allImages = [
+      ...viewmodel.uploadedImageUrls,
+      ...viewmodel.selectedImages.map((e) => e.path),
+    ];
+
+    return MultiImagePickerSection(
+      imagePaths: allImages,
+      onAddImages: _pickImages,
+      onRemoveImage: (index) {
+        if (index >= uploadedCount) {
+          // Removing from selectedImages
+          final localIndex = index - uploadedCount;
+          viewmodel.removeImage(localIndex);
+        } else {
+          // Removing from uploadedImageUrls
+          viewmodel.uploadedImageUrls.removeAt(index);
+          viewmodel.notifyListeners();
+        }
+      },
+    );
+  }
+
+  Future<void> _pickImages() async {
+    final pickedFiles = await _picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
+      final imagePaths = pickedFiles.map((e) => e.path).toList();
+      viewmodel.addImages(imagePaths);
+    }
+  }
+
+  Widget timePickerWidget() {
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 0),
+      child: TimeSlotSelector(
+        key: ValueKey(viewmodel.timeSlots.hashCode),
+        initialSlots: viewmodel.timeSlots,
+        onChanged: (updatedSlots) {
+          setState(() => viewmodel.timeSlots = updatedSlots);
+        },
+      ),
+    );
+  }
+
+  Widget dateWidget() {
+    return Row(
+      children: [
+        DatePickerField(
+          title: StringConstant.fromDate,
+          selectedDate: viewmodel.selectedStartDate,
+          onDatePicked: (date) => setState(() {
+            viewmodel.selectedStartDate = date;
+            viewmodel.selectedEndDate = null;
+          }),
+        ),
+        DatePickerField(
+          title: StringConstant.toDate,
+          selectedDate: viewmodel.selectedEndDate,
+          fromDate: viewmodel.selectedStartDate,
+          onDatePicked: (date) => setState(() {
+            viewmodel.selectedEndDate = date;
+          }),
+        ),
+      ],
     );
   }
 
@@ -170,6 +235,7 @@ class _CreateEventState extends State<CreateEvent> {
       hintText: StringConstant.contactName,
       labelText: StringConstant.contactName,
       isFromPassword: false,
+      isFromPhone: false,
       controller: viewmodel.contactNameController,
     );
   }
@@ -192,6 +258,53 @@ class _CreateEventState extends State<CreateEvent> {
         Text(StringConstant.createEvent, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
       ],
+    );
+  }
+
+  Widget eventButton() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              onPressed: () async {
+                final isValid = await viewmodel.validateEvent(false);
+                if (!isValid) {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  return;
+                }
+
+                // final success = await viewmodel.createEvent();
+                // if (success) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Event created successfully')),
+                //   );
+                //   Navigator.of(context).pop();
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(content: Text(viewmodel.message)),
+                //   );
+                // }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorConstant.buttonColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                StringConstant.createEvent,
+                style: AppTextStyles.buttonTextStyle,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

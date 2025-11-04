@@ -32,16 +32,48 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
     return "$hour:$minute:00";
   }
 
-  Future<void> _pickSlot(BuildContext context) async {
-    final from = await showTimePicker(
+  Future<TimeOfDay?> _showCustomTimePicker(
+    BuildContext context,
+    String title,
+    TimeOfDay initialTime,
+  ) async {
+    return showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initialTime,
+      helpText: title,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(
+              helpTextStyle: TextStyle(
+                fontFamily: font,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child!,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickSlot(BuildContext context) async {
+    final from = await _showCustomTimePicker(
+      context,
+      "Select Start Time",
+      TimeOfDay.now(),
     );
     if (from == null) return;
 
-    final to = await showTimePicker(
-      context: context,
-      initialTime: from.replacing(hour: (from.hour + 1) % 24),
+    final to = await _showCustomTimePicker(
+      context,
+      "Select End Time",
+      from.replacing(hour: (from.hour + 1) % 24),
     );
     if (to == null) return;
 
@@ -72,7 +104,6 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
   }
 
   String _formatDisplay(String timeStr) {
-    // convert "HH:mm:ss" → "HH:mm"
     final parts = timeStr.split(':');
     return "${parts[0]}:${parts[1]}";
   }
@@ -95,13 +126,15 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
                   borderRadius: BorderRadius.circular(12),
                   side: const BorderSide(color: Colors.grey),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
               onPressed: () => _pickSlot(context),
               icon: const Icon(Icons.add),
               label: Text(
-                "Add Time Slot",
+                "Add Time Slot", 
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: font,
