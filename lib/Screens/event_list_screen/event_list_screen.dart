@@ -1,7 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
+import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EventListScreen extends StatefulWidget {
   const EventListScreen({super.key});
@@ -11,63 +16,135 @@ class EventListScreen extends StatefulWidget {
 }
 
 class _EventListScreenState extends State<EventListScreen> {
-  // Example event data
-  final Map<String, dynamic> event = {
-    "temple_id": "21e37f32-388c-46a6-9249-70d6b9a6448f",
-    "name": "Deepavali Pooja Celebration",
-    "description":
-        "Annual Deepavali celebration at the temple with lighting and prayers.",
-    "location": "Coimbatore Temple",
-    "contact_name": "Ramesh Kumar",
-    "contact_phone": "+919876543210",
-    "start_date": "2025-11-10T00:00:00.000Z",
-    "end_date": "2025-11-12T00:00:00.000Z",
-    "start_time": "18:00:00",
-    "end_time": "21:00:00",
-    "images": <String>[
-      "https://example.com/event1.jpg",
-      "https://example.com/event2.jpg",
-    ],
-    "is_active": true,
-    "created_by_name": "Balakrishnan Ragavan",
-  };
+  late EventListViewmodel viewmodel;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    viewmodel = Provider.of<EventListViewmodel>(context, listen: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewmodel.fetchEvents(refresh: true);
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !viewmodel.isLoadingMore &&
+          viewmodel.hasMore &&
+          !viewmodel.isLoading) {
+        viewmodel.fetchEvents();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return FocusDetector(
-      onFocusGained: () async {},
-      child: Scaffold(
-        backgroundColor: ColorConstant.buttonColor,
-        appBar: AppBar(
+      onFocusGained: () async {
+        await viewmodel.fetchEvents(refresh: true);
+      },
+      child: Consumer<EventListViewmodel>(
+        builder: (context, viewmodel, child) => Scaffold(
           backgroundColor: ColorConstant.buttonColor,
-          elevation: 0,
-          title: nammaDaivaAppBar(),
+          appBar: AppBar(
+            backgroundColor: ColorConstant.buttonColor,
+            elevation: 0,
+            title: nammaDaivaAppBar(),
+          ),
+          body: viewmodel.isLoading && viewmodel.events.isEmpty
+              ? _buildShimmer()
+              : Column(
+                  children: [
+                    SizedBox(height: screenHeight * 0.02),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              await viewmodel.fetchEvents(refresh: true);
+                            },
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount:
+                                  viewmodel.events.length +
+                                  (viewmodel.isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == viewmodel.events.length) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(
+                                          color: ColorConstant.buttonColor,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                final event = viewmodel.events[index];
+                                return buildEventCard(event);
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ),
-        body: Column(
-          children: [
-            SizedBox(height: screenHeight * 0.02),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: buildEventCard(),
-                  ),
-                ),
-              ),
+      ),
+    );
+  }
+
+  Widget _buildShimmer() {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: ListView.separated(
+        itemCount: 6,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (_, __) => Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            height: 140,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -84,7 +161,7 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget buildEventCard() {
+  Widget buildEventCard(EventItem event) {
     return Card(
       color: Colors.white,
       elevation: 4,
@@ -95,67 +172,82 @@ class _EventListScreenState extends State<EventListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            eventTitle(),
+            eventTitle(event.name),
             const SizedBox(height: 8),
-            locationText(),
+            locationText(event.location ?? ''),
             const SizedBox(height: 8),
-            fromAndEndDateText(),
+            fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
             const SizedBox(height: 8),
-            fromTimeEndTime(),
+            fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
             const Divider(height: 24),
             descriptionTitleText(),
             const SizedBox(height: 6),
-            descriptionText(),
+            descriptionText(event.description ?? ''),
             const Divider(height: 24),
             contactNameText(),
             const SizedBox(height: 8),
-            contactName(),
+            contactName(event.contactName ?? ''),
             const SizedBox(height: 4),
-            contactPhone(),
+            contactPhone(event.contactPhone ?? ''),
             const Divider(height: 24),
+            imageViewer(event),
             const SizedBox(height: 16),
-            if (event['images'] != null && event['images'].length > 1)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 100,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: event['images'].length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 10),
-                      itemBuilder: (context, index) {
-                        final imageUrl = event['images'][index];
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            imageUrl,
-                            width: 120,
-                            height: 100,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey.shade300,
-                              width: 120,
-                              height: 100,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
           ],
         ),
       ),
     );
   }
 
-  Widget eventTitle() {
+  Widget imageViewer(EventItem event) {
+    return SizedBox(
+      height: 120,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: event.images?.length ?? 0,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final imageUrl = event.images?[index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              imageUrl!,
+              width: 160,
+              height: 120,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Container(
+                  width: 160,
+                  height: 120,
+                  color: Colors.grey.shade200,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 160,
+                height: 120,
+                color: Colors.grey.shade300,
+                child: const Icon(
+                  Icons.broken_image,
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget eventTitle(String title) {
     return Text(
-      event['name'] ?? '',
+      title,
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
@@ -164,14 +256,14 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget locationText() {
+  Widget locationText(String location) {
     return Row(
       children: [
         const Icon(Icons.location_on, color: Colors.grey, size: 20),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
-            event['location'] ?? '',
+            location,
             style: TextStyle(
               fontSize: 14,
               color: Colors.black87,
@@ -183,26 +275,26 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget fromAndEndDateText() {
+  Widget fromAndEndDateText(String startDate, String endDate) {
     return Row(
       children: [
         const Icon(Icons.calendar_today, color: Colors.grey, size: 18),
         const SizedBox(width: 6),
         Text(
-          "From ${_formatDate(event['start_date'])} to ${_formatDate(event['end_date'])}",
+          "From ${_formatDate(startDate)} to ${_formatDate(endDate)}",
           style: TextStyle(fontSize: 14, fontFamily: font),
         ),
       ],
     );
   }
 
-  Widget fromTimeEndTime() {
+  Widget fromTimeEndTime(String startTime, String endTime) {
     return Row(
       children: [
         const Icon(Icons.access_time, color: Colors.grey, size: 18),
         const SizedBox(width: 6),
         Text(
-          "${event['start_time']} - ${event['end_time']}",
+          "${startTime} - ${endTime}",
           style: TextStyle(fontSize: 14, fontFamily: font),
         ),
       ],
@@ -211,7 +303,7 @@ class _EventListScreenState extends State<EventListScreen> {
 
   Widget descriptionTitleText() {
     return Text(
-      "Description",
+      StringConstant.eventDescription,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -220,16 +312,16 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget descriptionText() {
+  Widget descriptionText(String description) {
     return Text(
-      event['description'] ?? '',
+      description,
       style: TextStyle(fontSize: 14, color: Colors.black87, fontFamily: font),
     );
   }
 
   Widget contactNameText() {
     return Text(
-      "Contact Information",
+      StringConstant.contactInformation,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -238,13 +330,13 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget contactName() {
+  Widget contactName(String contactName) {
     return Row(
       children: [
         const Icon(Icons.person, size: 18, color: Colors.grey),
         const SizedBox(width: 6),
         Text(
-          event['contact_name'] ?? '',
+          contactName,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black87,
@@ -255,13 +347,13 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget contactPhone() {
+  Widget contactPhone(String contactPhone) {
     return Row(
       children: [
         const Icon(Icons.phone, size: 18, color: Colors.grey),
         const SizedBox(width: 6),
         Text(
-          event['contact_phone'] ?? '',
+          contactPhone,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black87,

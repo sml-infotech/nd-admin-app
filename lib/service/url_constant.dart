@@ -33,5 +33,6 @@ class UrlConstant {
   static String toggleUrl ="${baseUrlString()}toggle-puja-active";
   static String templeApprovalUrl ="${baseUrlString()}temple-approval";
   static String createEventUrl ="${baseUrlString()}create-event";
+  static String getEventsUrl ="${baseUrlString()}list-events";
     
 }

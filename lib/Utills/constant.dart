@@ -81,7 +81,9 @@ class StringConstant {
   static const String requested = "Requested";
   static const String cancel = "Cancel";
   static const String submitAllApprovals = "Submit All Approvals";
-
+   static const String eventDescription = "Description";
+   static const String contactInformation =  "Contact Information";
+  static const String eventLocation = "Location";
   static const String addPuja = "Add Puja / Seva";
   static const String updatePuja = "updatePuja";
 
