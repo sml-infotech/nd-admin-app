@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/event_service.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart'
+    show TempleService;
 
 class EventListViewmodel extends ChangeNotifier {
   int page = 1;
@@ -9,15 +12,24 @@ class EventListViewmodel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMore = true;
   EventService eventService = EventService();
+  TempleService templeService = TempleService();
   List<EventItem> events = [];
+  List<Temple> templeData = [];
+  String? selectedTempleId;
+  Temple? selectedTemple;
+  void setSelectedTemple(Temple temple) {
+    selectedTemple = temple;
+    print('Selected Temple: ${temple.name}');
+    notifyListeners();
+  }
 
-  Future<void> fetchEvents({bool refresh = false}) async {
+  Future<void> fetchEvents(String trempleId,bool reset ) async {
     if (isLoading || isLoadingMore) return;
 
-    if (refresh) {
+    if (reset) {
+      events.clear();
       page = 1;
       hasMore = true;
-      events.clear();
     }
 
     // Set loading state based on page
@@ -32,11 +44,11 @@ class EventListViewmodel extends ChangeNotifier {
       final response = await eventService.fetchEventes(
         page: page,
         limit: limit,
-        temple_id: "21e37f32-388c-46a6-9249-70d6b9a6448f",
+        temple_id: trempleId ?? '',
       );
 
       events.addAll(response.events);
-      
+
       // Check if more data is available
       if (response.events.length < limit) {
         hasMore = false;
@@ -50,6 +62,32 @@ class EventListViewmodel extends ChangeNotifier {
 
     isLoading = false;
     isLoadingMore = false;
+    notifyListeners();
+  }
+
+  List<String> templeList = [];
+  Future<void> getTemples({bool reset = false}) async {
+    if (isLoading) return;
+    isLoading = true;
+    notifyListeners();
+
+    if (reset) {
+      templeData.clear();
+      templeList.clear();
+      page = 1;
+    }
+
+    final response = await templeService.getTemples();
+
+    if (response.data != null && response.data!.isNotEmpty) {
+      templeData.addAll(response.data!);
+      templeList = templeData.map((t) => t.name).toList();
+      selectedTempleId = templeData.first.id;
+      page++;
+      notifyListeners();
+    }
+
+    isLoading = false;
     notifyListeners();
   }
 }

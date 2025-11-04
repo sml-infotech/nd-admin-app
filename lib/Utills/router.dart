@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
+import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
@@ -94,6 +95,11 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => UpdateRequests(),
+        );
+      case StringsRoute.eventListScreen:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => EventListScreen(),
         );
       case StringsRoute.updateTempleDetails:
         TempleDetailsArguments args =

@@ -12,6 +12,7 @@ import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/time_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, StringConstant;
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -278,17 +279,17 @@ class _CreateEventState extends State<CreateEvent> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-
-             await viewmodel.createEvent();
+                await viewmodel.createEvent();
                 if (viewmodel.eventCreated) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Event created successfully')),
                   );
-                  Navigator.of(context).pop();
+                  Navigator.pushNamed(context, StringsRoute.eventListScreen);
+              
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(viewmodel.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(viewmodel.message)));
                 }
               },
               style: ElevatedButton.styleFrom(

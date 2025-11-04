@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -18,14 +19,27 @@ class EventListScreen extends StatefulWidget {
 class _EventListScreenState extends State<EventListScreen> {
   late EventListViewmodel viewmodel;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  List<EventItem> filteredEvents = [];
 
   @override
   void initState() {
     super.initState();
     viewmodel = Provider.of<EventListViewmodel>(context, listen: false);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewmodel.fetchEvents(refresh: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await viewmodel.getTemples();
+
+      if (viewmodel.templeData.isNotEmpty) {
+        final firstTemple = viewmodel.templeData.first;
+        viewmodel.setSelectedTemple(firstTemple);
+        viewmodel.selectedTempleId = firstTemple.id;
+
+        await viewmodel.fetchEvents(firstTemple.id, false);
+        setState(() {
+          filteredEvents = viewmodel.events;
+        });
+      }
     });
 
     _scrollController.addListener(() {
@@ -34,14 +48,28 @@ class _EventListScreenState extends State<EventListScreen> {
           !viewmodel.isLoadingMore &&
           viewmodel.hasMore &&
           !viewmodel.isLoading) {
-        viewmodel.fetchEvents();
+        viewmodel.fetchEvents(viewmodel.selectedTempleId!, false);
       }
+    });
+
+    _searchController.addListener(() {
+      final query = _searchController.text.toLowerCase();
+      setState(() {
+        filteredEvents = viewmodel.events
+            .where(
+              (event) =>
+                  event.name.toLowerCase().contains(query) ||
+                  (event.description?.toLowerCase().contains(query) ?? false),
+            )
+            .toList();
+      });
     });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -51,11 +79,16 @@ class _EventListScreenState extends State<EventListScreen> {
 
     return FocusDetector(
       onFocusGained: () async {
-        await viewmodel.fetchEvents(refresh: true);
+        if (viewmodel.selectedTempleId != null) {
+          await viewmodel.fetchEvents(viewmodel.selectedTempleId!, true);
+          setState(() {
+            filteredEvents = viewmodel.events;
+          });
+        }
       },
       child: Consumer<EventListViewmodel>(
         builder: (context, viewmodel, child) => Scaffold(
-          backgroundColor: ColorConstant.buttonColor,
+          backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: ColorConstant.buttonColor,
             elevation: 0,
@@ -66,55 +99,108 @@ class _EventListScreenState extends State<EventListScreen> {
               : Column(
                   children: [
                     SizedBox(height: screenHeight * 0.02),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              await viewmodel.fetchEvents(refresh: true);
-                            },
+
+                    _buildTempleDropdown(),
+
+                    SizedBox(height: 12),
+
+                    searchBar(),
+
+                    SizedBox(height: 12),
+                    !filteredEvents.isEmpty
+                        ? Expanded(
                             child: ListView.builder(
                               controller: _scrollController,
                               physics: const BouncingScrollPhysics(),
                               itemCount:
-                                  viewmodel.events.length +
+                                  filteredEvents.length +
                                   (viewmodel.isLoadingMore ? 1 : 0),
                               itemBuilder: (context, index) {
-                                if (index == viewmodel.events.length) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
+                                if (index == filteredEvents.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
                                     child: Center(
                                       child: SizedBox(
                                         width: 30,
                                         height: 30,
-                                        child: CircularProgressIndicator(
-                                          color: ColorConstant.buttonColor,
-                                        ),
+                                        child: CircularProgressIndicator(),
                                       ),
                                     ),
                                   );
                                 }
-                                final event = viewmodel.events[index];
+                                final event = filteredEvents[index];
                                 return buildEventCard(event);
                               },
                             ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              "No events found.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                fontFamily: font,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTempleDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: CommonDropdownField(
+        hintText: StringConstant.temple,
+        labelText: StringConstant.temple,
+        items: viewmodel.templeData.map((t) => t.name).toList(),
+        selectedValue: viewmodel.selectedTemple?.name,
+        paddingSize: 0,
+        onChanged: (value) async {
+          if (value == null) return;
+
+          final selectedTemple = viewmodel.templeData.firstWhere(
+            (t) => t.name == value,
+          );
+
+          viewmodel.setSelectedTemple(selectedTemple);
+          viewmodel.selectedTempleId = selectedTemple.id;
+
+          await viewmodel.fetchEvents(selectedTemple.id, true);
+
+          setState(() {
+            filteredEvents = viewmodel.events;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget searchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          hintText: StringConstant.search,
+          hintStyle: TextStyle(fontFamily: font),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color:Colors.grey),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 0,
+          ),
         ),
       ),
     );
@@ -162,37 +248,40 @@ class _EventListScreenState extends State<EventListScreen> {
   }
 
   Widget buildEventCard(EventItem event) {
-    return Card(
-      color: Colors.white,
-      elevation: 4,
-      shadowColor: Colors.black87,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            eventTitle(event.name),
-            const SizedBox(height: 8),
-            locationText(event.location ?? ''),
-            const SizedBox(height: 8),
-            fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
-            const SizedBox(height: 8),
-            fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
-            const Divider(height: 24),
-            descriptionTitleText(),
-            const SizedBox(height: 6),
-            descriptionText(event.description ?? ''),
-            const Divider(height: 24),
-            contactNameText(),
-            const SizedBox(height: 8),
-            contactName(event.contactName ?? ''),
-            const SizedBox(height: 4),
-            contactPhone(event.contactPhone ?? ''),
-            const Divider(height: 24),
-            imageViewer(event),
-            const SizedBox(height: 16),
-          ],
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
+      child: Card(
+        color: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.black87,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              eventTitle(event.name),
+              const SizedBox(height: 8),
+              locationText(event.location ?? ''),
+              const SizedBox(height: 8),
+              fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
+              const SizedBox(height: 8),
+              fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
+              const Divider(height: 24),
+              descriptionTitleText(),
+              const SizedBox(height: 6),
+              descriptionText(event.description ?? ''),
+              const Divider(height: 24),
+              contactNameText(),
+              const SizedBox(height: 8),
+              contactName(event.contactName ?? ''),
+              const SizedBox(height: 4),
+              contactPhone(event.contactPhone ?? ''),
+              const Divider(height: 24),
+              imageViewer(event),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

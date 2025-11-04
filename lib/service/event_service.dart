@@ -21,7 +21,7 @@ class EventService {
     List<String> images,
   ) async {
     try {
-      final loginRequest = CreateEventModal(
+      final createEvent = CreateEventModal(
         templeId: templeId,
         name: name,
         startDate: start_date,
@@ -37,7 +37,7 @@ class EventService {
 
       final data = await apiService.post(
         UrlConstant.createEventUrl,
-        loginRequest.toJson(),
+        createEvent.toJson(),
       );
 
       return CreateEventResponse.fromJson(data);
@@ -55,11 +55,11 @@ class EventService {
     try {
       final url =
           '${UrlConstant.getEventsUrl}?temple_id=$temple_id&page=$page&limit=$limit';
-      print('Fetching updateTemple: $url');
+      print('Fetching fetchEventes: $url');
       dynamic data = await apiService.get(url);
       return EventListResponse.fromJson(data);
     } catch (e) {
-      print("updateTemple service decode fails: $e");
+      print("fetchEventes service decode fails: $e");
       throw Exception('API failed: $e');
     }
   }
