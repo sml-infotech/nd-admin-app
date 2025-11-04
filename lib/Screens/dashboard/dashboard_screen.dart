@@ -148,7 +148,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          contaierWidgets(
+                            ImageStrings.eventicon,
+                            StringConstant.events,
+                            () {
+                              Navigator.pushNamed(
+                                context,
+                                StringsRoute.eventListScreen,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 5),
+
+                          contaierWidgets(
+                            ImageStrings.ritual,
+                            StringConstant.updateRequests,
+                            () {
+                              Navigator.pushNamed(
+                                context,
+                                StringsRoute.updateRequestsUrl,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

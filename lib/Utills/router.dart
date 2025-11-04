@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
@@ -19,6 +20,7 @@ import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 
 class AppRouter {
   Route<dynamic>? route(RouteSettings settings) {
@@ -95,6 +97,13 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => UpdateRequests(),
+        );
+        case StringsRoute.createEvent:
+        EventItem? args = settings.arguments as EventItem?;
+
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateEvent(event: args,),
         );
       case StringsRoute.eventListScreen:
         return CupertinoPageRoute(

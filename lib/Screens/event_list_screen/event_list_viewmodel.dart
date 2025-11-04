@@ -90,4 +90,20 @@ class EventListViewmodel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  void  reset() {
+      page = 1;
+   int limit = 10;
+   isLoading = false;
+   isLoadingMore = false;
+   hasMore = true;
+   eventService = EventService();
+   templeService = TempleService();
+  events = [];
+ templeData = [];
+   selectedTempleId="";
+  selectedTemple = null;
+  templeList = [];
+    notifyListeners();
+  }
 }

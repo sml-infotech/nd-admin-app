@@ -41,7 +41,6 @@ Future<void> addImages(List<String> newImages) async {
       isLoading = true;
       notifyListeners();
 
-      // Prevent duplicates before adding
       for (final path in newImages) {
         final alreadyExists = selectedImages.any((img) => img.path == path);
         if (!alreadyExists) {
@@ -250,5 +249,24 @@ Future<void> addImages(List<String> newImages) async {
       notifyListeners();
     }
   }
+void reset() {
+    eventController.clear();
+    descriptionContoller.clear();
+    locationController.clear();
+    contactNameController.clear();
+    contactNumberController.clear();
 
+    timeSlots = [];
+    templeData = [];
+    selectedTemple = null;
+    selectedTempleId = '';
+    selectedStartDate = null;
+    selectedEndDate = null;
+    uploadedImageUrls = [];
+    selectedImages = [];
+    message = '';
+    eventCreated = false;
+
+  
+  }
 }

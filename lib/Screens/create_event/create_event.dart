@@ -14,10 +14,14 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, StringConstant;
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/login_model/createpuja/create_pujamodel.dart';
+
 class CreateEvent extends StatefulWidget {
-  const CreateEvent({super.key});
+  final EventItem? event;
+  const CreateEvent({super.key, required this.event});
 
   @override
   State<CreateEvent> createState() => _CreateEventState();
@@ -28,86 +32,142 @@ class _CreateEventState extends State<CreateEvent> {
   final ImagePicker _picker = ImagePicker();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await viewmodel.getTemples(reset: true);
+
+      if (widget.event != null) {
+        final selectedTempleId = widget.event!.templeId;
+        final selectedTemple = viewmodel.templeData.firstWhere(
+          (temple) => temple.id == selectedTempleId,
+          orElse: () => viewmodel.templeData.first,
+        );
+        viewmodel.selectedTemple = selectedTemple;
+        viewmodel.selectedTempleId = selectedTemple.id;
+        viewmodel.eventController.text = widget.event!.name;
+        viewmodel.descriptionContoller.text = widget.event!.description!;
+        viewmodel.locationController.text = widget.event!.location!;
+        viewmodel.contactNameController.text = widget.event!.contactName!;
+        viewmodel.contactNumberController.text = widget.event!.contactPhone!;
+        if (widget.event!.startDate != null) {
+          viewmodel.selectedStartDate = DateTime.parse(
+            widget.event!.startDate!,
+          );
+        }
+        if (widget.event!.endDate != null) {
+          viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
+        }
+        if (widget.event!.startTime != null && widget.event!.endTime != null) {
+          // Assuming startTime and endTime are in ISO 8601 format (e.g., "2023-11-04T09:00:00")
+
+          // Parse the start and end times
+          DateTime start = DateTime.parse(widget.event!.startTime!);
+          DateTime end = DateTime.parse(widget.event!.endTime!);
+
+          // Create a TimeSlot object with parsed start and end times
+          TimeSlot timeSlot = TimeSlot(
+            fromTime: start.toString(),
+            toTime: end.toString(),
+          );
+
+          // Store the time slot in the viewmodel's timeSlots list
+          viewmodel.timeSlots = [
+            timeSlot,
+          ]; // Assuming you're storing one time slot, if more, use .add() instead.
+        }
+
+        if (widget.event!.images != null) {
+          viewmodel.selectedImages = widget.event!.images!
+              .map((path) => XFile(path))
+              .toList();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    viewmodel.reset();
+  }
+
+  @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<CreateEventViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return FocusDetector(
-      onFocusGained: () async {
-        await viewmodel.getTemples(reset: true);
-      },
-
-      child: Stack(
-        children: [
-          Scaffold(
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: ColorConstant.buttonColor,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: ColorConstant.buttonColor,
-            appBar: AppBar(
-              backgroundColor: ColorConstant.buttonColor,
-              elevation: 0,
-              title: nammaDaivaAppBar(),
-            ),
-            body: Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
-
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(height: screenHeight * 0.02),
-                            _buildTempleDropdown(),
-                            SizedBox(height: screenHeight * 0.02),
-                            eventNameTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            descriptionTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            locationTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            contactNameTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            contactNumberTextField(),
-                            SizedBox(height: 8),
-                            dateWidget(),
-                            timePickerWidget(),
-                            SizedBox(height: screenHeight * 0.02),
-                            _buildImagePicker(),
-                            SizedBox(height: screenHeight * 0.06),
-                          ],
-                        ),
-                      ),
+            elevation: 0,
+            title: nammaDaivaAppBar(),
+          ),
+          body: Column(
+            children: [
+              SizedBox(height: screenHeight * 0.02),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          if (viewmodel.isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black54,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
+
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          SizedBox(height: screenHeight * 0.02),
+                          _buildTempleDropdown(),
+                          SizedBox(height: screenHeight * 0.02),
+                          eventNameTextField(),
+                          SizedBox(height: screenHeight * 0.02),
+                          descriptionTextField(),
+                          SizedBox(height: screenHeight * 0.02),
+                          locationTextField(),
+                          SizedBox(height: screenHeight * 0.02),
+                          contactNameTextField(),
+                          SizedBox(height: screenHeight * 0.02),
+                          contactNumberTextField(),
+                          SizedBox(height: 8),
+                          dateWidget(),
+                          timePickerWidget(),
+                          SizedBox(height: screenHeight * 0.02),
+                          _buildImagePicker(),
+                          SizedBox(height: screenHeight * 0.06),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+        if (viewmodel.isLoading)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: ColorConstant.buttonColor,
+                ),
+              ),
             ),
+          ),
 
-          eventButton(),
-        ],
-      ),
+        eventButton(),
+      ],
     );
   }
 
@@ -124,11 +184,9 @@ class _CreateEventState extends State<CreateEvent> {
       onAddImages: _pickImages,
       onRemoveImage: (index) {
         if (index >= uploadedCount) {
-          // Removing from selectedImages
           final localIndex = index - uploadedCount;
           viewmodel.removeImage(localIndex);
         } else {
-          // Removing from uploadedImageUrls
           viewmodel.uploadedImageUrls.removeAt(index);
           viewmodel.notifyListeners();
         }
@@ -189,11 +247,9 @@ class _CreateEventState extends State<CreateEvent> {
       paddingSize: 16,
       onChanged: (value) {
         if (value == null) return;
-
         final selectedTemple = viewmodel.templeData.firstWhere(
           (t) => t.name == value,
         );
-
         setState(() {
           viewmodel.selectedTempleId = selectedTemple.id;
           viewmodel.setSelectedTemple(selectedTemple);
@@ -255,8 +311,19 @@ class _CreateEventState extends State<CreateEvent> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+        ),
         const Spacer(),
-        Text(StringConstant.createEvent, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          widget.event?.id == null
+              ? StringConstant.createEvent
+              : StringConstant.updateEvent,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
       ],
     );
@@ -285,7 +352,6 @@ class _CreateEventState extends State<CreateEvent> {
                     const SnackBar(content: Text('Event created successfully')),
                   );
                   Navigator.pushNamed(context, StringsRoute.eventListScreen);
-              
                 } else {
                   ScaffoldMessenger.of(
                     context,
@@ -299,7 +365,9 @@ class _CreateEventState extends State<CreateEvent> {
                 ),
               ),
               child: Text(
-                StringConstant.createEvent,
+                widget.event?.id == null
+                    ? StringConstant.createEvent
+                    : StringConstant.updateEvent,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

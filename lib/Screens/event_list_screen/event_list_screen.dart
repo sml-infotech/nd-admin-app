@@ -4,6 +4,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class _EventListScreenState extends State<EventListScreen> {
         viewmodel.setSelectedTemple(firstTemple);
         viewmodel.selectedTempleId = firstTemple.id;
 
-        await viewmodel.fetchEvents(firstTemple.id, false);
+        await viewmodel.fetchEvents(firstTemple.id, true);
         setState(() {
           filteredEvents = viewmodel.events;
         });
@@ -70,6 +71,7 @@ class _EventListScreenState extends State<EventListScreen> {
   void dispose() {
     _scrollController.dispose();
     _searchController.dispose();
+    viewmodel.reset();
     super.dispose();
   }
 
@@ -90,6 +92,7 @@ class _EventListScreenState extends State<EventListScreen> {
         builder: (context, viewmodel, child) => Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: ColorConstant.buttonColor,
             elevation: 0,
             title: nammaDaivaAppBar(),
@@ -152,18 +155,20 @@ class _EventListScreenState extends State<EventListScreen> {
   }
 
   Widget _buildTempleDropdown() {
+    var uniqueTemples = viewmodel.templeData.toSet().toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: CommonDropdownField(
         hintText: StringConstant.temple,
         labelText: StringConstant.temple,
-        items: viewmodel.templeData.map((t) => t.name).toList(),
+        items: uniqueTemples.map((t) => t.name).toList(),
         selectedValue: viewmodel.selectedTemple?.name,
         paddingSize: 0,
         onChanged: (value) async {
           if (value == null) return;
 
-          final selectedTemple = viewmodel.templeData.firstWhere(
+          final selectedTemple = uniqueTemples.firstWhere(
             (t) => t.name == value,
           );
 
@@ -195,7 +200,7 @@ class _EventListScreenState extends State<EventListScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(13),
-            borderSide: const BorderSide(color:Colors.grey),
+            borderSide: const BorderSide(color: Colors.grey),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
@@ -238,10 +243,17 @@ class _EventListScreenState extends State<EventListScreen> {
 
   Widget nammaDaivaAppBar() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Spacer(),
+        IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        Spacer(),
         Text(StringConstant.events, style: AppTextStyles.appBarTitleStyle),
+        SizedBox(width: 48),
         const Spacer(),
       ],
     );
@@ -260,7 +272,15 @@ class _EventListScreenState extends State<EventListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              eventTitle(event.name),
+              Row(
+                children: [
+                  eventTitle(event.name),
+                  Spacer(),
+                  IconButton(onPressed: () {
+                    Navigator.pushNamed(context, StringsRoute.createEvent,arguments: event);  
+                  }, icon: Icon(Icons.edit)),
+                ],
+              ),
               const SizedBox(height: 8),
               locationText(event.location ?? ''),
               const SizedBox(height: 8),

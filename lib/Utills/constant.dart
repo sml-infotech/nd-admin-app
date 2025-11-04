@@ -37,6 +37,7 @@ class StringConstant {
   static const String templeDetail = "Temples Details";
   static const String edit = "edit";
   static const String phone = "Phone";
+
   static const String email = "Email";
   static const String verificationCode = "Enter Verification code";
   static const String otpSubTitle = "4 digits code was sent to ";
