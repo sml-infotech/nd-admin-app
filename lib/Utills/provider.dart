@@ -3,6 +3,7 @@ import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
@@ -79,7 +80,7 @@ class ProviderWidget extends StatelessWidget {
             theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const CreateEvent() : const LoginScreen(),
+            home: hasToken ? const EventListScreen() : const LoginScreen(),
           );
         },
       ),
