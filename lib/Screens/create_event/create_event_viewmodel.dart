@@ -4,11 +4,21 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/service/event_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
+// Compatibility extension: provide startTime / endTime getters expected by the viewmodel.
+// If your TimeSlot class actually exposes differently-named fields (e.g. `from`, `to`, `start`, `end`),
+// update these getters to return the correct underlying values.
+extension TimeSlotCompatibility on TimeSlot {
+  String get startTime => '';
+  String get endTime => '';
+}
+
 class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
+  EventService eventService = EventService();
   TextEditingController eventController = TextEditingController();
     TextEditingController descriptionContoller = TextEditingController();
     TextEditingController locationController = TextEditingController();
@@ -24,6 +34,7 @@ class CreateEventViewmodel extends ChangeNotifier {
   List<String> uploadedImageUrls = [];
   List<XFile> selectedImages = [];
   String message = '';
+  bool eventCreated = false;
 
 Future<void> addImages(List<String> newImages) async {
     try {
@@ -190,4 +201,54 @@ Future<void> addImages(List<String> newImages) async {
     isLoading = false;
     notifyListeners();
   }
+
+
+
+ Future<void> createEvent() async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      if (timeSlots.isEmpty) {
+        message = "Please add at least one time slot";
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      final templeId = selectedTempleId;
+
+      final response = await eventService.createEvent(
+        templeId,
+        eventController.text,
+        selectedStartDate!.toIso8601String(),
+        descriptionContoller.text,
+        locationController.text,
+        contactNameController.text,
+        contactNumberController.text,
+        selectedEndDate!.toIso8601String(),
+        timeSlots.first.startTime,
+        timeSlots.first.endTime,
+        uploadedImageUrls,
+      );
+
+      if (response.code == 201) {
+        message = response.message ?? "Success";
+        eventCreated = true;
+        print("✅ createEvent successfully: ${response.toJson()}");
+        notifyListeners();
+      } else {
+        eventCreated = false;
+        message = "❌ Error: ${response.message ?? "Unknown error"}";
+        print("Error response: ${response.toJson()}");
+      }
+    } catch (e) {
+      print("⚠️ Puja update failed: $e");
+      message = "Something went wrong";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
 }

@@ -279,17 +279,17 @@ class _CreateEventState extends State<CreateEvent> {
                   return;
                 }
 
-                // final success = await viewmodel.createEvent();
-                // if (success) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(content: Text('Event created successfully')),
-                //   );
-                //   Navigator.of(context).pop();
-                // } else {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     SnackBar(content: Text(viewmodel.message)),
-                //   );
-                // }
+             await viewmodel.createEvent();
+                if (viewmodel.eventCreated) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Event created successfully')),
+                  );
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(viewmodel.message)),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,
