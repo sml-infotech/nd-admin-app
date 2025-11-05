@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:nammadaiva_dashboard/service/password_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResetViewmodel extends ChangeNotifier {
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
-bool isLoading=false;
+  bool isLoading = false;
   var authService = PasswordService();
   bool isChecked = false;
-  String message="";
+  String message = "";
   bool isPasswordUpdated = false;
 
   ResetViewmodel() {
@@ -21,35 +22,28 @@ bool isLoading=false;
     final confirmPwd = confirmPassword.text.trim();
 
     return pwd.isNotEmpty &&
-        pwd.length >= 6 && 
+        pwd.length >= 6 &&
         confirmPwd.isNotEmpty &&
-        pwd == confirmPwd; 
+        pwd == confirmPwd;
   }
-
 
   Future<void> resetPassword() async {
     try {
       print("valid otp called");
       isLoading = true;
       notifyListeners();
-      final response = await authService.resetPassword(
-          confirmPassword.text,);
-      if (response.code==200) {
-        print("->>> $response");
-   
+      final response = await authService.resetPassword(confirmPassword.text);
+      if (response.code == 200) {
+        deleteToken();
         message = response.message ?? "success";
-        print("message $message");
         isLoading = false;
-      isPasswordUpdated=true;
-         notifyListeners();
-      }
-      else if(response.code==400){
+        isPasswordUpdated = true;
+        notifyListeners();
+      } else if (response.code == 400) {
         isLoading = false;
         message = response.message ?? ".";
-      }
-      
-       else {
-        message ="some error occurred";
+      } else {
+        message = "some error occurred";
         isLoading = false;
         print("message $message");
       }
@@ -58,9 +52,12 @@ bool isLoading=false;
       message = "Something went wrong";
       isLoading = false;
       notifyListeners();
-   
     }
   }
 
-
+  Future<void> deleteToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.remove('authToken');
+    final storedRole = prefs.remove('userRole');
+  }
 }

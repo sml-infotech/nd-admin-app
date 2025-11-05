@@ -156,60 +156,66 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
       appBar: _buildAppBar(),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(24),
+                      ),
                     ),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        children: [
-                          _buildTempleDropdown(),
-                          const SizedBox(height: 15),
-                          _buildDeitiesDropdown(),
-                          const SizedBox(height: 18),
-                          _buildPujaDetails(),
-                          const SizedBox(height: 18),
-                          _buildSlotSection(),
-                          const SizedBox(height: 10),
-                          _buildDurationAndFee(),
-                          const SizedBox(height: 10),
-                          _buildImagePicker(),
-                          const SizedBox(height: 10),
-                          _buildCheckboxSection(),
-                          const SizedBox(height: 60),
-                        ],
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            _buildTempleDropdown(),
+                            const SizedBox(height: 15),
+                            _buildDeitiesDropdown(),
+                            const SizedBox(height: 18),
+                            _buildPujaDetails(),
+                            const SizedBox(height: 18),
+                            _buildSlotSection(),
+                            const SizedBox(height: 10),
+                            _buildDurationAndFee(),
+                            const SizedBox(height: 10),
+                            _buildImagePicker(),
+                            const SizedBox(height: 10),
+                            _buildCheckboxSection(),
+                            const SizedBox(height: 60),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          _buildResetButton(),
-          if (viewmodel.isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
+              ],
+            ),
+            _buildResetButton(),
+            if (viewmodel.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -373,31 +379,30 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 
- Widget _buildImagePicker() {
-  final uploadedCount = viewmodel.uploadedImageUrls.length;
+  Widget _buildImagePicker() {
+    final uploadedCount = viewmodel.uploadedImageUrls.length;
 
-  final allImages = [
-    ...viewmodel.uploadedImageUrls,
-    ...viewmodel.selectedImages.map((e) => e.path),
-  ];
+    final allImages = [
+      ...viewmodel.uploadedImageUrls,
+      ...viewmodel.selectedImages.map((e) => e.path),
+    ];
 
-  return MultiImagePickerSection(
-    imagePaths: allImages,
-    onAddImages: _pickImages,
-    onRemoveImage: (index) {
-      if (index >= uploadedCount) {
-        // Removing from selectedImages
-        final localIndex = index - uploadedCount;
-        viewmodel.removeImage(localIndex);
-      } else {
-        // Removing from uploadedImageUrls
-        viewmodel.uploadedImageUrls.removeAt(index);
-        viewmodel.notifyListeners();
-      }
-    },
-  );
-}
-
+    return MultiImagePickerSection(
+      imagePaths: allImages,
+      onAddImages: _pickImages,
+      onRemoveImage: (index) {
+        if (index >= uploadedCount) {
+          // Removing from selectedImages
+          final localIndex = index - uploadedCount;
+          viewmodel.removeImage(localIndex);
+        } else {
+          // Removing from uploadedImageUrls
+          viewmodel.uploadedImageUrls.removeAt(index);
+          viewmodel.notifyListeners();
+        }
+      },
+    );
+  }
 
   Widget _buildCheckboxSection() {
     return Column(
@@ -428,6 +433,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () async {
+                FocusScope.of(context).unfocus();
+
                 final isUpdate =
                     widget.pujaArgumrnts != null &&
                     widget.pujaArgumrnts!.puja_id.isNotEmpty;

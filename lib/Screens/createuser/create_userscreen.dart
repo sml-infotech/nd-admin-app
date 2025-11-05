@@ -40,125 +40,134 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                 elevation: 0,
                 title: nammaDaivaCreateAppBar(),
               ),
-              body: Stack(
-                children: [
-                  Column(
-                    children: [
-                      SizedBox(height: screenHeight * 0.02),
-                      Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24),
+              body: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: screenHeight * 0.02),
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: SingleChildScrollView(
-                              physics: const ClampingScrollPhysics(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  CommonTextField(
-                                    hintText: StringConstant.enterName,
-                                    labelText: StringConstant.userName,
-                                    isFromPassword: false,
-                                    controller: viewModel.nameController,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  CommonTextField(
-                                    hintText: StringConstant.email,
-                                    labelText: StringConstant.email,
-                                    isFromPassword: false,
-                                    controller: viewModel.emailController,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  CommonTextField(
-                                    hintText: StringConstant.password,
-                                    labelText: StringConstant.password,
-                                    isFromPassword: true,
-                                    controller: viewModel.passwordController,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  CommonTextField(
-                                    hintText: StringConstant.phone,
-                                    labelText: StringConstant.phone,
-                                    isFromPassword: false,
-                                    isFromPhone: true,
-                                    controller: viewModel.phoneController,
-                                  ),
-                                  const SizedBox(height: 20),
-
-                                  // 🔹 Role Dropdown
-                                  CommonDropdownField(
-                                    paddingSize: 20,
-                                    hintText: StringConstant.selectedRole,
-                                    labelText: StringConstant.role,
-                                    items: StringConstant.roles,
-                                    selectedValue:
-                                        StringConstant.roles.contains(
-                                          viewModel.role.text,
-                                        )
-                                        ? viewModel.role.text
-                                        : null,
-                                    onChanged: (value) {
-                                      viewModel.role.text = value ?? "";
-                                      viewModel.notifyListeners();
-                                    },
-                                  ),
-                                  if (viewModel.role.text == "Temple" ||
-                                      viewModel.role.text == "Agent") ...[
-                                    const SizedBox(height: 20),
-                                    CommonDropdownField(
-                                      hintText: StringConstant.selectTemples,
-                                      labelText: StringConstant.temples,
-                                      items: viewModel
-                                          .templeList, 
-                                      selectedIds: viewModel.selectedTempleIds,
-                                      onMultiChanged: (ids) {
-                                        setState(() {
-                                          viewModel.selectedTempleIds = ids;
-                                        });
-                                        debugPrint("Selected Temple IDs: $ids");
-                                      },
-                                      isTempleSelection: true,
-                                      paddingSize: 20,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: SingleChildScrollView(
+                                physics: const ClampingScrollPhysics(),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    CommonTextField(
+                                      hintText: StringConstant.enterName,
+                                      labelText: StringConstant.userName,
+                                      isFromPassword: false,
+                                      controller: viewModel.nameController,
                                     ),
-                                  ],
+                                    const SizedBox(height: 20),
+                                    CommonTextField(
+                                      hintText: StringConstant.email,
+                                      labelText: StringConstant.email,
+                                      isFromPassword: false,
+                                      controller: viewModel.emailController,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    CommonTextField(
+                                      hintText: StringConstant.password,
+                                      labelText: StringConstant.password,
+                                      isFromPassword: true,
+                                      controller: viewModel.passwordController,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    CommonTextField(
+                                      hintText: StringConstant.phone,
+                                      labelText: StringConstant.phone,
+                                      isFromPassword: false,
+                                      isFromPhone: true,
+                                      controller: viewModel.phoneController,
+                                    ),
+                                    const SizedBox(height: 20),
 
-                                  const SizedBox(height: 100),
-                                ],
+                                    // 🔹 Role Dropdown
+                                    CommonDropdownField(
+                                      paddingSize: 20,
+                                      hintText: StringConstant.selectedRole,
+                                      labelText: StringConstant.role,
+                                      items: StringConstant.roles,
+                                      selectedValue:
+                                          StringConstant.roles.contains(
+                                            viewModel.role.text,
+                                          )
+                                          ? viewModel.role.text
+                                          : null,
+                                      onChanged: (value) {
+                                        viewModel.role.text = value ?? "";
+                                        viewModel.notifyListeners();
+                                      },
+                                    ),
+                                    if (viewModel.role.text == "Temple" ||
+                                        viewModel.role.text == "Agent") ...[
+                                      const SizedBox(height: 20),
+                                      CommonDropdownField(
+                                        hintText: StringConstant.selectTemples,
+                                        labelText: StringConstant.temples,
+                                        items: viewModel.templeList,
+                                        selectedIds:
+                                            viewModel.selectedTempleIds,
+                                        onMultiChanged: (ids) {
+                                          setState(() {
+                                            viewModel.selectedTempleIds = ids;
+                                          });
+                                          debugPrint(
+                                            "Selected Temple IDs: $ids",
+                                          );
+                                        },
+                                        isTempleSelection: true,
+                                        paddingSize: 20,
+                                      ),
+                                    ],
+
+                                    const SizedBox(height: 100),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.all(16.0),
-                        child: SafeArea(
-                          top: false,
-                          child: createUserButton(viewModel),
+                        Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.all(16.0),
+                          child: SafeArea(
+                            top: false,
+                            child: createUserButton(viewModel),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  if (viewModel.isLoading)
-                    Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.4),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: ColorConstant.buttonColor,
+                    if (viewModel.isLoading)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black.withOpacity(0.4),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: ColorConstant.buttonColor,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -189,6 +198,8 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       height: 50,
       child: ElevatedButton(
         onPressed: () async {
+          FocusScope.of(context).unfocus();
+
           await viewModel.validateUser();
 
           if (viewModel.message.isNotEmpty) {
@@ -202,7 +213,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             viewModel.message = "";
           }
           if (viewModel.isCreateUserSuccess) {
-            Navigator.pushReplacementNamed(context, StringsRoute.userDetails);
+            Navigator.pop(context);
           }
           setState(() {
             viewModel.isCreateUserSuccess = false;

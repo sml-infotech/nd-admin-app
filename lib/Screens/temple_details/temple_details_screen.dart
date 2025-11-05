@@ -301,10 +301,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   }
 
   Widget imageWidget(String image) {
-    return IconButton(
-      icon: Image.asset(image),
-      onPressed: () => Navigator.pop(context),
-    );
+    return IconButton(icon: Image.asset(image), onPressed: () {});
   }
 
   Widget templeContacts(String title, String subtitle) {
@@ -336,38 +333,35 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
             StringConstant.templeDetail,
             style: AppTextStyles.appBarTitleStyle,
           ),
-          
-            const Spacer(),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.updateTempleDetails,
-                  arguments: TempleDetailsArguments(
-                    templeId: widget.arguments.templeId,
-                    name: widget.arguments.name,
-                    address: widget.arguments.address,
-                    city: widget.arguments.city,
-                    state: widget.arguments.state,
-                    pincode: widget.arguments.pincode,
-                    architecture: widget.arguments.architecture,
-                    phoneNumber: widget.arguments.phoneNumber,
-                    email: widget.arguments.email,
-                    description: widget.arguments.description,
-                    deities: widget.arguments.deities,
-                    images: widget.arguments.images,
-                  ),
-                );
-              },
-              child: Text(
-                StringConstant.edit,
-                style: AppTextStyles.appBarTitleStyle,
-              ),
+
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                StringsRoute.updateTempleDetails,
+                arguments: TempleDetailsArguments(
+                  templeId: widget.arguments.templeId,
+                  name: widget.arguments.name,
+                  address: widget.arguments.address,
+                  city: widget.arguments.city,
+                  state: widget.arguments.state,
+                  pincode: widget.arguments.pincode,
+                  architecture: widget.arguments.architecture,
+                  phoneNumber: widget.arguments.phoneNumber,
+                  email: widget.arguments.email,
+                  description: widget.arguments.description,
+                  deities: widget.arguments.deities,
+                  images: widget.arguments.images,
+                ),
+              );
+            },
+            child: Text(
+              StringConstant.edit,
+              style: AppTextStyles.appBarTitleStyle,
             ),
-       
-       
-        ]
-      
+          ),
+        ],
       ),
     );
   }

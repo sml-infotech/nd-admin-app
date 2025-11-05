@@ -31,68 +31,74 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         automaticallyImplyLeading: false,
         title: _buildAppBar(),
       ),
-      body: Stack(
-        children: [
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Container(
-                width: double.infinity,
-                constraints: BoxConstraints(
-                  minHeight: screenHeight - kToolbarHeight,
-                ),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+            SafeArea(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    minHeight: screenHeight - kToolbarHeight,
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _resetImage(),
-                    const SizedBox(height: 20),
-                    _resetSubText(),
-                    const SizedBox(height: 28),
-                    CommonTextField(
-                      hintText: StringConstant.password,
-                      labelText: StringConstant.enterPassword,
-                      isFromPassword: true,
-                      controller: viewmodel.password,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
-                    const SizedBox(height: 18),
-                    CommonTextField(
-                      hintText: StringConstant.password,
-                      labelText: StringConstant.enterConfirmPassword,
-                      isFromPassword: true,
-                      controller: viewmodel.confirmPassword,
-                    ),
-                    const SizedBox(height: 30),
-                    _resetButton(viewmodel),
-                    const SizedBox(height: 60),
-                  ],
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _resetImage(),
+                      const SizedBox(height: 20),
+                      _resetSubText(),
+                      const SizedBox(height: 28),
+                      CommonTextField(
+                        hintText: StringConstant.password,
+                        labelText: StringConstant.enterPassword,
+                        isFromPassword: true,
+                        controller: viewmodel.password,
+                      ),
+                      const SizedBox(height: 18),
+                      CommonTextField(
+                        hintText: StringConstant.password,
+                        labelText: StringConstant.enterConfirmPassword,
+                        isFromPassword: true,
+                        controller: viewmodel.confirmPassword,
+                      ),
+                      const SizedBox(height: 30),
+                      _resetButton(viewmodel),
+                      const SizedBox(height: 60),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
-          if (viewmodel.isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
+            if (viewmodel.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -148,6 +154,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         child: ElevatedButton(
           onPressed: isButtonEnabled
               ? () async {
+                  FocusScope.of(context).unfocus();
+
                   await viewmodel.resetPassword();
                   Fluttertoast.showToast(msg: viewmodel.message);
                   if (viewmodel.isPasswordUpdated) {

@@ -5,6 +5,7 @@ import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +98,12 @@ class _UserListScreenState extends State<UserListScreen> {
         const Spacer(),
         Text(StringConstant.userDetails, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
-        const SizedBox(width: 48),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.createUser);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }

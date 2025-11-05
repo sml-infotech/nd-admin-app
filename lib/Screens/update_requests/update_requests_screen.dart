@@ -58,7 +58,12 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
         appBar: _buildAppBar(),
-        body: Stack(
+        body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child:Stack(
           children: [
             Column(
               children: [
@@ -115,7 +120,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   AppBar _buildAppBar() {

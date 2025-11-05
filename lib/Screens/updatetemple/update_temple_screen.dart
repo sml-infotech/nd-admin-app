@@ -35,7 +35,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
   }
 
   void _setInitialData() {
-      viewModel.originalTempleData = widget.arguments; 
+    viewModel.originalTempleData = widget.arguments;
 
     viewModel.templeName.text = widget.arguments.name ?? '';
     viewModel.templeLocation.text = widget.arguments.address ?? '';
@@ -47,7 +47,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeCity.text = widget.arguments.city ?? "";
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
-   viewModel.images = List<String>.from(widget.arguments.images ?? []);
+    viewModel.images = List<String>.from(widget.arguments.images ?? []);
   }
 
   @override
@@ -63,134 +63,140 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
         elevation: 0,
         title: nammaDaivaDetailAppBar(),
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 16),
-                          titleTextWidget(StringConstant.templeName),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeName,
-                          ),
-                          titleTextWidget(StringConstant.templelocation),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeLocation,
-                          ),
-                          titleTextWidget(StringConstant.cityy),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeCity,
-                          ),
-                          titleTextWidget(StringConstant.statee),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeState,
-                          ),
-                          titleTextWidget(StringConstant.pincode),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templePincode,
-                          ),
-                          titleTextWidget(StringConstant.templedescription),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeDescription,
-                          ),
-                          titleTextWidget(StringConstant.templephonenumber),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            isFromPhone: true,
-                            controller: viewModel.templePhoneNumber,
-                          ),
-                          titleTextWidget(StringConstant.templeemail),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeEmail,
-                          ),
-                          titleTextWidget(StringConstant.deitiestemple),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeDeities,
-                          ),
-                          titleTextWidget(StringConstant.templearchitecture),
-                          const SizedBox(height: 8),
-                          CommonTextField(
-                            hintText: "",
-                            labelText: "",
-                            isFromPassword: false,
-                            controller: viewModel.templeArchitecture,
-                          ),
-                          titleTextWidget(StringConstant.editImages),
-                          const SizedBox(height: 8),
-                          UpdateImagepickerWidget(),
-                          const SizedBox(height: 30),
-                        ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            titleTextWidget(StringConstant.templeName),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeName,
+                            ),
+                            titleTextWidget(StringConstant.templelocation),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeLocation,
+                            ),
+                            titleTextWidget(StringConstant.cityy),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeCity,
+                            ),
+                            titleTextWidget(StringConstant.statee),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeState,
+                            ),
+                            titleTextWidget(StringConstant.pincode),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templePincode,
+                            ),
+                            titleTextWidget(StringConstant.templedescription),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeDescription,
+                            ),
+                            titleTextWidget(StringConstant.templephonenumber),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              isFromPhone: true,
+                              controller: viewModel.templePhoneNumber,
+                            ),
+                            titleTextWidget(StringConstant.templeemail),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeEmail,
+                            ),
+                            titleTextWidget(StringConstant.deitiestemple),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeDeities,
+                            ),
+                            titleTextWidget(StringConstant.templearchitecture),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText: "",
+                              isFromPassword: false,
+                              controller: viewModel.templeArchitecture,
+                            ),
+                            titleTextWidget(StringConstant.editImages),
+                            const SizedBox(height: 8),
+                            UpdateImagepickerWidget(),
+                            const SizedBox(height: 30),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          if (viewModel.isLoading)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black.withOpacity(0.4),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
+              ],
+            ),
+            if (viewModel.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -213,6 +219,8 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
           const Spacer(),
           GestureDetector(
             onTap: () async {
+              FocusScope.of(context).unfocus();
+
               if (viewModel.validateUpdateTemple()) {
                 await viewModel.updateTemple(widget.arguments.templeId);
                 Fluttertoast.showToast(msg: viewModel.message);
@@ -221,7 +229,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                     print(route.settings.name);
                     return route.settings.name == StringsRoute.templeScreen;
                   });
-                  viewModel.templeUpdated=false;
+                  viewModel.templeUpdated = false;
                 }
               } else {
                 Fluttertoast.showToast(msg: viewModel.message);

@@ -71,7 +71,6 @@ class _CreateEventState extends State<CreateEvent> {
         }
 
         if (widget.event!.images != null) {
-         
           viewmodel.uploadedImageUrls = widget.event!.images!;
         }
       }
@@ -83,7 +82,7 @@ class _CreateEventState extends State<CreateEvent> {
       final parsed = DateFormat("HH:mm:ss").parse(time);
       return DateFormat("hh:mm a").format(parsed);
     } catch (_) {
-      return time; 
+      return time;
     }
   }
 
@@ -108,51 +107,57 @@ class _CreateEventState extends State<CreateEvent> {
             elevation: 0,
             title: nammaDaivaAppBar(),
           ),
-          body: Column(
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            behavior: HitTestBehavior.translucent,
+            child: Column(
+              children: [
+                SizedBox(height: screenHeight * 0.02),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 18, 0, 0),
 
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          SizedBox(height: screenHeight * 0.02),
-                          _buildTempleDropdown(),
-                          SizedBox(height: screenHeight * 0.02),
-                          eventNameTextField(),
-                          SizedBox(height: screenHeight * 0.02),
-                          descriptionTextField(),
-                          SizedBox(height: screenHeight * 0.02),
-                          locationTextField(),
-                          SizedBox(height: screenHeight * 0.02),
-                          contactNameTextField(),
-                          SizedBox(height: screenHeight * 0.02),
-                          contactNumberTextField(),
-                          SizedBox(height: 8),
-                          dateWidget(),
-                          timePickerWidget(),
-                          SizedBox(height: screenHeight * 0.02),
-                          _buildImagePicker(),
-                          SizedBox(height: screenHeight * 0.06),
-                        ],
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(height: screenHeight * 0.02),
+                            _buildTempleDropdown(),
+                            SizedBox(height: screenHeight * 0.02),
+                            eventNameTextField(),
+                            SizedBox(height: screenHeight * 0.02),
+                            descriptionTextField(),
+                            SizedBox(height: screenHeight * 0.02),
+                            locationTextField(),
+                            SizedBox(height: screenHeight * 0.02),
+                            contactNameTextField(),
+                            SizedBox(height: screenHeight * 0.02),
+                            contactNumberTextField(),
+                            SizedBox(height: 8),
+                            dateWidget(),
+                            timePickerWidget(),
+                            SizedBox(height: screenHeight * 0.02),
+                            _buildImagePicker(),
+                            SizedBox(height: screenHeight * 0.06),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         if (viewmodel.isLoading)
@@ -345,6 +350,8 @@ class _CreateEventState extends State<CreateEvent> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () async {
+                FocusScope.of(context).unfocus();
+
                 final isValid = await viewmodel.validateEvent(false);
                 if (!isValid) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
