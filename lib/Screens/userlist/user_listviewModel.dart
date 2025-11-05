@@ -14,7 +14,7 @@ class UserViewModel extends ChangeNotifier {
 
   List<UserModel> userData = [];
   List<UserModel> get users => userData;
- List<Map<String, dynamic>> templeList = []; 
+  List<Map<String, String>> templeList = [];
 
   List<EditUserResponse> editData = [];
   List<EditUserResponse> get editdata => editData;
@@ -22,7 +22,7 @@ class UserViewModel extends ChangeNotifier {
   bool isLoading = true;
   bool editLoading = false;
 
-List<String> selectedTempleIds = [];
+  List<String> selectedTempleIds = [];
   bool hasMore = true;
   int page = 1;
   final int _pageSize = 10;
@@ -35,16 +35,14 @@ List<String> selectedTempleIds = [];
     notifyListeners();
   }
 
-
-void toggleTempleSelection(String id) {
-  if (selectedTempleIds.contains(id)) {
-    selectedTempleIds.remove(id);
-  } else {
-    selectedTempleIds.add(id);
+  void toggleTempleSelection(String id) {
+    if (selectedTempleIds.contains(id)) {
+      selectedTempleIds.remove(id);
+    } else {
+      selectedTempleIds.add(id);
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
-
 
   Future<void> getUsers({bool reset = false}) async {
     if (reset) {
@@ -59,7 +57,10 @@ void toggleTempleSelection(String id) {
     notifyListeners();
 
     try {
-      final response = await authService.getUserDetails(page: page, pageSize: _pageSize);
+      final response = await authService.getUserDetails(
+        page: page,
+        pageSize: _pageSize,
+      );
 
       if (response.users.isNotEmpty) {
         userData.addAll(response.users);
@@ -86,43 +87,49 @@ void toggleTempleSelection(String id) {
     await getUsers();
   }
 
-/// Edit user API call
-Future<void> editUser(
-  String userId,
-  String name,
-  bool isActive, {
-  List<String>? selectedTemples,
-}) async {
-  editLoading = true;
-  notifyListeners();
+  /// Edit user API call
+  Future<void> editUser(
+    String userId,
+    String name,
+    bool isActive, {
+    List<String>? selectedTemples,
+  }) async {
+    editLoading = true;
+    notifyListeners();
 
-  try {
-    // ✅ Send selected temples along with other fields
-    final response = await authService.editUser(
-      userId,
-      name,
-      role.text,
-      isActive,
-      selectedTemples: selectedTemples ?? [],
-    );
+    try {
+      final filteredTemples = (selectedTemples ?? [])
+          .where((id) => id.isNotEmpty)
+          .toSet()
+          .toList();
+      print("selectedTemplesselectedTemples${selectedTemples}");
+      print("selectedTemplesselectedTemples${filteredTemples}");
 
-    if (response.message.isNotEmpty) {
-      editData.add(response);
+      final response = await authService.editUser(
+        userId,
+        name,
+        role.text,
+        isActive,
+        selectedTemples: filteredTemples,
+      );
+      if (response.message.isNotEmpty) {
+        editData.add(response);
 
-      // ✅ Update local user list immediately
-      final index = userData.indexWhere((user) => user.id == userId);
-      if (index != -1) {
-        userData[index] = UserModel(
-          id: userId,
-          fullName: name,
-          email: userData[index].email,
-          role: role.text.isNotEmpty ? role.text : userData[index].role,
-          isActive: isActive,
-          createdAt: userData[index].createdAt,
-          updatedAt: DateTime.now().toIso8601String(),
-          phoneNumber: userData[index].phoneNumber,
-          associatedTemples: (selectedTemples ?? [])
-              .map((id) => TempleModel(
+        final index = userData.indexWhere((user) => user.id == userId);
+        if (index != -1) {
+          userData[index] = UserModel(
+            id: userId,
+            fullName: name,
+            email: userData[index].email,
+            role: role.text.isNotEmpty ? role.text : userData[index].role,
+            isActive: isActive,
+            createdAt: userData[index].createdAt,
+            updatedAt: DateTime.now().toIso8601String(),
+            phoneNumber: userData[index].phoneNumber,
+
+            associatedTemples: filteredTemples
+                .map(
+                  (id) => TempleModel(
                     id: id,
                     name: _getTempleNameById(id),
                     address: '',
@@ -137,31 +144,33 @@ Future<void> editUser(
                     updatedAt: '',
                     deities: [],
                     images: [],
-                  ))
-              .toList(),
-        );
+                  ),
+                )
+                .toList(),
+          );
+        }
       }
+    } catch (e, st) {
+      print("❌ Error editing user: $e");
+      print("🔍 Stack trace: $st");
     }
-  } catch (e) {
-    print("❌ Error editing user: $e");
+
+    editLoading = false;
+    notifyListeners();
   }
 
-  editLoading = false;
-  notifyListeners();
-}
+  String _getTempleNameById(String id) {
+    if (templeList.isEmpty) return '';
 
-/// Helper to get temple name from the cached list
-String _getTempleNameById(String id) {
-  final match = templeList.firstWhere(
-    (temple) => temple['id'] == id,
-    orElse: () => {"name": "Unknown"},
-  );
-  return match['name'] ?? "Unknown";
-}
+    final Map<String, String> temple = templeList.firstWhere(
+      (t) => t['id'] == id,
+      orElse: () => <String, String>{'id': '', 'name': ''},
+    );
 
+    return temple['name'] ?? '';
+  }
 
-   Future<void> getTemples({bool reset = false}) async {
-
+  Future<void> getTemples({bool reset = false}) async {
     isLoading = true;
     notifyListeners();
 
@@ -169,16 +178,13 @@ String _getTempleNameById(String id) {
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
-templeList = _templeData
-        .map((t) => {
-              "id": t.id.toString(),
-              "name": t.name.toString(),
-            })
-        .toList();      page++;
+      templeList = _templeData
+          .map((t) => {"id": t.id.toString(), "name": t.name.toString()})
+          .toList();
+      page++;
     }
 
     isLoading = false;
     notifyListeners();
   }
-
 }

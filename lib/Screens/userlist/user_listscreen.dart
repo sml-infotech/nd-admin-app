@@ -239,7 +239,6 @@ class _UserListScreenState extends State<UserListScreen> {
     List<String> associatedIds = [];
     associatedIds = user.associatedTemples.map((t) => t.id).toList();
     viewModel.selectedTempleIds = associatedIds;
-    viewModel.selectedTempleIds = associatedIds;
     print(">>>>>>>>>>>><<<<<<<<<<<,${viewModel.selectedTempleIds}");
     viewModel.role.text = user.role;
     await Future.delayed(const Duration(milliseconds: 50));
@@ -349,32 +348,55 @@ class _UserListScreenState extends State<UserListScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(8),
+
+                        // ✅ Remove duplicate temples by ID
                         child: Column(
-                          children: viewModel.templeList.map((temple) {
-                            final String templeId = temple['id'];
-                            final bool isSelected = viewModel.selectedTempleIds
-                                .contains(templeId);
+                          children: viewModel.templeList
+                              .fold<Map<String, dynamic>>(
+                                {}, // accumulator
+                                (unique, temple) {
+                                  final id = temple['id'] ?? '';
+                                  if (id.isNotEmpty && !unique.containsKey(id)) {
+                                    unique[id] = temple;
+                                  }
+                                  return unique;
+                                },
+                              )
+                              .values
+                              .map((temple) {
+                                final String templeId = temple['id'];
+                                final bool isSelected = viewModel
+                                    .selectedTempleIds
+                                    .contains(templeId);
 
-                            return CheckboxListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(
-                                temple['name'] ?? '',
-                                style: AppTextStyles.templeNameDetailsStyle,
-                              ),
-                              value: isSelected,
-                              activeColor: ColorConstant.buttonColor,
-                              onChanged: (bool? value) {
-                                if (value == true) {
-                                  viewModel.selectedTempleIds.add(templeId);
-                                } else {
-                                  viewModel.selectedTempleIds.remove(templeId);
-                                }
+                                return CheckboxListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(
+                                    temple['name'] ?? '',
+                                    style: AppTextStyles.templeNameDetailsStyle,
+                                  ),
+                                  value: isSelected,
+                                  activeColor: ColorConstant.buttonColor,
+                                  onChanged: (bool? value) {
+                                    if (value == true) {
+                                      viewModel.selectedTempleIds.add(templeId);
+                                    } else {
+                                      setState(() {
+                                        viewModel.selectedTempleIds.removeWhere(
+                                          (id) => id == templeId,
+                                        );
+                                      });
 
-                                setStateSB(() {});
-                              },
-                            );
-                          }).toList(),
+                                      print(
+                                        "fgdfggdfg${viewModel.selectedTempleIds.remove(templeId)}",
+                                      );
+                                    }
+                                    setStateSB(() {});
+                                  },
+                                );
+                              })
+                              .toList(),
                         ),
                       ),
                     ],
@@ -427,12 +449,14 @@ class _UserListScreenState extends State<UserListScreen> {
                   ? null
                   : () async {
                       final isActive = viewModel.getTempActive(user.id);
-                      final selectedTemples = viewModel.selectedTempleIds;
                       await viewModel.editUser(
                         user.id,
                         fullNameController.text,
                         isActive,
-                        selectedTemples: selectedTemples,
+                        selectedTemples: viewModel.selectedTempleIds,
+                      );
+                      print(
+                        "viewModel.selectedTempleIds${viewModel.selectedTempleIds}",
                       );
                       if (!viewModel.editLoading) Navigator.pop(context);
                     },
