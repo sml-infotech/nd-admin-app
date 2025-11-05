@@ -12,7 +12,6 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 // If your TimeSlot class actually exposes differently-named fields (e.g. `from`, `to`, `start`, `end`),
 // update these getters to return the correct underlying values.
 
-
 class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
   EventService eventService = EventService();
@@ -256,7 +255,7 @@ class CreateEventViewmodel extends ChangeNotifier {
         notifyListeners();
         return;
       }
-  
+
       final templeId = selectedTempleId;
 
       final response = await eventService.updateEvents(
@@ -268,8 +267,8 @@ class CreateEventViewmodel extends ChangeNotifier {
         contactNameController.text,
         contactNumberController.text,
         selectedEndDate!,
-        "18:00:00",
-        "21:00:00",
+        timeSlots.first.fromTime,
+        timeSlots.first.toTime,
         uploadedImageUrls,
       );
 

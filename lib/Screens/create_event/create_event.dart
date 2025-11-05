@@ -149,7 +149,7 @@ class _CreateEventState extends State<CreateEvent> {
                             timePickerWidget(),
                             SizedBox(height: screenHeight * 0.02),
                             _buildImagePicker(),
-                            SizedBox(height: screenHeight * 0.06),
+                            SizedBox(height: screenHeight * 0.10),
                           ],
                         ),
                       ),
@@ -160,7 +160,10 @@ class _CreateEventState extends State<CreateEvent> {
             ),
           ),
         ),
-        if (viewmodel.isLoading)
+       
+
+        eventButton(),
+         if (viewmodel.isLoading)
           Positioned.fill(
             child: Container(
               color: Colors.black54,
@@ -171,8 +174,6 @@ class _CreateEventState extends State<CreateEvent> {
               ),
             ),
           ),
-
-        eventButton(),
       ],
     );
   }

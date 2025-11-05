@@ -121,6 +121,7 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
                 child: _timeBox(
                   label: fromTime.isNotEmpty ? fromTime : 'Start Time',
                   icon: Icons.access_time,
+                  time: fromTime,
                 ),
               ),
             ),
@@ -133,6 +134,7 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
                   label: toTime.isNotEmpty ? toTime : 'End Time',
                   icon: Icons.access_time,
                   isError: _errorText != null,
+                  time: toTime,
                 ),
               ),
             ),
@@ -159,6 +161,7 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
     required String label,
     required IconData icon,
     bool isError = false,
+    String? time,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
@@ -175,7 +178,7 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
             style: TextStyle(
               fontSize: 16,
               fontFamily: font,
-              color: Colors.grey,
+              color: time!.isEmpty ? Colors.grey : Colors.black,
             ),
           ),
           Icon(icon, color: Colors.grey.shade600, size: 20),
