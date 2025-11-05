@@ -58,6 +58,13 @@ class _CreateEventState extends State<CreateEvent> {
         if (widget.event!.endDate != null) {
           viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
         }
+
+        if (widget.event!.images != null) {
+          // viewmodel.selectedImages = widget.event!.images!
+          //     .map((path) => XFile(path))
+          //     .toList();
+          viewmodel.uploadedImageUrls = widget.event!.images!;
+        }
         if (widget.event!.startTime != null && widget.event!.endTime != null) {
           // Assuming startTime and endTime are in ISO 8601 format (e.g., "2023-11-04T09:00:00")
 
@@ -75,12 +82,6 @@ class _CreateEventState extends State<CreateEvent> {
           viewmodel.timeSlots = [
             timeSlot,
           ]; // Assuming you're storing one time slot, if more, use .add() instead.
-        }
-
-        if (widget.event!.images != null) {
-          viewmodel.selectedImages = widget.event!.images!
-              .map((path) => XFile(path))
-              .toList();
         }
       }
     });
@@ -346,16 +347,17 @@ class _CreateEventState extends State<CreateEvent> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                await viewmodel.createEvent();
-                if (viewmodel.eventCreated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Event created successfully')),
-                  );
-                  Navigator.pushNamed(context, StringsRoute.eventListScreen);
+                if (widget.event?.id != null) {
+                  await viewmodel.updateEvent(widget.event!.id);
                 } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(viewmodel.message)));
+                  await viewmodel.createEvent();
+                }
+                if (viewmodel.eventUpdated) {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+
+                  Navigator.pop(context);
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
                 }
               },
               style: ElevatedButton.styleFrom(

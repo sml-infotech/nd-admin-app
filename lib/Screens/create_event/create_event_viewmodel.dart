@@ -20,23 +20,24 @@ class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
   EventService eventService = EventService();
   TextEditingController eventController = TextEditingController();
-    TextEditingController descriptionContoller = TextEditingController();
-    TextEditingController locationController = TextEditingController();
-    TextEditingController contactNameController = TextEditingController();
-    TextEditingController contactNumberController = TextEditingController();
+  TextEditingController descriptionContoller = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController contactNameController = TextEditingController();
+  TextEditingController contactNumberController = TextEditingController();
   UserService userService = UserService();
   List<TimeSlot> timeSlots = [];
   List<Temple> templeData = [];
   Temple? selectedTemple;
   String selectedTempleId = '';
-  DateTime ?selectedStartDate ;
-  DateTime ?selectedEndDate ;
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
   List<String> uploadedImageUrls = [];
   List<XFile> selectedImages = [];
   String message = '';
   bool eventCreated = false;
+  bool eventUpdated = false;
 
-Future<void> addImages(List<String> newImages) async {
+  Future<void> addImages(List<String> newImages) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -93,6 +94,7 @@ Future<void> addImages(List<String> newImages) async {
     selectedImages.removeAt(index);
     notifyListeners();
   }
+
   Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
     try {
       final fileBytes = await imageFile.readAsBytes();
@@ -116,9 +118,7 @@ Future<void> addImages(List<String> newImages) async {
     }
   }
 
-
-
- Future<bool> validateEvent(bool isFromUpdate) async {
+  Future<bool> validateEvent(bool isFromUpdate) async {
     if (selectedTemple == null) {
       message = "Please select a temple.";
       return false;
@@ -147,7 +147,7 @@ Future<void> addImages(List<String> newImages) async {
       message = "Please select start date.";
       return false;
     }
-    if (selectedEndDate == null) {  
+    if (selectedEndDate == null) {
       message = "Please select end date.";
       return false;
     }
@@ -155,16 +155,16 @@ Future<void> addImages(List<String> newImages) async {
       message = "End date cannot be before start date.";
       return false;
     }
-    if(timeSlots.isEmpty){
+    if (timeSlots.isEmpty) {
       message = "Please add at least one time slot.";
       return false;
-    } 
+    }
     if (uploadedImageUrls.isEmpty) {
       message = "Please upload at least one image.";
       return false;
     }
     return true;
- }
+  }
 
   void setSelectedTemple(Temple temple) {
     selectedTemple = temple;
@@ -201,9 +201,7 @@ Future<void> addImages(List<String> newImages) async {
     notifyListeners();
   }
 
-
-
- Future<void> createEvent() async {
+  Future<void> createEvent() async {
     try {
       isLoading = true;
       notifyListeners();
@@ -249,7 +247,56 @@ Future<void> addImages(List<String> newImages) async {
       notifyListeners();
     }
   }
-void reset() {
+
+  Future<void> updateEvent(String eventId) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      if (timeSlots.isEmpty) {
+        message = "Please add at least one time slot";
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
+      print("timeSlots.first.startTime${timeSlots.length}");
+      print("timeSlots.first.endTime${timeSlots.first.endTime}");
+      final templeId = selectedTempleId;
+
+      final response = await eventService.updateEvents(
+        eventId,
+        eventController.text,
+        selectedStartDate!,
+        descriptionContoller.text,
+        locationController.text,
+        contactNameController.text,
+        contactNumberController.text,
+        selectedEndDate!,
+        "18:00:00",
+        "21:00:00",
+        uploadedImageUrls,
+      );
+
+      if (response.code == 200) {
+        message = response.message ?? "Success";
+        eventUpdated = true;
+        print("✅ updateEvent successfully: ${response.toJson()}");
+        notifyListeners();
+      } else {
+        eventUpdated = false;
+        message = "❌ Error: ${response.message ?? "Unknown error"}";
+        print("Error response: ${response.toJson()}");
+      }
+    } catch (e) {
+      print("⚠️ updateEvent update failed: $e");
+      message = "Something went wrong";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void reset() {
     eventController.clear();
     descriptionContoller.clear();
     locationController.clear();
@@ -266,7 +313,5 @@ void reset() {
     selectedImages = [];
     message = '';
     eventCreated = false;
-
-  
   }
 }
