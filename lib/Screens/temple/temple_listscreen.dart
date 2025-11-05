@@ -46,53 +46,54 @@ class _TempleScreenState extends State<TempleScreen> {
   Widget build(BuildContext context) {
     return Consumer<TempleViewModel>(
       builder: (context, viewModel, _) {
-        return FocusDetector(onFocusGained: () async {
-          print(">>>>>><<<<<<");
-          await         viewModel.fetchTemples(refresh: true);
-
-        },child: 
-        Scaffold(
-          backgroundColor: ColorConstant.buttonColor,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
+        return FocusDetector(
+          onFocusGained: () async {
+            print(">>>>>><<<<<<");
+            await viewModel.fetchTemples(refresh: true);
+          },
+          child: Scaffold(
             backgroundColor: ColorConstant.buttonColor,
-            elevation: 0,
-            centerTitle: true,
-            title: _buildAppBar(),
-          ),
-          body: viewModel.isLoading && viewModel.temples.isEmpty
-              ? _buildShimmer()
-              : Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24),
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: ColorConstant.buttonColor,
+              elevation: 0,
+              centerTitle: true,
+              title: _buildAppBar(),
+            ),
+            body: viewModel.isLoading && viewModel.temples.isEmpty
+                ? _buildShimmer()
+                : Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(24),
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: ListView.separated(
+                            controller: _scrollController,
+                            itemCount: viewModel.temples.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (_, index) =>
+                                _templeCard(viewModel.temples[index]),
                           ),
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: ListView.separated(
-                          controller: _scrollController,
-                          itemCount: viewModel.temples.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (_, index) =>
-                              _templeCard(viewModel.temples[index]),
+                      ),
+                      if (viewModel.isLoadingMore)
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: _buildShimmer(),
                         ),
-                      ),
-                    ),
-                    if (viewModel.isLoadingMore)
-                      Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: _buildShimmer(),
-                      ),
-                  ],
-                ),
-         ) );
+                    ],
+                  ),
+          ),
+        );
       },
     );
   }
@@ -108,7 +109,12 @@ class _TempleScreenState extends State<TempleScreen> {
         const Spacer(),
         Text(StringConstant.temple, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
-        const SizedBox(width: 48),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }
@@ -130,7 +136,7 @@ class _TempleScreenState extends State<TempleScreen> {
             email: temple.email,
             description: temple.description,
             deities: temple.deities!,
-            images:temple.images??[],
+            images: temple.images ?? [],
             templeId: temple.id,
           ),
         );

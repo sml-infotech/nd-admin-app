@@ -58,6 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -70,7 +71,9 @@ class _OtpScreenState extends State<OtpScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
-                  const SizedBox(height: 50),
+                  backbutton(),
+
+                  const SizedBox(height: 100),
                   otpTitle(),
                   const SizedBox(height: 20),
                   otpImage(),
@@ -101,6 +104,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       const SizedBox(width: 20),
                     ],
                   ),
+                  SizedBox(height: 100),
                 ],
               ),
             ),
@@ -125,6 +129,18 @@ class _OtpScreenState extends State<OtpScreen> {
     return Text(
       StringConstant.verificationCode,
       style: AppTextStyles.otpDetailHeadingStyle,
+    );
+  }
+
+  Widget backbutton() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back, color: Colors.black),
+      ),
     );
   }
 

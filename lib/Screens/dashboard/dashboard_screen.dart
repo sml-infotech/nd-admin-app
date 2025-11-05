@@ -75,7 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       welcomeText(),
                       const SizedBox(height: 15),
-                      templeNameText(),
+                      // templeNameText(),
                       const SizedBox(height: 10),
 
                       if (token != null && role != null) ...[
@@ -164,16 +164,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           SizedBox(width: 5),
 
-                          contaierWidgets(
-                            ImageStrings.ritual,
-                            StringConstant.updateRequests,
-                            () {
-                              Navigator.pushNamed(
-                                context,
-                                StringsRoute.updateRequestsUrl,
-                              );
-                            },
-                          ),
+                          // contaierWidgets(
+                          //   ImageStrings.ritual,
+                          //   StringConstant.updateRequests,
+                          //   () {
+                          //     Navigator.pushNamed(
+                          //       context,
+                          //       StringsRoute.updateRequestsUrl,
+                          //     );
+                          //   },
+                          // ),
                         ],
                       ),
                     ],
@@ -193,6 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Spacer(),
+        SizedBox(width: 20),
         Text(
           StringConstant.nammaDaivaSmall,
           style: AppTextStyles.appBarTitleStyle,

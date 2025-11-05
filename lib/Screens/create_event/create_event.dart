@@ -333,6 +333,7 @@ class _CreateEventState extends State<CreateEvent> {
               : StringConstant.updateEvent,
           style: AppTextStyles.appBarTitleStyle,
         ),
+        SizedBox(width: 48),
         const Spacer(),
       ],
     );

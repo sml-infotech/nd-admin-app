@@ -50,5 +50,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photos to upload temple images.</string>
+
 </dict>
 </plist>

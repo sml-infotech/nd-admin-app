@@ -35,18 +35,18 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
       toTime = DateFormat('hh:mm a').format(oneHourLater);
     }
   }
-  @override
-void didUpdateWidget(covariant SingleTimePicker oldWidget) {
-  super.didUpdateWidget(oldWidget);
-  if (widget.initialValue != oldWidget.initialValue &&
-      widget.initialValue != null) {
-    setState(() {
-      fromTime = widget.initialValue!.fromTime;
-      toTime = widget.initialValue!.toTime;
-    });
-  }
-}
 
+  @override
+  void didUpdateWidget(covariant SingleTimePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != null) {
+      setState(() {
+        fromTime = widget.initialValue!.fromTime;
+        toTime = widget.initialValue!.toTime;
+      });
+    }
+  }
 
   Future<void> _pickTime({required bool isStart}) async {
     final picked = await showTimePicker(
@@ -170,7 +170,14 @@ void didUpdateWidget(covariant SingleTimePicker oldWidget) {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style:  TextStyle(fontSize: 16,fontFamily: font)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: font,
+              color: Colors.grey,
+            ),
+          ),
           Icon(icon, color: Colors.grey.shade600, size: 20),
         ],
       ),
