@@ -59,68 +59,71 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         backgroundColor: ColorConstant.buttonColor,
         appBar: _buildAppBar(),
         body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        behavior: HitTestBehavior.translucent,
-        child:Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(height: screenHeight * 0.02),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.02),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: viewmodel.isLoading
+                          ? _buildShimmer()
+                          : RefreshIndicator(
+                              color: ColorConstant.buttonColor,
+                              onRefresh: () =>
+                                  viewmodel.fetchUpdateRequests(reset: true),
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                padding: const EdgeInsets.all(16),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount:
+                                    visibleRequests.length +
+                                    (viewmodel.isLoadingMore ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index < visibleRequests.length) {
+                                    final originalIndex = viewmodel.requests
+                                        .indexOf(visibleRequests[index]);
+                                    return _buildUpdateRequestCard(
+                                      originalIndex,
+                                    );
+                                  } else {
+                                    return _buildLoadingMoreIndicator();
+                                  }
+                                },
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+              if (viewmodel.isLoadingForApproval)
+                Container(
+                  color: Colors.black45,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        ColorConstant.buttonColor,
                       ),
                     ),
-                    child: viewmodel.isLoading
-                        ? _buildShimmer()
-                        : RefreshIndicator(
-                            color: ColorConstant.buttonColor,
-                            onRefresh: () =>
-                                viewmodel.fetchUpdateRequests(reset: true),
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              padding: const EdgeInsets.all(16),
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount:
-                                  visibleRequests.length +
-                                  (viewmodel.isLoadingMore ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index < visibleRequests.length) {
-                                  final originalIndex = viewmodel.requests
-                                      .indexOf(visibleRequests[index]);
-                                  return _buildUpdateRequestCard(originalIndex);
-                                } else {
-                                  return _buildLoadingMoreIndicator();
-                                }
-                              },
-                            ),
-                          ),
                   ),
                 ),
-              ],
-            ),
-            if (viewmodel.isLoadingForApproval)
-              Container(
-                color: Colors.black45,
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      ColorConstant.buttonColor,
-                    ),
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   AppBar _buildAppBar() {
@@ -597,6 +600,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             );
             viewmodel.expandedIndex = null;
             await viewmodel.fetchUpdateRequests(reset: true);
+          } else {
+            Fluttertoast.showToast(msg: viewmodel.message);
           }
         },
         style: ElevatedButton.styleFrom(

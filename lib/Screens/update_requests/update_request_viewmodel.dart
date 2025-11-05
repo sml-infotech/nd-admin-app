@@ -136,6 +136,7 @@ class UpdateRequestViewModel extends ChangeNotifier {
       final response = await _templeService.updateApproval(
         requestId,
         fieldDecisions,
+        rejected?.values.join(', ') ?? ''
       );
       if (response.code == 200) {
         isLoadingForApproval = false;

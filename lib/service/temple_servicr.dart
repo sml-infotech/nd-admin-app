@@ -146,10 +146,10 @@ Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limi
   }
 }
 
-Future<UpdateTempleApprovalResponse> updateApproval( String requestId,Map<String, String> field_decisions) async {
+Future<UpdateTempleApprovalResponse> updateApproval( String requestId,Map<String, String> field_decisions,String admin_comments) async {
   try {
 
-  final request=UpdateTempleApprovalModal(requestId:requestId , fieldDecisions: field_decisions) ;
+  final request=UpdateTempleApprovalModal(requestId:requestId , fieldDecisions: field_decisions,admin_comments:admin_comments ) ;
     final data = await apiService.put(
       UrlConstant.templeApprovalUrl,
       request.toJson(),
