@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
+import 'package:nammadaiva_dashboard/Common/time_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
@@ -43,6 +45,15 @@ class _CreateEventState extends State<CreateEvent> {
           (temple) => temple.id == selectedTempleId,
           orElse: () => viewmodel.templeData.first,
         );
+        if (widget.event!.startTime != null && widget.event!.endTime != null) {
+          viewmodel.timeSlots = [
+            TimeSlot(
+              fromTime: _formatForDisplay(widget.event!.startTime!),
+              toTime: _formatForDisplay(widget.event!.endTime!),
+            ),
+          ];
+        }
+
         viewmodel.selectedTemple = selectedTemple;
         viewmodel.selectedTempleId = selectedTemple.id;
         viewmodel.eventController.text = widget.event!.name;
@@ -60,31 +71,20 @@ class _CreateEventState extends State<CreateEvent> {
         }
 
         if (widget.event!.images != null) {
-          // viewmodel.selectedImages = widget.event!.images!
-          //     .map((path) => XFile(path))
-          //     .toList();
+         
           viewmodel.uploadedImageUrls = widget.event!.images!;
-        }
-        if (widget.event!.startTime != null && widget.event!.endTime != null) {
-          // Assuming startTime and endTime are in ISO 8601 format (e.g., "2023-11-04T09:00:00")
-
-          // Parse the start and end times
-          DateTime start = DateTime.parse(widget.event!.startTime!);
-          DateTime end = DateTime.parse(widget.event!.endTime!);
-
-          // Create a TimeSlot object with parsed start and end times
-          TimeSlot timeSlot = TimeSlot(
-            fromTime: start.toString(),
-            toTime: end.toString(),
-          );
-
-          // Store the time slot in the viewmodel's timeSlots list
-          viewmodel.timeSlots = [
-            timeSlot,
-          ]; // Assuming you're storing one time slot, if more, use .add() instead.
         }
       }
     });
+  }
+
+  String _formatForDisplay(String time) {
+    try {
+      final parsed = DateFormat("HH:mm:ss").parse(time);
+      return DateFormat("hh:mm a").format(parsed);
+    } catch (_) {
+      return time; 
+    }
   }
 
   @override
@@ -205,12 +205,15 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget timePickerWidget() {
     return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 0),
-      child: TimeSlotSelector(
-        key: ValueKey(viewmodel.timeSlots.hashCode),
-        initialSlots: viewmodel.timeSlots,
-        onChanged: (updatedSlots) {
-          setState(() => viewmodel.timeSlots = updatedSlots);
+      padding: const EdgeInsets.all(16.0),
+      child: SingleTimePicker(
+        initialValue: viewmodel.timeSlots.isNotEmpty
+            ? viewmodel.timeSlots.first
+            : null,
+        onChanged: (selectedSlot) {
+          setState(() {
+            viewmodel.timeSlots = [selectedSlot];
+          });
         },
       ),
     );
@@ -352,10 +355,11 @@ class _CreateEventState extends State<CreateEvent> {
                 } else {
                   await viewmodel.createEvent();
                 }
-                if (viewmodel.eventUpdated) {
+                if (viewmodel.eventUpdated || viewmodel.eventCreated) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-
                   Navigator.pop(context);
+                  viewmodel.eventCreated = false;
+                  viewmodel.eventUpdated = false;
                 } else {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                 }

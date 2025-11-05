@@ -253,8 +253,14 @@ class _EventListScreenState extends State<EventListScreen> {
         ),
         Spacer(),
         Text(StringConstant.events, style: AppTextStyles.appBarTitleStyle),
-        SizedBox(width: 48),
+
         const Spacer(),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.createEvent);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }
@@ -276,9 +282,16 @@ class _EventListScreenState extends State<EventListScreen> {
                 children: [
                   eventTitle(event.name),
                   Spacer(),
-                  IconButton(onPressed: () {
-                    Navigator.pushNamed(context, StringsRoute.createEvent,arguments: event);  
-                  }, icon: Icon(Icons.edit)),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        StringsRoute.createEvent,
+                        arguments: event,
+                      );
+                    },
+                    icon: Icon(Icons.edit),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),

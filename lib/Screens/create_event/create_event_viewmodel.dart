@@ -11,10 +11,7 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 // Compatibility extension: provide startTime / endTime getters expected by the viewmodel.
 // If your TimeSlot class actually exposes differently-named fields (e.g. `from`, `to`, `start`, `end`),
 // update these getters to return the correct underlying values.
-extension TimeSlotCompatibility on TimeSlot {
-  String get startTime => '';
-  String get endTime => '';
-}
+
 
 class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
@@ -224,8 +221,8 @@ class CreateEventViewmodel extends ChangeNotifier {
         contactNameController.text,
         contactNumberController.text,
         selectedEndDate!.toIso8601String(),
-        timeSlots.first.startTime,
-        timeSlots.first.endTime,
+        timeSlots.first.fromTime,
+        timeSlots.first.toTime,
         uploadedImageUrls,
       );
 
@@ -259,8 +256,7 @@ class CreateEventViewmodel extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      print("timeSlots.first.startTime${timeSlots.length}");
-      print("timeSlots.first.endTime${timeSlots.first.endTime}");
+  
       final templeId = selectedTempleId;
 
       final response = await eventService.updateEvents(

@@ -50,7 +50,7 @@ class EventService {
   }
 
   Future<EventUpdateResponse> updateEvents(
-    String templeId,
+    String eventId,
     String name,
     DateTime start_date,
     String description,
@@ -78,7 +78,7 @@ class EventService {
       );
 
       final data = await apiService.put(
-        "${UrlConstant.updateEvent}/$templeId",
+        "${UrlConstant.updateEvent}/$eventId",
         createEvent.toJson(),
       );
 
