@@ -94,10 +94,10 @@ class UserViewModel extends ChangeNotifier {
     bool isActive, {
     List<String>? selectedTemples,
   }) async {
-    editLoading = true;
-    notifyListeners();
-
+       editLoading = true;
+      notifyListeners();
     try {
+   
       final filteredTemples = (selectedTemples ?? [])
           .where((id) => id.isNotEmpty)
           .toSet()
