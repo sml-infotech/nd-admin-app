@@ -106,24 +106,40 @@ class _PujaListState extends State<PujaList> {
                               ),
                             ],
                           ),
-                       Expanded(
-  child: ListView.builder(
-    controller: _scrollController,
-    physics: const AlwaysScrollableScrollPhysics(),
-    itemCount: viewmodel.pujaList.length + (viewmodel.isLoadingMore ? 1 : 0),
-    itemBuilder: (context, index) {
-      if (index < viewmodel.pujaList.length) {
-        return listCard(viewmodel.pujaList[index]);
-      } else {
-        return const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
-        );
-      }
-    },
-  ),
-),
+                        if (viewmodel.pujaList.isEmpty)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 200),
+                              Text(
+                                "No Pujas Available",
+                                style: TextStyle(fontFamily: font),
+                              ),
+                            ],
+                          ),
 
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount:
+                                viewmodel.pujaList.length +
+                                (viewmodel.isLoadingMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index < viewmodel.pujaList.length) {
+                                return listCard(viewmodel.pujaList[index]);
+                              } else {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -136,8 +152,6 @@ class _PujaListState extends State<PujaList> {
       ),
     );
   }
-
-  
 
   AppBar _buildAppBar() {
     return AppBar(
