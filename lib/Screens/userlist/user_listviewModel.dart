@@ -18,6 +18,7 @@ class UserViewModel extends ChangeNotifier {
 
   List<EditUserResponse> editData = [];
   List<EditUserResponse> get editdata => editData;
+  bool isLoadingMore = false;
 
   bool isLoading = true;
   bool editLoading = false;
@@ -44,16 +45,21 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUsers({bool reset = false}) async {
+   Future<void> getUsers({bool reset = false}) async {
     if (reset) {
       page = 1;
       hasMore = true;
       userData.clear();
     }
 
-    if (!hasMore) return;
+    if (!hasMore || isLoading || isLoadingMore) return;
 
-    isLoading = true;
+    // ✅ separate initial vs pagination states
+    if (page == 1) {
+      isLoading = true;
+    } else {
+      isLoadingMore = true;
+    }
     notifyListeners();
 
     try {
@@ -62,32 +68,32 @@ class UserViewModel extends ChangeNotifier {
         pageSize: _pageSize,
       );
 
-      if (response.users.isNotEmpty) {
-        userData.addAll(response.users);
-        if (response.users.length < _pageSize) {
-          hasMore = false; // no more pages
-        } else {
-          page++; // next page
-        }
+      final users = response.users ?? [];
+
+      if (users.isNotEmpty) {
+        userData.addAll(users);
+        hasMore = users.length == _pageSize;
+        if (hasMore) page++;
       } else {
         hasMore = false;
       }
     } catch (e) {
-      print("Error fetching users: $e");
+      print("⚠️ Error fetching users: $e");
       hasMore = false;
+    } finally {
+      isLoading = false;
+      isLoadingMore = false;
+      notifyListeners();
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
-  /// Fetch more users (pagination)
   Future<void> fetchMoreUsers() async {
-    if (!hasMore) return;
-    await getUsers();
+    if (hasMore && !isLoadingMore && !isLoading) {
+      await getUsers();
+    }
   }
 
-  /// Edit user API call
+  
   Future<void> editUser(
     String userId,
     String name,

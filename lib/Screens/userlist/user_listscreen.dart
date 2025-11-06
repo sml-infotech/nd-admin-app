@@ -83,9 +83,9 @@ class _UserListScreenState extends State<UserListScreen> {
       builder: (context, viewModel, _) {
         return FocusDetector(
           onFocusGained: () async {
-            if (viewModel.userData.isEmpty) {
-              await viewModel.getUsers(reset: true);
-            }
+            // if (viewModel.userData.isEmpty) {
+            //   await viewModel.getUsers(reset: true);
+            // }
           },
           child: Scaffold(
             backgroundColor: viewModel.isLoading
