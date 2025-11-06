@@ -82,11 +82,16 @@ class CreateUserViewmodel extends ChangeNotifier {
         phoneController.text,
       );
 
-      if (response.message?.isNotEmpty == true) {
+      if (response.code == 201) {
         message = response.message!;
         isCreateUserSuccess = true;
+        notifyListeners();
+      } else if (response.code == 409) {
+        message = "Email already exists";
+        notifyListeners();
       } else {
         message = "Some error occurred";
+        notifyListeners();
       }
       isLoading = false;
       notifyListeners();
@@ -97,7 +102,6 @@ class CreateUserViewmodel extends ChangeNotifier {
     }
   }
 
-  // Fetch temples with pagination
   Future<void> getTemples({bool reset = false}) async {
     if (isLoading) return;
 

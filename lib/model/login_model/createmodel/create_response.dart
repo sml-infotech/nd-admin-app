@@ -1,25 +1,20 @@
 class UserResponse {
-  final String ?message;
+  final String? message;
+  final int? code;
   final User? user;
-  
 
-  UserResponse({
-    required this.message,
-    required this.user,
-  });
+  UserResponse({required this.message, this.code, required this.user});
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     return UserResponse(
       message: json['message'] ?? '',
+      code: json['code'] ?? '',
       user: User.fromJson(json['user'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'message': message,
-      'user': user?.toJson(),
-    };
+    return {'message': message, 'code': code, 'user': user?.toJson()};
   }
 }
 
@@ -50,7 +45,7 @@ class User {
       fullName: json['full_name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'] ?? '',
-      associatedTempleId: json['associated_temple_id']??"",
+      associatedTempleId: json['associated_temple_id'] ?? "",
       createdAt: json['created_at'] ?? '',
       otpCode: json['otp_code'] ?? '',
       otpExpiry: json['otp_expiry'] ?? '',
