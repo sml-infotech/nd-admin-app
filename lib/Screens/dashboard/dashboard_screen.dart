@@ -33,7 +33,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-
   Future<void> deleteToken() async {
     final prefs = await SharedPreferences.getInstance();
     final storedToken = prefs.remove('authToken');
@@ -123,7 +122,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (role == "Super Admin" || role == "Admin") ...[
+                          if (role == "Super Admin" ||
+                              role == "Admin" ||
+                              role == "Temple") ...[
                             contaierWidgets(
                               ImageStrings.onlineseva,
                               StringConstant.createUser,

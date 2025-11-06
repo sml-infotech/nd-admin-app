@@ -134,9 +134,9 @@ Future<AdminTempleUpdateResponse> updateTemplebyAdmin(AddTemple datas) async {
 
 
 
-Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limit = 10}) async {
+Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limit = 10,required String status}) async {
   try {
-    final url = '${UrlConstant.updateTempleRequestUrl}?page=$page&limit=$limit';
+    final url = '${UrlConstant.updateTempleRequestUrl}?page=$page&limit=$limit$status';
     print('Fetching updateTemple: $url');
     dynamic data = await apiService.get(url);
     return TempleUpdateRequestListModel.fromJson(data);

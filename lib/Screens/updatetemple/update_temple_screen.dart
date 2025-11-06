@@ -50,9 +50,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeCity.text = widget.arguments.city ?? "";
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
-    viewModel.uploadedImageUrls = List<String>.from(
-      widget.arguments.images ?? [],
-    );
+    viewModel.images = List<String>.from(widget.arguments.images ?? []);
   }
 
   @override
@@ -179,7 +177,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                             ),
                             titleTextWidget(StringConstant.editImages),
                             const SizedBox(height: 8),
-                            _buildImagePicker(),
+                            UpdateImagepickerWidget(),
                             const SizedBox(height: 30),
                           ],
                         ),

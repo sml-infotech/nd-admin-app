@@ -102,45 +102,67 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   List<String> uploadedImageUrls = [];
 
   Future<void> addImages(List<String> newImages) async {
-    try {
-      isLoading = true;
-      notifyListeners();
+  try {
+    isLoading = true;
+    notifyListeners();
 
-      selectedImages.addAll(newImages.map((path) => XFile(path)));
-      debugPrint(
-        "🖼 Selected Images: ${selectedImages.map((e) => e.path).toList()}",
-      );
+    final newXFiles = newImages.map((path) => XFile(path)).toList();
 
-      for (final file in selectedImages) {
-        debugPrint("📤 Getting presigned URL for ${file.name}");
-        final response = await userService.presignedUrl(file.name, file.path);
+    final existingPaths = selectedImages.map((e) => e.path).toSet();
+    final uniqueNewXFiles =
+        newXFiles.where((file) => !existingPaths.contains(file.path)).toList();
 
-        if (response.url != null && response.url!.isNotEmpty) {
-          final presignedUrl = response.url!;
-          final uploadedUrl = await uploadToS3(presignedUrl, file);
-
-          if (uploadedUrl != null) {
-            uploadedImageUrls.add(uploadedUrl);
-            images.add(uploadedUrl);
-            notifyListeners();
-          } else {
-            message = "Upload failed for ${file.name}";
-          }
-        } else {
-          message =
-              response.message ??
-              "Failed to get presigned URL for ${file.name}";
-        }
-      }
-    } catch (e, st) {
-      debugPrint("❌ Error while uploading images: $e");
-      debugPrint(st.toString());
-      message = "Unexpected error occurred: $e";
-    } finally {
+    if (uniqueNewXFiles.isEmpty) {
+      debugPrint("⚠️ No new unique images to upload");
+      message = "Duplicate images skipped.";
       isLoading = false;
       notifyListeners();
+      return;
     }
+
+    selectedImages.addAll(uniqueNewXFiles);
+    debugPrint(
+      "🖼 Selected Images (unique): ${selectedImages.map((e) => e.path).toList()}",
+    );
+
+    for (final file in uniqueNewXFiles) {
+      debugPrint("📤 Getting presigned URL for ${file.name}");
+      final response = await userService.presignedUrl(file.name, file.path);
+
+      if (response.url != null && response.url!.isNotEmpty) {
+        final presignedUrl = response.url!;
+        final uploadedUrl = await uploadToS3(presignedUrl, file);
+
+        if (uploadedUrl != null) {
+          // ✅ Avoid duplicates in uploadedImageUrls and images
+          if (!uploadedImageUrls.contains(uploadedUrl)) {
+            uploadedImageUrls.add(uploadedUrl);
+          }
+          if (!images.contains(uploadedUrl)) {
+            images.add(uploadedUrl);
+          }
+
+          debugPrint("✅ Uploaded: $uploadedUrl");
+          notifyListeners();
+        } else {
+          message = "Upload failed for ${file.name}";
+        }
+      } else {
+        message =
+            response.message ??
+            "Failed to get presigned URL for ${file.name}";
+      }
+    }
+  } catch (e, st) {
+    debugPrint("❌ Error while uploading images: $e");
+    debugPrint(st.toString());
+    message = "Unexpected error occurred: $e";
+  } finally {
+    isLoading = false;
+    notifyListeners();
   }
+}
+
 
   void removeImage(int index) {
     if (index >= 0 && index < images.length) {

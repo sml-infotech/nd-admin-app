@@ -47,6 +47,8 @@ class StringConstant {
   static const String addTemple = "Add Temple";
   static const String templeName = "Temple Name";
   static const String pincode = "Pincode";
+  static const String status = "Status";
+
   static const String deities = "Deities";
   static const String images = "Images";
   static const String userDetails = "User Details";

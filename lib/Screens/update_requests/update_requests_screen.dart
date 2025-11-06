@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class UpdateRequests extends StatefulWidget {
@@ -19,10 +20,36 @@ class UpdateRequests extends StatefulWidget {
 class _UpdateRequestsState extends State<UpdateRequests> {
   late UpdateRequestViewModel viewmodel;
   final ScrollController _scrollController = ScrollController();
+  String? _token;
+  String? _role;
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    _role = prefs.getString('userRole');
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    viewmodel = Provider.of<UpdateRequestViewModel>(context, listen: false);
+
+    // Fetch data initially
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_role != null) {
+        viewmodel.setUserRole(_role!);
+      }
+      await viewmodel.fetchUpdateRequests(reset: true);
+    });
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -37,96 +64,103 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   @override
   void dispose() {
     _scrollController.dispose();
-    super.dispose();
     viewmodel.reset();
     viewmodel.expandedIndex = null;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    viewmodel = Provider.of<UpdateRequestViewModel>(context);
-    final screenHeight = MediaQuery.of(context).size.height;
-    final visibleRequests = viewmodel.requests
-        .where(
-          (r) => r.status != 'PartiallyReviewed' && r.status != 'Completed',
-        )
-        .toList();
-    return FocusDetector(
-      onFocusGained: () async {
-        await viewmodel.fetchUpdateRequests(reset: true);
-      },
-      child: Scaffold(
-        backgroundColor: ColorConstant.buttonColor,
-        appBar: _buildAppBar(),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
+    return Consumer<UpdateRequestViewModel>(
+      builder: (context, vm, child) {
+        final screenHeight = MediaQuery.of(context).size.height;
+        List<TempleRequest> visibleRequests = [];
+        if (_role == "Super Admin" || _role == "Admin") {
+          visibleRequests = vm.requests
+              .where(
+                (r) =>
+                    r.status != 'PartiallyReviewed' && r.status != 'Completed',
+              )
+              .toList();
+        } else {
+          visibleRequests = vm.requests.toList();
+        }
+
+        return FocusDetector(
+          onFocusGained: () async {
+            await vm.fetchUpdateRequests(reset: true);
           },
-          behavior: HitTestBehavior.translucent,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  SizedBox(height: screenHeight * 0.02),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+          child: Scaffold(
+            backgroundColor: ColorConstant.buttonColor,
+            appBar: _buildAppBar(context),
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: screenHeight * 0.02),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: vm.isLoading
+                            ? _buildShimmer()
+                            : RefreshIndicator(
+                                color: ColorConstant.buttonColor,
+                                onRefresh: () =>
+                                    vm.fetchUpdateRequests(reset: true),
+                                child: ListView.builder(
+                                  controller: _scrollController,
+                                  padding: const EdgeInsets.all(16),
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  itemCount:
+                                      visibleRequests.length +
+                                      (vm.isLoadingMore ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index < visibleRequests.length) {
+                                      final originalIndex = vm.requests.indexOf(
+                                        visibleRequests[index],
+                                      );
+                                      return _buildUpdateRequestCard(
+                                        vm,
+                                        originalIndex,
+                                      );
+                                    } else {
+                                      return _buildLoadingMoreIndicator();
+                                    }
+                                  },
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (vm.isLoadingForApproval)
+                  Container(
+                    color: Colors.black45,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          ColorConstant.buttonColor,
                         ),
                       ),
-                      child: viewmodel.isLoading
-                          ? _buildShimmer()
-                          : RefreshIndicator(
-                              color: ColorConstant.buttonColor,
-                              onRefresh: () =>
-                                  viewmodel.fetchUpdateRequests(reset: true),
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                padding: const EdgeInsets.all(16),
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount:
-                                    visibleRequests.length +
-                                    (viewmodel.isLoadingMore ? 1 : 0),
-                                itemBuilder: (context, index) {
-                                  if (index < visibleRequests.length) {
-                                    final originalIndex = viewmodel.requests
-                                        .indexOf(visibleRequests[index]);
-                                    return _buildUpdateRequestCard(
-                                      originalIndex,
-                                    );
-                                  } else {
-                                    return _buildLoadingMoreIndicator();
-                                  }
-                                },
-                              ),
-                            ),
                     ),
                   ),
-                ],
-              ),
-              if (viewmodel.isLoadingForApproval)
-                Container(
-                  color: Colors.black45,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        ColorConstant.buttonColor,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: ColorConstant.buttonColor,
       elevation: 0,
@@ -150,7 +184,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   }
 
   Widget _buildShimmer() {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView.separated(
         itemCount: 6,
@@ -177,9 +211,9 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
-  Widget _buildUpdateRequestCard(int index) {
-    final request = viewmodel.requests[index];
-    final isExpanded = viewmodel.expandedIndex == index;
+  Widget _buildUpdateRequestCard(UpdateRequestViewModel vm, int index) {
+    final request = vm.requests[index];
+    final isExpanded = vm.expandedIndex == index;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -197,8 +231,10 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           _infoRow(StringConstant.email, request.templeDetails.email),
           _infoRow(StringConstant.addresss, request.templeDetails.address),
           _infoRow(StringConstant.pincode, request.templeDetails.pincode),
+          _infoRow(StringConstant.status, request.status),
           const SizedBox(height: 8),
-          _expandSection(isExpanded, index, request),
+          if (_role == "Super Admin" || _role == "Admin")
+            _expandSection(vm, isExpanded, index, request),
         ],
       ),
     );
@@ -226,43 +262,34 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
-  Widget _expandSection(bool isExpanded, int index, TempleRequest request) {
+  Widget _expandSection(
+    UpdateRequestViewModel vm,
+    bool isExpanded,
+    int index,
+    TempleRequest request,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
           onTap: () {
             setState(() {
-              viewmodel.expandedIndex = isExpanded ? null : index;
+              vm.expandedIndex = isExpanded ? null : index;
             });
           },
           child: Text(
             isExpanded
                 ? StringConstant.hideDetails
                 : StringConstant.viewAndApprove,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.blue,
-              fontFamily: font,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
         if (isExpanded) ...[
           const SizedBox(height: 16),
-          _buildDataSection(
-            Map.fromEntries(
-              request.templeDetails.toJson().entries.where(
-                (e) => request.changes.keys.contains(e.key),
-              ),
-            ),
-            changedData: Map.fromEntries(
-              request.changes.entries.where(
-                (e) => request.templeDetails.toJson().keys.contains(e.key),
-              ),
-            ),
-            requestIndex: index,
-            isExpanded: isExpanded,
-          ),
+          _buildDataSection(vm, request, index),
           const SizedBox(height: 12),
         ],
       ],
@@ -270,11 +297,21 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   }
 
   Widget _buildDataSection(
-    Map<String, dynamic> previousData, {
-    required Map<String, dynamic> changedData,
-    required int requestIndex,
-    bool isExpanded = true,
-  }) {
+    UpdateRequestViewModel vm,
+    TempleRequest request,
+    int requestIndex,
+  ) {
+    final previousData = Map.fromEntries(
+      request.templeDetails.toJson().entries.where(
+        (e) => request.changes.keys.contains(e.key),
+      ),
+    );
+    final changedData = Map.fromEntries(
+      request.changes.entries.where(
+        (e) => request.templeDetails.toJson().keys.contains(e.key),
+      ),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -282,12 +319,13 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           final key = entry.key;
           final oldValue = entry.value?.toString() ?? '';
           final newValue = changedData[key]?.toString() ?? '';
-          final reason = viewmodel.rejectedReasons[requestIndex]?[key];
+          final reason = vm.rejectedReasons[requestIndex]?[key];
           final bool isRejected = reason != null;
           final bool isApproved =
-              viewmodel.approvedFields[requestIndex]?.contains(key) ?? false;
+              vm.approvedFields[requestIndex]?.contains(key) ?? false;
 
           return _buildFieldComparison(
+            vm,
             key,
             oldValue,
             newValue,
@@ -297,12 +335,13 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           );
         }),
         const SizedBox(height: 16),
-        _buildGlobalReasonSection(requestIndex, isExpanded: isExpanded),
+        _buildGlobalReasonSection(vm, requestIndex),
       ],
     );
   }
 
   Widget _buildFieldComparison(
+    UpdateRequestViewModel vm,
     String key,
     String oldValue,
     String newValue,
@@ -311,7 +350,6 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     int requestIndex,
   ) {
     final bool isImageField = key.toLowerCase().contains('image');
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Container(
@@ -324,26 +362,28 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dataLabel("${StringConstant.current} $key"),
+            Text(
+              "${StringConstant.current} $key",
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
             isImageField
                 ? _buildImageSection(_formatValue(oldValue))
                 : _dataBox(_formatValue(oldValue), const Color(0xFFECCBDD)),
-
             const SizedBox(height: 8),
-
-            _dataLabel("${StringConstant.requested} $key"),
+            Text(
+              "${StringConstant.requested} $key",
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
             isImageField
                 ? _buildImageSection(_formatValue(newValue))
                 : _dataBox(_formatValue(newValue), Colors.greenAccent.shade100),
-
             const SizedBox(height: 10),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _approveCheckbox(isApproved, requestIndex, key),
+                _approveCheckbox(vm, isApproved, requestIndex, key),
                 const SizedBox(width: 12),
-                _rejectCheckbox(isRejected, requestIndex, key),
+                _rejectCheckbox(vm, isRejected, requestIndex, key),
               ],
             ),
           ],
@@ -351,11 +391,6 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       ),
     );
   }
-
-  Widget _dataLabel(String label) => Text(
-    label,
-    style: TextStyle(color: Colors.grey, fontSize: 12, fontFamily: font),
-  );
 
   Widget _dataBox(String value, Color color) => Container(
     width: double.infinity,
@@ -368,138 +403,191 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     ),
     child: Text(
       value.isEmpty ? '-' : value,
-      style: TextStyle(fontSize: 14, fontFamily: font),
+      style: const TextStyle(fontSize: 14),
     ),
   );
 
-  Widget _approveCheckbox(bool isApproved, int requestIndex, String key) {
+  Widget _approveCheckbox(
+    UpdateRequestViewModel vm,
+    bool isApproved,
+    int requestIndex,
+    String key,
+  ) {
     return Row(
       children: [
         Checkbox(
           value: isApproved,
-          checkColor: Colors.white,
           activeColor: Colors.greenAccent,
           onChanged: (value) {
             setState(() {
-              viewmodel.approvedFields[requestIndex] ??= {};
+              vm.approvedFields[requestIndex] ??= {};
               if (value == true) {
-                viewmodel.approvedFields[requestIndex]!.add(key);
-                viewmodel.rejectedReasons[requestIndex]?.remove(key);
+                vm.approvedFields[requestIndex]!.add(key);
+                vm.rejectedReasons[requestIndex]?.remove(key);
               } else {
-                viewmodel.approvedFields[requestIndex]!.remove(key);
+                vm.approvedFields[requestIndex]!.remove(key);
               }
             });
           },
         ),
-        Text(
-          StringConstant.approve,
-          style: TextStyle(fontSize: 14, fontFamily: font),
-        ),
+        const Text(StringConstant.approve),
       ],
     );
   }
 
-  Widget _rejectCheckbox(bool isRejected, int requestIndex, String key) {
+  Widget _rejectCheckbox(
+    UpdateRequestViewModel vm,
+    bool isRejected,
+    int requestIndex,
+    String key,
+  ) {
     return Row(
       children: [
         Checkbox(
           value: isRejected,
-          checkColor: Colors.white,
           activeColor: Colors.redAccent,
           onChanged: (value) {
             setState(() {
-              viewmodel.rejectedReasons[requestIndex] ??= {};
+              vm.rejectedReasons[requestIndex] ??= {};
               if (value == true) {
-                viewmodel.rejectedReasons[requestIndex]![key] = "";
-                viewmodel.approvedFields[requestIndex]?.remove(key);
+                vm.rejectedReasons[requestIndex]![key] = "";
+                vm.approvedFields[requestIndex]?.remove(key);
               } else {
-                viewmodel.rejectedReasons[requestIndex]?.remove(key);
+                vm.rejectedReasons[requestIndex]?.remove(key);
               }
             });
           },
         ),
-        Text(
-          StringConstant.reject,
-          style: TextStyle(fontSize: 14, fontFamily: font),
-        ),
+        const Text(StringConstant.reject),
       ],
     );
   }
 
-  Widget _buildGlobalReasonSection(int requestIndex, {bool isExpanded = true}) {
+  Widget _buildGlobalReasonSection(
+    UpdateRequestViewModel vm,
+    int requestIndex,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
-        Text(
+        const Text(
           StringConstant.rejectionComment,
-          style: TextStyle(
-            fontSize: 14,
-            fontFamily: font,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
+          child: TextField(
+            onChanged: (val) {
+              setState(() {
+                vm.rejectedReasons[requestIndex]!["global_reason"] = val;
+              });
+            },
+            maxLines: 3,
+            decoration: const InputDecoration(
+              hintText: StringConstant.reason,
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            ),
           ),
         ),
-        _reasonTextField(requestIndex),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _cancelButton(isExpanded),
+            _cancelButton(vm),
             const SizedBox(width: 10),
-            _submitAllButton(),
+            _submitAllButton(vm),
           ],
         ),
       ],
     );
   }
 
-  Widget _reasonTextField(int requestIndex) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
-      child: TextField(
-        onChanged: (val) {
-          setState(() {
-            viewmodel.rejectedReasons[requestIndex]!["global_reason"] = val;
-          });
-        },
-        style: TextStyle(fontSize: 13, fontFamily: font),
-        cursorColor: Colors.blue,
-        keyboardType: TextInputType.text,
-        maxLines: 3,
-        decoration: InputDecoration(
-          hintText: StringConstant.reason,
-          hintStyle: TextStyle(fontSize: 12, fontFamily: font),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.grey, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.redAccent, width: 1.6),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 8,
-          ),
-        ),
+  Widget _cancelButton(UpdateRequestViewModel vm) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          vm.expandedIndex = null;
+        });
+      },
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+      child: const Text(
+        StringConstant.cancel,
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
 
+  Widget _submitAllButton(UpdateRequestViewModel vm) {
+    return ElevatedButton(
+      onPressed: () async {
+        if (!_validateBeforeSubmit(vm)) {
+          Fluttertoast.showToast(
+            msg:
+                "Please approve or reject all changed fields before submitting.",
+            backgroundColor: Colors.red,
+          );
+          return;
+        }
+
+        await vm.approvalTempleUpdate(
+          vm.requests[vm.expandedIndex!].id,
+          vm.expandedIndex!,
+        );
+
+        if (vm.isUpdated) {
+          Fluttertoast.showToast(
+            msg: vm.message.isNotEmpty
+                ? vm.message
+                : "Update approved successfully",
+            backgroundColor: Colors.green,
+          );
+          vm.expandedIndex = null;
+          await vm.fetchUpdateRequests(reset: true);
+        } else {
+          Fluttertoast.showToast(msg: vm.message);
+        }
+      },
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+      child: const Text(
+        StringConstant.submitAllApprovals,
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  bool _validateBeforeSubmit(UpdateRequestViewModel vm) {
+    final int? requestIndex = vm.expandedIndex;
+    if (requestIndex == null) return false;
+
+    final request = vm.requests[requestIndex];
+    final changedData = request.changes;
+    final approved = vm.approvedFields[requestIndex] ?? {};
+    final rejected = vm.rejectedReasons[requestIndex] ?? {};
+    final allChangedKeys = changedData.keys.toList();
+    final allMarkedKeys = {
+      ...approved,
+      ...rejected.keys.where((k) => k != "global_reason"),
+    };
+
+    return allChangedKeys.every(allMarkedKeys.contains);
+  }
+
   Widget _buildImageSection(String imageUrl) {
-    final List<String> imageUrls = imageUrl
+    final imageUrls = imageUrl
         .split(',')
         .map((url) => url.trim())
         .where((url) => url.isNotEmpty)
         .toList();
 
     if (imageUrls.isEmpty) {
-      return Container(
+      return const SizedBox(
         height: 100,
-        alignment: Alignment.center,
-        child: const Text(
-          "No images available",
-          style: TextStyle(color: Colors.grey),
+        child: Center(
+          child: Text(
+            "No images available",
+            style: TextStyle(color: Colors.grey),
+          ),
         ),
       );
     }
@@ -510,19 +598,19 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         scrollDirection: Axis.horizontal,
         itemCount: imageUrls.length,
         itemBuilder: (context, index) {
-          final image = imageUrls[index];
+          final img = imageUrls[index];
           return Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 8),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                image,
+                img,
                 width: 120,
                 height: 120,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
+                errorBuilder: (_, __, ___) =>
                     const Icon(Icons.broken_image, color: Colors.red, size: 40),
-                loadingBuilder: (context, child, loadingProgress) {
+                loadingBuilder: (_, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Container(
                     width: 120,
@@ -541,104 +629,11 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     );
   }
 
-  Widget _cancelButton(bool isExpanded) {
-    return SizedBox(
-      height: 30,
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            viewmodel.expandedIndex = isExpanded ? null : -1;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
-        ),
-        child: Text(
-          StringConstant.cancel,
-          style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _submitAllButton() {
-    return SizedBox(
-      height: 30,
-      child: ElevatedButton(
-        onPressed: () async {
-          final bool isValid = _validateBeforeSubmit();
-
-          if (!isValid) {
-            Fluttertoast.showToast(
-              msg:
-                  "Please approve or reject all changed fields before submitting.",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-            return;
-          }
-
-          await viewmodel.approvalTempleUpdate(
-            viewmodel.requests[viewmodel.expandedIndex!].id,
-            viewmodel.expandedIndex ?? 0,
-          );
-
-          if (viewmodel.isUpdated) {
-            Fluttertoast.showToast(
-              msg: viewmodel.message.isNotEmpty
-                  ? viewmodel.message
-                  : "Update approved successfully",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0,
-            );
-            viewmodel.expandedIndex = null;
-            await viewmodel.fetchUpdateRequests(reset: true);
-          } else {
-            Fluttertoast.showToast(msg: viewmodel.message);
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
-        ),
-        child: Text(
-          StringConstant.submitAllApprovals,
-          style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  bool _validateBeforeSubmit() {
-    final int? requestIndex = viewmodel.expandedIndex;
-    if (requestIndex == null) return false;
-
-    final request = viewmodel.requests[requestIndex];
-    final Map<String, dynamic> changedData = request.changes;
-
-    final approved = viewmodel.approvedFields[requestIndex] ?? {};
-    final rejected = viewmodel.rejectedReasons[requestIndex] ?? {};
-    final allChangedKeys = changedData.keys.toList();
-    final allMarkedKeys = {
-      ...approved,
-      ...rejected.keys.where((key) => key != "global_reason"),
-    };
-    return allChangedKeys.every(allMarkedKeys.contains);
-  }
-
   String _formatValue(dynamic value) {
     if (value == null) return '-';
     if (value is List) return value.join(', ');
-    if (value is Map) {
+    if (value is Map)
       return value.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    }
     return value.toString().replaceAll('[', '').replaceAll(']', '').trim();
   }
 }
