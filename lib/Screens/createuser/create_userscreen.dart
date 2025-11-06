@@ -122,6 +122,8 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                         hintText: StringConstant.selectTemples,
                                         labelText: StringConstant.temples,
                                         items: viewModel.templeList,
+                                        selectedValue:
+                                            viewModel.selectedTempleName,
                                         selectedIds:
                                             viewModel.selectedTempleIds,
                                         onMultiChanged: (ids) {

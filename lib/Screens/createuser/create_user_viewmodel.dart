@@ -16,20 +16,21 @@ class CreateUserViewmodel extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
 
   List<Temple> _templeData = [];
-List<Map<String, dynamic>> templeList = []; // ✅ store id + name both
+  List<Map<String, dynamic>> templeList = []; // ✅ store id + name both
   String? selectedTempleName;
   String? selectedTempleId;
-List<String> selectedTempleIds = [];
+  List<String> selectedTempleIds = [];
   int page = 1;
   final int limit = 10;
   final UserService userService = UserService();
   final TempleService templeService = TempleService();
 
   Future<void> validateUser() async {
+    String name = nameController.text.trim();
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    if (nameController.text.isEmpty) {
+    if (name.isEmpty) {
       message = "Please enter Name";
     } else if (!isValidEmail(email)) {
       message = "Please enter valid email";
@@ -39,10 +40,12 @@ List<String> selectedTempleIds = [];
       message = "Password must be at least 8 characters";
     } else if (phoneController.text.isEmpty) {
       message = "Please enter Phone Number";
+    } else if (phoneController.text.length != 10) {
+      message = "Please enter valid Phone Number";
     } else if (role.text.isEmpty) {
       message = "Role is Mandaratory";
     } else if ((role.text == "Temple" || role.text == "Agent") &&
-        (templeList == null || templeList.isEmpty)) {
+        (selectedTempleIds.isEmpty)) {
       message = "Select Temple";
     } else {
       message = "";
@@ -63,25 +66,21 @@ List<String> selectedTempleIds = [];
       isLoading = true;
       notifyListeners();
 
-
-print("${ nameController.text}");
-print("${ emailController.text}");
-print("${ passwordController.text}");
-print("${ role.text}");
-print("${ selectedTempleId}");
-print("${ phoneController.text}");
+      print("${nameController.text}");
+      print("${emailController.text}");
+      print("${passwordController.text}");
+      print("${role.text}");
+      print("${selectedTempleId}");
+      print("${phoneController.text}");
 
       final response = await userService.createUser(
         nameController.text,
         emailController.text,
         passwordController.text,
         role.text,
-       selectedTempleIds,
+        selectedTempleIds,
         phoneController.text,
       );
-
-
-
 
       if (response.message?.isNotEmpty == true) {
         message = response.message!;
@@ -115,12 +114,10 @@ print("${ phoneController.text}");
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
-templeList = _templeData
-        .map((t) => {
-              "id": t.id.toString(),
-              "name": t.name.toString(),
-            })
-        .toList();      page++;
+      templeList = _templeData
+          .map((t) => {"id": t.id.toString(), "name": t.name.toString()})
+          .toList();
+      page++;
     }
 
     isLoading = false;

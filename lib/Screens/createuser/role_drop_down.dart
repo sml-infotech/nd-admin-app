@@ -45,13 +45,13 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
   void didUpdateWidget(CommonDropdownField oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Sync single-select
+    // Sync single select
     if (widget.selectedValue != oldWidget.selectedValue &&
         widget.selectedValue != _currentValue) {
       setState(() => _currentValue = widget.selectedValue);
     }
 
-    // Sync multi-select
+    // Sync multi select
     if (widget.selectedIds != oldWidget.selectedIds &&
         widget.selectedIds != _selectedIds) {
       setState(() => _selectedIds = widget.selectedIds ?? []);
@@ -60,94 +60,95 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
 
   @override
   Widget build(BuildContext context) {
-    final displayText = widget.isTempleSelection
-        ? _selectedIds.isEmpty
-            ? widget.hintText
-            : widget.items
-                .whereType<Map<String, dynamic>>()
-                .where((item) => _selectedIds.contains(item['id'].toString()))
-                .map((e) => e['name'].toString())
-                .join(', ')
-        : _currentValue ?? widget.hintText;
+    final selectedNames = widget.items
+        .whereType<Map<String, dynamic>>()
+        .where((item) => _selectedIds.contains(item['id'].toString()))
+        .map((e) => e['name'].toString())
+        .join(', ');
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: widget.paddingSize),
-      child: GestureDetector(
-        onTap: widget.isTempleSelection ? _showMultiSelectDialog : null,
-        child: AbsorbPointer(
-          absorbing: widget.isTempleSelection,
-          child: DropdownButtonFormField<String>(
-            isExpanded: true,
-            value: widget.isTempleSelection ? null : _currentValue,
-            onChanged: widget.isTempleSelection
-                ? null
-                : (value) {
-                    setState(() => _currentValue = value);
-                    widget.onChanged?.call(value);
-                  },
-            style: TextStyle(
-              fontFamily: font,
-              color: Colors.black,
-              fontSize: 15,
-            ),
-            decoration: InputDecoration(
-              labelText: widget.labelText,
-              hintText: widget.hintText,
-              labelStyle: TextStyle(fontFamily: font, color: Colors.black),
-              hintStyle: TextStyle(fontFamily: font, color: Colors.black),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(13),
-                borderSide: const BorderSide(
-                  color: ColorConstant.primaryColor,
+      child: widget.isTempleSelection
+          ? InkWell(
+              onTap: _showMultiSelectDialog,
+              borderRadius: BorderRadius.circular(13),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: widget.labelText,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(13),
+                    borderSide:
+                        const BorderSide(color: ColorConstant.primaryColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(13),
+                    borderSide:
+                        const BorderSide(color: ColorConstant.primaryColor),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                  suffixIcon: const Icon(Icons.arrow_drop_down,
+                      color: Colors.black),
+                ),
+                child: Text(
+                  selectedNames.isEmpty ? widget.hintText : selectedNames,
+                  style: TextStyle(
+                    fontFamily: font,
+                    color:
+                        selectedNames.isEmpty ? Colors.grey[600] : Colors.black,
+                    fontSize: 15,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(13),
-                borderSide: const BorderSide(
-                  color: ColorConstant.primaryColor,
+            )
+          : DropdownButtonFormField<String>(
+              isExpanded: true,
+              value: _currentValue,
+              onChanged: (value) {
+                setState(() => _currentValue = value);
+                widget.onChanged?.call(value);
+              },
+              style: TextStyle(
+                fontFamily: font,
+                color: Colors.black,
+                fontSize: 15,
+              ),
+              decoration: InputDecoration(
+                labelText: widget.labelText,
+                hintText: widget.hintText,
+                labelStyle: TextStyle(fontFamily: font, color: Colors.black),
+                hintStyle: TextStyle(fontFamily: font, color: Colors.black),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(13),
+                  borderSide:
+                      const BorderSide(color: ColorConstant.primaryColor),
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(13),
+                  borderSide:
+                      const BorderSide(color: ColorConstant.primaryColor),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 18,
-              ),
-            ),
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-            dropdownColor: Colors.white,
-            items: !widget.isTempleSelection
-                ? widget.items
-                    .whereType<String>()
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e,
-                        child: Text(e, style: TextStyle(fontFamily: font)),
-                      ),
-                    )
-                    .toList()
-                : [
-                    DropdownMenuItem<String>(
-                      value: '',
-                      enabled: false,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.8,
-                        ),
-                        child: Text(
-                          displayText,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: TextStyle(fontFamily: font),
-                        ),
-                      ),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+              dropdownColor: Colors.white,
+              items: widget.items
+                  .whereType<String>()
+                  .map(
+                    (e) => DropdownMenuItem<String>(
+                      value: e,
+                      child: Text(e, style: TextStyle(fontFamily: font)),
                     ),
-                  ],
-          ),
-        ),
-      ),
+                  )
+                  .toList(),
+            ),
     );
   }
 
+  /// Multi-select popup
   void _showMultiSelectDialog() async {
     final List<String> tempSelectedIds = List.from(_selectedIds);
 
@@ -168,6 +169,7 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                     final isSelected = tempSelectedIds.contains(id);
 
                     return CheckboxListTile(
+                      activeColor: ColorConstant.buttonColor,
                       title: Text(name, style: TextStyle(fontFamily: font)),
                       value: isSelected,
                       onChanged: (checked) {
@@ -186,7 +188,10 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(fontFamily: font, color: Colors.black),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -199,7 +204,10 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorConstant.primaryColor,
                   ),
-                  child: const Text("OK"),
+                  child: Text(
+                    "OK",
+                    style: TextStyle(fontFamily: font, color: Colors.white),
+                  ),
                 ),
               ],
             );
