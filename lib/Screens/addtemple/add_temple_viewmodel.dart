@@ -2,6 +2,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
@@ -19,13 +21,14 @@ class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController templeController = TextEditingController();
   var authService = TempleService();
   var userService=UserService();
+  List<XFile> selectedImages = [];
 
   bool isLoading=false;
   String message="";
   String presignedURL="";
+  List<String> uploadedImageUrls = [];
 
   final List<String> temples = [];
-  final List<File> images = [];
   bool templeAdded=false;
 AddTempleViewmodel() {
   templeName.addListener(_onChange);
@@ -43,13 +46,84 @@ AddTempleViewmodel() {
 void _onChange() {
   notifyListeners();
 }
-  void addImage(File image) {
-    images.add(image);
-    notifyListeners();
+  Future<void> addImages(List<String> newImages) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      // Prevent duplicates before adding
+      for (final path in newImages) {
+        final alreadyExists = selectedImages.any((img) => img.path == path);
+        if (!alreadyExists) {
+          selectedImages.add(XFile(path));
+        }
+      }
+
+      print(
+        "🖼 Final Selected Images: ${selectedImages.map((e) => e.path).toList()}",
+      );
+
+      // 🪣 Upload safely
+      for (final file in List<XFile>.from(selectedImages)) {
+        print("📤 Getting presigned URL for ${file.name}");
+        final response = await userService.presignedUrl(file.name, file.path);
+
+        if (response.url != null && response.url!.isNotEmpty) {
+          final presignedUrlForFile = response.url!;
+          print("✅ Got presigned URL for ${file.name}");
+
+          final uploadedUrl = await uploadToS3(presignedUrlForFile, file);
+          if (uploadedUrl != null) {
+            if (!uploadedImageUrls.contains(uploadedUrl)) {
+              uploadedImageUrls.add(uploadedUrl);
+            }
+            selectedImages.remove(file);
+
+            print("✅ Uploaded ${file.name} -> $uploadedUrl");
+          } else {
+            print("❌ Upload failed for ${file.name}");
+            message = "Upload failed for ${file.name}";
+          }
+        } else {
+          print("⚠️ Failed to get presigned URL for ${file.name}");
+          message =
+              response.message ??
+              "Failed to get presigned URL for ${file.name}";
+        }
+      }
+    } catch (e) {
+      print("❌ Error in addImages: $e");
+      message = "Something went wrong: $e";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+  Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
+    try {
+      final fileBytes = await imageFile.readAsBytes();
+
+      final response = await http.put(
+        Uri.parse(presignedUrl),
+        body: fileBytes,
+        headers: {'Content-Type': 'image/jpeg'},
+      );
+      if (response.statusCode == 200) {
+        final imageUrl = presignedUrl.split('?').first;
+        print("✅ Uploaded successfully: $imageUrl");
+        return imageUrl;
+      } else {
+        print("❌ Upload failed: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("⚠️ Error uploading to S3: $e");
+      return null;
+    }
   }
 
   void removeImage(int index) {
-    images.removeAt(index);
+    selectedImages.removeAt(index);
     notifyListeners();
   }
 
@@ -109,7 +183,7 @@ void _onChange() {
     message = "Please add at least one deity";
     return false;
   }
-  if (images.isEmpty) {
+  if (selectedImages.isEmpty) {
     message = "Please upload at least one image";
     return false;
   }
@@ -224,7 +298,7 @@ Future<void> addTempleApi() async {
   description.clear();
   templeController.clear();
   temples.clear();
-  images.clear();
+  selectedImages.clear();
   notifyListeners();
 
 
