@@ -187,4 +187,22 @@ class UserViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  void resetData() {
+  userData.clear();
+  editData.clear();
+  templeList.clear();
+  _templeData.clear();
+  selectedTempleIds.clear();
+  _tempActiveMap.clear();
+
+  page = 1;
+  hasMore = true;
+  isLoading = false;
+  editLoading = false;
+  role.clear();
+
+  notifyListeners();
+}
+
 }

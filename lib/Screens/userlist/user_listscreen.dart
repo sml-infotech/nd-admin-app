@@ -22,6 +22,7 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   final Map<String, bool> expandedMap = {};
   final ScrollController _scrollController = ScrollController();
+  late UserViewModel viewModel; // ✅ Cached safely
 
   bool _isLoadingMore = false;
   String? token;
@@ -30,14 +31,18 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<UserViewModel>(context, listen: false);
 
+    /// ✅ Initialize the viewModel safely before first frame
+    viewModel = context.read<UserViewModel>();
+
+    /// Fetch initial data after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadUserData();
       await viewModel.getTemples();
       await viewModel.getUsers(reset: true);
-      await _loadUserData();
     });
 
+    /// Infinite scroll listener
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -65,49 +70,57 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    viewModel.resetData(); // ✅ Direct safe call (no context)
+    debugPrint("🧹 User screen disposed & ViewModel reset.");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<UserViewModel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return FocusDetector(
-      onFocusGained: () async {
-        if (viewModel.userData.isEmpty) {
-          await viewModel.getUsers(reset: true);
-        }
+    return Consumer<UserViewModel>(
+      builder: (context, viewModel, _) {
+        return FocusDetector(
+          onFocusGained: () async {
+            if (viewModel.userData.isEmpty) {
+              await viewModel.getUsers(reset: true);
+            }
+          },
+          child: Scaffold(
+            backgroundColor: viewModel.isLoading
+                ? Colors.white
+                : ColorConstant.buttonColor,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: ColorConstant.buttonColor,
+              elevation: 0,
+              title: _buildAppBar(viewModel),
+            ),
+            body: viewModel.isLoading && viewModel.page == 1
+                ? _buildFullShimmerList()
+                : Column(
+                    children: [
+                      SizedBox(height: screenHeight * 0.02),
+                      Expanded(child: _buildUserList(viewModel)),
+                    ],
+                  ),
+          ),
+        );
       },
-      child: Scaffold(
-        backgroundColor: viewModel.isLoading
-            ? Colors.white
-            : ColorConstant.buttonColor,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: ColorConstant.buttonColor,
-          elevation: 0,
-          title: _buildAppBar(),
-        ),
-        body: viewModel.isLoading && viewModel.page == 1
-            ? _buildFullShimmerList()
-            : Column(
-                children: [
-                  SizedBox(height: screenHeight * 0.02),
-                  Expanded(child: _buildUserList(viewModel)),
-                ],
-              ),
-      ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(UserViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            viewModel.resetData();
+            Navigator.pop(context);
+          },
         ),
         const Spacer(),
         Text(StringConstant.userDetails, style: AppTextStyles.appBarTitleStyle),
@@ -232,7 +245,7 @@ class _UserListScreenState extends State<UserListScreen> {
               ),
             ),
             Text(
-              "Created At: ${user.createdAt ?? user.updatedAt}",
+              "Created At: ${_formatDate(user.createdAt ?? user.updatedAt)}",
               style: AppTextStyles.templeNameDetailsStyle,
             ),
           ],
@@ -241,10 +254,21 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  /// ✅ Full-Screen Bottom Sheet for Editing
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return "N/A";
+
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('dd-MM-yyyy').format(date);
+    } catch (e) {
+      return "Invalid Date";
+    }
+  }
+
   void _showEditBottomSheet(UserModel user, UserViewModel viewModel) {
     final fullNameController = TextEditingController(text: user.fullName);
     final emailController = TextEditingController(text: user.email);
+
     viewModel.setTempActive(user.id, user.isActive);
     viewModel.selectedTempleIds = user.associatedTemples
         .map((t) => t.id)
@@ -260,7 +284,7 @@ class _UserListScreenState extends State<UserListScreen> {
       ),
       builder: (context) {
         return FractionallySizedBox(
-          heightFactor: 0.95, // almost full screen
+          heightFactor: 0.95,
           child: Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -297,173 +321,146 @@ class _UserListScreenState extends State<UserListScreen> {
             currentRole.toLowerCase() == 'temple';
 
         return SafeArea(
-          child: Stack(
-            children: [
-              GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                    left: 16,
-                    right: 16,
-                    top: 10,
-                  ),
-                  child: Column(
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 10,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Spacer(),
+                    Text(
+                      StringConstant.editUser,
+                      style: AppTextStyles.loginTitleStyle.copyWith(
+                        fontSize: 20,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                _buildTextField(fullNameController, "Full Name"),
+                const SizedBox(height: 16),
+                _buildTextField(emailController, "Email"),
+                const SizedBox(height: 16),
+                CommonDropdownField(
+                  paddingSize: 0,
+                  hintText: StringConstant.selectedRole,
+                  labelText: StringConstant.role,
+                  items: StringConstant.roles,
+                  selectedValue: currentRole,
+                  onChanged: (value) {
+                    viewModel.role.text = value ?? user.role;
+                    setStateSB(() {});
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                if (isAgentOrTemple)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // your entire form content here
-                      Row(
-                        children: [
-                          const Spacer(),
-                          Text(
-                            StringConstant.editUser,
-                            style: AppTextStyles.loginTitleStyle.copyWith(
-                              fontSize: 20,
-                            ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      _buildTextField(fullNameController, "Full Name"),
-                      const SizedBox(height: 16),
-                      _buildTextField(emailController, "Email"),
-                      const SizedBox(height: 16),
-                      CommonDropdownField(
-                        paddingSize: 0,
-                        hintText: StringConstant.selectedRole,
-                        labelText: StringConstant.role,
-                        items: StringConstant.roles,
-                        selectedValue: currentRole,
-                        onChanged: (value) {
-                          viewModel.role.text = value ?? user.role;
-                          setStateSB(() {});
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      if (isAgentOrTemple)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Associated Temples",
-                              style: AppTextStyles.otpSubHeadingStyle.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: Column(
-                                children: viewModel.templeList.map((temple) {
-                                  final String templeId = temple['id'] ?? '';
-                                  final bool isSelected = viewModel
-                                      .selectedTempleIds
-                                      .contains(templeId);
-                                  return CheckboxListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    title: Text(
-                                      temple['name'] ?? '',
-                                      style:
-                                          AppTextStyles.templeNameDetailsStyle,
-                                    ),
-                                    value: isSelected,
-                                    activeColor: ColorConstant.buttonColor,
-                                    onChanged: (bool? value) {
-                                      if (value == true) {
-                                        viewModel.selectedTempleIds.add(
-                                          templeId,
-                                        );
-                                      } else {
-                                        viewModel.selectedTempleIds.remove(
-                                          templeId,
-                                        );
-                                      }
-                                      setStateSB(() {});
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
+                      Text(
+                        "Associated Temples",
+                        style: AppTextStyles.otpSubHeadingStyle.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
-
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Is Active",
-                            style: AppTextStyles.otpSubHeadingStyle.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Switch(
-                            value: viewModel.getTempActive(user.id),
-                            activeColor: Colors.green,
-                            onChanged: (val) {
-                              viewModel.setTempActive(user.id, val);
-                              setStateSB(() {});
-                            },
-                          ),
-                        ],
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          backgroundColor: ColorConstant.buttonColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        onPressed: viewModel.editLoading
-                            ? null
-                            : () async {
-                                final isActive = viewModel.getTempActive(
-                                  user.id,
-                                );
-                                await viewModel.editUser(
-                                  user.id,
-                                  fullNameController.text,
-                                  isActive,
-                                  selectedTemples: viewModel.selectedTempleIds,
-                                );
-                                if (!viewModel.editLoading)
-                                  Navigator.pop(context);
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          children: viewModel.templeList.map((temple) {
+                            final String templeId = temple['id'] ?? '';
+                            final bool isSelected = viewModel.selectedTempleIds
+                                .contains(templeId);
+                            return CheckboxListTile(
+                              dense: true,
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(
+                                temple['name'] ?? '',
+                                style: AppTextStyles.templeNameDetailsStyle,
+                              ),
+                              value: isSelected,
+                              activeColor: ColorConstant.buttonColor,
+                              onChanged: (bool? value) {
+                                if (value == true) {
+                                  viewModel.selectedTempleIds.add(templeId);
+                                } else {
+                                  viewModel.selectedTempleIds.remove(templeId);
+                                }
+                                setStateSB(() {});
                               },
-                        child: Text(
-                          "Save",
-                          style: AppTextStyles.buttonTextStyle.copyWith(
-                            color: Colors.white,
-                          ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
 
-              // if (viewModel.editLoading)
-              //   Container(
-              //     color: Colors.black.withOpacity(0.4),
-              //     child: Center(
-              //       child: CircularProgressIndicator(
-              //         color: ColorConstant.buttonColor,
-              //       ),
-              //     ),
-              //   ),
-            ],
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Is Active",
+                      style: AppTextStyles.otpSubHeadingStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Switch(
+                      value: viewModel.getTempActive(user.id),
+                      activeColor: Colors.green,
+                      onChanged: (val) {
+                        viewModel.setTempActive(user.id, val);
+                        setStateSB(() {});
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 48),
+                    backgroundColor: ColorConstant.buttonColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: viewModel.editLoading
+                      ? null
+                      : () async {
+                          final isActive = viewModel.getTempActive(user.id);
+                          await viewModel.editUser(
+                            user.id,
+                            fullNameController.text,
+                            isActive,
+                            selectedTemples: viewModel.selectedTempleIds,
+                          );
+                          if (!viewModel.editLoading) Navigator.pop(context);
+                        },
+                  child: Text(
+                    "Save",
+                    style: AppTextStyles.buttonTextStyle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

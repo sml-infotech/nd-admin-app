@@ -60,4 +60,9 @@ class ResetViewmodel extends ChangeNotifier {
     final storedToken = prefs.remove('authToken');
     final storedRole = prefs.remove('userRole');
   }
+
+  void reset(){
+    password.text="";
+    confirmPassword.text="";
+  }
 }

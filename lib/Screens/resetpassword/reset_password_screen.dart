@@ -19,6 +19,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   late ResetViewmodel viewmodel;
 
   @override
+  void dispose() {
+    print(">>>>>><<<<<<{}");
+    viewmodel.reset();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<ResetViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
