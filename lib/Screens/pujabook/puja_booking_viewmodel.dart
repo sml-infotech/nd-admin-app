@@ -293,6 +293,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         message = response.message ?? "Success";
         print("✅ Puja updated successfully: ${response.toJson()}");
         pujaCreated = true;
+        await resetForm();
         notifyListeners();
       } else {
         message = "❌ Error: ${response.message ?? "Unknown error"}";
@@ -372,19 +373,18 @@ class CreatePujaViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
- void setSelectedTemple(Temple temple) {
-  selectedTemple = temple;
+  void setSelectedTemple(Temple temple) {
+    selectedTemple = temple;
 
-  if (temple.deities != null && temple.deities!.isNotEmpty) {
-    deitiesList = List<String>.from(temple.deities!);
-  } else {
-    deitiesList = [];
+    if (temple.deities != null && temple.deities!.isNotEmpty) {
+      deitiesList = List<String>.from(temple.deities!);
+    } else {
+      deitiesList = [];
+    }
+    deities = [];
+    deities = List<String>.from(deities);
+    notifyListeners();
   }
-  deities = [];
-  deities = List<String>.from(deities); 
-  notifyListeners();
-}
-
 
   @override
   void dispose() {

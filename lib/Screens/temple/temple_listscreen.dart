@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -19,13 +20,14 @@ class TempleScreen extends StatefulWidget {
 
 class _TempleScreenState extends State<TempleScreen> {
   final ScrollController _scrollController = ScrollController();
-
+  String? token;
+  String? role;
   @override
   void initState() {
     super.initState();
     final viewModel = Provider.of<TempleViewModel>(context, listen: false);
     // viewModel.fetchTemples();
-
+    _loadUserData();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -40,6 +42,17 @@ class _TempleScreenState extends State<TempleScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.getString('authToken');
+    final storedRole = prefs.getString('userRole');
+
+    setState(() {
+      token = storedToken;
+      role = storedRole;
+    });
   }
 
   @override
@@ -109,12 +122,13 @@ class _TempleScreenState extends State<TempleScreen> {
         const Spacer(),
         Text(StringConstant.temple, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-          },
-          icon: Icon(Icons.add, color: Colors.white),
-        ),
+        if (role == "Super Admin")
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+            },
+            icon: Icon(Icons.add, color: Colors.white),
+          ),
       ],
     );
   }

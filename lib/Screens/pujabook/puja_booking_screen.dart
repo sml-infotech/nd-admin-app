@@ -64,6 +64,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     }
   }
 
+  
+
   Future<void> prefillData() async {
     final args = widget.pujaArgumrnts;
     if (args == null || args.puja_id.isEmpty) return;
@@ -137,6 +139,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   @override
   void dispose() {
     viewmodel.resetForm();
+    print("");
     super.dispose();
   }
 
@@ -394,11 +397,9 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       onAddImages: _pickImages,
       onRemoveImage: (index) {
         if (index >= uploadedCount) {
-          // Removing from selectedImages
           final localIndex = index - uploadedCount;
           viewmodel.removeImage(localIndex);
         } else {
-          // Removing from uploadedImageUrls
           viewmodel.uploadedImageUrls.removeAt(index);
           viewmodel.notifyListeners();
         }

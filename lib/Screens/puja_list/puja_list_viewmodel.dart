@@ -27,55 +27,66 @@ class PujaListViewmodel extends ChangeNotifier {
   String message = '';
   bool? isActive;
 
-  Future<void> fetchPujas({
-    required String templeId,
-    bool reset = false,
-  }) async {
-    try {
-      if (reset) {
-        _currentPage = 1;
-        pujaList.clear();
-        hasMorePujas = true;
-      }
 
-      if (!hasMorePujas) return;
 
-      if (_currentPage == 1) {
-        isLoading = true;
-      } else {
-        isLoadingMore = true;
-      }
-      notifyListeners();
 
-      final response = await templeService.getPujas(
-        templeId,
-        page: _currentPage,
-        limit: _itemsPerPage,
-      );
-
-      if (response.code == 200) {
-        final newPujas = response.data.pujas;
-
-        if (reset || _currentPage == 1) {
-          pujaList = newPujas;
-        } else {
-          pujaList.addAll(newPujas);
-        }
-
-        hasMorePujas = newPujas.length == _itemsPerPage;
-        if (hasMorePujas) _currentPage++;
-      } else {
-        hasMorePujas = false;
-      }
-    } catch (e) {
-      print("⚠️ Error fetching pujas: $e");
-      hasMorePujas = false;
-    } finally {
-      isLoading = false;
-      isLoadingMore = false;
-      notifyListeners();
+ Future<void> fetchPujas({
+  bool reset = false,
+}) async {
+  try {
+    if (reset) {
+      _currentPage = 1;
+      pujaList.clear();
+      hasMorePujas = true;
     }
+
+    if (!hasMorePujas) return;
+
+    if (_currentPage == 1) {
+      isLoading = true;
+    } else {
+      isLoadingMore = true;
+    }
+    notifyListeners();
+
+    final response = await templeService.getPujas(
+      templeId,
+      page: _currentPage,
+      limit: _itemsPerPage,
+    );
+
+    if (response.code == 200) {
+      final newPujas = response.data.pujas;
+
+      if (reset || _currentPage == 1) {
+        pujaList = newPujas;
+      } else {
+        pujaList.addAll(newPujas);
+      }
+
+      // ✅ if server returns fewer than requested items → no more data
+      hasMorePujas = newPujas.length == _itemsPerPage;
+      if (hasMorePujas) {
+        _currentPage++;
+      }
+    } else {
+      hasMorePujas = false;
+    }
+  } catch (e) {
+    print("⚠️ Error fetching pujas: $e");
+    hasMorePujas = false;
+  } finally {
+    isLoading = false;
+    isLoadingMore = false;
+    notifyListeners();
   }
+}
+
+Future<void> loadMorePujas() async {
+  if (isLoadingMore || !hasMorePujas) return;
+  await fetchPujas(reset: false,);
+}
+
 
   Future<void> getTemples({bool reset = false}) async {
     isLoading = true;
@@ -97,13 +108,6 @@ class PujaListViewmodel extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
-  }
-
-  Future<void> loadMorePujas() async {
-    if (!hasMorePujas || isLoadingMore) return;
-
-    _currentPage++;
-    await fetchPujas(reset: false, templeId: templeId);
   }
 
   Future<bool> toggleActivate(String pujaId, bool toggle) async {

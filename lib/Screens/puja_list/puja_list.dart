@@ -34,7 +34,9 @@ class _PujaListState extends State<PujaList> {
   void _scrollListener() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
-        viewmodel.hasMorePujas) {
+        !viewmodel.isLoadingMore &&
+        viewmodel.hasMorePujas &&
+        !viewmodel.isLoading) {
       _loadMorePujas();
     }
   }
@@ -51,7 +53,7 @@ class _PujaListState extends State<PujaList> {
     return FocusDetector(
       onFocusGained: () async {
         await viewmodel.getTemples();
-        await viewmodel.fetchPujas(templeId: viewmodel.templeId);
+        await viewmodel.fetchPujas(reset: true);
       },
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
@@ -221,7 +223,7 @@ class _PujaListState extends State<PujaList> {
                   editButton(puja),
                 ],
               ),
-              isActiveTextWidget(isActive),
+              // isActiveTextWidget(isActive),
               deitiesName(puja.deitiesName),
               descriptionWidget(puja.description),
               SizedBox(height: 8),
@@ -383,7 +385,8 @@ class _PujaListState extends State<PujaList> {
         if (idx != -1) {
           final selectedTemple = viewmodel.templeData[idx];
           viewmodel.selectedTemple = selectedTemple.name;
-          viewmodel.fetchPujas(templeId: selectedTemple.id, reset: true);
+          viewmodel.templeId = selectedTemple.id;
+          viewmodel.fetchPujas(reset: true);
         }
       },
     );
