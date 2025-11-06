@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
@@ -6,11 +7,15 @@ import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamod
 class SingleTimePicker extends StatefulWidget {
   final TimeSlot? initialValue;
   final Function(TimeSlot) onChanged;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   const SingleTimePicker({
     super.key,
     this.initialValue,
     required this.onChanged,
+    this.startDate,
+    this.endDate,
   });
 
   @override
@@ -28,7 +33,6 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
     fromTime = widget.initialValue?.fromTime ?? '';
     toTime = widget.initialValue?.toTime ?? '';
 
-    // If start time is set but no end time, auto add +1 hour
     if (fromTime.isNotEmpty && toTime.isEmpty) {
       final start = _parseTime(fromTime);
       final oneHourLater = start.add(const Duration(hours: 1));
@@ -49,30 +53,46 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
   }
 
   Future<void> _pickTime({required bool isStart}) async {
+    final now = DateTime.now();
+
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
-    if (picked != null) {
-      final formatted = _formatTime(picked);
+    if (picked == null) return;
 
-      setState(() {
-        if (isStart) {
-          fromTime = formatted;
+    final selected = DateTime(
+      widget.startDate?.year ?? now.year,
+      widget.startDate?.month ?? now.month,
+      widget.startDate?.day ?? now.day,
+      picked.hour,
+      picked.minute,
+    );
 
-          // Auto set end time = start time + 1 hour if end not set
-          final start = _parseTime(fromTime);
-          final oneHourLater = start.add(const Duration(hours: 1));
-          toTime = DateFormat('hh:mm a').format(oneHourLater);
-        } else {
-          toTime = formatted;
-        }
-      });
-
-      _validateTimes();
-      widget.onChanged(TimeSlot(fromTime: fromTime, toTime: toTime));
+    if (widget.startDate != null &&
+        DateUtils.isSameDay(widget.startDate, now) &&
+        selected.isBefore(now)) {
+      Fluttertoast.showToast(msg: "You cannot select a past time.");
+      return;
     }
+
+    final formatted = _formatTime(picked);
+
+    setState(() {
+      if (isStart) {
+        fromTime = formatted;
+
+        final start = _parseTime(fromTime);
+        final oneHourLater = start.add(const Duration(hours: 1));
+        toTime = DateFormat('hh:mm a').format(oneHourLater);
+      } else {
+        toTime = formatted;
+      }
+    });
+
+    _validateTimes();
+    widget.onChanged(TimeSlot(fromTime: fromTime, toTime: toTime));
   }
 
   void _validateTimes() {
@@ -114,7 +134,6 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
       children: [
         Row(
           children: [
-            // Start time box
             Expanded(
               child: InkWell(
                 onTap: () => _pickTime(isStart: true),
@@ -126,7 +145,6 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
               ),
             ),
             const SizedBox(width: 12),
-            // End time box
             Expanded(
               child: InkWell(
                 onTap: () => _pickTime(isStart: false),

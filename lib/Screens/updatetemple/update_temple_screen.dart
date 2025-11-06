@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -23,6 +25,7 @@ class TempleUpdateScreen extends StatefulWidget {
 class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
   late UpdateTempleViewmodel viewModel;
   bool _isDataLoaded = false; // ensure data sets only once
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void didChangeDependencies() {
@@ -47,7 +50,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeCity.text = widget.arguments.city ?? "";
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
-    viewModel.images = List<String>.from(widget.arguments.images ?? []);
+    viewModel.uploadedImageUrls = List<String>.from(
+      widget.arguments.images ?? [],
+    );
   }
 
   @override
@@ -174,7 +179,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                             ),
                             titleTextWidget(StringConstant.editImages),
                             const SizedBox(height: 8),
-                            UpdateImagepickerWidget(),
+                            _buildImagePicker(),
                             const SizedBox(height: 30),
                           ],
                         ),
@@ -199,6 +204,39 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildImagePicker() {
+    final uploadedCount = viewModel.uploadedImageUrls.length;
+
+    final allImages = [
+      ...viewModel.uploadedImageUrls,
+      ...viewModel.selectedImages.map((e) => e.path),
+    ];
+
+    return MultiImagePickerSection(
+      imagePaths: allImages,
+      onAddImages: _pickImages,
+      onRemoveImage: (index) {
+        if (index >= uploadedCount) {
+          // Removing from selectedImages
+          final localIndex = index - uploadedCount;
+          viewModel.removeImage(localIndex);
+        } else {
+          // Removing from uploadedImageUrls
+          viewModel.uploadedImageUrls.removeAt(index);
+          viewModel.notifyListeners();
+        }
+      },
+    );
+  }
+
+  Future<void> _pickImages() async {
+    final pickedFiles = await _picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
+      final imagePaths = pickedFiles.map((e) => e.path).toList();
+      viewModel.addImages(imagePaths);
+    }
   }
 
   Widget nammaDaivaDetailAppBar() {

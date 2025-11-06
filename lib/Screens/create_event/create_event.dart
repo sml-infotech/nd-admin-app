@@ -160,10 +160,9 @@ class _CreateEventState extends State<CreateEvent> {
             ),
           ),
         ),
-       
 
         eventButton(),
-         if (viewmodel.isLoading)
+        if (viewmodel.isLoading)
           Positioned.fill(
             child: Container(
               color: Colors.black54,
@@ -221,6 +220,8 @@ class _CreateEventState extends State<CreateEvent> {
             viewmodel.timeSlots = [selectedSlot];
           });
         },
+        startDate: viewmodel.selectedStartDate,
+        endDate: viewmodel.selectedEndDate,
       ),
     );
   }
