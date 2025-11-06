@@ -6,11 +6,15 @@ import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamod
 class TimeSlotSelector extends StatefulWidget {
   final List<TimeSlot> initialSlots;
   final Function(List<TimeSlot>) onChanged;
+  final DateTime ?startTime;
+  final DateTime ?endTime;
 
   const TimeSlotSelector({
     super.key,
     required this.initialSlots,
     required this.onChanged,
+     this.startTime,
+     this.endTime
   });
 
   @override
@@ -61,15 +65,34 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
       },
     );
   }
+Future<void> _pickSlot(BuildContext context) async {
+  final now = DateTime.now();
 
-  Future<void> _pickSlot(BuildContext context) async {
-    final from = await _showCustomTimePicker(
-      context,
-      "Select Start Time",
-      TimeOfDay.now(),
-    );
-    if (from == null) return;
+  final from = await _showCustomTimePicker(
+    context,
+    "Select Start Time",
+    TimeOfDay.now(),
+  );
+  if (from == null) return;
 
+  final selectedStart = DateTime(
+    widget.startTime?.year ?? now.year,
+    widget.startTime?.month ?? now.month,
+    widget.startTime?.day ?? now.day,
+    from.hour,
+    from.minute,
+  );
+
+  if (selectedStart.isBefore(now) &&
+      widget.startTime != null &&
+      DateUtils.isSameDay(widget.startTime, now)) {
+    Fluttertoast.showToast(msg: "Start time cannot be in the past");
+    return;
+  }
+
+  if (widget.startTime != null &&
+      widget.endTime != null &&
+      widget.startTime!.isAtSameMomentAs(widget.endTime!)) {
     final to = await _showCustomTimePicker(
       context,
       "Select End Time",
@@ -77,10 +100,15 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
     );
     if (to == null) return;
 
-    // Validation
-    final fromMinutes = from.hour * 60 + from.minute;
-    final toMinutes = to.hour * 60 + to.minute;
-    if (toMinutes <= fromMinutes) {
+    final selectedEnd = DateTime(
+      widget.endTime!.year,
+      widget.endTime!.month,
+      widget.endTime!.day,
+      to.hour,
+      to.minute,
+    );
+
+    if (selectedEnd.isBefore(selectedStart) || selectedEnd.isAtSameMomentAs(selectedStart)) {
       Fluttertoast.showToast(msg: "End time must be after start time");
       return;
     }
@@ -93,8 +121,20 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
     setState(() {
       timeSlots.add(slot);
     });
-    widget.onChanged(timeSlots);
+  } 
+  else {
+    final slot = TimeSlot(
+      fromTime: _formatTimeOfDay(from),
+      toTime: "",
+    );
+    setState(() {
+      timeSlots.add(slot);
+    });
   }
+
+  widget.onChanged(timeSlots);
+}
+
 
   void _removeSlot(int index) {
     setState(() {

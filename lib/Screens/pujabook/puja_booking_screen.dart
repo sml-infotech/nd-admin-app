@@ -350,6 +350,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             onChanged: (updatedSlots) {
               setState(() => viewmodel.timeSlots = updatedSlots);
             },
+            startTime: viewmodel.selectedStartDate,
+            endTime: viewmodel.selectedEndDate,
           ),
         ),
       ],
