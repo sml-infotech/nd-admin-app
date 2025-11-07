@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart'; // <-- ensure this has TimeSlot
 
 class TimeSlotSelector extends StatefulWidget {
   final List<TimeSlot> initialSlots;
   final Function(List<TimeSlot>) onChanged;
-  final DateTime ?startTime;
-  final DateTime ?endTime;
+  final DateTime? startTime;
+  final DateTime? endTime;
 
   const TimeSlotSelector({
     super.key,
     required this.initialSlots,
     required this.onChanged,
-     this.startTime,
-     this.endTime
+    this.startTime,
+    this.endTime,
   });
 
   @override
@@ -65,76 +66,73 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
       },
     );
   }
-Future<void> _pickSlot(BuildContext context) async {
-  final now = DateTime.now();
 
-  final from = await _showCustomTimePicker(
-    context,
-    "Select Start Time",
-    TimeOfDay.now(),
-  );
-  if (from == null) return;
+  Future<void> _pickSlot(BuildContext context) async {
+    final now = DateTime.now();
 
-  final selectedStart = DateTime(
-    widget.startTime?.year ?? now.year,
-    widget.startTime?.month ?? now.month,
-    widget.startTime?.day ?? now.day,
-    from.hour,
-    from.minute,
-  );
-
-  if (selectedStart.isBefore(now) &&
-      widget.startTime != null &&
-      DateUtils.isSameDay(widget.startTime, now)) {
-    Fluttertoast.showToast(msg: "Start time cannot be in the past");
-    return;
-  }
-
-  if (widget.startTime != null &&
-      widget.endTime != null &&
-      widget.startTime!.isAtSameMomentAs(widget.endTime!)) {
-    final to = await _showCustomTimePicker(
+    final from = await _showCustomTimePicker(
       context,
-      "Select End Time",
-      from.replacing(hour: (from.hour + 1) % 24),
+      "Select Start Time",
+      TimeOfDay.now(),
     );
-    if (to == null) return;
+    if (from == null) return;
 
-    final selectedEnd = DateTime(
-      widget.endTime!.year,
-      widget.endTime!.month,
-      widget.endTime!.day,
-      to.hour,
-      to.minute,
+    final selectedStart = DateTime(
+      widget.startTime?.year ?? now.year,
+      widget.startTime?.month ?? now.month,
+      widget.startTime?.day ?? now.day,
+      from.hour,
+      from.minute,
     );
 
-    if (selectedEnd.isBefore(selectedStart) || selectedEnd.isAtSameMomentAs(selectedStart)) {
-      Fluttertoast.showToast(msg: "End time must be after start time");
+    if (selectedStart.isBefore(now) &&
+        widget.startTime != null &&
+        DateUtils.isSameDay(widget.startTime, now)) {
+      Fluttertoast.showToast(msg: "Start time cannot be in the past");
       return;
     }
 
-    final slot = TimeSlot(
-      fromTime: _formatTimeOfDay(from),
-      toTime: _formatTimeOfDay(to),
-    );
+    if (widget.startTime != null &&
+        widget.endTime != null &&
+        widget.startTime!.isAtSameMomentAs(widget.endTime!)) {
+      final to = await _showCustomTimePicker(
+        context,
+        "Select End Time",
+        from.replacing(hour: (from.hour + 1) % 24),
+      );
+      if (to == null) return;
 
-    setState(() {
-      timeSlots.add(slot);
-    });
-  } 
-  else {
-    final slot = TimeSlot(
-      fromTime: _formatTimeOfDay(from),
-      toTime: "",
-    );
-    setState(() {
-      timeSlots.add(slot);
-    });
+      final selectedEnd = DateTime(
+        widget.endTime!.year,
+        widget.endTime!.month,
+        widget.endTime!.day,
+        to.hour,
+        to.minute,
+      );
+
+      if (selectedEnd.isBefore(selectedStart) ||
+          selectedEnd.isAtSameMomentAs(selectedStart)) {
+        Fluttertoast.showToast(msg: "End time must be after start time");
+        return;
+      }
+
+      final slot = TimeSlot(
+        fromTime: _formatTimeOfDay(from),
+        toTime: _formatTimeOfDay(to),
+      );
+
+      setState(() {
+        timeSlots.add(slot);
+      });
+    } else {
+      final slot = TimeSlot(fromTime: _formatTimeOfDay(from), toTime: "");
+      setState(() {
+        timeSlots.add(slot);
+      });
+    }
+
+    widget.onChanged(timeSlots);
   }
-
-  widget.onChanged(timeSlots);
-}
-
 
   void _removeSlot(int index) {
     setState(() {
@@ -143,9 +141,16 @@ Future<void> _pickSlot(BuildContext context) async {
     widget.onChanged(timeSlots);
   }
 
-  String _formatDisplay(String timeStr) {
-    final parts = timeStr.split(':');
-    return "${parts[0]}:${parts[1]}";
+  String formatTimeRange(String fromTime, String toTime) {
+    try {
+      final from = DateFormat("HH:mm:ss").parse(fromTime);
+      final to = DateFormat("HH:mm:ss").parse(toTime);
+      final formattedFrom = DateFormat("hh:mm a").format(from);
+      final formattedTo = DateFormat("hh:mm a").format(to);
+      return "$formattedFrom - $formattedTo";
+    } catch (e) {
+      return "$fromTime - $toTime";
+    }
   }
 
   @override
@@ -174,7 +179,7 @@ Future<void> _pickSlot(BuildContext context) async {
               onPressed: () => _pickSlot(context),
               icon: const Icon(Icons.add),
               label: Text(
-                "Add Time Slot", 
+                "Add Time Slot",
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: font,
@@ -192,7 +197,7 @@ Future<void> _pickSlot(BuildContext context) async {
             final slot = timeSlots[index];
             return Chip(
               label: Text(
-                "${_formatDisplay(slot.fromTime)} - ${_formatDisplay(slot.toTime)}",
+                "${formatTimeRange(slot.fromTime, slot.toTime)}",
                 style: TextStyle(fontFamily: font),
               ),
               deleteIcon: const Icon(Icons.close),

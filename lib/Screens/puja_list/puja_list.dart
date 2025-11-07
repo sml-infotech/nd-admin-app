@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/expandable_text.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
@@ -178,8 +179,20 @@ class _PujaListState extends State<PujaList> {
   Widget listCard(PujaData puja) {
     List<String> formatTimeSlots(List<PujaTimeSlot> slots) {
       return slots.map((slot) {
-        return "${slot.fromTime} → ${slot.toTime}";
+        return "${slot.fromTime}-${slot.toTime}";
       }).toList();
+    }
+
+    String formatTimeRange(String fromTime, String toTime) {
+      try {
+        final from = DateFormat("HH:mm:ss").parse(fromTime);
+        final to = DateFormat("HH:mm:ss").parse(toTime);
+        final formattedFrom = DateFormat("hh:mm a").format(from);
+        final formattedTo = DateFormat("hh:mm a").format(to);
+        return "$formattedFrom - $formattedTo";
+      } catch (e) {
+        return "$fromTime - $toTime";
+      }
     }
 
     final formattedTimes = formatTimeSlots(puja.timeSlots);
@@ -645,15 +658,21 @@ class _PujaListState extends State<PujaList> {
         spacing: 8,
         runSpacing: 8,
         children: activeTimes.map((time) {
+          final parts = time.split('-');
+          String formatted = time;
+          if (parts.length == 2) {
+            formatted = formatTimeRange(parts[0], parts[1]);
+          }
+
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
             decoration: BoxDecoration(
               color: ColorConstant.buttonColor,
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: ColorConstant.buttonColor, width: 1),
             ),
             child: Text(
-              time,
+              formatted,
               style: TextStyle(
                 fontSize: 11,
                 fontFamily: font,
@@ -665,5 +684,17 @@ class _PujaListState extends State<PujaList> {
         }).toList(),
       ),
     );
+  }
+
+  String formatTimeRange(String fromTime, String toTime) {
+    try {
+      final from = DateFormat("HH:mm:ss").parse(fromTime);
+      final to = DateFormat("HH:mm:ss").parse(toTime);
+      final formattedFrom = DateFormat("hh:mm a").format(from);
+      final formattedTo = DateFormat("hh:mm a").format(to);
+      return "$formattedFrom - $formattedTo";
+    } catch (e) {
+      return "$fromTime - $toTime";
+    }
   }
 }

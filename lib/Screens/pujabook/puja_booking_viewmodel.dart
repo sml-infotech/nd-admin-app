@@ -52,13 +52,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
   TimeOfDay? toTime;
 
   Map<String, bool> selectedDays = {
-    "Mon": false,
-    "Tue": false,
-    "Wed": false,
-    "Thu": false,
-    "Fri": false,
-    "Sat": false,
-    "Sun": false,
+    "Mon": true,
+    "Tue": true,
+    "Wed": true,
+    "Thu": true,
+    "Fri": true,
+    "Sat": true,
+    "Sun": true,
   };
 
   List<TimeSlot> timeSlots = [];
@@ -218,13 +218,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
           .toList();
 
       final response = await pujaService.cretaPuja(
-        selectedTempleId ?? "",
-        pujaName.text,
-        deitiesList,
-        description.text,
-        int.parse(maxDevotees.text),
-        int.parse(fee.text),
-        uploadedImageUrls,
+      selectedTempleId ?? "",
+      pujaName.text,
+      deitiesList,
+      description.text,
+      int.parse(maxDevotees.text),
+      double.parse(fee.text),
+      uploadedImageUrls,
         2,
         specialReq,
         selectedStartDate.toString(),
