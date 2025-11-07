@@ -20,49 +20,53 @@ class TempleScreen extends StatefulWidget {
 
 class _TempleScreenState extends State<TempleScreen> {
   final ScrollController _scrollController = ScrollController();
+  TempleViewModel? viewModel;
   String? token;
   String? role;
+
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<TempleViewModel>(context, listen: false);
-    // viewModel.fetchTemples();
     _loadUserData();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200 &&
-          !viewModel.isLoadingMore &&
-          viewModel.hasMore) {
-        viewModel.fetchTemples();
-      }
-    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    viewModel?.reset();
     super.dispose();
   }
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.getString('authToken');
-    final storedRole = prefs.getString('userRole');
-
     setState(() {
-      token = storedToken;
-      role = storedRole;
+      token = prefs.getString('authToken');
+      role = prefs.getString('userRole');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<TempleViewModel>(
-      builder: (context, viewModel, _) {
+      builder: (context, model, _) {
+        viewModel = model;
+
+        // Infinite scroll listener — only attach once
+        if (!_scrollController.hasListeners) {
+          _scrollController.addListener(() {
+            if (_scrollController.position.pixels >=
+                    _scrollController.position.maxScrollExtent - 200 &&
+                !model.isLoadingMore &&
+                model.hasMore) {
+              model.fetchTemples();
+            }
+          });
+        }
+
         return FocusDetector(
           onFocusGained: () async {
-            print(">>>>>><<<<<<");
-            await viewModel.fetchTemples(refresh: true);
+            // 🧹 Reset data and fetch fresh temples when coming back
+            await viewModel?.resetAndFetch();
           },
           child: Scaffold(
             backgroundColor: ColorConstant.buttonColor,
@@ -71,39 +75,39 @@ class _TempleScreenState extends State<TempleScreen> {
               backgroundColor: ColorConstant.buttonColor,
               elevation: 0,
               centerTitle: true,
-              title: _buildAppBar(),
+              title: _buildAppBar(context),
             ),
-            body: viewModel.isLoading && viewModel.temples.isEmpty
+            body: model.isLoading && model.temples.isEmpty
                 ? _buildShimmer()
-                : Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24),
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(16),
+                : Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Expanded(
                           child: ListView.separated(
                             controller: _scrollController,
-                            itemCount: viewModel.temples.length,
+                            itemCount: model.temples.length,
                             separatorBuilder: (_, __) =>
                                 const SizedBox(height: 12),
                             itemBuilder: (_, index) =>
-                                _templeCard(viewModel.temples[index]),
+                                _templeCard(model.temples[index]),
                           ),
                         ),
-                      ),
-                      if (viewModel.isLoadingMore)
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: _buildShimmer(),
-                        ),
-                    ],
+                        if (model.isLoadingMore)
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: _loadingIndicator(),
+                          ),
+                      ],
+                    ),
                   ),
           ),
         );
@@ -111,7 +115,7 @@ class _TempleScreenState extends State<TempleScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -124,10 +128,12 @@ class _TempleScreenState extends State<TempleScreen> {
         const Spacer(),
         if (role == "Super Admin")
           IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+            onPressed: () async {
+              await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+              // 🔁 When you return from add screen, refetch fresh list
+              await viewModel?.resetAndFetch();
             },
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: const Icon(Icons.add, color: Colors.white),
           ),
       ],
     );
@@ -149,7 +155,7 @@ class _TempleScreenState extends State<TempleScreen> {
             phoneNumber: temple.phoneNumber,
             email: temple.email,
             description: temple.description,
-            deities: temple.deities!,
+            deities: temple.deities ?? [],
             images: temple.images ?? [],
             templeId: temple.id,
           ),
@@ -158,7 +164,7 @@ class _TempleScreenState extends State<TempleScreen> {
       child: Card(
         elevation: 2,
         color: Colors.white,
-        shadowColor: Colors.black,
+        shadowColor: Colors.black.withOpacity(0.2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -185,11 +191,11 @@ class _TempleScreenState extends State<TempleScreen> {
                           ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(child: templeDetails(temple)),
+                  Expanded(child: _templeDetails(temple)),
                 ],
               ),
               const SizedBox(height: 8),
-              address(temple),
+              _templeAddress(temple),
             ],
           ),
         ),
@@ -197,7 +203,7 @@ class _TempleScreenState extends State<TempleScreen> {
     );
   }
 
-  Widget templeDetails(Temple temple) {
+  Widget _templeDetails(Temple temple) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -208,23 +214,17 @@ class _TempleScreenState extends State<TempleScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        Text(
-          "${StringConstant.city} ${temple.city}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
-        Text(
-          "${StringConstant.state} ${temple.state}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
-        Text(
-          "${StringConstant.architecture} ${temple.architecture}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
+        Text("${StringConstant.city} ${temple.city}",
+            style: AppTextStyles.templeNameDetailsStyle),
+        Text("${StringConstant.state} ${temple.state}",
+            style: AppTextStyles.templeNameDetailsStyle),
+        Text("${StringConstant.architecture} ${temple.architecture}",
+            style: AppTextStyles.templeNameDetailsStyle),
       ],
     );
   }
 
-  Widget address(Temple temple) {
+  Widget _templeAddress(Temple temple) {
     return Text(
       "${StringConstant.address} ${temple.address}, ${temple.pincode}",
       style: AppTextStyles.templeNameDetailsAddressStyle,
@@ -232,6 +232,9 @@ class _TempleScreenState extends State<TempleScreen> {
       overflow: TextOverflow.ellipsis,
     );
   }
+
+  Widget _loadingIndicator() =>
+      const Center(child: CircularProgressIndicator());
 
   Widget _buildShimmer() {
     return Container(
@@ -245,6 +248,8 @@ class _TempleScreenState extends State<TempleScreen> {
       ),
       padding: const EdgeInsets.all(16),
       child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: 6,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (_, __) => Shimmer.fromColors(

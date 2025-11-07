@@ -11,26 +11,26 @@ class TempleViewModel extends ChangeNotifier {
   final TempleService authService = TempleService();
 
   int page = 1;
-  final int limit = 10;
+  int limit = 10;
 
-  /// Fetch temples with pagination
   Future<void> fetchTemples({bool refresh = false}) async {
-  
     try {
-        if (isLoading) return;
+      if (isLoading) return;
 
-    if (page == 1) {
-      isLoading = true;
-    } else {
-      isLoadingMore = true;
-    }
-    notifyListeners();
+      if (page == 1) {
+        isLoading = true;
+      } else {
+        isLoadingMore = true;
+      }
+      notifyListeners();
+
       if (refresh) {
         temples.clear();
         page = 1;
         hasMore = true;
+        isLoadingMore = false;
       }
-     
+
       final response = await authService.getTemples(page: page, limit: limit);
 
       if (response.data != null && response.data!.isNotEmpty) {
@@ -52,5 +52,21 @@ class TempleViewModel extends ChangeNotifier {
     isLoading = false;
     isLoadingMore = false;
     notifyListeners();
+  }
+
+  void reset() {
+    temples = [];
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+    page = 1;
+    limit = 10;
+    notifyListeners();
+  }
+
+  /// 👇 Add this helper method
+  Future<void> resetAndFetch() async {
+    reset();
+    await fetchTemples(refresh: true);
   }
 }
