@@ -254,7 +254,16 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             ),
             TextSpan(
               text: subtitle,
-              style: AppTextStyles.templeNameDetailsStyle,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: subtitle == "Completed"
+                    ? Colors.green
+                    : subtitle == "Pending"
+                    ? Colors.red
+                    : Colors.black,
+                fontFamily: font,
+              ),
             ),
           ],
         ),

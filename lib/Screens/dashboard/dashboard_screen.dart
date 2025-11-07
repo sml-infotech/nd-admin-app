@@ -122,9 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (role == "Super Admin" ||
-                              role == "Admin" ||
-                              role == "Temple") ...[
+                          if (role == "Super Admin" || role == "Admin") ...[
                             contaierWidgets(
                               ImageStrings.onlineseva,
                               StringConstant.createUser,
@@ -136,18 +134,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               },
                             ),
                             SizedBox(width: 5),
-
-                            contaierWidgets(
-                              ImageStrings.ritual,
-                              StringConstant.updateRequests,
-                              () {
-                                Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.updateRequestsUrl,
-                                );
-                              },
-                            ),
                           ],
+                          contaierWidgets(
+                            ImageStrings.ritual,
+                            StringConstant.updateRequests,
+                            () {
+                              Navigator.pushNamed(
+                                context,
+                                StringsRoute.updateRequestsUrl,
+                              );
+                            },
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -164,7 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               );
                             },
                           ),
-                          SizedBox(width: 5),
+                          // SizedBox(width: 5),
 
                           // contaierWidgets(
                           //   ImageStrings.ritual,

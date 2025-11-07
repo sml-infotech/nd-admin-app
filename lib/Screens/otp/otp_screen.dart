@@ -67,45 +67,54 @@ class _OtpScreenState extends State<OtpScreen> {
         child: Stack(
           children: [
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                children: [
-                  backbutton(),
-
-                  const SizedBox(height: 100),
-                  otpTitle(),
-                  const SizedBox(height: 20),
-                  otpImage(),
-                  const SizedBox(height: 20),
-                  otpSubTitle(),
-                  const SizedBox(height: 10),
-                  userEmailText(widget.arguments.email),
-                  const SizedBox(height: 30),
-                  OtpInputField(
-                    onChanged: (otp) {
-                      setState(() {
-                        viewModel.otp = otp;
-                      });
-                    },
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height,
                   ),
-                  const SizedBox(height: 30),
-                  verifyButton(viewModel.otp),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      const SizedBox(width: 20),
-                      resendCodeText(
-                        widget.arguments.email,
-                        widget.arguments.password,
-                      ),
-                      Spacer(),
-                      timerTextWidget(timerText),
-                      const SizedBox(width: 20),
-                    ],
+                  child: IntrinsicHeight(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+
+                      children: [
+                        backbutton(),
+
+                        const SizedBox(height: 100),
+                        otpTitle(),
+                        const SizedBox(height: 20),
+                        otpImage(),
+                        const SizedBox(height: 20),
+                        otpSubTitle(),
+                        const SizedBox(height: 10),
+                        userEmailText(widget.arguments.email),
+                        const SizedBox(height: 30),
+                        OtpInputField(
+                          onChanged: (otp) {
+                            setState(() {
+                              viewModel.otp = otp;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        verifyButton(viewModel.otp),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            const SizedBox(width: 20),
+                            resendCodeText(
+                              widget.arguments.email,
+                              widget.arguments.password,
+                            ),
+                            Spacer(),
+                            timerTextWidget(timerText),
+                            const SizedBox(width: 20),
+                          ],
+                        ),
+                        SizedBox(height: 100),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 100),
-                ],
+                ),
               ),
             ),
             if (viewModel.isLoading)

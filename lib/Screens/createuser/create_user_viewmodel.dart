@@ -150,7 +150,6 @@ class CreateUserViewmodel extends ChangeNotifier {
     return temple.id.isNotEmpty ? temple.id : null;
   }
 
-  // Set selected temple
   void selectTemple(String? name) {
     selectedTempleName = name;
     selectedTempleId = getTempleIdByName(name ?? "");

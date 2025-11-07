@@ -27,41 +27,49 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).unfocus(); // 👈 hides the keyboard
+          FocusScope.of(context).unfocus();
         },
-        behavior: HitTestBehavior
-            .translucent, // ensures tap detection even on empty space
+        behavior: HitTestBehavior.translucent,
         child: Stack(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 60),
-                loginImage(),
-                const SizedBox(height: 25),
-                loginText(),
-                const SizedBox(height: 25),
-                CommonTextField(
-                  hintText: StringConstant.enterUserName,
-                  labelText: StringConstant.userName,
-                  isFromPassword: false,
-                  controller: viewModel.emailController,
+            SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
                 ),
-                const SizedBox(height: 25),
-                CommonTextField(
-                  hintText: StringConstant.enterPassword,
-                  labelText: StringConstant.password,
-                  isFromPassword: true,
-                  controller: viewModel.passwordController,
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 75),
+                      loginImage(),
+                      const SizedBox(height: 25),
+                      loginText(),
+                      const SizedBox(height: 25),
+                      CommonTextField(
+                        hintText: StringConstant.enterUserName,
+                        labelText: StringConstant.userName,
+                        isFromPassword: false,
+                        controller: viewModel.emailController,
+                      ),
+                      const SizedBox(height: 25),
+                      CommonTextField(
+                        hintText: StringConstant.enterPassword,
+                        labelText: StringConstant.password,
+                        isFromPassword: true,
+                        controller: viewModel.passwordController,
+                      ),
+                      termAndConditionText(viewModel),
+                      const SizedBox(height: 25),
+                      loginButton(viewModel),
+                      const SizedBox(height: 15),
+                      forgotPasswordText(),
+                      const SizedBox(height: 15),
+                    ],
+                  ),
                 ),
-                termAndConditionText(viewModel),
-                const SizedBox(height: 25),
-                loginButton(viewModel),
-                const SizedBox(height: 15),
-                forgotPasswordText(),
-                const SizedBox(height: 15),
-              ],
+              ),
             ),
             if (viewModel.isLoading)
               Positioned.fill(
