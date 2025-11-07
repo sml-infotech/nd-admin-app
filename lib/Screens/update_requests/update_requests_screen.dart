@@ -462,7 +462,9 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                 vm.rejectedReasons[requestIndex]![key] = "";
                 vm.approvedFields[requestIndex]?.remove(key);
               } else {
-                vm.rejectedReasons[requestIndex]?.remove(key);
+                setState(() {
+                  vm.rejectedReasons[requestIndex]?.remove(key);
+                });
               }
             });
           },
@@ -479,26 +481,31 @@ class _UpdateRequestsState extends State<UpdateRequests> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          StringConstant.rejectionComment,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
-          child: TextField(
-            onChanged: (val) {
-              setState(() {
-                vm.rejectedReasons[requestIndex]!["global_reason"] = val;
-              });
-            },
-            maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: StringConstant.reason,
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        if (vm.rejectedReasons[requestIndex]?.isNotEmpty ?? false) ...[
+          const Text(
+            StringConstant.rejectionComment,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 4, right: 8),
+            child: TextField(
+              onChanged: (val) {
+                setState(() {
+                  vm.rejectedReasons[requestIndex]!["global_reason"] = val;
+                });
+              },
+              maxLines: 3,
+              decoration: const InputDecoration(
+                hintText: StringConstant.reason,
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+              ),
             ),
           ),
-        ),
+        ],
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
