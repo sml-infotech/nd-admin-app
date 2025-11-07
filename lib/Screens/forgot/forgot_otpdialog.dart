@@ -30,9 +30,6 @@ class _OtpDialogState extends State<OtpDialog> {
     startTimer();
   }
 
-  /// =======================
-  /// Timer logic
-  /// =======================
   void startTimer() {
     timer?.cancel();
     remainingSeconds = 60;
@@ -51,9 +48,6 @@ class _OtpDialogState extends State<OtpDialog> {
     super.dispose();
   }
 
-  /// =======================
-  /// OTP verification logic
-  /// =======================
   Future<void> verifyOtp() async {
     FocusScope.of(context).unfocus();
 
@@ -80,9 +74,6 @@ class _OtpDialogState extends State<OtpDialog> {
     });
   }
 
-  /// =======================
-  /// Resend OTP logic
-  /// =======================
   Future<void> resendOtp() async {
     startTimer();
     await viewModel.forgotPasswordApi();
@@ -90,18 +81,13 @@ class _OtpDialogState extends State<OtpDialog> {
     setState(() => viewModel.message = '');
   }
 
-  /// =======================
-  /// OTP Input Field Widget
-  /// =======================
+
   Widget buildOtpInputField() {
     return OtpInputField(
       onChanged: (value) => setState(() => viewModel.otp = value),
     );
   }
 
-  /// =======================
-  /// Verify Button Widget
-  /// =======================
   Widget buildVerifyButton() {
     return SizedBox(
       width: double.infinity,
@@ -124,9 +110,6 @@ class _OtpDialogState extends State<OtpDialog> {
     );
   }
 
-  /// =======================
-  /// Resend Row Widget
-  /// =======================
   Widget buildResendRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,10 +130,6 @@ class _OtpDialogState extends State<OtpDialog> {
       ],
     );
   }
-
-  /// =======================
-  /// Loading Overlay
-  /// =======================
   Widget buildLoadingOverlay() {
     if (!viewModel.isVerifyLoading) return const SizedBox.shrink();
 
@@ -164,9 +143,6 @@ class _OtpDialogState extends State<OtpDialog> {
     );
   }
 
-  /// =======================
-  /// Main Dialog Content
-  /// =======================
   Widget buildDialogContent() {
     return SingleChildScrollView(
       child: Padding(
@@ -214,8 +190,6 @@ class _OtpDialogState extends State<OtpDialog> {
       child: Stack(
         children: [
           buildDialogContent(),
-
-          // Close Button
           Positioned(
             top: 8,
             right: 8,
@@ -224,8 +198,6 @@ class _OtpDialogState extends State<OtpDialog> {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-
-          // Loading Overlay
           buildLoadingOverlay(),
         ],
       ),

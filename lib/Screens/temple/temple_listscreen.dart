@@ -130,7 +130,6 @@ class _TempleScreenState extends State<TempleScreen> {
           IconButton(
             onPressed: () async {
               await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-              // 🔁 When you return from add screen, refetch fresh list
               await viewModel?.resetAndFetch();
             },
             icon: const Icon(Icons.add, color: Colors.white),

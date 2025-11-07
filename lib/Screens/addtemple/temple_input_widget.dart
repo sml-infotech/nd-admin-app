@@ -11,7 +11,7 @@ class TempleInputWidget extends StatelessWidget {
     String text = vm.templeController.text.trim();
 
     if (text.isNotEmpty) {
-      vm.addTemple(text); 
+      vm.addTemple(text);
       vm.templeController.clear();
     }
   }
@@ -28,19 +28,19 @@ class TempleInputWidget extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: "Add Deities",
                 labelText: "Add Deities",
-                labelStyle:
-                     TextStyle(fontFamily: font, color: Colors.black),
-                hintStyle:
-                     TextStyle(fontFamily: font, color: Colors.black),
+                labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
+                hintStyle: TextStyle(fontFamily: font, color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(13),
-                  borderSide:
-                      const BorderSide(color: ColorConstant.primaryColor),
+                  borderSide: const BorderSide(
+                    color: ColorConstant.primaryColor,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(13),
-                  borderSide:
-                      const BorderSide(color: ColorConstant.primaryColor),
+                  borderSide: const BorderSide(
+                    color: ColorConstant.primaryColor,
+                  ),
                 ),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.add),
@@ -65,14 +65,16 @@ class TempleInputWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           vm.temples[index],
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontFamily: font,
                             color: Colors.black,
                           ),

@@ -64,7 +64,6 @@ class TempleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 👇 Add this helper method
   Future<void> resetAndFetch() async {
     reset();
     await fetchTemples(refresh: true);
