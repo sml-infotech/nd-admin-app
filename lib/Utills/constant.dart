@@ -105,7 +105,7 @@ class StringConstant {
       "Enter the maximum devotees allowed for puja / seva";
   static const String maxNoDevote = "Maximum number of Devotees";
   static const String uploadText = "Upload Image (Optional)";
-  static const String uploadImageSeva = "Upload Image (puja/seva)";
+  static const String uploadImageSeva = "Upload Images";
   static const String cutOffText = "Booking Cutoff / Notice";
   static const String priestText = "Priest Dakshina (Optional)";
   static const String fromTime = "From time";

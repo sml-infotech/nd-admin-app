@@ -311,7 +311,8 @@ class _EventListScreenState extends State<EventListScreen> {
               const SizedBox(height: 4),
               contactPhone(event.contactPhone ?? ''),
               const Divider(height: 24),
-              imageViewer(event),
+              if (event.images != null && event.images!.isNotEmpty)
+                imageViewer(event),
               const SizedBox(height: 16),
             ],
           ),
