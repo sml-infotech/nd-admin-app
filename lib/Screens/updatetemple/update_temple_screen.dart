@@ -256,15 +256,12 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
           GestureDetector(
             onTap: () async {
               FocusScope.of(context).unfocus();
-
               if (viewModel.validateUpdateTemple()) {
                 await viewModel.updateTemple(widget.arguments.templeId);
                 Fluttertoast.showToast(msg: viewModel.message);
                 if (viewModel.templeUpdated) {
-                  Navigator.popUntil(context, (route) {
-                    print(route.settings.name);
-                    return route.settings.name == StringsRoute.templeScreen;
-                  });
+                  Navigator.pop(context);
+                  viewModel.reset();
                   viewModel.templeUpdated = false;
                 }
               } else {

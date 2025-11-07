@@ -55,6 +55,8 @@ class _OtpDialogState extends State<OtpDialog> {
   /// OTP verification logic
   /// =======================
   Future<void> verifyOtp() async {
+    FocusScope.of(context).unfocus();
+
     viewModel.isVerifyLoading = true;
     await viewModel.validOtp(widget.email);
 

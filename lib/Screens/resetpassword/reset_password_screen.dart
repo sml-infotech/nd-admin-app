@@ -31,7 +31,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,

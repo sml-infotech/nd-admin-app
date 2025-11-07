@@ -332,4 +332,29 @@ class UpdateTempleViewmodel extends ChangeNotifier {
       return null;
     }
   }
+
+  void reset() {
+  templeName.clear();
+  templeLocation.clear();
+  templeDescription.clear();
+  templePhoneNumber.clear();
+  templeEmail.clear();
+  templeDeities.clear();
+  templeArchitecture.clear();
+  templeCity.clear();
+  templeState.clear();
+  templePincode.clear();
+
+  selectedImages.clear();
+  uploadedImageUrls.clear();
+  images.clear();
+
+  isLoading = false;
+  templeUpdated = false;
+  message = "";
+  originalTempleData = null;
+
+  notifyListeners();
+}
+
 }

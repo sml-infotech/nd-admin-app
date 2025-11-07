@@ -125,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           if (role == "Super Admin" || role == "Admin") ...[
                             contaierWidgets(
                               ImageStrings.onlineseva,
-                              StringConstant.createUser,
+                              StringConstant.userDetails,
                               () {
                                 Navigator.pushNamed(
                                   context,

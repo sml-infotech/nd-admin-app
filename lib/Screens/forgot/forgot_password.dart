@@ -26,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
