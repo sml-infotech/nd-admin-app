@@ -64,8 +64,6 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     }
   }
 
-  
-
   Future<void> prefillData() async {
     final args = widget.pujaArgumrnts;
     if (args == null || args.puja_id.isEmpty) return;
@@ -92,6 +90,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     if (args.days != null && args.days!.isNotEmpty) {
       for (final key in viewmodel.selectedDays.keys) {
         viewmodel.selectedDays[key] = args.days!.contains(key);
+        print("??????????????????${viewmodel.selectedDays}");
       }
     }
     if (args.templeId != null && args.templeId!.isNotEmpty) {
@@ -139,7 +138,16 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   @override
   void dispose() {
     viewmodel.resetForm();
-    print("");
+    viewmodel.selectedDays = {
+      "Mon": true,
+      "Tue": true,
+      "Wed": true,
+      "Thu": true,
+      "Fri": true,
+      "Sat": true,
+      "Sun": true,
+    };
+    print("ffghgffghhffhfgh");
     super.dispose();
   }
 

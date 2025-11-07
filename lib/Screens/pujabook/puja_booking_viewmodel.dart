@@ -218,13 +218,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
           .toList();
 
       final response = await pujaService.cretaPuja(
-      selectedTempleId ?? "",
-      pujaName.text,
-      deitiesList,
-      description.text,
-      int.parse(maxDevotees.text),
-      double.parse(fee.text),
-      uploadedImageUrls,
+        selectedTempleId ?? "",
+        pujaName.text,
+        deitiesList,
+        description.text,
+        int.parse(maxDevotees.text),
+        double.parse(fee.text),
+        uploadedImageUrls,
         2,
         specialReq,
         selectedStartDate.toString(),
@@ -338,22 +338,18 @@ class CreatePujaViewmodel extends ChangeNotifier {
     fee.clear();
     maxDevotees.clear();
     deitiesController.clear();
-    notifyListeners();
 
     selectedImages.clear();
     deities = [];
     deitiesList = [];
-    notifyListeners();
     selectedTemple = null;
     selectedDeities = "";
     selectedDeityId = "";
-    notifyListeners();
 
     bookingCutoff = false;
     priestDakshina = false;
     specialReq = false;
     hideActive = false;
-    notifyListeners();
 
     selectedStartDate = null;
     selectedEndDate = null;
@@ -362,20 +358,16 @@ class CreatePujaViewmodel extends ChangeNotifier {
     timeSlots = [];
     notifyListeners();
 
-    selectedDays.updateAll((key, value) => false);
-
     message = "";
     isValid = false;
     isLoading = false;
 
     uploadedImageUrls.clear();
-
-    notifyListeners();
+    selectedDays.clear();
   }
 
   void setSelectedTemple(Temple temple) {
     selectedTemple = temple;
-
     if (temple.deities != null && temple.deities!.isNotEmpty) {
       deitiesList = List<String>.from(temple.deities!);
     } else {

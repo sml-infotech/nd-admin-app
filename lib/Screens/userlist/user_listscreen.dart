@@ -124,12 +124,13 @@ class _UserListScreenState extends State<UserListScreen> {
         const Spacer(),
         Text(StringConstant.userDetails, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, StringsRoute.createUser);
-          },
-          icon: const Icon(Icons.add, color: Colors.white),
-        ),
+        if (role != "Admin")
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, StringsRoute.createUser);
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+          ),
       ],
     );
   }
