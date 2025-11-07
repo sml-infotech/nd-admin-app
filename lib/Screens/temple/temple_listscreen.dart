@@ -214,12 +214,18 @@ class _TempleScreenState extends State<TempleScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        Text("${StringConstant.city} ${temple.city}",
-            style: AppTextStyles.templeNameDetailsStyle),
-        Text("${StringConstant.state} ${temple.state}",
-            style: AppTextStyles.templeNameDetailsStyle),
-        Text("${StringConstant.architecture} ${temple.architecture}",
-            style: AppTextStyles.templeNameDetailsStyle),
+        Text(
+          "${StringConstant.city} ${temple.city}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
+        Text(
+          "${StringConstant.state} ${temple.state}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
+        Text(
+          "${StringConstant.architecture} ${temple.architecture}",
+          style: AppTextStyles.templeNameDetailsStyle,
+        ),
       ],
     );
   }
@@ -233,8 +239,9 @@ class _TempleScreenState extends State<TempleScreen> {
     );
   }
 
-  Widget _loadingIndicator() =>
-      const Center(child: CircularProgressIndicator());
+  Widget _loadingIndicator() => const Center(
+    child: CircularProgressIndicator(color: ColorConstant.buttonColor),
+  );
 
   Widget _buildShimmer() {
     return Container(
