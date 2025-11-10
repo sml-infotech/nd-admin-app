@@ -358,7 +358,7 @@ class _UserListScreenState extends State<UserListScreen> {
                       const SizedBox(height: 10),
                       _buildTextField(fullNameController, "Full Name"),
                       const SizedBox(height: 16),
-                      _buildTextField(emailController, "Email"),
+                      // _buildTextField(emailController, "Email"),
                       const SizedBox(height: 16),
                       CommonDropdownField(
                         paddingSize: 0,
@@ -457,12 +457,12 @@ class _UserListScreenState extends State<UserListScreen> {
                         onPressed: () async {
                           final isValid = await viewModel.updateValidate(
                             fullNameController.text,
-                            emailController.text,
                           );
-                          Fluttertoast.showToast(msg: viewModel.message);
-
-                          if (isValid) {
+                          if (viewModel.message.isNotEmpty) {
+                            Fluttertoast.showToast(msg: viewModel.message);
                             viewModel.message = "";
+                          }
+                          if (isValid) {
                             final isActive = viewModel.getTempActive(user.id);
                             setStateSB(() {
                               FocusScope.of(context).unfocus();

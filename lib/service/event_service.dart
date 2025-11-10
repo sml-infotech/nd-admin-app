@@ -84,7 +84,7 @@ class EventService {
 
       return EventUpdateResponse.fromJson(data);
     } catch (e) {
-      print("CreateEventResponse service decode fails: $e");
+      print("apiiiii update service decode fails: $e");
       throw Exception('API failed: $e');
     }
   }

@@ -27,7 +27,7 @@ class UserViewModel extends ChangeNotifier {
   bool hasMore = true;
   int page = 1;
   final int _pageSize = 10;
-  String message="";
+  String message = "";
   List<Temple> _templeData = [];
 
   final Map<String, bool> _tempActiveMap = {};
@@ -46,7 +46,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-   Future<void> getUsers({bool reset = false}) async {
+  Future<void> getUsers({bool reset = false}) async {
     if (reset) {
       page = 1;
       hasMore = true;
@@ -94,17 +94,15 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  
   Future<void> editUser(
     String userId,
     String name,
     bool isActive, {
     List<String>? selectedTemples,
   }) async {
-       editLoading = true;
-      notifyListeners();
+    editLoading = true;
+    notifyListeners();
     try {
-   
       final filteredTemples = (selectedTemples ?? [])
           .where((id) => id.isNotEmpty)
           .toSet()
@@ -195,50 +193,36 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-  Future<bool> updateValidate(String fullName,String email) async {
+  Future<bool> updateValidate(String fullName, ) async {
     if (fullName.isEmpty) {
       message = "Please fill FullName";
       return false;
-    }
-    else if(email.isEmpty){
-      message = "Please fill email";
-            return false;
-
-    }
-   else if (role.text.isEmpty) {
+    } else if (role.text.isEmpty) {
       message = "Role is Mandaratory";
-            return false;
-
+      return false;
     } else if ((role.text == "Temple" || role.text == "Agent") &&
         (selectedTempleIds.isEmpty)) {
       message = "Select Temple";
-            return false;
-
+      return false;
     } else {
-          return true;
-
+      return true;
     }
-
-    }
-
+  }
 
   void resetData() {
-  userData.clear();
-  editData.clear();
-  templeList.clear();
-  _templeData.clear();
-  selectedTempleIds.clear();
-  _tempActiveMap.clear();
+    userData.clear();
+    editData.clear();
+    templeList.clear();
+    _templeData.clear();
+    selectedTempleIds.clear();
+    _tempActiveMap.clear();
 
-  page = 1;
-  hasMore = true;
-  isLoading = false;
-  editLoading = false;
-  role.clear();
+    page = 1;
+    hasMore = true;
+    isLoading = false;
+    editLoading = false;
+    role.clear();
 
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 }
