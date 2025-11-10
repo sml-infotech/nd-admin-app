@@ -27,6 +27,7 @@ class UserViewModel extends ChangeNotifier {
   bool hasMore = true;
   int page = 1;
   final int _pageSize = 10;
+  String message="";
   List<Temple> _templeData = [];
 
   final Map<String, bool> _tempActiveMap = {};
@@ -193,6 +194,35 @@ class UserViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+
+
+  Future<bool> updateValidate(String fullName,String email) async {
+    if (fullName.isEmpty) {
+      message = "Please fill FullName";
+      return false;
+    }
+    else if(email.isEmpty){
+      message = "Please fill email";
+            return false;
+
+    }
+   else if (role.text.isEmpty) {
+      message = "Role is Mandaratory";
+            return false;
+
+    } else if ((role.text == "Temple" || role.text == "Agent") &&
+        (selectedTempleIds.isEmpty)) {
+      message = "Select Temple";
+            return false;
+
+    } else {
+          return true;
+
+    }
+
+    }
+
 
   void resetData() {
   userData.clear();

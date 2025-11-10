@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
@@ -454,26 +455,31 @@ class _UserListScreenState extends State<UserListScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          setStateSB(() {
-                            FocusScope.of(context).unfocus();
-
-                            viewModel.editLoading = true;
-                          });
-
-                          final isActive = viewModel.getTempActive(user.id);
-
-                          await viewModel.editUser(
-                            user.id,
+                          final isValid = await viewModel.updateValidate(
                             fullNameController.text,
-                            isActive,
-                            selectedTemples: viewModel.selectedTempleIds,
+                            emailController.text,
                           );
+                          Fluttertoast.showToast(msg: viewModel.message);
 
-                          setStateSB(() {
-                            viewModel.editLoading = false;
-                          });
+                          if (isValid) {
+                            viewModel.message = "";
+                            final isActive = viewModel.getTempActive(user.id);
+                            setStateSB(() {
+                              FocusScope.of(context).unfocus();
+                              viewModel.editLoading = true;
+                            });
+                            await viewModel.editUser(
+                              user.id,
+                              fullNameController.text,
+                              isActive,
+                              selectedTemples: viewModel.selectedTempleIds,
+                            );
 
-                          if (context.mounted) Navigator.pop(context);
+                            setStateSB(() {
+                              viewModel.editLoading = false;
+                            });
+                            if (context.mounted) Navigator.pop(context);
+                          }
                         },
                         child: Text(
                           "Save",
