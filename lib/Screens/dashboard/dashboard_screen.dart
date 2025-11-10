@@ -19,24 +19,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // ✅ Fetch SharedPreferences data when screen loads
+    _loadUserData();
   }
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.getString('authToken');
-    final storedRole = prefs.getString('userRole');
-
     setState(() {
-      token = storedToken;
-      role = storedRole;
+      token = prefs.getString('authToken');
+      role = prefs.getString('userRole');
     });
   }
 
   Future<void> deleteToken() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.remove('authToken');
-    final storedRole = prefs.remove('userRole');
+    await prefs.remove('authToken');
+    await prefs.remove('userRole');
   }
 
   @override
@@ -53,8 +50,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Column(
         children: [
           SizedBox(height: screenHeight * 0.02),
-
-          // ✅ Expanded section
           Expanded(
             child: Container(
               width: double.infinity,
@@ -67,17 +62,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       welcomeText(),
                       const SizedBox(height: 15),
-                      // templeNameText(),
-                      const SizedBox(height: 10),
-
                       if (token != null && role != null) ...[
                         Text(
                           "Role: $role",
@@ -87,92 +77,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-
                         const SizedBox(height: 20),
                       ],
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      // ✅ Dashboard buttons using Wrap
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
                         children: [
-                          contaierWidgets(
+                          containerWidget(
                             ImageStrings.templeImage,
                             StringConstant.templeDetailText,
-                            () {
-                              Navigator.pushNamed(
-                                context,
-                                StringsRoute.templeScreen,
-                              );
-                            },
+                            () => Navigator.pushNamed(
+                                context, StringsRoute.templeScreen),
                           ),
-                          SizedBox(width: 5),
-                          contaierWidgets(
+                          containerWidget(
                             ImageStrings.sevaimg,
                             StringConstant.sevaText,
-                            () {
-                              Navigator.pushNamed(
-                                context,
-                                StringsRoute.pujaList,
-                              );
-                            },
+                            () => Navigator.pushNamed(
+                                context, StringsRoute.pujaList),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (role == "Super Admin" || role == "Admin") ...[
-                            contaierWidgets(
+                          if (role == "Super Admin" || role == "Admin")
+                            containerWidget(
                               ImageStrings.onlineseva,
                               StringConstant.userDetails,
-                              () {
-                                Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.userDetails,
-                                );
-                              },
+                              () => Navigator.pushNamed(
+                                  context, StringsRoute.userDetails),
                             ),
-                            SizedBox(width: 5),
-                          ],
-                          contaierWidgets(
+                          containerWidget(
                             ImageStrings.ritual,
                             StringConstant.updateRequests,
-                            () {
-                              Navigator.pushNamed(
-                                context,
-                                StringsRoute.updateRequestsUrl,
-                              );
-                            },
+                            () => Navigator.pushNamed(
+                                context, StringsRoute.updateRequestsUrl),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          contaierWidgets(
+                          containerWidget(
                             ImageStrings.eventicon,
                             StringConstant.events,
-                            () {
-                              Navigator.pushNamed(
-                                context,
-                                StringsRoute.eventListScreen,
-                              );
-                            },
+                            () => Navigator.pushNamed(
+                                context, StringsRoute.eventListScreen),
                           ),
-                          // SizedBox(width: 5),
-
-                          // contaierWidgets(
-                          //   ImageStrings.ritual,
-                          //   StringConstant.updateRequests,
-                          //   () {
-                          //     Navigator.pushNamed(
-                          //       context,
-                          //       StringsRoute.updateRequestsUrl,
-                          //     );
-                          //   },
-                          // ),
                         ],
                       ),
                     ],
@@ -192,7 +135,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Spacer(),
-        SizedBox(width: 20),
         Text(
           StringConstant.nammaDaivaSmall,
           style: AppTextStyles.appBarTitleStyle,
@@ -218,21 +160,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget templeNameText() {
-    return Text(
-      "Arulmigu Arunachaleswarar Temple",
-      style: AppTextStyles.templeNameStyle,
-      textAlign: TextAlign.center,
-    );
-  }
-
-  // 🔹 Container Widget
-  Widget contaierWidgets(String image, String title, Function()? onTap) {
+  // 🔹 Dashboard Container Button
+  Widget containerWidget(String image, String title, Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 156,
-        width: 170,
+        width: 150,
         decoration: BoxDecoration(
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
@@ -244,7 +178,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Image.asset(image, height: 60, width: 60),
               const SizedBox(height: 10),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   title,
                   style: AppTextStyles.templeNameStyle,
