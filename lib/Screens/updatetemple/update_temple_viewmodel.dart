@@ -22,6 +22,8 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeCity = TextEditingController();
   TextEditingController templeState = TextEditingController();
   TextEditingController templePincode = TextEditingController();
+  final TextEditingController templeController =
+      TextEditingController(); // ✅ add this
 
   TempleService templeService = TempleService();
   UserService userService = UserService();
@@ -31,6 +33,30 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   String message = "";
   List<String> images = [];
   TempleDetailsArguments? originalTempleData;
+
+  List<String> temples = [];
+
+  List<String> get prefilledTemples {
+    if (templeDeities.text.trim().isEmpty) return [];
+    return templeDeities.text.split(',').map((e) => e.trim()).toList();
+  }
+
+  void addTemple(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isNotEmpty && !temples.contains(trimmed)) {
+      temples.add(trimmed);
+      templeDeities.text = temples.join(', ');
+      notifyListeners();
+    }
+  }
+
+  void removeTemple(int index) {
+    if (index >= 0 && index < temples.length) {
+      temples.removeAt(index);
+      templeDeities.text = temples.join(', ');
+      notifyListeners();
+    }
+  }
 
   bool validateUpdateTemple() {
     final name = templeName.text.trim();
@@ -102,67 +128,67 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   List<String> uploadedImageUrls = [];
 
   Future<void> addImages(List<String> newImages) async {
-  try {
-    isLoading = true;
-    notifyListeners();
+    try {
+      isLoading = true;
+      notifyListeners();
 
-    final newXFiles = newImages.map((path) => XFile(path)).toList();
+      final newXFiles = newImages.map((path) => XFile(path)).toList();
 
-    final existingPaths = selectedImages.map((e) => e.path).toSet();
-    final uniqueNewXFiles =
-        newXFiles.where((file) => !existingPaths.contains(file.path)).toList();
+      final existingPaths = selectedImages.map((e) => e.path).toSet();
+      final uniqueNewXFiles = newXFiles
+          .where((file) => !existingPaths.contains(file.path))
+          .toList();
 
-    if (uniqueNewXFiles.isEmpty) {
-      debugPrint("⚠️ No new unique images to upload");
-      message = "Duplicate images skipped.";
+      if (uniqueNewXFiles.isEmpty) {
+        debugPrint("⚠️ No new unique images to upload");
+        message = "Duplicate images skipped.";
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      selectedImages.addAll(uniqueNewXFiles);
+      debugPrint(
+        "🖼 Selected Images (unique): ${selectedImages.map((e) => e.path).toList()}",
+      );
+
+      for (final file in uniqueNewXFiles) {
+        debugPrint("📤 Getting presigned URL for ${file.name}");
+        final response = await userService.presignedUrl(file.name, file.path);
+
+        if (response.url != null && response.url!.isNotEmpty) {
+          final presignedUrl = response.url!;
+          final uploadedUrl = await uploadToS3(presignedUrl, file);
+
+          if (uploadedUrl != null) {
+            // ✅ Avoid duplicates in uploadedImageUrls and images
+            if (!uploadedImageUrls.contains(uploadedUrl)) {
+              uploadedImageUrls.add(uploadedUrl);
+            }
+            if (!images.contains(uploadedUrl)) {
+              images.add(uploadedUrl);
+            }
+
+            debugPrint("✅ Uploaded: $uploadedUrl");
+            notifyListeners();
+          } else {
+            message = "Upload failed for ${file.name}";
+          }
+        } else {
+          message =
+              response.message ??
+              "Failed to get presigned URL for ${file.name}";
+        }
+      }
+    } catch (e, st) {
+      debugPrint("❌ Error while uploading images: $e");
+      debugPrint(st.toString());
+      message = "Unexpected error occurred: $e";
+    } finally {
       isLoading = false;
       notifyListeners();
-      return;
     }
-
-    selectedImages.addAll(uniqueNewXFiles);
-    debugPrint(
-      "🖼 Selected Images (unique): ${selectedImages.map((e) => e.path).toList()}",
-    );
-
-    for (final file in uniqueNewXFiles) {
-      debugPrint("📤 Getting presigned URL for ${file.name}");
-      final response = await userService.presignedUrl(file.name, file.path);
-
-      if (response.url != null && response.url!.isNotEmpty) {
-        final presignedUrl = response.url!;
-        final uploadedUrl = await uploadToS3(presignedUrl, file);
-
-        if (uploadedUrl != null) {
-          // ✅ Avoid duplicates in uploadedImageUrls and images
-          if (!uploadedImageUrls.contains(uploadedUrl)) {
-            uploadedImageUrls.add(uploadedUrl);
-          }
-          if (!images.contains(uploadedUrl)) {
-            images.add(uploadedUrl);
-          }
-
-          debugPrint("✅ Uploaded: $uploadedUrl");
-          notifyListeners();
-        } else {
-          message = "Upload failed for ${file.name}";
-        }
-      } else {
-        message =
-            response.message ??
-            "Failed to get presigned URL for ${file.name}";
-      }
-    }
-  } catch (e, st) {
-    debugPrint("❌ Error while uploading images: $e");
-    debugPrint(st.toString());
-    message = "Unexpected error occurred: $e";
-  } finally {
-    isLoading = false;
-    notifyListeners();
   }
-}
-
 
   void removeImage(int index) {
     if (index >= 0 && index < images.length) {
@@ -232,15 +258,6 @@ class UpdateTempleViewmodel extends ChangeNotifier {
         changes["architecture"] = templeArchitecture.text.trim();
       }
 
-      final newDeities = templeDeities.text
-          .trim()
-          .split(',')
-          .map((e) => e.trim())
-          .toList();
-      if (!listEquals(originalTempleData?.deities ?? [], newDeities)) {
-        changes["deities"] = newDeities;
-      }
-
       final oldImages = List<String>.from(originalTempleData?.images ?? []);
       final newImages = List<String>.from(images);
 
@@ -270,7 +287,11 @@ class UpdateTempleViewmodel extends ChangeNotifier {
           phoneNumber: templePhoneNumber.text.trim(),
           email: templeEmail.text.trim(),
           description: templeDescription.text.trim(),
-          deities: ["dsfsdf"],
+          deities: templeDeities.text
+              .split(',')
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList(),
           images: newImages,
         );
         final response = await templeService.updateTemplebyAdmin(
@@ -334,27 +355,26 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   }
 
   void reset() {
-  templeName.clear();
-  templeLocation.clear();
-  templeDescription.clear();
-  templePhoneNumber.clear();
-  templeEmail.clear();
-  templeDeities.clear();
-  templeArchitecture.clear();
-  templeCity.clear();
-  templeState.clear();
-  templePincode.clear();
+    templeName.clear();
+    templeLocation.clear();
+    templeDescription.clear();
+    templePhoneNumber.clear();
+    templeEmail.clear();
+    templeDeities.clear();
+    templeArchitecture.clear();
+    templeCity.clear();
+    templeState.clear();
+    templePincode.clear();
 
-  selectedImages.clear();
-  uploadedImageUrls.clear();
-  images.clear();
+    selectedImages.clear();
+    uploadedImageUrls.clear();
+    images.clear();
 
-  isLoading = false;
-  templeUpdated = false;
-  message = "";
-  originalTempleData = null;
+    isLoading = false;
+    templeUpdated = false;
+    message = "";
+    originalTempleData = null;
 
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 }

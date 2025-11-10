@@ -161,11 +161,12 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                             ),
                             titleTextWidget(StringConstant.deitiestemple),
                             const SizedBox(height: 8),
-                            CommonTextField(
-                              hintText: "",
-                              labelText: "",
-                              isFromPassword: false,
-                              controller: viewModel.templeDeities,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: TempleInputWidget(
+                                viewmodel: viewModel,
+                                isUpdateMode: true, // enables prefill
+                              ),
                             ),
                             titleTextWidget(StringConstant.templearchitecture),
                             const SizedBox(height: 8),

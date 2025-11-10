@@ -117,8 +117,8 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                     ),
                     SizedBox(height: 10),
                     Padding(
-                      padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
-                      child: TempleInputWidget(),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: TempleInputWidget(viewmodel: templeViewmodel),
                     ),
                     SizedBox(height: 10),
                     _buildImagePicker(),
