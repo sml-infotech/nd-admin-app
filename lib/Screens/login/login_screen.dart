@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   viewModel.message = '';
                 }
-              : null, // ✅ disables the button if invalid
+              : null, 
           style: ElevatedButton.styleFrom(
             backgroundColor: isButtonEnabled
                 ? ColorConstant.buttonColor

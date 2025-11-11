@@ -21,8 +21,8 @@ class StringConstant {
   static const String forgotPassword = "Forgot Password?";
   static const String welcomeBack = "Welcome";
   static const String nammaDaivaSmall = "Namma Daiva";
-  static const String templeDetailText = "Temple Details & History";
-  static const String sevaText = "Seva/Pooja Calendar";
+  static const String templeDetailText = "Temples";
+  static const String sevaText = "Seva/Pooja";
   static const String onlineSeva = "Online Seva & Harake Bookings";
   static const String createUser = "CreateUser";
   static const String createEvent = "Create Event";
@@ -51,7 +51,7 @@ class StringConstant {
 
   static const String deities = "Deities";
   static const String images = "Images";
-  static const String userDetails = "User Details";
+  static const String userDetails = "Users";
   static const String selectedRole = "Select Role";
   static const String role = "Role";
   static const String temples = "Temples";
@@ -91,9 +91,9 @@ class StringConstant {
   static const String updatePuja = "UpdatePuja";
   static const String search = "Search events...";
   static const String pujaList = "Pujas";
-    static const String dashboard = "DashBoard";
+  static const String dashboard = "DashBoard";
 
-  static const String updateRequests = "UpdateRequests";
+  static const String updateRequests = "Requests";
   static const String fee = "Fee: ";
   static const String addSevaAndPuja = "Add Seva / puja name";
   static const String slot = "Slot";

@@ -36,8 +36,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
         child: TextField(
           keyboardType: widget.isFromDescription == true
               ? TextInputType.multiline
-              : (widget.isFromPhone ?? false ? TextInputType.phone : TextInputType.text),
-          maxLines: widget.isFromDescription == true ? 5 : 1, 
+              : (widget.isFromPhone ?? false
+                    ? TextInputType.phone
+                    : TextInputType.text),
+          maxLines: widget.isFromDescription == true ? 5 : 1,
           inputFormatters: widget.isFromPhone == true
               ? [
                   FilteringTextInputFormatter.digitsOnly,
@@ -49,6 +51,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
           obscureText: widget.isFromPassword ? _obscureText : false,
           decoration: InputDecoration(
             hintText: widget.hintText,
+            alignLabelWithHint: true,
             labelText: widget.labelText,
             labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
             hintStyle: TextStyle(fontFamily: font, color: Colors.black),
