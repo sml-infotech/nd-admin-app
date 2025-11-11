@@ -42,6 +42,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   bool isLoading = false;
   bool isValid = false;
   bool pujaCreated = false;
+  String selectedCutoffOption = '1';
 
   int page = 1;
   final int limit = 10;
@@ -60,6 +61,9 @@ class CreatePujaViewmodel extends ChangeNotifier {
     "Sat": true,
     "Sun": true,
   };
+
+  List<String> cutOffDays = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  int? cutOffDay;
 
   List<TimeSlot> timeSlots = [];
 
@@ -225,7 +229,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         int.parse(maxDevotees.text),
         double.parse(fee.text),
         uploadedImageUrls,
-        2,
+        cutOffDay ?? 1,
         specialReq,
         selectedStartDate.toString(),
         selectedEndDate.toString(),

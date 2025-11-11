@@ -105,9 +105,8 @@ class StringConstant {
   static const String duration = "Duration";
   static const String cost = "Enter Cost";
   static const String fees = "Fees";
-  static const String maxDevote =
-      "Enter the maximum devotees allowed for puja / seva";
-  static const String maxNoDevote = "Maximum number of Devotees";
+  static const String maxDevote = "devotees ";
+  static const String maxNoDevote = "number of Devotees";
   static const String uploadText = "Upload Image ";
   static const String uploadImageSeva = "Upload Images";
   static const String cutOffText = "Booking Cutoff / Notice";
@@ -119,6 +118,7 @@ class StringConstant {
   static const String noPujaAvailable = "No pujas available";
   static const String deitiesText = "Deities: ";
   static const String descriptionText = "Description : ";
+  static const String cutOffNoticeText="Select Cut-off Notice";
   static const String from = "From: ";
   static const String to = "To: ";
   static const String active = "Active";
