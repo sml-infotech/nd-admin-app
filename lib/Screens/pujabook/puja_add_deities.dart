@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 
 class DeitiesDropdown extends StatefulWidget {
-  final List<String> items; // all deities
-  final List<String> selectedItems; // selected deities
+  final List<String> items; // All deities list
+  final List<String> selectedItems; // Currently selected deities
   final ValueChanged<List<String>> onSelectionChanged;
   final double paddingSize;
 
@@ -21,24 +21,188 @@ class DeitiesDropdown extends StatefulWidget {
 
 class _DeitiesDropdownState extends State<DeitiesDropdown> {
   late List<String> _selectedItems;
-  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
     _selectedItems = List.from(widget.selectedItems);
   }
+
   @override
   void didUpdateWidget(covariant DeitiesDropdown oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedItems != oldWidget.selectedItems) {
-      setState(() {
-        _selectedItems = List.from(widget.selectedItems);
-      });
+      _selectedItems = List.from(widget.selectedItems);
     }
   }
-  void _toggleDropdown() {
-    setState(() => _isExpanded = !_isExpanded);
+
+  Future<void> _showDeitiesBottomSheet() async {
+    List<String> tempSelected = List.from(_selectedItems);
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: StatefulBuilder(
+          builder: (context, setBottomSheetState) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  barWidget(),
+                  selectDietiesText(),
+                  const SizedBox(height: 8),
+                  Divider(color: Colors.grey[300]),
+                  const SizedBox(height: 8),
+                  if (widget.items.isEmpty) emptyText(),
+                  if (widget.items.isNotEmpty)
+                    deitiesCheckbox(tempSelected, setBottomSheetState),
+                  if (widget.items.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Column(
+                      children: [
+                        okButton(tempSelected),
+                        const SizedBox(height: 8),
+                        cancelButton(),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget barWidget() {
+    return Container(
+      height: 5,
+      width: 40,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.grey[400],
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+
+  Widget emptyText() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        StringConstant.selectDeities,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontFamily: font, color: Colors.black87, fontSize: 14),
+      ),
+    );
+  }
+
+  Widget selectDietiesText() {
+    return Text(
+      "Select Deities",
+      style: TextStyle(
+        fontFamily: font,
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget deitiesCheckbox(
+    List<String> tempSelected,
+    Function setBottomSheetState,
+  ) {
+    return Flexible(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: widget.items.length,
+        itemBuilder: (context, index) {
+          final deity = widget.items[index];
+          final isSelected = tempSelected.contains(deity);
+
+          return CheckboxListTile(
+            value: isSelected,
+            title: Text(
+              deity,
+              style: TextStyle(fontFamily: font, color: Colors.black),
+            ),
+            activeColor: ColorConstant.primaryColor,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (checked) {
+              setBottomSheetState(() {
+                if (checked == true) {
+                  tempSelected.add(deity);
+                } else {
+                  tempSelected.remove(deity);
+                }
+              });
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget okButton(List<String> tempSelected) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _selectedItems = List.from(tempSelected);
+          });
+          widget.onSelectionChanged(_selectedItems);
+          Navigator.pop(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.primaryColor,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text(
+          "OK",
+          style: TextStyle(
+            fontFamily: font,
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget cancelButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: () => Navigator.pop(context),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: ColorConstant.primaryColor),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text(
+          "Cancel",
+          style: TextStyle(
+            fontFamily: font,
+            color: ColorConstant.primaryColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -48,6 +212,7 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Label
           Text(
             "Deities",
             style: TextStyle(
@@ -58,15 +223,16 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
             ),
           ),
           const SizedBox(height: 8),
+
+          // Dropdown-style display
           GestureDetector(
-            onTap: _toggleDropdown,
+            onTap: _showDeitiesBottomSheet,
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
               decoration: BoxDecoration(
-
-                borderRadius: BorderRadius.circular(13), 
-                border: Border.all(color:Colors.grey,),
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(color: Colors.grey.shade400),
                 color: Colors.white,
               ),
               child: Row(
@@ -112,54 +278,11 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
                                 .toList(),
                     ),
                   ),
-                  Icon(
-                    _isExpanded
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
+                  const Icon(
+                    Icons.keyboard_arrow_down_rounded,
                     color: ColorConstant.primaryColor,
                   ),
                 ],
-              ),
-            ),
-          ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            height: _isExpanded ? 180 : 0,
-            margin: const EdgeInsets.only(top: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: ColorConstant.primaryColor),
-              color: Colors.white,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(13),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                itemCount: widget.items.length,
-                itemBuilder: (context, index) {
-                  final deity = widget.items[index];
-                  final isSelected = _selectedItems.contains(deity);
-                  return CheckboxListTile(
-                    value: isSelected,
-                    title: Text(
-                      deity,
-                      style: TextStyle(fontFamily: font, color: Colors.black),
-                    ),
-                    activeColor: ColorConstant.primaryColor,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (checked) {
-                      setState(() {
-                        if (checked == true) {
-                          _selectedItems.add(deity);
-                        } else {
-                          _selectedItems.remove(deity);
-                        }
-                        widget.onSelectionChanged(_selectedItems);
-                      });
-                    },
-                  );
-                },
               ),
             ),
           ),

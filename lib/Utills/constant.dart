@@ -37,6 +37,8 @@ class StringConstant {
   static const String templeDetail = "Temples Details";
   static const String edit = "Edit";
   static const String phone = "Phone";
+  static const String selectDeities =
+      "Select the temple first to view deities.";
 
   static const String email = "Email";
   static const String verificationCode = "Enter Verification code";
