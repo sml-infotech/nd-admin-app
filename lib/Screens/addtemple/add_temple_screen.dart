@@ -52,7 +52,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 physics: const ClampingScrollPhysics(),
                 child: Column(
                   spacing: 15,
@@ -196,7 +196,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
     return Consumer<AddTempleViewmodel>(
       builder: (context, templeViewmodel, child) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: SizedBox(
             width: double.infinity,
             height: 50,

@@ -32,6 +32,12 @@ class _PujaListState extends State<PujaList> {
     _scrollController.addListener(_scrollListener);
   }
 
+  @override
+  void dispose() {
+    viewmodel.reset();
+    super.dispose();
+  }
+
   void _scrollListener() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
@@ -81,35 +87,9 @@ class _PujaListState extends State<PujaList> {
                           Row(
                             children: [
                               Expanded(flex: 1, child: _buildTempleDropdown()),
-                              IconButton(
-                                iconSize: 20,
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    StringsRoute.addPuja,
-                                    arguments: PujaArguments(
-                                      puja_id: '',
-                                      puja_name: '',
-                                      description: '',
-                                      maximumNoOfDevotees: 0,
-                                      fee: 0,
-                                      booking_cutoff_notice: '',
-                                      allows_special_requirements: true,
-                                      from_date: '',
-                                      to_date: '',
-                                      days: [],
-                                      deities_name: [],
-                                      sample_images: [],
-                                      templeId: "",
-                                      timeSlots: [],
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
                             ],
                           ),
-                        if (viewmodel.pujaList.isEmpty)
+                        if (viewmodel.pujaList.isEmpty && !viewmodel.isLoading)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -170,7 +150,32 @@ class _PujaListState extends State<PujaList> {
           const Spacer(),
           Text(StringConstant.pujaList, style: AppTextStyles.appBarTitleStyle),
           const Spacer(),
-          const SizedBox(width: 48),
+          IconButton(
+            iconSize: 20,
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                StringsRoute.addPuja,
+                arguments: PujaArguments(
+                  puja_id: '',
+                  puja_name: '',
+                  description: '',
+                  maximumNoOfDevotees: 0,
+                  fee: 0,
+                  booking_cutoff_notice: '',
+                  allows_special_requirements: true,
+                  from_date: '',
+                  to_date: '',
+                  days: [],
+                  deities_name: [],
+                  sample_images: [],
+                  templeId: "",
+                  timeSlots: [],
+                ),
+              );
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+          ),
         ],
       ),
     );

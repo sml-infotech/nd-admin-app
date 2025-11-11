@@ -23,7 +23,9 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
     // Prefill existing temples if in update mode
     if (widget.isUpdateMode && widget.viewmodel.prefilledTemples != null) {
       // assuming your UpdateTempleViewmodel has a List<String> prefilledTemples
-      widget.viewmodel.temples = List<String>.from(widget.viewmodel.prefilledTemples);
+      widget.viewmodel.temples = List<String>.from(
+        widget.viewmodel.prefilledTemples,
+      );
     }
   }
 
@@ -70,9 +72,7 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
           ),
           onSubmitted: (_) => _addTemple(),
         ),
-
-        const SizedBox(height: 15),
-
+        if (vm.temples.isNotEmpty) ...[const SizedBox(height: 15)],
         Wrap(
           alignment: WrapAlignment.start,
           spacing: 8,

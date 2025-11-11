@@ -25,14 +25,16 @@ class MultiImagePickerSection extends StatelessWidget {
     if (status.isGranted || storageStatus.isGranted) {
       // ✅ Permission granted → trigger image picker
       await onAddImages();
-    } else if (status.isPermanentlyDenied || storageStatus.isPermanentlyDenied) {
+    } else if (status.isPermanentlyDenied ||
+        storageStatus.isPermanentlyDenied) {
       // ⚠️ Permanently denied → show alert with settings option
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Permission Required'),
           content: const Text(
-              'Please enable photo or storage access in settings to upload images.'),
+            'Please enable photo or storage access in settings to upload images.',
+          ),
           actions: [
             TextButton(
               onPressed: () => openAppSettings(),
@@ -58,8 +60,9 @@ class MultiImagePickerSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Column(
+        spacing: 0,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -73,7 +76,7 @@ class MultiImagePickerSection extends StatelessWidget {
             onTap: () => _handleAddImages(context),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.circular(12),
@@ -109,10 +112,18 @@ class MultiImagePickerSection extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: isNetwork
-                            ? Image.network(path,
-                                width: 100, height: 100, fit: BoxFit.cover)
-                            : Image.file(File(path),
-                                width: 100, height: 100, fit: BoxFit.cover),
+                            ? Image.network(
+                                path,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                File(path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       Positioned(
                         top: 5,
@@ -126,8 +137,11 @@ class MultiImagePickerSection extends StatelessWidget {
                             ),
                             child: const Padding(
                               padding: EdgeInsets.all(4.0),
-                              child: Icon(Icons.close,
-                                  size: 18, color: Colors.white),
+                              child: Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
