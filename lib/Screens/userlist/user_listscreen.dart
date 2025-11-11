@@ -202,7 +202,6 @@ class _UserListScreenState extends State<UserListScreen> {
   ) {
     final bool canEdit = role != "Admin" && user.role != "Super Admin";
     final bool isActive = user.isActive;
-    final Color roleColor = _getRoleColor(user.role);
     final Color statusColor = isActive ? Colors.green : Colors.redAccent;
 
     return Stack(
@@ -294,32 +293,13 @@ class _UserListScreenState extends State<UserListScreen> {
                   ],
                 ),
                 child: const Center(
-                  child: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 16, 
-                  ),
+                  child: Icon(Icons.edit, color: Colors.white, size: 16),
                 ),
               ),
             ),
           ),
       ],
     );
-  }
-
-  Color _getRoleColor(String role) {
-    switch (role.toLowerCase()) {
-      case 'admin':
-        return Colors.deepPurple;
-      case 'super admin':
-        return Colors.redAccent;
-      case 'agent':
-        return Colors.blue;
-      case 'temple':
-        return Colors.teal;
-      default:
-        return Colors.grey;
-    }
   }
 
   Widget _buildUserDetails(UserModel user) {

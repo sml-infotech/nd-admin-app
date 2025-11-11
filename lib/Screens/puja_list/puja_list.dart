@@ -83,12 +83,11 @@ class _PujaListState extends State<PujaList> {
                     child: Column(
                       children: [
                         const SizedBox(height: 15),
-                        if (viewmodel.templeData.isNotEmpty)
-                          Row(
-                            children: [
-                              Expanded(flex: 1, child: _buildTempleDropdown()),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Expanded(flex: 1, child: _buildTempleDropdown()),
+                          ],
+                        ),
                         if (viewmodel.pujaList.isEmpty && !viewmodel.isLoading)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -292,7 +291,7 @@ class _PujaListState extends State<PujaList> {
             topRight: Radius.circular(24),
           ),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         child: ListView.separated(
           itemCount: 6,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
