@@ -23,7 +23,7 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   final Map<String, bool> expandedMap = {};
   final ScrollController _scrollController = ScrollController();
-  late UserViewModel viewModel; // ✅ Cached safely
+  late UserViewModel viewModel;
 
   bool _isLoadingMore = false;
   String? token;
@@ -32,18 +32,13 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void initState() {
     super.initState();
-
-    /// ✅ Initialize the viewModel safely before first frame
     viewModel = context.read<UserViewModel>();
-
-    /// Fetch initial data after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadUserData();
       await viewModel.getTemples();
       await viewModel.getUsers(reset: true);
     });
 
-    /// Infinite scroll listener
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -71,7 +66,7 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    viewModel.resetData(); // ✅ Direct safe call (no context)
+    viewModel.resetData();
     debugPrint("🧹 User screen disposed & ViewModel reset.");
     super.dispose();
   }
@@ -151,20 +146,42 @@ class _UserListScreenState extends State<UserListScreen> {
           if (index < viewModel.userData.length) {
             final user = viewModel.userData[index];
             final isExpanded = expandedMap[user.id] ?? false;
-            return Card(
-              elevation: 1,
-              color: user.role == "Super Admin"
-                  ? Colors.blueGrey
-                  : Colors.white,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.white.withOpacity(0.5)),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  _buildUserTile(user, isExpanded, viewModel),
-                  if (isExpanded) _buildUserDetails(user),
-                ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
+                child: Column(
+                  children: [
+                    _buildUserTile(user, isExpanded, viewModel),
+                    if (isExpanded)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(16),
+                          ),
+                        ),
+                        child: _buildUserDetails(user),
+                      ),
+                  ],
+                ),
               ),
             );
           }
@@ -183,44 +200,134 @@ class _UserListScreenState extends State<UserListScreen> {
     bool isExpanded,
     UserViewModel viewModel,
   ) {
-    print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<${role}");
-    return ListTile(
-      title: Text(user.fullName, style: AppTextStyles.resendCodeStyle),
-      subtitle: Text(user.email, style: AppTextStyles.unTabTextStyle),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (role != "Admin" && user.role != "Super Admin")
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black54),
-              onPressed: () => _showEditBottomSheet(user, viewModel),
-            ),
-          IconButton(
-            icon: Icon(
-              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-              color: Colors.black54,
-            ),
-            onPressed: () {
-              setState(() {
-                expandedMap[user.id] = !isExpanded;
-              });
-            },
+    final bool canEdit = role != "Admin" && user.role != "Super Admin";
+    final bool isActive = user.isActive;
+    final Color roleColor = _getRoleColor(user.role);
+    final Color statusColor = isActive ? Colors.green : Colors.redAccent;
+
+    return Stack(
+      children: [
+        // === Main ListTile ===
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
           ),
-        ],
-      ),
+          title: Text(
+            user.fullName,
+            style: AppTextStyles.resendCodeStyle.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: isActive ? Colors.black : Colors.grey,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 2),
+              Text(
+                user.email,
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                user.phoneNumber,
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? roleColor.withOpacity(0.15)
+                          : Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      user.role,
+                      style: TextStyle(
+                        fontFamily: font,
+                        fontSize: 12,
+                        color: isActive ? roleColor : Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      isActive ? "Active" : "Inactive",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: statusColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        if (canEdit)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: const Icon(Icons.edit, color: Colors.black54, size: 20),
+              onPressed: () => _showEditBottomSheet(user, viewModel),
+              splashRadius: 20,
+            ),
+          ),
+      ],
     );
+  }
+
+  Color _getRoleColor(String role) {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return Colors.deepPurple;
+      case 'super admin':
+        return Colors.redAccent;
+      case 'agent':
+        return Colors.blue;
+      case 'temple':
+        return Colors.teal;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildUserDetails(UserModel user) {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Role: ${user.role}",
+              "Contact: ${user.phoneNumber}",
               style: AppTextStyles.templeNameDetailsStyle,
             ),
             if (user.role.toLowerCase() == 'agent' ||
@@ -229,18 +336,6 @@ class _UserListScreenState extends State<UserListScreen> {
                 "Associated Temple: ${user.associatedTemples.map((t) => t.name).join(', ')}",
                 style: AppTextStyles.templeNameDetailsStyle,
               ),
-            Text(
-              "Active: ${user.isActive ? "Yes" : "No"}",
-              style: TextStyle(
-                fontFamily: font,
-                fontSize: 16,
-                color: user.isActive ? Colors.green : Colors.red,
-              ),
-            ),
-            Text(
-              "Created At: ${_formatDate(user.createdAt ?? user.updatedAt)}",
-              style: AppTextStyles.templeNameDetailsStyle,
-            ),
           ],
         ),
       ),

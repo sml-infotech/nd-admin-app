@@ -425,11 +425,13 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             children: [cutOffText(), cutOffDropDown()],
           ),
         ),
-
-        CheckBoxRow(
-          label: StringConstant.specialReq,
-          value: viewmodel.specialReq,
-          onChanged: (v) => setState(() => viewmodel.specialReq = v!),
+        Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(8, 0, 20, 0),
+          child: CheckBoxRow(
+            label: StringConstant.specialReq,
+            value: viewmodel.specialReq,
+            onChanged: (v) => setState(() => viewmodel.specialReq = v!),
+          ),
         ),
       ],
     );

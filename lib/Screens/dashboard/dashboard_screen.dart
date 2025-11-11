@@ -119,7 +119,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           containerWidget(
-                            ImageStrings.eventicon,
+                            ImageStrings.wowtracker,
                             StringConstant.events,
                             () => Navigator.pushNamed(
                               context,

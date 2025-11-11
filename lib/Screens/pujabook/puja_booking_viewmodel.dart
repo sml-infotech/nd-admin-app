@@ -368,6 +368,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
     uploadedImageUrls.clear();
     selectedDays.clear();
+    cutOffDay = 1;
   }
 
   void setSelectedTemple(Temple temple) {
