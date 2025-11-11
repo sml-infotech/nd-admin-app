@@ -207,7 +207,6 @@ class _UserListScreenState extends State<UserListScreen> {
 
     return Stack(
       children: [
-        // === Main ListTile ===
         ListTile(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -224,9 +223,16 @@ class _UserListScreenState extends State<UserListScreen> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                "${StringConstant.role} : ${user.role}",
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
               const SizedBox(height: 2),
               Text(
-                user.email,
+                "${StringConstant.email} : ${user.email}",
                 style: AppTextStyles.unTabTextStyle.copyWith(
                   fontSize: 13,
                   color: isActive ? Colors.black54 : Colors.grey,
@@ -234,7 +240,7 @@ class _UserListScreenState extends State<UserListScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                user.phoneNumber,
+                "${StringConstant.phone} : ${user.phoneNumber}",
                 style: AppTextStyles.unTabTextStyle.copyWith(
                   fontSize: 13,
                   color: isActive ? Colors.black54 : Colors.grey,
@@ -243,28 +249,6 @@ class _UserListScreenState extends State<UserListScreen> {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? roleColor.withOpacity(0.15)
-                          : Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      user.role,
-                      style: TextStyle(
-                        fontFamily: font,
-                        fontSize: 12,
-                        color: isActive ? roleColor : Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -291,12 +275,32 @@ class _UserListScreenState extends State<UserListScreen> {
 
         if (canEdit)
           Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black54, size: 20),
-              onPressed: () => _showEditBottomSheet(user, viewModel),
-              splashRadius: 20,
+            top: 6,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => _showEditBottomSheet(user, viewModel),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                    size: 16, 
+                  ),
+                ),
+              ),
             ),
           ),
       ],
