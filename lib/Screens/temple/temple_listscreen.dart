@@ -69,7 +69,7 @@ class _TempleScreenState extends State<TempleScreen> {
             await viewModel?.resetAndFetch();
           },
           child: Scaffold(
-            backgroundColor: ColorConstant.buttonColor,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: ColorConstant.buttonColor,

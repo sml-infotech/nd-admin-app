@@ -41,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
@@ -89,32 +89,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ImageStrings.templeImage,
                             StringConstant.templeDetailText,
                             () => Navigator.pushNamed(
-                                context, StringsRoute.templeScreen),
+                              context,
+                              StringsRoute.templeScreen,
+                            ),
                           ),
                           containerWidget(
                             ImageStrings.sevaimg,
                             StringConstant.sevaText,
                             () => Navigator.pushNamed(
-                                context, StringsRoute.pujaList),
+                              context,
+                              StringsRoute.pujaList,
+                            ),
                           ),
                           if (role == "Super Admin" || role == "Admin")
                             containerWidget(
                               ImageStrings.onlineseva,
                               StringConstant.userDetails,
                               () => Navigator.pushNamed(
-                                  context, StringsRoute.userDetails),
+                                context,
+                                StringsRoute.userDetails,
+                              ),
                             ),
                           containerWidget(
                             ImageStrings.ritual,
                             StringConstant.updateRequests,
                             () => Navigator.pushNamed(
-                                context, StringsRoute.updateRequestsUrl),
+                              context,
+                              StringsRoute.updateRequestsUrl,
+                            ),
                           ),
                           containerWidget(
                             ImageStrings.eventicon,
                             StringConstant.events,
                             () => Navigator.pushNamed(
-                                context, StringsRoute.eventListScreen),
+                              context,
+                              StringsRoute.eventListScreen,
+                            ),
                           ),
                         ],
                       ),
@@ -134,6 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(height: 24, width: 24),
         const Spacer(),
         Text(
           StringConstant.nammaDaivaSmall,
@@ -141,6 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const Spacer(),
         IconButton(
+          padding: EdgeInsets.all(0),
           icon: Image.asset(ImageStrings.logout),
           onPressed: () async {
             await deleteToken();

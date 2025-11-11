@@ -33,7 +33,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
               await viewModel.getTemples(reset: true);
             },
             child: Scaffold(
-              backgroundColor: ColorConstant.buttonColor,
+              backgroundColor: Colors.white,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 backgroundColor: ColorConstant.buttonColor,

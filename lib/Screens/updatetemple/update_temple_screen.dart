@@ -59,7 +59,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel = Provider.of<UpdateTempleViewmodel>(context);
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: ColorConstant.buttonColor,

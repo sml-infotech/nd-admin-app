@@ -165,7 +165,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(),
       body: GestureDetector(
         onTap: () {

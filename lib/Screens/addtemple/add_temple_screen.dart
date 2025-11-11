@@ -28,7 +28,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
     templeViewmodel = Provider.of<AddTempleViewmodel>(context);
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: ColorConstant.buttonColor,

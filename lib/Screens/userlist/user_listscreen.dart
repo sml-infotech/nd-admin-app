@@ -85,12 +85,10 @@ class _UserListScreenState extends State<UserListScreen> {
         return FocusDetector(
           onFocusGained: () async {
             viewModel.resetData();
-            await viewModel.getUsers(reset: true);
+            // await viewModel.getUsers(reset: true);
           },
           child: Scaffold(
-            backgroundColor: viewModel.isLoading
-                ? Colors.white
-                : ColorConstant.buttonColor,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: ColorConstant.buttonColor,
@@ -101,7 +99,6 @@ class _UserListScreenState extends State<UserListScreen> {
                 ? _buildFullShimmerList()
                 : Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.02),
                       Expanded(child: _buildUserList(viewModel)),
                     ],
                   ),

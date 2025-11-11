@@ -100,7 +100,7 @@ class _CreateEventState extends State<CreateEvent> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: ColorConstant.buttonColor,
+          backgroundColor: Colors.white,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: ColorConstant.buttonColor,

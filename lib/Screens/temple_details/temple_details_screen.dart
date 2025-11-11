@@ -48,7 +48,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: ColorConstant.buttonColor,
@@ -56,19 +56,12 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
+
                 child: Column(
                   children: [
                     carouselWidget(),
@@ -226,7 +219,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
       items: widget.arguments.images
           .map(
             (image) => ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(0),
               child: Image.network(
                 image,
                 fit: BoxFit.fill,

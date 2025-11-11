@@ -91,7 +91,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             await vm.fetchUpdateRequests(reset: true);
           },
           child: Scaffold(
-            backgroundColor: ColorConstant.buttonColor,
+            backgroundColor: Colors.white,
             appBar: _buildAppBar(context),
             body: Stack(
               children: [

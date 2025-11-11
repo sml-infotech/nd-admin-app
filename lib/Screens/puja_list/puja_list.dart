@@ -57,7 +57,7 @@ class _PujaListState extends State<PujaList> {
         await viewmodel.fetchPujas(reset: true);
       },
       child: Scaffold(
-        backgroundColor: ColorConstant.buttonColor,
+        backgroundColor: Colors.white,
         appBar: _buildAppBar(),
         body: Stack(
           children: [
