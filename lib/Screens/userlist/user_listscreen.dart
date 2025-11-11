@@ -84,8 +84,8 @@ class _UserListScreenState extends State<UserListScreen> {
       builder: (context, viewModel, _) {
         return FocusDetector(
           onFocusGained: () async {
-            viewModel.resetData();
-            // await viewModel.getUsers(reset: true);
+            // viewModel.resetData();
+            await viewModel.getUsers(reset: true);
           },
           child: Scaffold(
             backgroundColor: Colors.white,
@@ -98,9 +98,7 @@ class _UserListScreenState extends State<UserListScreen> {
             body: viewModel.isLoading && viewModel.page == 1
                 ? _buildFullShimmerList()
                 : Column(
-                    children: [
-                      Expanded(child: _buildUserList(viewModel)),
-                    ],
+                    children: [Expanded(child: _buildUserList(viewModel))],
                   ),
           ),
         );
@@ -144,13 +142,7 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget _buildUserList(UserViewModel viewModel) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       padding: const EdgeInsets.all(16),
       child: ListView.builder(
         controller: _scrollController,
@@ -161,7 +153,9 @@ class _UserListScreenState extends State<UserListScreen> {
             final isExpanded = expandedMap[user.id] ?? false;
             return Card(
               elevation: 1,
-              color: Colors.white,
+              color: user.role == "Super Admin"
+                  ? Colors.blueGrey
+                  : Colors.white,
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: Colors.white.withOpacity(0.5)),
                 borderRadius: BorderRadius.circular(12),
@@ -189,13 +183,14 @@ class _UserListScreenState extends State<UserListScreen> {
     bool isExpanded,
     UserViewModel viewModel,
   ) {
+    print(">>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<${role}");
     return ListTile(
       title: Text(user.fullName, style: AppTextStyles.resendCodeStyle),
       subtitle: Text(user.email, style: AppTextStyles.unTabTextStyle),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (role != "Admin")
+          if (role != "Admin" && user.role != "Super Admin")
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.black54),
               onPressed: () => _showEditBottomSheet(user, viewModel),

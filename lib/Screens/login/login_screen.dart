@@ -46,7 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       loginImage(),
                       const SizedBox(height: 25),
                       loginText(),
+                      const SizedBox(height: 0),
+                      dashBoardText(),
                       const SizedBox(height: 25),
+
                       CommonTextField(
                         hintText: StringConstant.enterUserName,
                         labelText: StringConstant.userName,
@@ -165,6 +168,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Text(
       StringConstant.nammDaivaTitleText,
       style: AppTextStyles.loginTitleStyle,
+    );
+  }
+
+  Widget dashBoardText() {
+    return Text(
+      StringConstant.dashboard,
+      style: AppTextStyles.loginSubTitleStyle,
     );
   }
 

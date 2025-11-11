@@ -354,7 +354,6 @@ class _CreateEventState extends State<CreateEvent> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-
                 final isValid = await viewmodel.validateEvent(false);
                 if (!isValid) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");

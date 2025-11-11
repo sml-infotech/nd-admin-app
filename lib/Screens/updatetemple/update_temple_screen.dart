@@ -261,7 +261,10 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                 await viewModel.updateTemple(widget.arguments.templeId);
                 Fluttertoast.showToast(msg: viewModel.message);
                 if (viewModel.templeUpdated) {
-                  Navigator.pop(context);
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName(StringsRoute.templeScreen),
+                  );
                   viewModel.reset();
                   viewModel.templeUpdated = false;
                 }
