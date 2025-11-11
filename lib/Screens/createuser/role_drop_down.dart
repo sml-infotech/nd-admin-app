@@ -45,13 +45,11 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
   void didUpdateWidget(CommonDropdownField oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Sync single select
     if (widget.selectedValue != oldWidget.selectedValue &&
         widget.selectedValue != _currentValue) {
       setState(() => _currentValue = widget.selectedValue);
     }
 
-    // Sync multi select
     if (widget.selectedIds != oldWidget.selectedIds &&
         widget.selectedIds != _selectedIds) {
       setState(() => _selectedIds = widget.selectedIds ?? []);
@@ -75,6 +73,7 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: widget.labelText,
+                  alignLabelWithHint: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
                     borderSide:
@@ -103,52 +102,120 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                 ),
               ),
             )
-          : DropdownButtonFormField<String>(
-              isExpanded: true,
-              value: _currentValue,
-              onChanged: (value) {
-                setState(() => _currentValue = value);
-                widget.onChanged?.call(value);
-              },
-              style: TextStyle(
-                fontFamily: font,
-                color: Colors.black,
-                fontSize: 15,
-              ),
-              decoration: InputDecoration(
-                labelText: widget.labelText,
-                hintText: widget.hintText,
-                labelStyle: TextStyle(fontFamily: font, color: Colors.black),
-                hintStyle: TextStyle(fontFamily: font, color: Colors.black),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide:
-                      const BorderSide(color: ColorConstant.primaryColor),
+
+          /// ✅ Single Select: Bottom Sheet Dropdown
+          : InkWell(
+              onTap: _showBottomSheetDropdown,
+              borderRadius: BorderRadius.circular(13),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: widget.labelText,
+                  alignLabelWithHint: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(13),
+                    borderSide:
+                        const BorderSide(color: ColorConstant.primaryColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(13),
+                    borderSide:
+                        const BorderSide(color: ColorConstant.primaryColor),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                  suffixIcon: const Icon(Icons.arrow_drop_down,
+                      color: Colors.black),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide:
-                      const BorderSide(color: ColorConstant.primaryColor),
+                child: Text(
+                  _currentValue ?? widget.hintText,
+                  style: TextStyle(
+                    fontFamily: font,
+                    color: _currentValue == null
+                        ? Colors.grey[600]
+                        : Colors.black,
+                    fontSize: 15,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
               ),
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-              dropdownColor: Colors.white,
-              items: widget.items
-                  .whereType<String>()
-                  .map(
-                    (e) => DropdownMenuItem<String>(
-                      value: e,
-                      child: Text(e, style: TextStyle(fontFamily: font)),
-                    ),
-                  )
-                  .toList(),
             ),
     );
   }
 
-  /// Multi-select popup
+  /// ✅ Single-select Bottom Sheet
+  void _showBottomSheetDropdown() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                height: 5,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                widget.labelText,
+                style: TextStyle(
+                  fontFamily: font,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Divider(),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.items.length,
+                  itemBuilder: (context, index) {
+                    final item = widget.items[index];
+                    final name = item.toString();
+                    final isSelected = _currentValue == name;
+
+                    return ListTile(
+                      title: Text(
+                        name,
+                        style: TextStyle(
+                          fontFamily: font,
+                          fontSize: 15,
+                          color: isSelected
+                              ? ColorConstant.primaryColor
+                              : Colors.black,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check,
+                              color: ColorConstant.primaryColor)
+                          : null,
+                      onTap: () {
+                        setState(() => _currentValue = name);
+                        widget.onChanged?.call(name);
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// ✅ Multi-select dialog (unchanged)
   void _showMultiSelectDialog() async {
     final List<String> tempSelectedIds = List.from(_selectedIds);
 
