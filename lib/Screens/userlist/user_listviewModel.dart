@@ -179,7 +179,7 @@ class UserViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final response = await templeService.getTemples(page: 1, limit: 10);
+    final response = await templeService.getTemples(page: 1, limit: 50);
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
@@ -193,7 +193,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> updateValidate(String fullName, ) async {
+  Future<bool> updateValidate(String fullName) async {
     if (fullName.isEmpty) {
       message = "Please fill FullName";
       return false;

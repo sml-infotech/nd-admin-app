@@ -262,6 +262,7 @@ class _UserListScreenState extends State<UserListScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         color: statusColor,
+                        fontFamily: font,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -355,8 +356,10 @@ class _UserListScreenState extends State<UserListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return FractionallySizedBox(
-          heightFactor: 0.95,
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return SizedBox(
+          height: screenHeight / 1.5,
           child: Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,

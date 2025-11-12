@@ -138,7 +138,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 🔹 AppBar
   Widget nammaDaivaAppBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -162,7 +161,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 🔹 Text Widgets
   Widget welcomeText() {
     return Text(
       StringConstant.welcomeBack,
@@ -171,13 +169,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 🔹 Dashboard Container Button
   Widget containerWidget(String image, String title, Function()? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 156,
-        width: 175,
+        width: 165,
         decoration: BoxDecoration(
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
