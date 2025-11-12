@@ -76,10 +76,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   child: IntrinsicHeight(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-
                       children: [
                         backbutton(),
-
                         const SizedBox(height: 100),
                         otpTitle(),
                         const SizedBox(height: 20),

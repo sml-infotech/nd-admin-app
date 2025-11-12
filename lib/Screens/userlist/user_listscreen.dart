@@ -283,20 +283,7 @@ class _UserListScreenState extends State<UserListScreen> {
               child: Container(
                 height: 30,
                 width: 30,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Icon(Icons.edit, color: Colors.white, size: 16),
-                ),
+                child: Center(child: Image.asset(ImageStrings.edit)),
               ),
             ),
           ),

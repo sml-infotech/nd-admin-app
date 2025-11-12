@@ -53,6 +53,7 @@ flutter:
     - assets/otpimage.png
     - assets/calendar.png
     - assets/uploadimg.png
+    - assets/edit.png
 
   fonts:
     - family: Nunito
