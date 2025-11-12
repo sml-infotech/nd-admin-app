@@ -6,15 +6,27 @@ class OtpInputField extends StatefulWidget {
 
   const OtpInputField({super.key, required this.onChanged});
 
+  void clearOtp(GlobalKey<OtpInputFieldState> key) {
+    key.currentState?.clearFields();
+  }
+
   @override
-  State<OtpInputField> createState() => _OtpInputFieldState();
+  State<OtpInputField> createState() => OtpInputFieldState();
 }
 
-class _OtpInputFieldState extends State<OtpInputField> {
+class OtpInputFieldState extends State<OtpInputField> {
   final int length = 4;
 
   late List<FocusNode> _focusNodes;
   late List<TextEditingController> _controllers;
+
+void clearFields() {
+  for (var c in _controllers) {
+    c.clear();
+  }
+  _focusNodes[0].requestFocus();
+  widget.onChanged(""); // reset parent value
+}
 
   @override
   void initState() {

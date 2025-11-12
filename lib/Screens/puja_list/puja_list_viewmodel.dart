@@ -151,6 +151,7 @@ class PujaListViewmodel extends ChangeNotifier {
     templeId = '';
     message = '';
     isActive = false;
+    print(">-------->>>>>");
     notifyListeners();
   }
 }

@@ -119,6 +119,7 @@ class _UserListScreenState extends State<UserListScreen> {
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, StringsRoute.createUser);
+              viewModel.resetData();
             },
             icon: const Icon(Icons.add, color: Colors.white),
           ),

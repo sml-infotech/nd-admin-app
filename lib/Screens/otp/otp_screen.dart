@@ -25,6 +25,7 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   OtpViewmodel viewModel = OtpViewmodel();
   late int remainingSeconds;
+  final GlobalKey<OtpInputFieldState> otpKey = GlobalKey<OtpInputFieldState>();
 
   @override
   void initState() {
@@ -89,6 +90,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         userEmailText(widget.arguments.email),
                         const SizedBox(height: 30),
                         OtpInputField(
+                          key: otpKey,
                           onChanged: (otp) {
                             setState(() {
                               viewModel.otp = otp;
@@ -222,8 +224,11 @@ class _OtpScreenState extends State<OtpScreen> {
     return GestureDetector(
       onTap: remainingSeconds == 0
           ? () async {
+              otpKey.currentState?.clearFields();
+
               setState(() {
                 remainingSeconds = widget.seconds;
+                viewModel.otp = "";
               });
               startTimer();
               await viewModel.resendOtp(email, password);

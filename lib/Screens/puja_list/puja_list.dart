@@ -35,6 +35,7 @@ class _PujaListState extends State<PujaList> {
   @override
   void dispose() {
     viewmodel.reset();
+    print("xcxvfgfdg");
     super.dispose();
   }
 
@@ -172,6 +173,7 @@ class _PujaListState extends State<PujaList> {
                   timeSlots: [],
                 ),
               );
+              viewmodel.reset();
             },
             icon: const Icon(Icons.add, color: Colors.white),
           ),
