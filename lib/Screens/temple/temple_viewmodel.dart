@@ -4,7 +4,7 @@ import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class TempleViewModel extends ChangeNotifier {
   List<Temple> temples = [];
-  bool isLoading = false;
+  bool isLoading = true;
   bool isLoadingMore = false;
   bool hasMore = true;
 
@@ -15,7 +15,7 @@ class TempleViewModel extends ChangeNotifier {
 
   Future<void> fetchTemples({bool refresh = false}) async {
     try {
-      if (isLoading) return;
+      // if (isLoading) return;
 
       if (page == 1) {
         isLoading = true;
@@ -56,11 +56,12 @@ class TempleViewModel extends ChangeNotifier {
 
   void reset() {
     temples = [];
-    isLoading = false;
+    isLoading = true;
     isLoadingMore = false;
     hasMore = true;
     page = 1;
     limit = 10;
+    print("dfgdfgdfgdfg");
     notifyListeners();
   }
 

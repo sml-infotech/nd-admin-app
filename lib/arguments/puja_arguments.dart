@@ -7,7 +7,7 @@ class PujaArguments {
   final String puja_name;
   final String description;
   final int maximumNoOfDevotees;
-  final int fee;
+  final double fee;
   final String booking_cutoff_notice;
   final bool allows_special_requirements;
   final String from_date;

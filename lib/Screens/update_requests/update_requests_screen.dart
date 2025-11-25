@@ -507,12 +507,13 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           ),
         ],
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _cancelButton(vm),
-            const SizedBox(width: 10),
             _submitAllButton(vm),
+            SizedBox(height: 10),
+            _cancelButton(vm),
           ],
         ),
       ],
@@ -520,54 +521,62 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   }
 
   Widget _cancelButton(UpdateRequestViewModel vm) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          vm.expandedIndex = null;
-        });
-      },
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-      child: const Text(
-        StringConstant.cancel,
-        style: TextStyle(color: Colors.white),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            vm.expandedIndex = null;
+          });
+        },
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+        child: Text(
+          StringConstant.cancel,
+          style: TextStyle(color: Colors.black, fontFamily: font),
+        ),
       ),
     );
   }
 
   Widget _submitAllButton(UpdateRequestViewModel vm) {
-    return ElevatedButton(
-      onPressed: () async {
-        if (!_validateBeforeSubmit(vm)) {
-          Fluttertoast.showToast(
-            msg:
-                "Please approve or reject all changed fields before submitting.",
-            backgroundColor: Colors.red,
-          );
-          return;
-        }
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (!_validateBeforeSubmit(vm)) {
+            Fluttertoast.showToast(
+              msg:
+                  "Please approve or reject all changed fields before submitting.",
+              backgroundColor: Colors.red,
+            );
+            return;
+          }
 
-        await vm.approvalTempleUpdate(
-          vm.requests[vm.expandedIndex!].id,
-          vm.expandedIndex!,
-        );
-
-        if (vm.isUpdated) {
-          Fluttertoast.showToast(
-            msg: vm.message.isNotEmpty
-                ? vm.message
-                : "Update approved successfully",
-            backgroundColor: Colors.green,
+          await vm.approvalTempleUpdate(
+            vm.requests[vm.expandedIndex!].id,
+            vm.expandedIndex!,
           );
-          vm.expandedIndex = null;
-          await vm.fetchUpdateRequests(reset: true);
-        } else {
-          Fluttertoast.showToast(msg: vm.message);
-        }
-      },
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-      child: const Text(
-        StringConstant.submitAllApprovals,
-        style: TextStyle(color: Colors.white),
+
+          if (vm.isUpdated) {
+            Fluttertoast.showToast(
+              msg: vm.message.isNotEmpty
+                  ? vm.message
+                  : "Update approved successfully",
+              backgroundColor: Colors.green,
+            );
+            vm.expandedIndex = null;
+            await vm.fetchUpdateRequests(reset: true);
+          } else {
+            Fluttertoast.showToast(msg: vm.message);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.buttonColor,
+        ),
+        child: Text(
+          StringConstant.submitAllApprovals,
+          style: TextStyle(color: Colors.white, fontFamily: font),
+        ),
       ),
     );
   }

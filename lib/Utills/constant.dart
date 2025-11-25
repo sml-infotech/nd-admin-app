@@ -85,7 +85,7 @@ class StringConstant {
   static const String current = "Current";
   static const String requested = "Requested";
   static const String cancel = "Cancel";
-  static const String submitAllApprovals = "Submit All Approvals";
+  static const String submitAllApprovals = "Submit";
   static const String eventDescription = "Description";
   static const String contactInformation = "Contact Information";
   static const String eventLocation = "Location";
@@ -118,7 +118,7 @@ class StringConstant {
   static const String noPujaAvailable = "No pujas available";
   static const String deitiesText = "Deities: ";
   static const String descriptionText = "Description : ";
-  static const String cutOffNoticeText="Select Cut-off Notice";
+  static const String cutOffNoticeText = "Select Cut-off Notice";
   static const String from = "From: ";
   static const String to = "To: ";
   static const String active = "Active";

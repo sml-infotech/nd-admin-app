@@ -104,7 +104,7 @@ class _EventListScreenState extends State<EventListScreen> {
                     SizedBox(height: screenHeight * 0.02),
                     _buildTempleDropdown(),
                     SizedBox(height: 12),
-                    searchBar(),
+                    if (!viewmodel.events.isEmpty) ...[searchBar()],
                     SizedBox(height: 12),
                     !filteredEvents.isEmpty
                         ? Expanded(

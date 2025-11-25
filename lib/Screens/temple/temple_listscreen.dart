@@ -159,84 +159,148 @@ class _TempleScreenState extends State<TempleScreen> {
             templeId: temple.id,
           ),
         );
+        viewModel?.reset();
       },
       child: Card(
-        elevation: 2,
+        elevation: 6,
         color: Colors.white,
-        shadowColor: Colors.black.withOpacity(0.2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image with gradient overlay and temple name
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                  child: temple.images?.isNotEmpty ?? false
+                      ? Image.network(
+                          temple.images!.first,
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          ImageStrings.loginImage,
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                Container(
+                  height: 160,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withOpacity(0.6),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 12,
+                  left: 16,
+                  right: 16,
+                  child: Text(
+                    temple.name,
+                    style: AppTextStyles.templeNameTitleBoldStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: 20,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black45,
+                          offset: Offset(1, 1),
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: temple.images?.isNotEmpty ?? false
-                        ? Image.network(
-                            temple.images!.first,
-                            width: 110,
-                            height: 110,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            ImageStrings.loginImage,
-                            width: 110,
-                            height: 110,
-                            fit: BoxFit.cover,
-                          ),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        size: 18,
+                        color: ColorConstant.buttonColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          "${temple.city}, ${temple.state}",
+                          style: AppTextStyles.templeNameDetailsStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(child: _templeDetails(temple)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.account_balance,
+                        size: 18,
+                        color: ColorConstant.buttonColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        temple.architecture,
+                        style: AppTextStyles.templeNameDetailsStyle,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.home_outlined,
+                        size: 18,
+                        color: ColorConstant.buttonColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          "${temple.address}, ${temple.pincode}",
+                          style: AppTextStyles.templeNameDetailsAddressStyle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const SizedBox(height: 12),
                 ],
               ),
-              const SizedBox(height: 8),
-              _templeAddress(temple),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _templeDetails(Temple temple) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          temple.name,
-          style: AppTextStyles.templeNameTitleBoldStyle,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "${StringConstant.city} ${temple.city}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
-        Text(
-          "${StringConstant.state} ${temple.state}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
-        Text(
-          "${StringConstant.architecture} ${temple.architecture}",
-          style: AppTextStyles.templeNameDetailsStyle,
-        ),
-      ],
-    );
-  }
 
-  Widget _templeAddress(Temple temple) {
-    return Text(
-      "${StringConstant.address} ${temple.address}, ${temple.pincode}",
-      style: AppTextStyles.templeNameDetailsAddressStyle,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
+ 
 
   Widget _loadingIndicator() => const Center(
     child: CircularProgressIndicator(color: ColorConstant.buttonColor),

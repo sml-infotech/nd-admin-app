@@ -336,7 +336,7 @@ class _PujaListState extends State<PujaList> {
             puja_name: puja.pujaName,
             description: puja.description,
             maximumNoOfDevotees: puja.maximumNoOfDevotees,
-            fee: int.parse(puja.fee),
+            fee: double.parse(puja.fee),
             booking_cutoff_notice: puja.bookingCutoffNotice.toString(),
             allows_special_requirements: puja.allowsSpecialRequirements,
             from_date: puja.fromDate.toString(),
