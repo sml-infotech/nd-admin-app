@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
@@ -7,13 +9,15 @@ class TempleViewModel extends ChangeNotifier {
   bool isLoading = true;
   bool isLoadingMore = false;
   bool hasMore = true;
+    final TextEditingController searchController = TextEditingController();
 
   final TempleService authService = TempleService();
+Timer? _debounce;
 
   int page = 1;
   int limit = 10;
 
-  Future<void> fetchTemples({bool refresh = false}) async {
+Future<void> fetchTemples({bool refresh = false}) async {
     try {
       // if (isLoading) return;
 
@@ -31,16 +35,25 @@ class TempleViewModel extends ChangeNotifier {
         isLoadingMore = false;
       }
 
-      final response = await authService.getTemples(page: page, limit: limit);
+      final response = await authService.getTemples(page: page, limit: limit,search:searchController.text );
 
       if (response.data != null && response.data!.isNotEmpty) {
-        temples.addAll(response.data!);
+  if (searchController.text.isNotEmpty) {
+    // 🔥 Search mode → always replace list
+    temples = response.data!;
+    hasMore = false;      // No pagination while searching
+  } else {
+    // Normal pagination
+    temples.addAll(response.data!);
 
-        if (response.data!.length < limit) {
-          hasMore = false;
-        } else {
-          page++;
-        }
+    if (response.data!.length < limit) {
+      hasMore = false;
+    } else {
+      page++;
+    }
+  
+}
+
       } else {
         hasMore = false;
       }
@@ -69,4 +82,12 @@ class TempleViewModel extends ChangeNotifier {
     reset();
     await fetchTemples(refresh: true);
   }
+  void onSearchChanged() {
+  if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+  _debounce = Timer(const Duration(milliseconds: 400), () {
+    resetAndFetch();
+  });
+}
+
 }

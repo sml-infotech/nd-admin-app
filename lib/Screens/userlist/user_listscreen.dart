@@ -453,16 +453,26 @@ class _UserListScreenState extends State<UserListScreen> {
                               ),
                               padding: const EdgeInsets.all(8),
                               child: Column(
-                                children: viewModel.templeList.map((temple) {
-                                  final String templeId = temple['id'] ?? '';
+                                children: viewModel.templeList.map<Widget>((
+                                  temple,
+                                ) {
+                                  final String templeId = (temple['id'] ?? '')
+                                      .toString();
+                                  final String templeName =
+                                      (temple['name'] ??
+                                              temple['temple_name'] ??
+                                              '')
+                                          .toString();
+
                                   final bool isSelected = viewModel
                                       .selectedTempleIds
                                       .contains(templeId);
+
                                   return CheckboxListTile(
                                     dense: true,
                                     contentPadding: EdgeInsets.zero,
                                     title: Text(
-                                      temple['name'] ?? '',
+                                      templeName,
                                       style:
                                           AppTextStyles.templeNameDetailsStyle,
                                     ),

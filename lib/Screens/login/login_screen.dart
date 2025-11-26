@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 75),
+                      const SizedBox(height: 30),
                       loginImage(),
                       const SizedBox(height: 25),
                       loginText(),
@@ -185,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Checkbox(
-            activeColor: Colors.grey,
+            activeColor: ColorConstant.buttonColor,
             value: viewModel.isChecked,
             onChanged: (value) {
               viewModel.toggleCheckbox(value);

@@ -14,9 +14,9 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class TempleService {
   final HttpApiService apiService = HttpApiService();
- Future<TempleResponse> getTemples({int page = 1, int limit = 10}) async {
+ Future<TempleResponse> getTemples({int page = 1, int limit = 10,String search=""}) async {
   try {
-    final url = '${UrlConstant.templeUser}?page=$page&limit=$limit';
+    final url = '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search';
     print('Fetching temples: $url');
     dynamic data = await apiService.get(url);
     return TempleResponse.fromJson(data);

@@ -68,6 +68,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
+                                        const SizedBox(height: 10),
                                     CommonTextField(
                                       hintText: StringConstant.enterName,
                                       labelText: StringConstant.userName,

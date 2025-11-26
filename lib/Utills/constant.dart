@@ -34,7 +34,7 @@ class StringConstant {
   static const String audittext = "Audit & Committee Reports";
   static const String transactionText = "Transaction Reports";
   static const String wowtracker = "Seva & WOW Tracker";
-  static const String templeDetail = "Temples Details";
+  static const String templeDetail = "Temple Details";
   static const String edit = "Edit";
   static const String phone = "Phone";
   static const String selectDeities =
@@ -92,6 +92,8 @@ class StringConstant {
   static const String addPuja = "Add Puja / Seva";
   static const String updatePuja = "UpdatePuja";
   static const String search = "Search events...";
+  static const String searchTemples = "Search Temples...";
+
   static const String pujaList = "Pujas";
   static const String dashboard = "DashBoard";
 

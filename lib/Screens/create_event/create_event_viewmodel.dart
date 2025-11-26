@@ -131,14 +131,14 @@ class CreateEventViewmodel extends ChangeNotifier {
       message = "Please enter location.";
       return false;
     }
-    if (contactNameController.text.isEmpty) {
-      message = "Please enter contact name.";
-      return false;
-    }
-    if (contactNumberController.text.isEmpty) {
-      message = "Please enter contact number.";
-      return false;
-    }
+    // if (contactNameController.text.isEmpty) {
+    //   message = "Please enter contact name.";
+    //   return false;
+    // }
+    // if (contactNumberController.text.isEmpty) {
+    //   message = "Please enter contact number.";
+    //   return false;
+    // }
     if (selectedStartDate == null) {
       message = "Please select start date.";
       return false;

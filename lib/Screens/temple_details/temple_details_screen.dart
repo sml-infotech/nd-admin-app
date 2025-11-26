@@ -204,47 +204,60 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
 
   Widget aboutTab() => Padding(
     key: const ValueKey("About"),
-    padding: const EdgeInsets.all(16.0),
-    child: const Text("About the temple goes here."),
+    padding: const EdgeInsets.all(18.0),
+    child:  Text(widget.arguments.description),
   );
 
   Widget eventsTab() => Padding(
     key: const ValueKey("Events"),
-    padding: const EdgeInsets.all(16.0),
+    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
     child: const Text("Upcoming events go here."),
   );
 
   Widget carouselWidget() {
-    return CarouselSlider(
-      items: widget.arguments.images
-          .map(
-            (image) => ClipRRect(
-              borderRadius: BorderRadius.circular(0),
-              child: Image.network(
-                image,
-                fit: BoxFit.fill,
-                width: double.infinity,
-              ),
-            ),
-          )
-          .toList(),
-      options: CarouselOptions(
+  final images = widget.arguments.images;
+
+  if (images.length == 1) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(0),
+      child: Image.network(
+        images.first,
+        fit: BoxFit.fill,
+        width: double.infinity,
         height: 200,
-        enlargeCenterPage: true,
-        autoPlay: true,
-        aspectRatio: 16 / 9,
-        autoPlayCurve: Curves.fastOutSlowIn,
-        enableInfiniteScroll: true,
-        autoPlayAnimationDuration: const Duration(milliseconds: 800),
-        viewportFraction: 1,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
       ),
     );
   }
+  return CarouselSlider(
+    items: images
+        .map(
+          (image) => ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: Image.network(
+              image,
+              fit: BoxFit.fill,
+              width: double.infinity,
+            ),
+          ),
+        )
+        .toList(),
+    options: CarouselOptions(
+      height: 200,
+      enlargeCenterPage: true,
+      autoPlay: true,
+      aspectRatio: 16 / 9,
+      autoPlayCurve: Curves.fastOutSlowIn,
+      enableInfiniteScroll: true,
+      autoPlayAnimationDuration: const Duration(milliseconds: 800),
+      viewportFraction: 1,
+      onPageChanged: (index, reason) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+    ),
+  );
+}
 
   Widget carouselDotWidget() {
     return Row(

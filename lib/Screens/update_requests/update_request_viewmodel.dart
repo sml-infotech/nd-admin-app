@@ -22,7 +22,6 @@ class UpdateRequestViewModel extends ChangeNotifier {
   /// 👇 Add this field for role
   String userRole = '';
 
-  /// 👇 Helper to set the role from login or provider
   void setUserRole(String role) {
     userRole = role;
     notifyListeners();

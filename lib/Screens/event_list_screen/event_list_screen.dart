@@ -21,7 +21,7 @@ class _EventListScreenState extends State<EventListScreen> {
   late EventListViewmodel viewmodel;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  List<EventItem> filteredEvents = [];
+List<EventItem> filteredEvents = [];
 
   @override
   void initState() {

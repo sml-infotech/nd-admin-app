@@ -39,6 +39,7 @@ class OtpViewmodel extends ChangeNotifier {
       } else if (response.code == 401) {
         message = response.message ?? "Invalid Otp";
         isLoading = false;
+              isOtpSuccess = false;
       } else {
         message = response.error ?? "some error occurred";
         isLoading = false;

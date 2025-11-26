@@ -132,6 +132,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               hintText: "",
                               labelText: "",
                               isFromPassword: false,
+                              isFromPhone: true,
                               controller: viewModel.templePincode,
                             ),
                             titleTextWidget(StringConstant.templedescription),
@@ -277,6 +278,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
               style: AppTextStyles.appBarTitleStyle,
             ),
           ),
+     
         ],
       ),
     );

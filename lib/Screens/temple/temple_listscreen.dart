@@ -20,6 +20,7 @@ class TempleScreen extends StatefulWidget {
 
 class _TempleScreenState extends State<TempleScreen> {
   final ScrollController _scrollController = ScrollController();
+
   TempleViewModel? viewModel;
   String? token;
   String? role;
@@ -51,17 +52,24 @@ class _TempleScreenState extends State<TempleScreen> {
       builder: (context, model, _) {
         viewModel = model;
 
-        // Infinite scroll listener — only attach once
-        if (!_scrollController.hasListeners) {
-          _scrollController.addListener(() {
-            if (_scrollController.position.pixels >=
-                    _scrollController.position.maxScrollExtent - 200 &&
-                !model.isLoadingMore &&
-                model.hasMore) {
-              model.fetchTemples();
-            }
-          });
-        }
+  // Infinite scroll listener — only attach once
+  if (!_scrollController.hasListeners) {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !model.isLoadingMore &&
+          model.hasMore) {
+        model.fetchTemples();
+      }
+    });
+  }
+
+if (!model.searchController.hasListeners) {
+  model.searchController.addListener(() {
+    model.onSearchChanged();
+  });
+}
+
 
         return FocusDetector(
           onFocusGained: () async {
@@ -91,6 +99,10 @@ class _TempleScreenState extends State<TempleScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
+                        SizedBox(height: 10),
+                        templeSearchBar(),
+                        SizedBox(height: 10),
+
                         Expanded(
                           child: ListView.separated(
                             controller: _scrollController,
@@ -134,6 +146,7 @@ class _TempleScreenState extends State<TempleScreen> {
             },
             icon: const Icon(Icons.add, color: Colors.white),
           ),
+        SizedBox(width: 10),
       ],
     );
   }
@@ -263,9 +276,11 @@ class _TempleScreenState extends State<TempleScreen> {
                         color: ColorConstant.buttonColor,
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        temple.architecture,
-                        style: AppTextStyles.templeNameDetailsStyle,
+                      Expanded(
+                        child: Text(
+                          temple.architecture,
+                          style: AppTextStyles.templeNameDetailsStyle,
+                        ),
                       ),
                     ],
                   ),
@@ -289,7 +304,6 @@ class _TempleScreenState extends State<TempleScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -298,9 +312,6 @@ class _TempleScreenState extends State<TempleScreen> {
       ),
     );
   }
-
-
- 
 
   Widget _loadingIndicator() => const Center(
     child: CircularProgressIndicator(color: ColorConstant.buttonColor),
@@ -332,6 +343,32 @@ class _TempleScreenState extends State<TempleScreen> {
               color: Colors.grey,
               borderRadius: BorderRadius.circular(12),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget templeSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: TextField(
+        controller: viewModel?.searchController,
+        decoration: InputDecoration(
+          hintText: StringConstant.searchTemples,
+          hintStyle: TextStyle(fontFamily: font),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 0,
           ),
         ),
       ),

@@ -38,7 +38,7 @@ class LoginViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       final response = await authService.loginUser(
-        emailController.text,
+        emailController.text.trim(),
         passwordController.text,
       );
       if (response.code == 200) {
