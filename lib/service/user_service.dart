@@ -43,9 +43,10 @@ class UserService {
   Future<UserListResponse> getUserDetails({
     int page = 1,
     int pageSize = 10,
+    String ?search,
   }) async {
     try {
-      final url = '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize';
+      final url = '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize&search=$search';
       print('Fetching users: $url');
       dynamic data = await apiService.get(url);
       return UserListResponse.fromJson(data);

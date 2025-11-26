@@ -25,7 +25,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
 
   @override
   void initState() {
-    super.initState();
+      super.initState();
     _loadUserData();
   }
 
@@ -241,7 +241,15 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           _infoRow(StringConstant.addresss, request.templeDetails.address),
           _infoRow(StringConstant.pincode, request.templeDetails.pincode),
           _infoRow(StringConstant.status, request.status),
-          const SizedBox(height: 8),
+ if (_role == "Temple" )...[
+               if (request.reviewStatus != null) ...[
+   Text(
+    "Review Status",
+    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,  fontFamily: font,),
+  ),
+  const SizedBox(height: 8),
+  _buildReviewStatusSection(request.reviewStatus!),
+],],
           if (_role == "Super Admin" || _role == "Admin")
             _expandSection(vm, isExpanded, index, request),
         ],
@@ -354,6 +362,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         }),
         const SizedBox(height: 16),
         _buildGlobalReasonSection(vm, requestIndex),
+   
+
       ],
     );
   }
@@ -670,4 +680,53 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       return value.entries.map((e) => '${e.key}: ${e.value}').join(', ');
     return value.toString().replaceAll('[', '').replaceAll(']', '').trim();
   }
+
+  Widget _buildReviewStatusSection(Map<String, dynamic> reviewStatus) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: reviewStatus.entries.map((entry) {
+      final key = entry.key;
+      final value = entry.value.toString();
+
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade400),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                key[0].toUpperCase() + key.substring(1),
+                style:  TextStyle(
+                  fontFamily: font,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                    fontFamily: font,
+                  fontSize: 14,
+                  color: value == "Approved"
+                      ? Colors.green
+                      : value == "Rejected"
+                          ? Colors.red
+                          : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
 }

@@ -7,10 +7,9 @@ class StringConstant {
   static const String password = "Password";
   static const String enterUserName = "Enter your email";
   static const String enterName = "Enter Name";
-  static const String enterPassword = "Enter valid password";
+  static const String enterPassword = "Enter New password";
   static const String enterConfirmPassword = "Enter Confirm password";
-  static const String termsAndCondition =
-      "I agree to the Terms & Conditions and Privacy policy";
+  static const String termsAndCondition ="I agree to the Terms & Conditions and Privacy policy";
   static const String login = "Login";
   static const String reset = "Reset";
   static const String resetPassword = "Reset Password";
@@ -29,7 +28,7 @@ class StringConstant {
   static const String event = "Event Name";
   static const String updateEvent = "Update Event";
   static const String events = "Events";
-static const String bookings="Bookings";
+  static const String bookings = "Bookings";
   static const String donationText = "Donation Tracking";
   static const String ritualText = "Ritual & Event Promotion";
   static const String audittext = "Audit & Committee Reports";
@@ -38,9 +37,8 @@ static const String bookings="Bookings";
   static const String templeDetail = "Temple Details";
   static const String edit = "Edit";
   static const String phone = "Phone";
-  static const String selectDeities =
-      "Select the temple first to view deities.";
-
+  static const String searchUser = "Search User..";
+  static const String selectDeities ="Select the temple first to view deities.";
   static const String email = "Email";
   static const String verificationCode = "Enter Verification code";
   static const String otpSubTitle = "4 digits code was sent to ";
@@ -51,7 +49,6 @@ static const String bookings="Bookings";
   static const String templeName = "Temple Name";
   static const String pincode = "Pincode";
   static const String status = "Status";
-
   static const String deities = "Deities";
   static const String images = "Images";
   static const String userDetails = "Users";
@@ -90,21 +87,19 @@ static const String bookings="Bookings";
   static const String eventDescription = "Description";
   static const String contactInformation = "Contact Information";
   static const String eventLocation = "Location";
-  static const String addPuja = "Add Puja / Seva";
-  static const String updatePuja = "UpdatePuja";
+  static const String addPuja = "Add Pooja / Seva";
+  static const String updatePuja = "UpdatePooja";
   static const String search = "Search events...";
   static const String searchTemples = "Search Temples...";
-
-  static const String pujaList = "Pujas";
+  static const String pujaList = "Poojas";
   static const String dashboard = "DashBoard";
-
   static const String updateRequests = "Requests";
   static const String fee = "Fee: ";
-  static const String addSevaAndPuja = "Add Seva / puja name";
+  static const String addSevaAndPuja = "Add Seva / Pooja name";
   static const String slot = "Slot";
   static const String selectSlot = "Select Slot";
   static const String date = "Date";
-  static const String enterPuja = "Enter Puja / Seva duration time";
+  static const String enterPuja = "Enter Pooja / Seva duration time";
   static const String duration = "Duration";
   static const String cost = "Enter Cost";
   static const String fees = "Fees";
@@ -138,10 +133,8 @@ static const String bookings="Bookings";
   static const String previousData = "Previous Data";
   static const String changesData = "Changes Data";
   static const String reason = "Add comment for rejection";
-  static const String rejectionComment =
-      "Rejection Comment (applies to all rejected fields)";
-  static const String specialReq =
-      "Special Requirements (allow user to add special requirements)";
+  static const String rejectionComment ="Rejection Comment (applies to all rejected fields)";
+  static const String specialReq ="Special Requirements (allow user to add special requirements)";
 }
 
 class ColorConstant {

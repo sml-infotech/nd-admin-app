@@ -91,7 +91,7 @@ class PujaListViewmodel extends ChangeNotifier {
       templeList.clear();
     }
 
-    final response = await templeService.getTemples(page: 1, limit: 50);
+    final response = await templeService.getTemples(page: 1, limit: 2000);
 
     if (response.data != null && response.data!.isNotEmpty) {
       templeData = response.data!;

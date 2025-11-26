@@ -128,7 +128,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget forgotSubText() {
-    return Text(
+    return Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),child: 
+    Text(
       StringConstant.fogotSubtext,
       style: AppTextStyles.otpSubHeadingStyle.copyWith(
         fontSize: 16,
@@ -136,7 +137,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         height: 1.5,
       ),
       textAlign: TextAlign.center,
-    );
+     ) );
   }
 }
 

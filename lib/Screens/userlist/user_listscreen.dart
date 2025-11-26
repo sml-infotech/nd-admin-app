@@ -47,6 +47,12 @@ class _UserListScreenState extends State<UserListScreen> {
         _loadMoreUsers(viewModel);
       }
     });
+
+     if (!viewModel.searchController.hasListeners) {
+        viewModel.searchController.addListener(() {
+          viewModel.onSearchChanged();
+        });
+      }
   }
 
   Future<void> _loadUserData() async {
@@ -63,9 +69,12 @@ class _UserListScreenState extends State<UserListScreen> {
     setState(() => _isLoadingMore = false);
   }
 
+    
+
   @override
   void dispose() {
     _scrollController.dispose();
+    viewModel.searchController.text="";
     viewModel.resetData();
     debugPrint("🧹 User screen disposed & ViewModel reset.");
     super.dispose();
@@ -93,7 +102,12 @@ class _UserListScreenState extends State<UserListScreen> {
             body: viewModel.isLoading && viewModel.page == 1
                 ? _buildFullShimmerList()
                 : Column(
-                    children: [Expanded(child: _buildUserList(viewModel))],
+                    children: [
+                      SizedBox(height: 10),
+                      userSearchBar(),
+                      SizedBox(height: 10),
+                      Expanded(child: _buildUserList(viewModel)),
+                    ],
                   ),
           ),
         );
@@ -310,6 +324,32 @@ class _UserListScreenState extends State<UserListScreen> {
                 style: AppTextStyles.templeNameDetailsStyle,
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget userSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        controller: viewModel.searchController,
+        decoration: InputDecoration(
+          hintText: StringConstant.searchUser,
+          hintStyle: TextStyle(fontFamily: font),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 0,
+          ),
         ),
       ),
     );

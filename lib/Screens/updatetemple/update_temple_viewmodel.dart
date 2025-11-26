@@ -250,6 +250,9 @@ class UpdateTempleViewmodel extends ChangeNotifier {
       if (isChanged(originalTempleData?.email, templeEmail.text.trim())) {
         changes["email"] = templeEmail.text.trim();
       }
+       if (isChanged(originalTempleData?.deities, templeDeities.text.trim())) {
+        changes["deities"] = templeDeities.text.trim();
+      }
 
       if (isChanged(
         originalTempleData?.architecture,

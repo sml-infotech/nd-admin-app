@@ -67,6 +67,7 @@ class TempleRequest {
   final String requestedByName;
   final String role;
   final String status;
+  final Map<String, dynamic> reviewStatus; // <-- UPDATED TYPE
   final Map<String, dynamic> changes;
   final String createdAt;
   final TempleDetails templeDetails;
@@ -78,6 +79,7 @@ class TempleRequest {
     required this.requestedByName,
     required this.role,
     required this.status,
+    required this.reviewStatus,   // <-- Added here
     required this.changes,
     required this.createdAt,
     required this.templeDetails,
@@ -91,6 +93,7 @@ class TempleRequest {
       requestedByName: json['requested_by_name'],
       role: json['role'],
       status: json['status'],
+      reviewStatus: Map<String, dynamic>.from(json['review_status'] ?? {}), // <-- Parse map safely
       changes: Map<String, dynamic>.from(json['changes']),
       createdAt: json['created_at'],
       templeDetails: TempleDetails.fromJson(json['temple_details']),
@@ -104,6 +107,7 @@ class TempleRequest {
         'requested_by_name': requestedByName,
         'role': role,
         'status': status,
+        'review_status': reviewStatus,  // <-- Included in JSON
         'changes': changes,
         'created_at': createdAt,
         'temple_details': templeDetails.toJson(),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
@@ -11,7 +12,9 @@ class UserViewModel extends ChangeNotifier {
   final UserService authService = UserService();
   final TextEditingController role = TextEditingController();
   final TempleService templeService = TempleService();
+  final TextEditingController searchController = TextEditingController();
 
+Timer? _debounce;
   List<UserModel> userData = [];
   List<UserModel> get users => userData;
   List<Map<String, String>> templeList = [];
@@ -67,6 +70,7 @@ class UserViewModel extends ChangeNotifier {
       final response = await authService.getUserDetails(
         page: page,
         pageSize: _pageSize,
+        search: searchController.text
       );
 
       final users = response.users ?? [];
@@ -92,6 +96,14 @@ class UserViewModel extends ChangeNotifier {
     if (hasMore && !isLoadingMore && !isLoading) {
       await getUsers();
     }
+  }
+
+   void onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      getUsers(reset: true);  // << FIXED
+    });
   }
 
   Future<void> editUser(
@@ -216,6 +228,7 @@ class UserViewModel extends ChangeNotifier {
     _templeData.clear();
     selectedTempleIds.clear();
     _tempActiveMap.clear();
+    searchController.clear;
 
     page = 1;
     hasMore = true;
