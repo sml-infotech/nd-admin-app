@@ -46,86 +46,86 @@ class _TempleScreenState extends State<TempleScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<TempleViewModel>(
-      builder: (context, model, _) {
-        viewModel = model;
+ @override
+Widget build(BuildContext context) {
+  return Consumer<TempleViewModel>(
+    builder: (context, model, _) {
+      viewModel = model;
 
-  // Infinite scroll listener — only attach once
-  if (!_scrollController.hasListeners) {
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200 &&
-          !model.isLoadingMore &&
-          model.hasMore) {
-        model.fetchTemples();
+      if (!_scrollController.hasListeners) {
+        _scrollController.addListener(() {
+          final atBottom = _scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200;
+
+          if (atBottom && !model.isLoadingMore && model.hasMore) {
+            model.fetchTemples();
+          }
+        });
       }
-    });
-  }
 
-if (!model.searchController.hasListeners) {
-  model.searchController.addListener(() {
-    model.onSearchChanged();
-  });
-}
+      if (!model.searchController.hasListeners) {
+        model.searchController.addListener(() {
+          model.onSearchChanged();
+        });
+      }
 
+      return FocusDetector(
+        onFocusGained: () async {
+          await model.resetAndFetch();
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            backgroundColor: ColorConstant.buttonColor,
+            elevation: 0,
+            centerTitle: true,
+            title: _buildAppBar(context),
+          ),
+          body:Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 0,),child: 
+           Column(
+            children: [
+              const SizedBox(height: 10),
 
-        return FocusDetector(
-          onFocusGained: () async {
-            // 🧹 Reset data and fetch fresh temples when coming back
-            await viewModel?.resetAndFetch();
-          },
-          child: Scaffold(
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: ColorConstant.buttonColor,
-              elevation: 0,
-              centerTitle: true,
-              title: _buildAppBar(context),
-            ),
-            body: model.isLoading && model.temples.isEmpty
-                ? _buildShimmer()
-                : Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 10),
-                        templeSearchBar(),
-                        SizedBox(height: 10),
+              templeSearchBar(),
 
-                        Expanded(
-                          child: ListView.separated(
-                            controller: _scrollController,
-                            itemCount: model.temples.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (_, index) =>
-                                _templeCard(model.temples[index]),
-                          ),
-                        ),
-                        if (model.isLoadingMore)
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: _loadingIndicator(),
-                          ),
-                      ],
+              const SizedBox(height: 10),
+
+              if (model.isLoading && model.temples.isEmpty)
+                Expanded(child: _buildShimmer()),
+
+              if (!model.isLoading && model.temples.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      "No Temples Found",
+                      style: TextStyle(fontFamily: font),
                     ),
                   ),
+                ),
+
+              if (model.temples.isNotEmpty)
+                Expanded(
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    itemCount: model.temples.length +
+                        (model.isLoadingMore ? 1 : 0),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, index) {
+                      if (index == model.temples.length) {
+                        return _loadingIndicator();
+                      }
+                      return _templeCard(model.temples[index]);
+                    },
+                  ),
+                ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      ));
+    },
+  );
+}
 
   Widget _buildAppBar(BuildContext context) {
     return Row(
@@ -146,7 +146,7 @@ if (!model.searchController.hasListeners) {
             },
             icon: const Icon(Icons.add, color: Colors.white),
           ),
-        SizedBox(width: 10),
+        SizedBox(width: 5),
       ],
     );
   }
