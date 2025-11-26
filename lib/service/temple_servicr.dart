@@ -1,3 +1,4 @@
+import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
@@ -95,19 +96,19 @@ Future<PujaListResponse> getPujas(
   }
 }
 
-Future<PujaListResponse> fetchBookings(
+Future<BookingResponse> fetchBookings(
   String templeId, {
   int page = 1,
   int limit = 10,
 }) async {
   try {
-    final url = '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
-    print('Fetching getPujas: $url');
+    final url = '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit';
+    print('Fetching bookinhs: $url');
     
     dynamic data = await apiService.get(url);
-    return PujaListResponse.fromJson(data);
+    return BookingResponse.fromJson(data);
   } catch (e) {
-    print("getPujas service decode fails: $e");
+    print("bookinhs service decode fails: $e");
     throw Exception('API failed: $e');
   }
 }

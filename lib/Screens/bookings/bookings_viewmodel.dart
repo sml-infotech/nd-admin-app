@@ -1,31 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
+import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class BookingsViewmodel extends ChangeNotifier {
-  List<TempleRequest> bookings = [];
+  List<BookingModel> bookings = [];
   bool isLoading = false;
   bool isLoadingMore = false;
   bool hasMore = true;
   bool isUpdating = false;
-  TempleService templeService = TempleService();
 
+  List<Temple> templeData = [];
+  String? selectedTemple;
+  String? selectedTempleId;
+
+  final TempleService api = TempleService();
   int page = 1;
+  int? expandedIndex;
+
   String? userRole;
+
+  void setExpanded(int index) {
+    expandedIndex = expandedIndex == index ? null : index;
+    notifyListeners();
+  }
 
   void setUserRole(String role) {
     userRole = role;
     notifyListeners();
   }
 
-  void reset() {
-    bookings.clear();
+  void resetBookings() {
     page = 1;
+    bookings.clear();
     hasMore = true;
     notifyListeners();
   }
 
+  /// Fetch temples list
+  Future<void> fetchTemples() async {
+    isLoading = true;
+    notifyListeners();
+
+    final response = await api.getTemples(page: 1, limit: 2000);
+
+    if (response.data != null && response.data!.isNotEmpty) {
+      templeData = response.data!;
+      selectedTemple = templeData.first.name;
+      selectedTempleId = templeData.first.id;
+
+      // Initially fetch bookings for first temple
+      await fetchBookings();
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  /// Fetch bookings based on selected temple id
   Future<void> fetchBookings({bool reset = false}) async {
+    if (selectedTempleId == null) return;
+
     try {
       if (reset) {
         page = 1;
@@ -37,21 +73,16 @@ class BookingsViewmodel extends ChangeNotifier {
       }
       notifyListeners();
 
-      // final response = await templeService.getPujas(templeId)
-
-      // if (response.isNotEmpty) {
-      //   if (reset) {
-      //     bookings = response;
-      //   } else {
-      //     bookings.addAll(response);
-      //   }
-
-      //   page++;
-      // } else {
-      //   hasMore = false;
-      // }
+      final result = await api.fetchBookings(selectedTempleId!);
+      final newItems = result.data ?? [];
+      if (newItems.isNotEmpty) {
+        bookings.addAll(newItems);
+        page++;
+      } else {
+        hasMore = false;
+      }
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Fetch error: $e");
     }
 
     isLoading = false;
@@ -59,18 +90,32 @@ class BookingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> approveBooking(String id) async {
-    isUpdating = true;
-    notifyListeners();
+  void selectTemple(Temple temple) async {
+    selectedTemple = temple.name;
+    selectedTempleId = temple.id;
+    Navigator.pop(_bottomSheetContext!); // close bottom sheet
+    resetBookings();
+    await fetchBookings();
+  }
 
-    try {
-     // await ApiService.approveBooking(id);
-      bookings.removeWhere((e) => e.id == id);
-    } catch (e) {
-      debugPrint("Approval error: $e");
-    }
+  BuildContext? _bottomSheetContext;
 
-    isUpdating = false;
-    notifyListeners();
+  void openTempleBottomSheet(BuildContext context) {
+    _bottomSheetContext = context;
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => ListView.builder(
+        itemCount: templeData.length,
+        itemBuilder: (_, index) {
+          final temple = templeData[index];
+          return Padding(padding: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 0),child: 
+          
+          ListTile(
+            title: Text(temple.name,style: TextStyle(fontFamily: font),),
+            onTap: () => selectTemple(temple),
+          ));
+        },
+      ),
+    );
   }
 }
