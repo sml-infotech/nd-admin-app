@@ -87,7 +87,7 @@ class CreateUserViewmodel extends ChangeNotifier {
         isCreateUserSuccess = true;
         notifyListeners();
       } else if (response.code == 409) {
-        message = "Email already exists";
+        message =response.error??"";
         notifyListeners();
       } else {
         message = "Some error occurred";

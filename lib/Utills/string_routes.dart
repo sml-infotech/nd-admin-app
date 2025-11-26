@@ -4,23 +4,17 @@ class StringsRoute {
   static const String dashboard = '/dashboard';
   static const String templeDetail = '/templeDetail';
   static const String otpScreen = '/otpScreen';
-  static const String createUser ='/createUser';
-  static const String forgotPassword ='/forgotPassword';
-  static const String resetPassword ='/resetPassword';
-  static const String userDetails ='/userDetails';
-  static const String templeScreen ='/templeScreen';
-  static const String addTempleScreen ='/addTempleScreen';
-  static const String updateTempleDetails ='/updateTempleDetails';
-  static const String addPuja ='/addPuja';
-  static const String pujaList ='/pujaList';
-  static const String updateRequestsUrl ='/updateRequests';
-  static const String createEvent ='/createEvent';
-  static const String eventListScreen ='/eventListScreen';
-
-
-
-
-
-
-
+  static const String createUser = '/createUser';
+  static const String forgotPassword = '/forgotPassword';
+  static const String resetPassword = '/resetPassword';
+  static const String userDetails = '/userDetails';
+  static const String templeScreen = '/templeScreen';
+  static const String addTempleScreen = '/addTempleScreen';
+  static const String updateTempleDetails = '/updateTempleDetails';
+  static const String addPuja = '/addPuja';
+  static const String pujaList = '/pujaList';
+  static const String updateRequestsUrl = '/updateRequests';
+  static const String createEvent = '/createEvent';
+  static const String eventListScreen = '/eventListScreen';
+  static const String bookings = '/bookingScreen';
 }

@@ -95,6 +95,24 @@ Future<PujaListResponse> getPujas(
   }
 }
 
+Future<PujaListResponse> fetchBookings(
+  String templeId, {
+  int page = 1,
+  int limit = 10,
+}) async {
+  try {
+    final url = '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
+    print('Fetching getPujas: $url');
+    
+    dynamic data = await apiService.get(url);
+    return PujaListResponse.fromJson(data);
+  } catch (e) {
+    print("getPujas service decode fails: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
+
 
 
 Future<TempleUpdateResponse> updateTemple(Map<String, dynamic> payload) async {

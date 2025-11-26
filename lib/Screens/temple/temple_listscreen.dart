@@ -327,7 +327,7 @@ Widget build(BuildContext context) {
           topRight: Radius.circular(24),
         ),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

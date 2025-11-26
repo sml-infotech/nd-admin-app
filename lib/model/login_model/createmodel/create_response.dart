@@ -2,19 +2,21 @@ class UserResponse {
   final String? message;
   final int? code;
   final User? user;
+  final String ?error;
 
-  UserResponse({required this.message, this.code, required this.user});
+  UserResponse({required this.message, this.code, required this.user,required this.error});
 
   factory UserResponse.fromJson(Map<String, dynamic> json) {
     return UserResponse(
       message: json['message'] ?? '',
       code: json['code'] ?? '',
       user: User.fromJson(json['user'] ?? {}),
+      error: json['error']??""
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'message': message, 'code': code, 'user': user?.toJson()};
+    return {'message': message, 'code': code, 'user': user?.toJson(),'error':error};
   }
 }
 

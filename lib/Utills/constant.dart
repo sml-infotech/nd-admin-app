@@ -29,6 +29,7 @@ class StringConstant {
   static const String event = "Event Name";
   static const String updateEvent = "Update Event";
   static const String events = "Events";
+static const String bookings="Bookings";
   static const String donationText = "Donation Tracking";
   static const String ritualText = "Ritual & Event Promotion";
   static const String audittext = "Audit & Committee Reports";

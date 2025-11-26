@@ -110,7 +110,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                         ),
                         child: vm.isLoading
                             ? _buildShimmer()
-                            : RefreshIndicator(
+                            : visibleRequests.isNotEmpty
+                            ? RefreshIndicator(
                                 color: ColorConstant.buttonColor,
                                 onRefresh: () =>
                                     vm.fetchUpdateRequests(reset: true),
@@ -135,6 +136,14 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                                       return _buildLoadingMoreIndicator();
                                     }
                                   },
+                                ),
+                              )
+                            : Container(
+                                child: Center(
+                                  child: Text(
+                                    "No Requests Found",
+                                    style: TextStyle(fontFamily: font),
+                                  ),
                                 ),
                               ),
                       ),

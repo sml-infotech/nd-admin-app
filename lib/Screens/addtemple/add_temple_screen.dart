@@ -21,11 +21,18 @@ class AddTempleScreen extends StatefulWidget {
 class _AddTempleScreenState extends State<AddTempleScreen> {
   late AddTempleViewmodel templeViewmodel;
   final ImagePicker _picker = ImagePicker();
-
+ @override
+  void dispose() {
+   
+    templeViewmodel.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     templeViewmodel = Provider.of<AddTempleViewmodel>(context);
+
+
 
     return Scaffold(
       backgroundColor: Colors.white,

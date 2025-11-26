@@ -125,6 +125,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               StringsRoute.eventListScreen,
                             ),
                           ),
+                          containerWidget(
+                            ImageStrings.wowtracker,
+                            StringConstant.bookings,
+                            () => Navigator.pushNamed(
+                              context,
+                              StringsRoute.bookings,
+                            ),
+                          ),
                         ],
                       ),
                     ],
