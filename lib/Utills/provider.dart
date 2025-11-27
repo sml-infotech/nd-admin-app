@@ -73,7 +73,9 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => EventListViewmodel()),
         ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
         ChangeNotifierProvider(create: (context) => ContactViewModel()),
-                ChangeNotifierProvider(create: (context) => MasterTempleListViewmodel()),
+        ChangeNotifierProvider(
+          create: (context) => MasterTempleListViewmodel(),
+        ),
       ],
       child: FutureBuilder<bool>(
         future: _checkToken(),
@@ -91,7 +93,7 @@ class ProviderWidget extends StatelessWidget {
             theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? DashboardScreen() : const LoginScreen(),
+            home: hasToken ? CreateMasterTemple() : const LoginScreen(),
           );
         },
       ),

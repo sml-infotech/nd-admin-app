@@ -65,6 +65,7 @@ static const String masterTemples = "Master Temples";
   static const List<String> roles = ["Temple", "Agent", "Admin"];
   static const String temple = "Temples";
   static const String create = "Create";
+static const String uploadFromExcel = "Upload Temples From Excel";
   static const String editUser = "Edit User";
   static const String city = "City:";
   static const String state = "State:";

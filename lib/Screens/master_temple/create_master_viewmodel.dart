@@ -10,6 +10,7 @@ class CreateMasterViewmodel extends ChangeNotifier {
   final TextEditingController city = TextEditingController();
   final TextEditingController state = TextEditingController();
   final TextEditingController pincode = TextEditingController();
+  List<TempleModelExcel> excelTemples = [];
 
    Future<void> validateUser() async {
     String temple = templeName.text.trim();
@@ -40,4 +41,27 @@ class CreateMasterViewmodel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+void reset(){
+    templeName .clear();
+   address .clear();
+   city .clear();
+  state.clear();
+   pincode .clear();
+}
+}
+class TempleModelExcel {
+  final String templeName;
+  final String address;
+  final String city;
+  final String state;
+  final String pincode;
+
+  TempleModelExcel({
+    required this.templeName,
+    required this.address,
+    required this.city,
+    required this.state,
+    required this.pincode,
+  });
 }
