@@ -93,7 +93,7 @@ class ProviderWidget extends StatelessWidget {
             theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? CreateMasterTemple() : const LoginScreen(),
+            home: hasToken ? DashboardScreen() : const LoginScreen(),
           );
         },
       ),

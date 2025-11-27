@@ -9,6 +9,7 @@ import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_viewmod
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:provider/provider.dart';
 
 class CreateMasterTemple extends StatelessWidget {
@@ -90,47 +91,47 @@ class CreateMasterTemple extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 10),
-          CommonTextField(
-            hintText: StringConstant.templeName,
-            labelText: StringConstant.templeName,
-            controller: vm.templeName,
-            isFromPassword: false,
-          ),
-          const SizedBox(height: 20),
+          // CommonTextField(
+          //   hintText: StringConstant.templeName,
+          //   labelText: StringConstant.templeName,
+          //   controller: vm.templeName,
+          //   isFromPassword: false,
+          // ),
+          // const SizedBox(height: 20),
 
-          CommonTextField(
-            hintText: StringConstant.addresss,
-            labelText: StringConstant.addresss,
-            controller: vm.address,
-            isFromPassword: false,
-          ),
-          const SizedBox(height: 20),
+          // CommonTextField(
+          //   hintText: StringConstant.addresss,
+          //   labelText: StringConstant.addresss,
+          //   controller: vm.address,
+          //   isFromPassword: false,
+          // ),
+          // const SizedBox(height: 20),
 
-          CommonTextField(
-            hintText: StringConstant.cityy,
-            labelText: StringConstant.cityy,
-            controller: vm.city,
-            isFromPassword: false,
-          ),
-          const SizedBox(height: 20),
+          // CommonTextField(
+          //   hintText: StringConstant.cityy,
+          //   labelText: StringConstant.cityy,
+          //   controller: vm.city,
+          //   isFromPassword: false,
+          // ),
+          // const SizedBox(height: 20),
 
-          CommonTextField(
-            hintText: StringConstant.statee,
-            labelText: StringConstant.statee,
-            controller: vm.state,
-            isFromPassword: false,
-          ),
-          const SizedBox(height: 20),
+          // CommonTextField(
+          //   hintText: StringConstant.statee,
+          //   labelText: StringConstant.statee,
+          //   controller: vm.state,
+          //   isFromPassword: false,
+          // ),
+          // const SizedBox(height: 20),
 
-          CommonTextField(
-            hintText: StringConstant.pincode,
-            labelText: StringConstant.pincode,
-            controller: vm.pincode,
-            isFromPassword: false,
-            isFromPhone: true,
-          ),
-          const SizedBox(height: 20),
-          addTempleButton(context, vm),
+          // CommonTextField(
+          //   hintText: StringConstant.pincode,
+          //   labelText: StringConstant.pincode,
+          //   controller: vm.pincode,
+          //   isFromPassword: false,
+          //   isFromPhone: true,
+          // ),
+          // const SizedBox(height: 20),
+          // addTempleButton(context, vm),
           excelTempleCards(vm),
           const SizedBox(height: 100),
         ],
@@ -169,7 +170,7 @@ class CreateMasterTemple extends StatelessWidget {
                       icon: const Icon(Icons.close, color: Colors.red),
                       onPressed: () {
                         vm.excelTemples.removeAt(index);
-                        vm.notifyListeners(); 
+                        vm.notifyListeners();
                       },
                     ),
                   ),
@@ -198,15 +199,10 @@ class CreateMasterTemple extends StatelessWidget {
       height: 50,
       child: ElevatedButton(
         onPressed: () async {
-          // bool ok = await vm.validateUser();
-
-          // if (!ok && vm.message.isNotEmpty) {
-          //   Fluttertoast.showToast(msg: vm.message);
-          //   return;
-          // }
-
-          // Success Action Here
-          Fluttertoast.showToast(msg: "Validated Successfully!");
+          if (vm.excelTemples.isNotEmpty) {
+            await vm.createMasterTemple();
+            Fluttertoast.showToast(msg: "Validated Successfully!");
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,
@@ -227,9 +223,9 @@ class CreateMasterTemple extends StatelessWidget {
         height: 50,
         child: ElevatedButton(
           onPressed: () async {
-            if (vm.templeName.text.isNotEmpty&&vm.address.text.isNotEmpty) {
+            if (vm.templeName.text.isNotEmpty && vm.address.text.isNotEmpty) {
               vm.excelTemples.add(
-                TempleModelExcel(
+                MasterTemple(
                   templeName: vm.templeName.text,
                   address: vm.address.text,
                   city: vm.city.text,
@@ -267,11 +263,17 @@ class CreateMasterTemple extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => _pickAndReadExcelFile(context),
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorConstant.buttonColor,
+          side: const BorderSide(color: ColorConstant.buttonColor),
+          backgroundColor: Colors.white,
         ),
         child: Text(
           StringConstant.uploadFromExcel,
-          style: AppTextStyles.buttonTextStyle,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontFamily: font,
+          ),
         ),
       ),
     );
@@ -295,12 +297,12 @@ class CreateMasterTemple extends StatelessWidget {
       String sheet = excel.tables.keys.first;
       var rows = excel.tables[sheet]!.rows;
 
-      List<TempleModelExcel> list = [];
+      List<MasterTemple> list = [];
 
       for (int i = 1; i < rows.length; i++) {
         var row = rows[i];
         vm.excelTemples.add(
-          TempleModelExcel(
+          MasterTemple(
             templeName: row[0]?.value.toString() ?? "",
             address: row[1]?.value.toString() ?? "",
             city: row[2]?.value.toString() ?? "",

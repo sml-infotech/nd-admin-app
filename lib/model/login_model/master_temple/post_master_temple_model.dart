@@ -18,7 +18,7 @@ class MasterTemple {
   final String city;
   final String state;
   final String pincode;
-  final bool isOnboarded;
+  bool? isOnboarded;
 
   MasterTemple({
     required this.templeName,
@@ -26,9 +26,10 @@ class MasterTemple {
     required this.city,
     required this.state,
     required this.pincode,
-    required this.isOnboarded,
+    this.isOnboarded,
   });
 
+  // Factory to convert from JSON
   factory MasterTemple.fromJson(Map<String, dynamic> json) {
     return MasterTemple(
       templeName: json['temple_name'],
@@ -39,4 +40,17 @@ class MasterTemple {
       isOnboarded: json['is_onboarded'],
     );
   }
+
+  // Add this method to convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'temple_name': templeName,
+      'address': address,
+      'city': city,
+      'state': state,
+      'pincode': pincode,
+      'is_onboarded': isOnboarded ?? false, // default true if null
+    };
+  }
 }
+

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class CreateMasterViewmodel extends ChangeNotifier {
   bool isLoading = false;
   String message = '';
   bool isCreateUserSuccess = false;
-
+TempleService templeService=TempleService();
   final TextEditingController templeName = TextEditingController();
   final TextEditingController address = TextEditingController();
   final TextEditingController city = TextEditingController();
   final TextEditingController state = TextEditingController();
   final TextEditingController pincode = TextEditingController();
-  List<TempleModelExcel> excelTemples = [];
+  List<MasterTemple> excelTemples = [];
 
    Future<void> validateUser() async {
     String temple = templeName.text.trim();
@@ -42,6 +44,35 @@ class CreateMasterViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+ Future<void> createMasterTemple() async {
+    if (excelTemples.isEmpty) {
+      message = "Add at least one temple";
+      notifyListeners();
+      return;
+    }
+
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      // Call your API service
+      final response = await TempleService().postMasterTemple(excelTemples);
+
+      message = response.message ?? "Success";
+      isLoading = false;
+      excelTemples.clear();
+      reset();
+      notifyListeners();
+    } catch (e) {
+      message = "Something went wrong: $e";
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+
+
 void reset(){
     templeName .clear();
    address .clear();
@@ -49,19 +80,4 @@ void reset(){
   state.clear();
    pincode .clear();
 }
-}
-class TempleModelExcel {
-  final String templeName;
-  final String address;
-  final String city;
-  final String state;
-  final String pincode;
-
-  TempleModelExcel({
-    required this.templeName,
-    required this.address,
-    required this.city,
-    required this.state,
-    required this.pincode,
-  });
 }

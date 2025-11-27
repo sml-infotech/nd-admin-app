@@ -1,4 +1,3 @@
-
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
@@ -18,152 +17,128 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class TempleService {
   final HttpApiService apiService = HttpApiService();
- Future<TempleResponse> getTemples({int page = 1, int limit = 10,String search=""}) async {
-  try {
-    final url = '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search';
-    print('Fetching temples: $url');
-    dynamic data = await apiService.get(url);
-    return TempleResponse.fromJson(data);
-  } catch (e) {
-    print("Temple service decode fails: $e");
-    throw Exception('API failed: $e');
+  Future<TempleResponse> getTemples({
+    int page = 1,
+    int limit = 10,
+    String search = "",
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search';
+      print('Fetching temples: $url');
+      dynamic data = await apiService.get(url);
+      return TempleResponse.fromJson(data);
+    } catch (e) {
+      print("Temple service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
   }
-}
 
+  Future<CreateTempleResponse> addTemple(
+    String name,
+    String address,
+    String city,
+    String state,
+    String pincode,
+    String architecture,
+    String phoneNumber,
+    String email,
+    String description,
+    List<String> deities,
+    List<String> images,
+  ) async {
+    try {
+      final request = AddTemple(
+        name: name,
+        address: address,
+        city: city,
+        state: state,
+        pincode: pincode,
+        architecture: architecture,
+        phoneNumber: phoneNumber,
+        email: email,
+        description: description,
+        deities: deities,
+        images: images,
+      );
 
+      // Print the request as JSON
+      print(">>>>>>>>>>>>>>> Request JSON >>>>>>>>>>>");
+      print(request.toJson());
+      print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
+      final data = await apiService.post(
+        UrlConstant.addTempleUrl,
+        request.toJson(),
+      );
 
-Future<CreateTempleResponse> addTemple(
-  String name,
-  String address,
-  String city,
-  String state,
-  String pincode,
-  String architecture,
-  String phoneNumber,
-  String email,
-  String description,
-  List<String> deities,
-  List<String> images,
-) async {
+      print("API Response >>>> $data");
+      return CreateTempleResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<PujaListResponse> getPujas(
+    String templeId, {
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
+      print('Fetching getPujas: $url');
+
+      dynamic data = await apiService.get(url);
+      return PujaListResponse.fromJson(data);
+    } catch (e) {
+      print("getPujas service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<BookingResponse> fetchBookings(
+    String templeId, {
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit';
+      print('Fetching bookinhs: $url');
+
+      dynamic data = await apiService.get(url);
+      return BookingResponse.fromJson(data);
+    } catch (e) {
+      print("bookinhs service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<MasterTempleListResponse> fetchMasterTemples({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final url = '${UrlConstant.master_temples}?page=$page&limit=$limit';
+      print('Fetching MasterTemples: $url');
+
+      final data = await apiService.get(url);
+      return MasterTempleListResponse.fromJson(data);
+    } catch (e) {
+      print("MasterTemples service decode fails: $e");
+      throw Exception('API MasterTemples: $e');
+    }
+  }
+
+Future<TempleUpdateResponse> postMasterTemple(List<MasterTemple> request) async {
   try {
-    final request = AddTemple(
-      name: name,
-      address: address,
-      city: city,
-      state: state,
-      pincode: pincode,
-      architecture: architecture,
-      phoneNumber: phoneNumber,
-      email: email,
-      description: description,
-      deities: deities,
-      images: images,
-    );
-
-    // Print the request as JSON
-    print(">>>>>>>>>>>>>>> Request JSON >>>>>>>>>>>");
-    print(request.toJson());
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
     final data = await apiService.post(
-      UrlConstant.addTempleUrl,
-      request.toJson(),
-    );
-
-    print("API Response >>>> $data");
-    return CreateTempleResponse.fromJson(data);
-  } catch (e) {
-    print("Auth service decode fails: $e");
-    throw Exception('API failed: $e');
-  }
-}
-
-
-
-
-Future<PujaListResponse> getPujas(
-  String templeId, {
-  int page = 1,
-  int limit = 10,
-}) async {
-  try {
-    final url = '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
-    print('Fetching getPujas: $url');
-    
-    dynamic data = await apiService.get(url);
-    return PujaListResponse.fromJson(data);
-  } catch (e) {
-    print("getPujas service decode fails: $e");
-    throw Exception('API failed: $e');
-  }
-}
-
-Future<BookingResponse> fetchBookings(
-  String templeId, {
-  int page = 1,
-  int limit = 10,
-}) async {
-  try {
-    final url = '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit';
-    print('Fetching bookinhs: $url');
-    
-    dynamic data = await apiService.get(url);
-    return BookingResponse.fromJson(data);
-  } catch (e) {
-    print("bookinhs service decode fails: $e");
-    throw Exception('API failed: $e');
-  }
-}
-
-Future<MasterTempleListResponse> fetchMasterTemples (
-  {
-  int page = 1,
-  int limit = 10,
-}) async {
-  try {
-    final url = '${UrlConstant.master_temples}?page=$page&limit=$limit';
-    print('Fetching MasterTemples: $url');
-    
-     final data = await apiService.get(url);
-    return MasterTempleListResponse.fromJson(data);
-  } catch (e) {
-    print("MasterTemples service decode fails: $e");
-    throw Exception('API MasterTemples: $e');
-  }
-}
-
-// Future<TempleUpdateResponse> postMasterTemple() async {
-//   try {
-//    final request = MasterTemple(templeName: '', address: '', city: '', state: '', pincode: '', isOnboarded: null
-   
-//     );
-// final data = await apiService.post(
-//       UrlConstant.addTempleUrl
-//       // request.toJson(),
-//     );
-
-
-//     print("✅ Temple Update API Response >>>> $data");
-//     return TempleUpdateResponse.fromJson(data);
-//   } catch (e) {
-//     print("❌ Temple Update service failed: $e");
-//     throw Exception('Temple update API failed: $e');
-//   }
-// }
-
-
-
-
-Future<TempleUpdateResponse> updateTemple(Map<String, dynamic> payload) async {
-  try {
-    print(">>>>>>>>>>>>>>> Temple Update Request JSON >>>>>>>>>>>");
-    print(payload);
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
-    final data = await apiService.post(
-      UrlConstant.updateTempleUrl,
-      payload,
+      UrlConstant.create_master_temple,
+      {
+        "temples": request.map((e) => e.toJson()).toList(),
+      },
     );
 
     print("✅ Temple Update API Response >>>> $data");
@@ -174,51 +149,80 @@ Future<TempleUpdateResponse> updateTemple(Map<String, dynamic> payload) async {
   }
 }
 
-Future<AdminTempleUpdateResponse> updateTemplebyAdmin(AddTemple datas) async {
-  try {
-  final request=datas;
-    final data = await apiService.put(
-      UrlConstant.updateTempleAdminUrl,
-      request.toJson(),
-    );
 
-    print("✅ Temple Update API Response >>>> $data");
-    return AdminTempleUpdateResponse.fromJson(data);
-  } catch (e) {
-    print("❌ Temple Update service failed: $e");
-    throw Exception('Temple update API failed: $e');
+
+  Future<TempleUpdateResponse> updateTemple(
+    Map<String, dynamic> payload,
+  ) async {
+    try {
+      print(">>>>>>>>>>>>>>> Temple Update Request JSON >>>>>>>>>>>");
+      print(payload);
+      print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+      final data = await apiService.post(UrlConstant.updateTempleUrl, payload);
+
+      print("✅ Temple Update API Response >>>> $data");
+      return TempleUpdateResponse.fromJson(data);
+    } catch (e) {
+      print("❌ Temple Update service failed: $e");
+      throw Exception('Temple update API failed: $e');
+    }
   }
-}
 
+  Future<AdminTempleUpdateResponse> updateTemplebyAdmin(AddTemple datas) async {
+    try {
+      final request = datas;
+      final data = await apiService.put(
+        UrlConstant.updateTempleAdminUrl,
+        request.toJson(),
+      );
 
-
-Future<TempleUpdateRequestListModel> fetchUpdateRequests({int page = 1, int limit = 10,required String status}) async {
-  try {
-    final url = '${UrlConstant.updateTempleRequestUrl}?page=$page&limit=$limit$status';
-    print('Fetching updateTemple: $url');
-    dynamic data = await apiService.get(url);
-    return TempleUpdateRequestListModel.fromJson(data);
-  } catch (e) {
-    print("updateTemple service decode fails: $e");
-    throw Exception('API failed: $e');
+      print("✅ Temple Update API Response >>>> $data");
+      return AdminTempleUpdateResponse.fromJson(data);
+    } catch (e) {
+      print("❌ Temple Update service failed: $e");
+      throw Exception('Temple update API failed: $e');
+    }
   }
-}
 
-Future<UpdateTempleApprovalResponse> updateApproval( String requestId,Map<String, String> field_decisions,String admin_comments) async {
-  try {
-
-  final request=UpdateTempleApprovalModal(requestId:requestId , fieldDecisions: field_decisions,admin_comments:admin_comments ) ;
-    final data = await apiService.put(
-      UrlConstant.templeApprovalUrl,
-      request.toJson(),
-    );
-
-    print("✅ Temple Update API Response >>>> $data");
-    return UpdateTempleApprovalResponse.fromJson(data);
-  } catch (e) {
-    print("❌ Temple Update service failed: $e");
-    throw Exception('Temple update API failed: $e');
+  Future<TempleUpdateRequestListModel> fetchUpdateRequests({
+    int page = 1,
+    int limit = 10,
+    required String status,
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.updateTempleRequestUrl}?page=$page&limit=$limit$status';
+      print('Fetching updateTemple: $url');
+      dynamic data = await apiService.get(url);
+      return TempleUpdateRequestListModel.fromJson(data);
+    } catch (e) {
+      print("updateTemple service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
   }
-}
 
+  Future<UpdateTempleApprovalResponse> updateApproval(
+    String requestId,
+    Map<String, String> field_decisions,
+    String admin_comments,
+  ) async {
+    try {
+      final request = UpdateTempleApprovalModal(
+        requestId: requestId,
+        fieldDecisions: field_decisions,
+        admin_comments: admin_comments,
+      );
+      final data = await apiService.put(
+        UrlConstant.templeApprovalUrl,
+        request.toJson(),
+      );
+
+      print("✅ Temple Update API Response >>>> $data");
+      return UpdateTempleApprovalResponse.fromJson(data);
+    } catch (e) {
+      print("❌ Temple Update service failed: $e");
+      throw Exception('Temple update API failed: $e');
+    }
+  }
 }
