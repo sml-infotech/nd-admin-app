@@ -47,6 +47,8 @@ class StringConstant {
   static const String resend = "Resend Code";
   static const String verify = "Verify";
   static const String createAcc = " Create User";
+  static const String addMasterTemple = " Add Master Temple";
+
   static const String addTemple = "Add Temple";
   static const String templeName = "Temple Name";
   static const String pincode = "Pincode";

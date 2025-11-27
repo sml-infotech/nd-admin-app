@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
@@ -130,6 +131,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => ContactScreen(),
+        );
+case StringsRoute.create_master_temple:
+       
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateMasterTemple(),
         );
 
 
