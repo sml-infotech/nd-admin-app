@@ -113,6 +113,23 @@ Future<BookingResponse> fetchBookings(
   }
 }
 
+Future<BookingResponse> fetchMasterTemples (
+  String templeId, {
+  int page = 1,
+  int limit = 10,
+}) async {
+  try {
+    final url = '${UrlConstant.master_temples}?page=$page&limit=$limit';
+    print('Fetching MasterTemples: $url');
+    
+    dynamic data = await apiService.get(url);
+    return BookingResponse.fromJson(data);
+  } catch (e) {
+    print("MasterTemples service decode fails: $e");
+    throw Exception('API MasterTemples: $e');
+  }
+}
+
 
 
 

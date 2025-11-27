@@ -139,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             StringConstant.contacts,
                             () => Navigator.pushNamed(
                               context,
-                              StringsRoute.bookings,
+                              StringsRoute.contactUs,
                             ),
                           ),
                         ],

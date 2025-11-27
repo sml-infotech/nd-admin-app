@@ -50,7 +50,6 @@ class BookingsViewmodel extends ChangeNotifier {
       selectedTemple = templeData.first.name;
       selectedTempleId = templeData.first.id;
 
-      // Initially fetch bookings for first temple
       await fetchBookings();
     }
 
@@ -58,37 +57,37 @@ class BookingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Fetch bookings based on selected temple id
-  Future<void> fetchBookings({bool reset = false}) async {
-    if (selectedTempleId == null) return;
+Future<void> fetchBookings({bool reset = false}) async {
+  if (selectedTempleId == null) return;
 
-    try {
-      if (reset) {
-        page = 1;
-        bookings.clear();
-        hasMore = true;
-        isLoading = true;
-      } else {
-        isLoadingMore = true;
-      }
-      notifyListeners();
-
-      final result = await api.fetchBookings(selectedTempleId!);
-      final newItems = result.data ?? [];
-      if (newItems.isNotEmpty) {
-        bookings.addAll(newItems);
-        page++;
-      } else {
-        hasMore = false;
-      }
-    } catch (e) {
-      debugPrint("Fetch error: $e");
+  try {
+    if (reset) {
+      page = 1;
+      bookings.clear();
+      hasMore = true;
+      isLoading = true;
+    } else {
+      isLoadingMore = true;
     }
-
-    isLoading = false;
-    isLoadingMore = false;
     notifyListeners();
+
+    final result = await api.fetchBookings(selectedTempleId!, page: page); // <- pass page here
+    final newItems = result.data ?? [];
+    if (newItems.isNotEmpty) {
+      bookings.addAll(newItems);
+      page++; // increment page for next fetch
+    } else {
+      hasMore = false;
+    }
+  } catch (e) {
+    debugPrint("Fetch error: $e");
   }
+
+  isLoading = false;
+  isLoadingMore = false;
+  notifyListeners();
+}
+
 
   void selectTemple(Temple temple) async {
     selectedTemple = temple.name;
@@ -117,5 +116,27 @@ class BookingsViewmodel extends ChangeNotifier {
         },
       ),
     );
+  }
+
+
+   void reset() {
+    bookings = [];
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+    isUpdating = false;
+
+    templeData = [];
+    selectedTemple = null;
+    selectedTempleId = null;
+
+    page = 1;
+    expandedIndex = null;
+
+    bookings.clear();
+    hasMore = true;
+    notifyListeners();
+    userRole = null;
+    notifyListeners();
   }
 }

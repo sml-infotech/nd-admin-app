@@ -38,6 +38,9 @@ class UrlConstant {
   static String bookingList ="${baseUrlString()}list-bookings";
   static String contact_us="${baseUrlString()}list-contact-us-messages";
     static String mark_as_read="${baseUrlString()}contact-us";
+        static String master_temples="${baseUrlString()}list-master-temples";
+
+
 
 
     

@@ -51,6 +51,8 @@ class _BookingScreenState extends State<BookingScreen> {
     super.didChangeDependencies();
     vm = Provider.of<BookingsViewmodel>(context, listen: false);
     if (_role != null) vm.setUserRole(_role!);
+        vm.reset();
+
     vm.fetchBookings(reset: true);
   }
 
