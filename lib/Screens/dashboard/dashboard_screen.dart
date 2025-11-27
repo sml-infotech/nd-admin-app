@@ -142,6 +142,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               StringsRoute.contactUs,
                             ),
                           ),
+                          if (role == "Super Admin")
+                            containerWidget(
+                              ImageStrings.sevaimg,
+                              StringConstant.masterTemples,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.master_temple_list,
+                              ),
+                            ),
                         ],
                       ),
                     ],

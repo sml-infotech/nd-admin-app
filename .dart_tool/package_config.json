@@ -3,7 +3,7 @@
   "packages": [
     {
       "name": "archive",
-      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/archive-4.0.7",
+      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/archive-3.6.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -82,6 +82,18 @@
     {
       "name": "dbus",
       "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/dbus-0.7.11",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "equatable",
+      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/equatable-2.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "excel",
+      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/excel-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -195,9 +207,9 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/image-4.5.4",
+      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/image-4.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "2.15"
     },
     {
       "name": "image_picker",
@@ -388,12 +400,6 @@
     {
       "name": "plugin_platform_interface",
       "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "posix",
-      "rootUri": "file:///Users/smlmacmini1/.pub-cache/hosted/pub.dev/posix-6.0.3",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
@@ -135,24 +136,27 @@ class _MasterTempleListState extends State<MasterTempleList> {
   }
 
   Widget pincodeAndDate(MasterTempleListModal temple) {
-    return Column(        crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-        
         Text(
           " ${temple.state} - ${temple.pincode}",
           style: TextStyle(fontFamily: font, color: Colors.grey[700]),
         ),
         const SizedBox(height: 4),
 
-Padding(padding: EdgeInsetsGeometry.fromLTRB(4, 0, 0, 0),child:         Text(
-          "Created: ${formatApiDate(temple.createdAt)}",
-          style: TextStyle(
-            fontFamily: font,
-            fontSize: 12,
-            color: Colors.grey[500],
+        Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(4, 0, 0, 0),
+          child: Text(
+            "Created: ${formatApiDate(temple.createdAt)}",
+            style: TextStyle(
+              fontFamily: font,
+              fontSize: 12,
+              color: Colors.grey[500],
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -210,7 +214,9 @@ Padding(padding: EdgeInsetsGeometry.fromLTRB(4, 0, 0, 0),child:         Text(
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
-        const SizedBox(width: 48),
+        IconButton(iconSize: 20, onPressed: () {
+          Navigator.pushNamed(context, StringsRoute.create_master_temple);
+        }, icon: Icon(Icons.add),color: Colors.white,),
       ],
     );
   }

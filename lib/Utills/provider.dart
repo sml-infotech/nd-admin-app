@@ -89,9 +89,9 @@ class ProviderWidget extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(textTheme: const TextTheme()),
-            initialRoute: hasToken ? StringsRoute.create_master_temple : '/login',
+            initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? MasterTempleList() : const LoginScreen(),
+            home: hasToken ? DashboardScreen() : const LoginScreen(),
           );
         },
       ),
