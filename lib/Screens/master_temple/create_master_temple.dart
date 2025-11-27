@@ -154,7 +154,10 @@ class _CreateMasterTempleState extends State<CreateMasterTemple> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.addMasterTemple, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          StringConstant.addMasterTemple,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         const SizedBox(width: 48),
       ],

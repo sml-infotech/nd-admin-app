@@ -45,7 +45,7 @@ class HttpApiService {
     }
   }
 
-  Future<Map<String, dynamic>> get(
+Future<Map<String, dynamic>> get(
     String url,
   ) async {
     print(url);

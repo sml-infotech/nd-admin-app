@@ -3,6 +3,7 @@ import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_res
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
@@ -115,7 +116,7 @@ Future<BookingResponse> fetchBookings(
   }
 }
 
-Future<BookingResponse> fetchMasterTemples (
+Future<MasterTempleListResponse> fetchMasterTemples (
   {
   int page = 1,
   int limit = 10,
@@ -124,8 +125,8 @@ Future<BookingResponse> fetchMasterTemples (
     final url = '${UrlConstant.master_temples}?page=$page&limit=$limit';
     print('Fetching MasterTemples: $url');
     
-    dynamic data = await apiService.get(url);
-    return BookingResponse.fromJson(data);
+     final data = await apiService.get(url);
+    return MasterTempleListResponse.fromJson(data);
   } catch (e) {
     print("MasterTemples service decode fails: $e");
     throw Exception('API MasterTemples: $e');
