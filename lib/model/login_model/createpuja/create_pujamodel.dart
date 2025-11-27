@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Puja {
-  final String ?templeId;
-  final String? puja_id;
+  final String? templeId;
+  final String? pujaId;
   final String pujaName;
   final List<String> deitiesName;
+  final List<Benefit> benefits;
   final String description;
   final int maximumNoOfDevotees;
   final double fee;
@@ -17,10 +18,11 @@ class Puja {
   final List<TimeSlot> timeSlots;
 
   Puja({
-     this.templeId,
-    this.puja_id,
+    this.templeId,
+    this.pujaId,
     required this.pujaName,
     required this.deitiesName,
+    required this.benefits,
     required this.description,
     required this.maximumNoOfDevotees,
     required this.fee,
@@ -35,42 +37,50 @@ class Puja {
 
   factory Puja.fromJson(Map<String, dynamic> json) {
     return Puja(
-      templeId: json['temple_id'] as String,
-      puja_id: json['puja_id'] as String,
+      templeId: json['temple_id'] as String?,
+      pujaId: json['puja_id'] as String?,
       pujaName: json['puja_name'] as String,
-      deitiesName: (json['deities_name'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      deitiesName: (json['deities_name'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      benefits: (json['benefits'] as List<dynamic>?)
+              ?.map((b) => Benefit.fromJson(b as Map<String, dynamic>))
+              .toList() ??
+          [],
       description: json['description'] as String,
       maximumNoOfDevotees: json['maximumNoOfDevotees'] is int
           ? json['maximumNoOfDevotees'] as int
           : (json['maximumNoOfDevotees'] as num).toInt(),
       fee: (json['fee'] as num).toDouble(),
-      sampleImages: (json['sample_images'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      sampleImages: (json['sample_images'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       bookingCutoffNotice: json['booking_cutoff_notice'] is int
           ? json['booking_cutoff_notice'] as int
           : (json['booking_cutoff_notice'] as num).toInt(),
       allowsSpecialRequirements: json['allows_special_requirements'] as bool,
       fromDate: json['from_date'] as String,
       toDate: json['to_date'] as String,
-      days: (json['days'] as List<dynamic>).map((e) => e as String).toList(),
-      timeSlots: json['time_slots'] != null
-    ? (json['time_slots'] as List<dynamic>)
-        .map((ts) => TimeSlot.fromJson(ts as Map<String, dynamic>))
-        .toList()
-    : <TimeSlot>[],
-
+      days: (json['days'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      timeSlots: (json['time_slots'] as List<dynamic>?)
+              ?.map((ts) => TimeSlot.fromJson(ts as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'temple_id': templeId,
-      'puja_id': puja_id,
+      'puja_id': pujaId,
       'puja_name': pujaName,
       'deities_name': deitiesName,
+      'benefits': benefits.map((b) => b.toJson()).toList(),
       'description': description,
       'maximumNoOfDevotees': maximumNoOfDevotees,
       'fee': fee,
@@ -111,4 +121,17 @@ class TimeSlot {
 
   @override
   String toString() => '$fromTime - $toTime';
+}
+class Benefit {
+  final String description;
+
+  Benefit({required this.description});
+
+  factory Benefit.fromJson(Map<String, dynamic> json) {
+    return Benefit(description: json['description'] as String);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'description': description,
+      };
 }

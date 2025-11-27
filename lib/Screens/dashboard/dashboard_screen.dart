@@ -133,6 +133,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               StringsRoute.bookings,
                             ),
                           ),
+
+                          containerWidget(
+                            ImageStrings.ritual,
+                            StringConstant.contacts,
+                            () => Navigator.pushNamed(
+                              context,
+                              StringsRoute.bookings,
+                            ),
+                          ),
                         ],
                       ),
                     ],

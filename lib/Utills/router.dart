@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
@@ -123,6 +124,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => BookingScreen(),
+        );
+ case StringsRoute.contactUs:
+       
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => ContactScreen(),
         );
 
 

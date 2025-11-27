@@ -36,6 +36,9 @@ class UrlConstant {
   static String getEventsUrl ="${baseUrlString()}list-events";
   static String updateEvent ="${baseUrlString()}update-event";
   static String bookingList ="${baseUrlString()}list-bookings";
+  static String contact_us="${baseUrlString()}list-contact-us-messages";
+    static String mark_as_read="${baseUrlString()}contact-us";
+
 
     
 }

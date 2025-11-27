@@ -46,6 +46,20 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   int page = 1;
   final int limit = 10;
+final TextEditingController benefitController = TextEditingController();
+
+List<Benefit> benefits = [];
+
+void addBenefit(String benefit) {
+  benefits.add(Benefit(description: benefit));
+  notifyListeners();
+}
+
+void removeBenefit(int index) {
+  benefits.removeAt(index);
+  notifyListeners();
+}
+
 
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
@@ -234,7 +248,9 @@ class CreatePujaViewmodel extends ChangeNotifier {
         selectedStartDate.toString(),
         selectedEndDate.toString(),
         requestDays,
-        timeSlots,
+        timeSlots,benefits
+        
+
       );
 
       if (response.code == 200) {

@@ -1,7 +1,9 @@
+import 'package:nammadaiva_dashboard/model/login_model/contact_us_model/contact_us_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
+import 'package:nammadaiva_dashboard/model/login_model/mark_as_read/mark_as_read_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -55,6 +57,39 @@ class UserService {
       throw Exception('API failed: $e');
     }
   }
+
+    Future<ContactResponse> fetchContactUsList(
+    int page ,
+    
+  ) async {
+    try {
+      final url = '${UrlConstant.contact_us}?page=$page';
+      print('Fetching users: $url');
+      dynamic data = await apiService.get(url);
+      return ContactResponse.fromJson(data);
+    } catch (e) {
+      print("User service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+Future<ContactResponse> markAsRead(String id) async {
+  try {
+    final url = "${UrlConstant.mark_as_read}/$id/mark-as-read";
+
+    final Map<String, dynamic> data = await apiService.put(
+      url,
+      {},
+    );
+    return ContactResponse.fromJson(data);
+  } catch (e) {
+    print("Mark as read API failed: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
+
+
 
   Future<EditUserResponse> editUser(
     String id,

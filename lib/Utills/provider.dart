@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
@@ -66,8 +68,8 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
         ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
         ChangeNotifierProvider(create: (context) => EventListViewmodel()),
-                ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
-
+        ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
+        ChangeNotifierProvider(create: (context) => ContactViewModel()),
       ],
       child: FutureBuilder<bool>(
         future: _checkToken(),
@@ -83,9 +85,9 @@ class ProviderWidget extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(textTheme: const TextTheme()),
-            initialRoute: hasToken ? StringsRoute.dashboard : '/login',
+            initialRoute: hasToken ? StringsRoute.contactUs : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const DashboardScreen() : const LoginScreen(),
+            home: hasToken ? ContactScreen() : const LoginScreen(),
           );
         },
       ),

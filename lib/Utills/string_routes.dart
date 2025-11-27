@@ -17,4 +17,5 @@ class StringsRoute {
   static const String createEvent = '/createEvent';
   static const String eventListScreen = '/eventListScreen';
   static const String bookings = '/bookingScreen';
+static const String contactUs="/contactUs";
 }

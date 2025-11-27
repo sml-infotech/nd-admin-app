@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nammadaiva_dashboard/Common/benefits.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
@@ -302,6 +304,13 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           isFromDescription: true,
           isFromPassword: false,
         ),
+                const SizedBox(height: 14),
+
+        Padding(
+  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+  child: BenefitInputWidget(viewmodel: viewmodel),
+),
+
       ],
     );
   }

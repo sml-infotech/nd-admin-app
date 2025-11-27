@@ -29,6 +29,7 @@ class StringConstant {
   static const String updateEvent = "Update Event";
   static const String events = "Events";
   static const String bookings = "Bookings";
+  static const String contacts = "Contacts";
   static const String donationText = "Donation Tracking";
   static const String ritualText = "Ritual & Event Promotion";
   static const String audittext = "Audit & Committee Reports";
@@ -37,6 +38,7 @@ class StringConstant {
   static const String templeDetail = "Temple Details";
   static const String edit = "Edit";
   static const String phone = "Phone";
+  static const String message="Message";
   static const String searchUser = "Search User..";
   static const String selectDeities ="Select the temple first to view deities.";
   static const String email = "Email";
