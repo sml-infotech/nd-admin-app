@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart'
-    show CommonDropdownField;
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -50,10 +48,11 @@ class _BookingScreenState extends State<BookingScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     vm = Provider.of<BookingsViewmodel>(context, listen: false);
-    if (_role != null) vm.setUserRole(_role!);
-        vm.reset();
 
+    if (_role != null) vm.setUserRole(_role!);
+    vm.reset();
     vm.fetchBookings(reset: true);
+    vm.fetchTemples();
   }
 
   @override
@@ -68,8 +67,8 @@ class _BookingScreenState extends State<BookingScreen> {
       builder: (context, vm, child) {
         return FocusDetector(
           onFocusGained: () async {
-            await vm.fetchTemples();
-            // await vm.fetchBookings(reset: true);
+            vm.fetchTemples();
+            vm.fetchBookings(reset: true);
           },
           child: Scaffold(
             backgroundColor: Colors.white,
@@ -90,6 +89,13 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: CircularProgressIndicator(
                         color: ColorConstant.buttonColor,
                       ),
+                    ),
+                  ),
+                if (!vm.isLoading && vm.bookings.isEmpty)
+                  Center(
+                    child: Text(
+                      "No Bookings Found",
+                      style: TextStyle(fontFamily: font),
                     ),
                   ),
               ],
@@ -116,51 +122,38 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
+
   Widget _buildBody(BookingsViewmodel vm) {
     if (vm.isLoading && vm.bookings.isEmpty) return _buildShimmer();
-    if (!vm.isLoading && vm.bookings.isEmpty) {
-      return Column(
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: _buildTempleDropdown(),
-          ),
-          const SizedBox(height: 50),
-          Expanded(
-            child: Center(
-              child: Text(
-                "No bookings found",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: font,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    }
+
     return RefreshIndicator(
       color: ColorConstant.buttonColor,
-      onRefresh: () => vm.fetchBookings(reset: true),
+      onRefresh: () {
+        vm.selectedSegment = 0;
+
+        return vm.fetchBookings(reset: true);
+      },
       child: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.all(16),
-        itemCount: vm.bookings.length + 1 + (vm.isLoadingMore ? 1 : 0),
+        itemCount: vm.bookings.length + 2 + (vm.isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == 0) {
-            // First item is the temple dropdown
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: _buildTempleDropdown(),
             );
           }
 
-          if (index <= vm.bookings.length) {
-            return _buildCard(vm.bookings[index - 1], index - 1);
+          if (index == 1) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _buildSegmentedControl(),
+            );
+          }
+
+          if (index - 2 < vm.bookings.length) {
+            return _buildCard(vm.bookings[index - 2], index - 2);
           }
 
           return _loadingMore();
@@ -168,6 +161,58 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
     );
   }
+
+  Widget _buildSegmentedControl() {
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: List.generate(vm.segments.length, (index) {
+          bool active = index == vm.selectedSegment;
+
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() => vm.selectedSegment = index);
+                print("_selectedSegment${vm.segments[index].toLowerCase()}");
+                vm.fetchBookings(
+                  filter: vm.segments[index].toLowerCase(),
+                  reset: true,
+                );
+                // vm.applyBookingFilter(_segments[index].toLowerCase());
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: active
+                      ? ColorConstant.buttonColor
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  vm.segments[index],
+                  style: TextStyle(
+                    fontFamily: font,
+                    fontSize: 14,
+                    color: active ? Colors.white : Colors.black87,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
 
   Widget _buildTempleDropdown() {
     return GestureDetector(
@@ -195,6 +240,9 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
+  // --------------------------------------------------------
+  // BOOKING CARD
+  // --------------------------------------------------------
   Widget _buildCard(BookingModel request, int index) {
     bool isExpanded = vm.expandedIndex == index;
 
@@ -266,7 +314,6 @@ class _BookingScreenState extends State<BookingScreen> {
             _infoRow("Date", request.pujaDateFormatted),
             _infoRow("Amount", "₹ ${request.totalAmount}"),
 
-
             Align(
               alignment: Alignment.centerRight,
               child: Icon(
@@ -322,7 +369,6 @@ class _BookingScreenState extends State<BookingScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "$title: ",
@@ -335,6 +381,8 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
     );
   }
+
+
 
   Widget _buildShimmer() {
     return ListView.builder(

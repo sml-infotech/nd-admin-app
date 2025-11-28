@@ -14,7 +14,8 @@ class BookingsViewmodel extends ChangeNotifier {
   List<Temple> templeData = [];
   String? selectedTemple;
   String? selectedTempleId;
-
+  int selectedSegment = 0;
+  final List<String> segments = ["Today", "Tomorrow", "Upcoming", "Past"];
   final TempleService api = TempleService();
   int page = 1;
   int? expandedIndex;
@@ -57,7 +58,7 @@ class BookingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> fetchBookings({bool reset = false}) async {
+Future<void> fetchBookings({bool reset = false,String filter="today"}) async {
   if (selectedTempleId == null) return;
 
   try {
@@ -71,7 +72,7 @@ Future<void> fetchBookings({bool reset = false}) async {
     }
     notifyListeners();
 
-    final result = await api.fetchBookings(selectedTempleId!, page: page); // <- pass page here
+    final result = await api.fetchBookings(selectedTempleId!, page: page,filter:filter ); // <- pass page here
     final newItems = result.data ?? [];
     if (newItems.isNotEmpty) {
       bookings.addAll(newItems);
@@ -89,13 +90,18 @@ Future<void> fetchBookings({bool reset = false}) async {
 }
 
 
-  void selectTemple(Temple temple) async {
-    selectedTemple = temple.name;
-    selectedTempleId = temple.id;
-    Navigator.pop(_bottomSheetContext!); // close bottom sheet
-    resetBookings();
-    await fetchBookings();
-  }
+void selectTemple(Temple temple) async {
+  selectedSegment = 0;
+
+  selectedTemple = temple.name;
+  selectedTempleId = temple.id;
+
+  Navigator.pop(_bottomSheetContext!);
+
+  /// Fetch bookings for the newly selected temple
+  await fetchBookings(reset: true);
+}
+
 
   BuildContext? _bottomSheetContext;
 

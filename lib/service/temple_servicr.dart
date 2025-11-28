@@ -98,23 +98,26 @@ class TempleService {
     }
   }
 
-  Future<BookingResponse> fetchBookings(
-    String templeId, {
-    int page = 1,
-    int limit = 10,
-  }) async {
-    try {
-      final url =
-          '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit';
-      print('Fetching bookinhs: $url');
+Future<BookingResponse> fetchBookings(
+  String templeId, {
+  int page = 1,
+  int limit = 10,
+  String filter = "",
+}) async {
+  try {
+    final url =
+        '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit&$filter=${true}';
 
-      dynamic data = await apiService.get(url);
-      return BookingResponse.fromJson(data);
-    } catch (e) {
-      print("bookinhs service decode fails: $e");
-      throw Exception('API failed: $e');
-    }
+    print('Fetching bookings: $url');
+
+    dynamic data = await apiService.get(url);
+    return BookingResponse.fromJson(data);
+  } catch (e) {
+    print("Bookings service decode fails: $e");
+    throw Exception('API failed: $e');
   }
+}
+
 
   Future<MasterTempleListResponse> fetchMasterTemples({
     int page = 1,
