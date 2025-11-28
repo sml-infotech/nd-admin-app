@@ -98,7 +98,7 @@ class CreateMasterViewmodel extends ChangeNotifier {
 
   void closeExcelPopup() {
     showExcelPopup = false;
-    excelTemples.clear();
+    // excelTemples.clear();
 
     notifyListeners();
   }

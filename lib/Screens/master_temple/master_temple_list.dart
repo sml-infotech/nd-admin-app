@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -24,8 +25,8 @@ class _MasterTempleListState extends State<MasterTempleList> {
   void initState() {
     super.initState();
 
-    final vm = context.read<MasterTempleListViewmodel>();
-    vm.fetchTemples(reset: true);
+    // final vm = context.read<MasterTempleListViewmodel>();
+    // vm.fetchTemples(reset: true);
 
     _controller.addListener(() {
       final vm = context.read<MasterTempleListViewmodel>();
@@ -41,38 +42,44 @@ class _MasterTempleListState extends State<MasterTempleList> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MasterTempleListViewmodel>(
-      builder: (context, vm, _) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: ColorConstant.buttonColor,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            title: _buildAppBar(),
-          ),
-
-          body: vm.isLoading && vm.temples.isEmpty
-              ? _buildShimmer()
-              : RefreshIndicator(
-                  onRefresh: () async => vm.fetchTemples(reset: true),
-                  child: ListView.builder(
-                    controller: _controller,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: vm.temples.length + (vm.isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index < vm.temples.length) {
-                        return _templeCard(vm.temples[index]);
-                      }
-                      return const Padding(
-                        padding: EdgeInsets.all(18),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    },
-                  ),
-                ),
-        );
+    return FocusDetector(
+      onFocusGained: () {
+        final vm = context.read<MasterTempleListViewmodel>();
+        vm.fetchTemples(reset: true);
       },
+      child: Consumer<MasterTempleListViewmodel>(
+        builder: (context, vm, _) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: ColorConstant.buttonColor,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: _buildAppBar(vm),
+            ),
+
+            body: vm.isLoading && vm.temples.isEmpty
+                ? _buildShimmer()
+                : RefreshIndicator(
+                    onRefresh: () async => vm.fetchTemples(reset: true),
+                    child: ListView.builder(
+                      controller: _controller,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: vm.temples.length + (vm.isLoadingMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index < vm.temples.length) {
+                          return _templeCard(vm.temples[index]);
+                        }
+                        return const Padding(
+                          padding: EdgeInsets.all(18),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    ),
+                  ),
+          );
+        },
+      ),
     );
   }
 
@@ -200,13 +207,15 @@ class _MasterTempleListState extends State<MasterTempleList> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(MasterTempleListViewmodel vm) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () { Navigator.pop(context);
+          vm.reset();
+          },
         ),
         const Spacer(),
         Text(
@@ -214,9 +223,15 @@ class _MasterTempleListState extends State<MasterTempleList> {
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
-        IconButton(iconSize: 20, onPressed: () {
-          Navigator.pushNamed(context, StringsRoute.create_master_temple);
-        }, icon: Icon(Icons.add),color: Colors.white,),
+        IconButton(
+          iconSize: 20,
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.create_master_temple);
+            vm.reset();
+          },
+          icon: Icon(Icons.add),
+          color: Colors.white,
+        ),
       ],
     );
   }

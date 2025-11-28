@@ -41,4 +41,14 @@ class MasterTempleListViewmodel extends ChangeNotifier {
     isLoadingMore = false;
     notifyListeners();
   }
+  void reset(){
+
+   isLoading = false;
+   isLoadingMore = false;
+   hasMore = true;
+
+   page = 1;
+   temples = [];
+   notifyListeners();
+  }
 }

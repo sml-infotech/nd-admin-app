@@ -40,6 +40,47 @@ class CreateMasterTemple extends StatelessWidget {
                     Column(
                       children: [
                         SizedBox(height: screenHeight * 0.02),
+                        CommonTextField(
+                          hintText: StringConstant.templeName,
+                          labelText: StringConstant.templeName,
+                          controller: vm.templeName,
+                          isFromPassword: false,
+                        ),
+                        const SizedBox(height: 20),
+
+                        CommonTextField(
+                          hintText: StringConstant.addresss,
+                          labelText: StringConstant.addresss,
+                          controller: vm.address,
+                          isFromPassword: false,
+                        ),
+                        const SizedBox(height: 20),
+
+                        CommonTextField(
+                          hintText: StringConstant.cityy,
+                          labelText: StringConstant.cityy,
+                          controller: vm.city,
+                          isFromPassword: false,
+                        ),
+                        const SizedBox(height: 20),
+
+                        CommonTextField(
+                          hintText: StringConstant.statee,
+                          labelText: StringConstant.statee,
+                          controller: vm.state,
+                          isFromPassword: false,
+                        ),
+                        const SizedBox(height: 20),
+
+                        CommonTextField(
+                          hintText: StringConstant.pincode,
+                          labelText: StringConstant.pincode,
+                          controller: vm.pincode,
+                          isFromPassword: false,
+                          isFromPhone: true,
+                        ),
+                        const SizedBox(height: 20),
+
                         Expanded(child: buildForm(vm)),
                         buildBottomButtons(context, vm),
                       ],
@@ -115,7 +156,7 @@ class CreateMasterTemple extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "Excel Loaded Temples",
+                    "Loaded Temples",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -174,9 +215,33 @@ class CreateMasterTemple extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          if (vm.excelTemples.isNotEmpty) viewLoadedTemple(vm),
+          const SizedBox(height: 15),
+
           uploadExcelTempleButton(context),
           const SizedBox(height: 10),
+          addTempleButton(context, vm),
+          const SizedBox(height: 10),
         ],
+      ),
+    );
+  }
+
+  Widget viewLoadedTemple(CreateMasterViewmodel vm) {
+    return GestureDetector(
+      onTap: () {
+        vm.openExcelPopup();
+      },
+      child: RichText(
+        text: TextSpan(
+          text: "View Loaded Temples & Create",
+          style: TextStyle(
+            fontFamily: font,
+            fontSize: 13,
+            color: ColorConstant.buttonColor,
+            decoration: TextDecoration.underline,
+          ),
+        ),
       ),
     );
   }
@@ -189,6 +254,7 @@ class CreateMasterTemple extends StatelessWidget {
         onPressed: () async {
           if (vm.excelTemples.isNotEmpty) {
             await vm.createMasterTemple();
+            Fluttertoast.showToast(msg: vm.message);
           } else {
             Fluttertoast.showToast(msg: "Add Temples");
           }
@@ -199,6 +265,44 @@ class CreateMasterTemple extends StatelessWidget {
         ),
         child: Text(
           StringConstant.create,
+          style: AppTextStyles.buttonTextStyle,
+        ),
+      ),
+    );
+  }
+
+  Widget addTempleButton(BuildContext context, CreateMasterViewmodel vm) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (vm.templeName.text.isNotEmpty &&
+              vm.address.text.isNotEmpty &&
+              vm.city.text.isNotEmpty &&
+              vm.state.text.isNotEmpty &&
+              vm.pincode.text.isNotEmpty) {
+            vm.excelTemples.add(
+              MasterTemple(
+                templeName: vm.templeName.text ?? "",
+                address: vm.address.text ?? "",
+                city: vm.city.text ?? "",
+                state: vm.state.text ?? "",
+                pincode: vm.pincode.text ?? "",
+              ),
+            );
+            vm.notifyListeners();
+            vm.openExcelPopup();
+            vm.reset();
+          } else {
+            Fluttertoast.showToast(msg: "Fill The All Fields");
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.buttonColor,
+        ),
+        child: Text(
+          StringConstant.addTemple,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),
