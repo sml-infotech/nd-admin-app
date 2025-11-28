@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temp
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_onboard/update_onboard_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_admin/admin_update_templemodal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update-temple_approval-response.dart';
@@ -98,26 +99,25 @@ class TempleService {
     }
   }
 
-Future<BookingResponse> fetchBookings(
-  String templeId, {
-  int page = 1,
-  int limit = 10,
-  String filter = "",
-}) async {
-  try {
-    final url =
-        '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit&$filter=${true}';
+  Future<BookingResponse> fetchBookings(
+    String templeId, {
+    int page = 1,
+    int limit = 10,
+    String filter = "",
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit&$filter=${true}';
 
-    print('Fetching bookings: $url');
+      print('Fetching bookings: $url');
 
-    dynamic data = await apiService.get(url);
-    return BookingResponse.fromJson(data);
-  } catch (e) {
-    print("Bookings service decode fails: $e");
-    throw Exception('API failed: $e');
+      dynamic data = await apiService.get(url);
+      return BookingResponse.fromJson(data);
+    } catch (e) {
+      print("Bookings service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
   }
-}
-
 
   Future<MasterTempleListResponse> fetchMasterTemples({
     int page = 1,
@@ -135,24 +135,21 @@ Future<BookingResponse> fetchBookings(
     }
   }
 
-Future<TempleUpdateResponse> postMasterTemple(List<MasterTemple> request) async {
-  try {
-    final data = await apiService.post(
-      UrlConstant.create_master_temple,
-      {
+  Future<TempleUpdateResponse> postMasterTemple(
+    List<MasterTemple> request,
+  ) async {
+    try {
+      final data = await apiService.post(UrlConstant.create_master_temple, {
         "temples": request.map((e) => e.toJson()).toList(),
-      },
-    );
+      });
 
-    print("✅ Temple Update API Response >>>> $data");
-    return TempleUpdateResponse.fromJson(data);
-  } catch (e) {
-    print("❌ Temple Update service failed: $e");
-    throw Exception('Temple update API failed: $e');
+      print("✅ Temple Update API Response >>>> $data");
+      return TempleUpdateResponse.fromJson(data);
+    } catch (e) {
+      print("❌ Temple Update service failed: $e");
+      throw Exception('Temple update API failed: $e');
+    }
   }
-}
-
-
 
   Future<TempleUpdateResponse> updateTemple(
     Map<String, dynamic> payload,
@@ -169,6 +166,21 @@ Future<TempleUpdateResponse> postMasterTemple(List<MasterTemple> request) async 
     } catch (e) {
       print("❌ Temple Update service failed: $e");
       throw Exception('Temple update API failed: $e');
+    }
+  }
+
+  Future<MasterTempleListModal> updateOnboard(UpdateOnboardModel datas) async {
+    try {
+      final request = datas;
+      final data = await apiService.put(
+        UrlConstant.update_onboard,
+        request.toJson(),
+      );
+      print("✅ update_onboard Update API Response >>>> $data");
+      return MasterTempleListModal.fromJson(data);
+    } catch (e) {
+      print("❌ update_onboard Update service failed: $e");
+      throw Exception('update_onboard update API failed: $e');
     }
   }
 

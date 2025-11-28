@@ -58,10 +58,12 @@ class BookingsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> fetchBookings({bool reset = false,String filter="today"}) async {
-  if (selectedTempleId == null) return;
+  Future<void> fetchBookings({
+    bool reset = false,
+    String filter = "today",
+  }) async {
+    if (selectedTempleId == null) return;
 
-  try {
     if (reset) {
       page = 1;
       bookings.clear();
@@ -72,36 +74,67 @@ Future<void> fetchBookings({bool reset = false,String filter="today"}) async {
     }
     notifyListeners();
 
-    final result = await api.fetchBookings(selectedTempleId!, page: page,filter:filter ); // <- pass page here
-    final newItems = result.data ?? [];
-    if (newItems.isNotEmpty) {
-      bookings.addAll(newItems);
-      page++; // increment page for next fetch
-    } else {
-      hasMore = false;
+    try {
+      final result = await api.fetchBookings(
+        selectedTempleId!,
+        page: page,
+        filter: filter,
+      );
+      final newItems = result.data ?? [];
+
+      List<BookingModel> filtered = newItems;
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final tomorrow = today.add(const Duration(days: 1));
+
+      if (filter == "today") {
+        filtered = newItems
+            .where(
+              (b) =>
+                  DateTime.parse(
+                    b.pujaDate,
+                  ).toLocal().difference(today).inDays ==
+                  0,
+            )
+            .toList();
+      } else if (filter == "tomorrow") {
+        filtered = newItems
+            .where(
+              (b) =>
+                  DateTime.parse(
+                    b.pujaDate,
+                  ).toLocal().difference(today).inDays ==
+                  1,
+            )
+            .toList();
+      }
+
+      if (filtered.isNotEmpty) {
+        bookings.addAll(filtered);
+        page++; // increment page only if API returned data
+      } else if (newItems.length < result.limit) {
+        hasMore = false; // no more pages
+      }
+    } catch (e) {
+      debugPrint("Fetch error: $e");
     }
-  } catch (e) {
-    debugPrint("Fetch error: $e");
+
+    isLoading = false;
+    isLoadingMore = false;
+    notifyListeners();
   }
 
-  isLoading = false;
-  isLoadingMore = false;
-  notifyListeners();
-}
+  void selectTemple(Temple temple) async {
+    selectedSegment = 0;
 
+    selectedTemple = temple.name;
+    selectedTempleId = temple.id;
 
-void selectTemple(Temple temple) async {
-  selectedSegment = 0;
+    Navigator.pop(_bottomSheetContext!);
 
-  selectedTemple = temple.name;
-  selectedTempleId = temple.id;
-
-  Navigator.pop(_bottomSheetContext!);
-
-  /// Fetch bookings for the newly selected temple
-  await fetchBookings(reset: true);
-}
-
+    /// Fetch bookings for the newly selected temple
+    await fetchBookings(reset: true);
+  }
 
   BuildContext? _bottomSheetContext;
 
@@ -113,19 +146,19 @@ void selectTemple(Temple temple) async {
         itemCount: templeData.length,
         itemBuilder: (_, index) {
           final temple = templeData[index];
-          return Padding(padding: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 0),child: 
-          
-          ListTile(
-            title: Text(temple.name,style: TextStyle(fontFamily: font),),
-            onTap: () => selectTemple(temple),
-          ));
+          return Padding(
+            padding: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 0),
+            child: ListTile(
+              title: Text(temple.name, style: TextStyle(fontFamily: font)),
+              onTap: () => selectTemple(temple),
+            ),
+          );
         },
       ),
     );
   }
 
-
-   void reset() {
+  void reset() {
     bookings = [];
     isLoading = false;
     isLoadingMore = false;
@@ -135,7 +168,7 @@ void selectTemple(Temple temple) async {
     templeData = [];
     selectedTemple = null;
     selectedTempleId = null;
-
+    selectedSegment = 0;
     page = 1;
     expandedIndex = null;
 

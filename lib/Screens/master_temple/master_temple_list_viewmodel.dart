@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_onboard/update_onboard_model.dart'
+    show UpdateOnboardModel;
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class MasterTempleListViewmodel extends ChangeNotifier {
@@ -9,6 +11,7 @@ class MasterTempleListViewmodel extends ChangeNotifier {
   bool isLoading = false;
   bool isLoadingMore = false;
   bool hasMore = true;
+  String message = "";
 
   int page = 1;
   List<MasterTempleListModal> temples = [];
@@ -41,14 +44,49 @@ class MasterTempleListViewmodel extends ChangeNotifier {
     isLoadingMore = false;
     notifyListeners();
   }
-  void reset(){
 
-   isLoading = false;
-   isLoadingMore = false;
-   hasMore = true;
+Future<void> updateOnboard(String templeId, bool newValue) async {
+  try {
+    final index = temples.indexWhere((t) => t.id == templeId);
+    if (index != -1) {
+      temples[index] = temples[index].copyWith(isOnboarded: newValue);
+      notifyListeners();
+    }
 
-   page = 1;
-   temples = [];
-   notifyListeners();
+    isLoading = true;
+    notifyListeners();
+
+    var data = UpdateOnboardModel(
+      temple_id: templeId,
+      is_onboarded: newValue,
+    );
+
+    await api.updateOnboard(data);
+
+    isLoading = false;
+    notifyListeners();
+
+  } catch (e) {
+    final index = temples.indexWhere((t) => t.id == templeId);
+    if (index != -1) {
+      temples[index] = temples[index].copyWith(isOnboarded: !newValue);
+      notifyListeners();
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+}
+
+
+
+  void reset() {
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+
+    page = 1;
+    temples = [];
+    notifyListeners();
   }
 }

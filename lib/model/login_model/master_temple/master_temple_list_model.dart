@@ -61,4 +61,20 @@ class MasterTempleListModal {
       createdAt: json["created_at"] ?? "",
     );
   }
+
+  // ✅ ADD COPYWITH
+  MasterTempleListModal copyWith({
+    bool? isOnboarded,
+  }) {
+    return MasterTempleListModal(
+      id: id,
+      templeName: templeName,
+      address: address,
+      city: city,
+      state: state,
+      pincode: pincode,
+      isOnboarded: isOnboarded ?? this.isOnboarded,
+      createdAt: createdAt,
+    );
+  }
 }

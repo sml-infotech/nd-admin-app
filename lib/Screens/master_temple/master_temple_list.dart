@@ -60,7 +60,8 @@ class _MasterTempleListState extends State<MasterTempleList> {
 
             body: vm.isLoading && vm.temples.isEmpty
                 ? _buildShimmer()
-                : RefreshIndicator(color: ColorConstant.buttonColor,
+                : RefreshIndicator(
+                    color: ColorConstant.buttonColor,
                     onRefresh: () async => vm.fetchTemples(reset: true),
                     child: ListView.builder(
                       controller: _controller,
@@ -68,7 +69,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
                       itemCount: vm.temples.length + (vm.isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index < vm.temples.length) {
-                          return _templeCard(vm.temples[index]);
+                          return _templeCard(vm.temples[index], vm);
                         }
                         return const Padding(
                           padding: EdgeInsets.all(18),
@@ -83,7 +84,10 @@ class _MasterTempleListState extends State<MasterTempleList> {
     );
   }
 
-  Widget _templeCard(MasterTempleListModal temple) {
+  Widget _templeCard(
+    MasterTempleListModal temple,
+    MasterTempleListViewmodel vm,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -97,7 +101,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          templeName(temple),
+          templeName(temple, vm),
           const SizedBox(height: 8),
           locationAndCity(temple),
           const SizedBox(height: 4),
@@ -107,7 +111,10 @@ class _MasterTempleListState extends State<MasterTempleList> {
     );
   }
 
-  Widget templeName(MasterTempleListModal temple) {
+  Widget templeName(
+    MasterTempleListModal temple,
+    MasterTempleListViewmodel vm,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -121,20 +128,38 @@ class _MasterTempleListState extends State<MasterTempleList> {
             ),
           ),
         ),
-        Container(
-          height: 28,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: temple.isOnboarded ? Colors.green : Colors.red,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            temple.isOnboarded ? "Onboarded" : "Not Onboarded",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: font,
+
+        GestureDetector(
+          onTap: () async {
+            await vm.updateOnboard(temple.id, !temple.isOnboarded);
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            width: 45,
+            height: 28,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: temple.isOnboarded ? Colors.green : Colors.red,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Stack(
+              children: [
+                AnimatedAlign(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  alignment: temple.isOnboarded
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -213,8 +238,9 @@ class _MasterTempleListState extends State<MasterTempleList> {
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () { Navigator.pop(context);
-          vm.reset();
+          onPressed: () {
+            Navigator.pop(context);
+            vm.reset();
           },
         ),
         const Spacer(),

@@ -181,8 +181,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 setState(() => vm.selectedSegment = index);
                 print("_selectedSegment${vm.segments[index].toLowerCase()}");
                 vm.fetchBookings(
-                  filter: vm.segments[index].toLowerCase(),
                   reset: true,
+                  filter: vm.segments[index].toLowerCase()
                 );
                 // vm.applyBookingFilter(_segments[index].toLowerCase());
               },
@@ -240,9 +240,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // --------------------------------------------------------
-  // BOOKING CARD
-  // --------------------------------------------------------
   Widget _buildCard(BookingModel request, int index) {
     bool isExpanded = vm.expandedIndex == index;
 
