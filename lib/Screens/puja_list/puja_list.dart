@@ -302,7 +302,7 @@ class _PujaListState extends State<PujaList> {
             highlightColor: Colors.grey.shade100,
             child: Container(
               height: 140,
-              margin: const EdgeInsets.symmetric(horizontal: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 0),
               decoration: BoxDecoration(
                 color: Colors.grey,
                 borderRadius: BorderRadius.circular(12),
@@ -514,34 +514,42 @@ class _PujaListState extends State<PujaList> {
   Widget availableDays({required List<String> activeDays}) {
     final allDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: allDays.map((day) {
-        final isActive = activeDays.contains(day);
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(8, 0, 0, 0),
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: allDays.map((day) {
+          final isActive = activeDays.contains(day);
 
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: BoxDecoration(
-            color: isActive ? ColorConstant.buttonColor : Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(0),
-            border: Border.all(
+          return AnimatedContainer(
+            width: 30,
+            height: 30,
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+            decoration: BoxDecoration(
               color: isActive
                   ? ColorConstant.buttonColor
-                  : Colors.grey.shade400,
-              width: 1,
+                  : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: isActive
+                    ? ColorConstant.buttonColor
+                    : Colors.grey.shade400,
+              ),
             ),
-          ),
-          child: Text(
-            day.substring(0, 3),
-            style: TextStyle(
-              fontSize: 11,
-              fontFamily: font,
-              fontWeight: FontWeight.w600,
-              color: isActive ? Colors.white : Colors.black87,
+            child: Text(
+              day.substring(0, 1),
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: font,
+                fontWeight: FontWeight.w600,
+                color: isActive ? Colors.white : Colors.black87,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 

@@ -60,7 +60,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
 
             body: vm.isLoading && vm.temples.isEmpty
                 ? _buildShimmer()
-                : RefreshIndicator(
+                : RefreshIndicator(color: ColorConstant.buttonColor,
                     onRefresh: () async => vm.fetchTemples(reset: true),
                     child: ListView.builder(
                       controller: _controller,

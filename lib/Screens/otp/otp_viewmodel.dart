@@ -30,6 +30,7 @@ class OtpViewmodel extends ChangeNotifier {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', response.token!);
         await prefs.setString('userRole', response.user?.role ?? "");
+        // await prefs.setString('UserName',response.user.)
         print("✅ Token saved: ${response.token}");
         message = response.message ?? "success";
         isOtpSuccess = true;

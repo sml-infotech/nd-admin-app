@@ -153,23 +153,7 @@ class CreateMasterTemple extends StatelessWidget {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Loaded Temples",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: font,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.red),
-                    onPressed: () => vm.closeExcelPopup(),
-                  ),
-                ],
-              ),
+            loadedTempleTextAndCloseIcon(vm) ,
               const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
@@ -209,6 +193,28 @@ class CreateMasterTemple extends StatelessWidget {
       ),
     );
   }
+
+  Widget loadedTempleTextAndCloseIcon(CreateMasterViewmodel vm){
+    return  Row(
+                children: [
+                  Text(
+                    "Loaded Temples",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: font,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.red),
+                    onPressed: () => vm.closeExcelPopup(),
+                  ),
+                ],
+              );
+  }
+
+  // Widget loaded
 
   Widget buildBottomButtons(BuildContext context, CreateMasterViewmodel vm) {
     return Container(

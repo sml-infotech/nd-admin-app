@@ -23,7 +23,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   String? _token;
   String? _role;
 
-  final List<String> tabTitles = ["Map", "About", "Events"];
+  final List<String> tabTitles = ["About", "Map", "Events"];
 
   @override
   void initState() {
@@ -137,16 +137,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
 
   Widget _getTabIcon(int index) {
     switch (index) {
-      case 0:
-        return Image.asset(
-          ImageStrings.mapicon,
-          width: 24,
-          height: 24,
-          color: _selectedTab == index
-              ? ColorConstant.buttonColor
-              : Colors.grey,
-        );
-      case 1:
+        case 0:
         return Image.asset(
           ImageStrings.abouticon,
           width: 24,
@@ -155,6 +146,16 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
               ? ColorConstant.buttonColor
               : Colors.grey,
         );
+      case 1:
+        return Image.asset(
+          ImageStrings.mapicon,
+          width: 24,
+          height: 24,
+          color: _selectedTab == index
+              ? ColorConstant.buttonColor
+              : Colors.grey,
+        );
+    
       default:
         return Image.asset(
           ImageStrings.eventicon,
@@ -170,9 +171,9 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   Widget getSelectedTabContent(int index, TempleDetailsArguments widget) {
     switch (index) {
       case 0:
-        return mapTab(widget);
-      case 1:
         return aboutTab();
+      case 1:
+        return mapTab(widget);
       default:
         return eventsTab();
     }
@@ -205,7 +206,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   Widget aboutTab() => Padding(
     key: const ValueKey("About"),
     padding: const EdgeInsets.all(18.0),
-    child:  Text(widget.arguments.description),
+    child: Text(widget.arguments.description),
   );
 
   Widget eventsTab() => Padding(
@@ -215,49 +216,49 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   );
 
   Widget carouselWidget() {
-  final images = widget.arguments.images;
+    final images = widget.arguments.images;
 
-  if (images.length == 1) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(0),
-      child: Image.network(
-        images.first,
-        fit: BoxFit.fill,
-        width: double.infinity,
+    if (images.length == 1) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(0),
+        child: Image.network(
+          images.first,
+          fit: BoxFit.fill,
+          width: double.infinity,
+          height: 200,
+        ),
+      );
+    }
+    return CarouselSlider(
+      items: images
+          .map(
+            (image) => ClipRRect(
+              borderRadius: BorderRadius.circular(0),
+              child: Image.network(
+                image,
+                fit: BoxFit.fill,
+                width: double.infinity,
+              ),
+            ),
+          )
+          .toList(),
+      options: CarouselOptions(
         height: 200,
+        enlargeCenterPage: true,
+        autoPlay: true,
+        aspectRatio: 16 / 9,
+        autoPlayCurve: Curves.fastOutSlowIn,
+        enableInfiniteScroll: true,
+        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        viewportFraction: 1,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
     );
   }
-  return CarouselSlider(
-    items: images
-        .map(
-          (image) => ClipRRect(
-            borderRadius: BorderRadius.circular(0),
-            child: Image.network(
-              image,
-              fit: BoxFit.fill,
-              width: double.infinity,
-            ),
-          ),
-        )
-        .toList(),
-    options: CarouselOptions(
-      height: 200,
-      enlargeCenterPage: true,
-      autoPlay: true,
-      aspectRatio: 16 / 9,
-      autoPlayCurve: Curves.fastOutSlowIn,
-      enableInfiniteScroll: true,
-      autoPlayAnimationDuration: const Duration(milliseconds: 800),
-      viewportFraction: 1,
-      onPageChanged: (index, reason) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-    ),
-  );
-}
 
   Widget carouselDotWidget() {
     return Row(
