@@ -40,16 +40,22 @@ class CreateMasterTemple extends StatelessWidget {
                     Column(
                       children: [
                         SizedBox(height: screenHeight * 0.02),
-
-                        Expanded(child: buildForm(vm, context)),
-
+                        Expanded(child: buildForm(vm)),
                         buildBottomButtons(context, vm),
                       ],
                     ),
 
+                    if (vm.isExcelLoading)
+                      Container(
+                        color: Colors.black.withOpacity(0.3),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+
+                    if (vm.showExcelPopup) excelOverlayPopup(context, vm),
+
                     if (vm.isLoading)
                       Container(
-                        color: Colors.black.withOpacity(0.4),
+                        color: Colors.black.withOpacity(0.3),
                         child: Center(
                           child: CircularProgressIndicator(
                             color: ColorConstant.buttonColor,
@@ -85,99 +91,82 @@ class CreateMasterTemple extends StatelessWidget {
     );
   }
 
-  Widget buildForm(CreateMasterViewmodel vm, context) {
+  Widget buildForm(CreateMasterViewmodel vm) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(0),
-      child: Column(
-        children: [
-          SizedBox(height: 10),
-          // CommonTextField(
-          //   hintText: StringConstant.templeName,
-          //   labelText: StringConstant.templeName,
-          //   controller: vm.templeName,
-          //   isFromPassword: false,
-          // ),
-          // const SizedBox(height: 20),
-
-          // CommonTextField(
-          //   hintText: StringConstant.addresss,
-          //   labelText: StringConstant.addresss,
-          //   controller: vm.address,
-          //   isFromPassword: false,
-          // ),
-          // const SizedBox(height: 20),
-
-          // CommonTextField(
-          //   hintText: StringConstant.cityy,
-          //   labelText: StringConstant.cityy,
-          //   controller: vm.city,
-          //   isFromPassword: false,
-          // ),
-          // const SizedBox(height: 20),
-
-          // CommonTextField(
-          //   hintText: StringConstant.statee,
-          //   labelText: StringConstant.statee,
-          //   controller: vm.state,
-          //   isFromPassword: false,
-          // ),
-          // const SizedBox(height: 20),
-
-          // CommonTextField(
-          //   hintText: StringConstant.pincode,
-          //   labelText: StringConstant.pincode,
-          //   controller: vm.pincode,
-          //   isFromPassword: false,
-          //   isFromPhone: true,
-          // ),
-          // const SizedBox(height: 20),
-          // addTempleButton(context, vm),
-          excelTempleCards(vm),
-          const SizedBox(height: 100),
-        ],
-      ),
+      child: Column(children: const [SizedBox(height: 20)]),
     );
   }
 
-  Widget excelTempleCards(CreateMasterViewmodel vm) {
-    return vm.excelTemples.isEmpty
-        ? const SizedBox() // nothing to show
-        : ListView.builder(
-            itemCount: vm.excelTemples.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              final item = vm.excelTemples[index];
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(12),
-                    side: BorderSide(color: Colors.black12),
-                  ),
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    title: Text(
-                      item.templeName,
-                      style: TextStyle(fontFamily: font),
-                    ),
-                    subtitle: Text(
-                      style: TextStyle(fontFamily: font),
-                      "${item.address}, ${item.city}\n${item.state} - ${item.pincode}",
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      onPressed: () {
-                        vm.excelTemples.removeAt(index);
-                        vm.notifyListeners();
-                      },
+  Widget excelOverlayPopup(BuildContext context, CreateMasterViewmodel vm) {
+    return Container(
+      color: Colors.black.withOpacity(0.5),
+      child: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.85,
+          height: MediaQuery.of(context).size.height * 0.65,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Excel Loaded Temples",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: font,
                     ),
                   ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.red),
+                    onPressed: () => vm.closeExcelPopup(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: vm.excelTemples.length,
+                  itemBuilder: (context, index) {
+                    final item = vm.excelTemples[index];
+                    return Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          item.templeName,
+                          style: TextStyle(fontFamily: font),
+                        ),
+                        subtitle: Text(
+                          style: TextStyle(fontFamily: font),
+                          "${item.address}, ${item.city}\n${item.state} - ${item.pincode}",
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            vm.removeTemple(index);
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          );
+              ),
+
+              createUserButton(context, vm),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildBottomButtons(BuildContext context, CreateMasterViewmodel vm) {
@@ -187,7 +176,6 @@ class CreateMasterTemple extends StatelessWidget {
         children: [
           uploadExcelTempleButton(context),
           const SizedBox(height: 10),
-          createUserButton(context, vm),
         ],
       ),
     );
@@ -201,8 +189,10 @@ class CreateMasterTemple extends StatelessWidget {
         onPressed: () async {
           if (vm.excelTemples.isNotEmpty) {
             await vm.createMasterTemple();
-            Fluttertoast.showToast(msg: "Validated Successfully!");
+          } else {
+            Fluttertoast.showToast(msg: "Add Temples");
           }
+          vm.message = "";
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,
@@ -210,47 +200,6 @@ class CreateMasterTemple extends StatelessWidget {
         child: Text(
           StringConstant.create,
           style: AppTextStyles.buttonTextStyle,
-        ),
-      ),
-    );
-  }
-
-  Widget addTempleButton(BuildContext context, CreateMasterViewmodel vm) {
-    return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
-      child: SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton(
-          onPressed: () async {
-            if (vm.templeName.text.isNotEmpty && vm.address.text.isNotEmpty) {
-              vm.excelTemples.add(
-                MasterTemple(
-                  templeName: vm.templeName.text,
-                  address: vm.address.text,
-                  city: vm.city.text,
-                  state: vm.state.text,
-                  pincode: vm.pincode.text,
-                ),
-              );
-              vm.notifyListeners(); // <--- Required
-              vm.reset();
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            side: const BorderSide(color: ColorConstant.buttonColor),
-            backgroundColor: Colors.white,
-          ),
-          child: Text(
-            StringConstant.addMasterTemple,
-
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontFamily: font,
-            ),
-          ),
         ),
       ),
     );
@@ -270,9 +219,9 @@ class CreateMasterTemple extends StatelessWidget {
           StringConstant.uploadFromExcel,
           style: TextStyle(
             fontSize: 16,
+            fontFamily: font,
             fontWeight: FontWeight.bold,
             color: Colors.black,
-            fontFamily: font,
           ),
         ),
       ),
@@ -283,12 +232,17 @@ class CreateMasterTemple extends StatelessWidget {
     final vm = Provider.of<CreateMasterViewmodel>(context, listen: false);
 
     try {
+      vm.setExcelLoading(true);
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
 
-      if (result == null) return;
+      if (result == null) {
+        vm.setExcelLoading(false);
+        return;
+      }
 
       File file = File(result.files.single.path!);
       var bytes = file.readAsBytesSync();
@@ -297,10 +251,9 @@ class CreateMasterTemple extends StatelessWidget {
       String sheet = excel.tables.keys.first;
       var rows = excel.tables[sheet]!.rows;
 
-      List<MasterTemple> list = [];
-
       for (int i = 1; i < rows.length; i++) {
         var row = rows[i];
+
         vm.excelTemples.add(
           MasterTemple(
             templeName: row[0]?.value.toString() ?? "",
@@ -312,11 +265,13 @@ class CreateMasterTemple extends StatelessWidget {
         );
       }
 
-      vm.notifyListeners();
+      vm.setExcelLoading(false);
+      vm.openExcelPopup();
     } catch (e) {
+      vm.setExcelLoading(false);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      ).showSnackBar(SnackBar(content: Text("Upload a Valid Excel ")));
     }
   }
 }
