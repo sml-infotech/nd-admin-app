@@ -33,6 +33,8 @@ class StringConstant {
   static const String createUser = "CreateUser";
   static const String createEvent = "Create Event";
   static const String createMantra = "Create Mantra";
+    static const String mantras = "Mantras";
+
 
   static const String event = "Event Name";
   static const String updateEvent = "Update Event";

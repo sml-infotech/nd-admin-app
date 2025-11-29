@@ -43,8 +43,8 @@ class UrlConstant {
   static String mark_as_read = "${baseUrlString()}contact-us";
   static String master_temples = "${baseUrlString()}list-master-temples";
   static String create_master_temple = "${baseUrlString()}create-master-temple";
-        static String update_onboard="${baseUrlString()}update-master-temple";
-                static String create_mantra="${baseUrlString()}create-mantra";
-
+  static String update_onboard = "${baseUrlString()}update-master-temple";
+  static String create_mantra = "${baseUrlString()}create-mantra";
+    static String list_mantras = "${baseUrlString()}list-mantras";
 
 }

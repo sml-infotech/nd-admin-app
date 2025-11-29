@@ -1,3 +1,4 @@
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_response_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -29,4 +30,20 @@ class MantraService {
       throw Exception('API failed: $e');
     }
   }
+Future<MantraListModal> fetchMantra({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final url =
+          '${UrlConstant.list_mantras}?page=$page&limit=$limit';
+      print('Fetching fetchMantra: $url');
+      dynamic data = await apiService.get(url);
+      return MantraListModal.fromJson(data);
+    } catch (e) {
+      print("fetchMantra service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
 }

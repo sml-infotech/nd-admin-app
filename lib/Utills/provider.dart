@@ -10,6 +10,9 @@ import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart'
+    show MantraList;
+import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
@@ -76,6 +79,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
         ChangeNotifierProvider(create: (context) => ContactViewModel()),
         ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
+        ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
 
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
@@ -97,7 +101,7 @@ class ProviderWidget extends StatelessWidget {
             theme: ThemeData(textTheme: const TextTheme()),
             initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? DashboardScreen() : const LoginScreen(),
+            home: hasToken ? MantraList() : const LoginScreen(),
           );
         },
       ),
