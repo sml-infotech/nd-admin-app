@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -57,7 +59,7 @@ class _MantraListState extends State<MantraList> {
               ? mantraShimmer()
               : ListView.builder(
                   controller: _controller,
-                  padding: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.only(top: 0),
                   itemCount:
                       viewmodel.mantras.length +
                       (viewmodel.isLoadingMore ? 1 : 0),
@@ -79,6 +81,7 @@ class _MantraListState extends State<MantraList> {
                       imageUrl: item.imageUrl ?? "",
                       title: item.mantraName ?? "",
                       mantra: item.mantra ?? "",
+                      mantraId: item.id ?? "",
                     );
                   },
                 ),
@@ -97,7 +100,21 @@ class _MantraListState extends State<MantraList> {
         const Spacer(),
         Text(StringConstant.mantras, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
-        const SizedBox(width: 30),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              StringsRoute.createMantra,
+              arguments: UpdateMantra(
+                mantraName: "",
+                mantra: "",
+                image: "",
+                mantraID: "",
+              ),
+            );
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }
@@ -106,18 +123,18 @@ class _MantraListState extends State<MantraList> {
     required String imageUrl,
     required String title,
     required String mantra,
+    required String mantraId,
   }) {
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center, // <-- FIXED
             children: [
               roundedImage(imageUrl),
               const SizedBox(width: 15),
-
-              titleAndContent(title, mantra),
+              titleAndContent(title, mantra, context, imageUrl, mantraId),
             ],
           ),
         ),
@@ -148,18 +165,45 @@ Widget roundedImage(String imageUrl) {
   );
 }
 
-Widget titleAndContent(String title, String mantra) {
+Widget titleAndContent(
+  String title,
+  String mantra,
+  BuildContext context,
+  String image,
+  String mantraId,
+) {
   return Expanded(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: font,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: font,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Spacer(),
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.createMantra,
+                  arguments: UpdateMantra(
+                    mantraName: title,
+                    mantra: mantra,
+                    image: image,
+                    mantraID: mantraId,
+                  ),
+                );
+              },
+              icon: Icon(Icons.edit),
+              iconSize: 20,
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         Text(

@@ -18,7 +18,7 @@ class CreateMantraViewmodel extends ChangeNotifier {
 
   bool isImageUploading = false;
   bool isLoading = false;
-
+  bool isCompleted = false;
   final mantraService = MantraService();
   final userService = UserService();
 
@@ -109,6 +109,7 @@ class CreateMantraViewmodel extends ChangeNotifier {
       if (response.code == 200) {
         message = "Mantra created successfully";
         isLoading = false;
+        isCompleted = true;
         reset();
         notifyListeners();
       } else {
@@ -126,8 +127,41 @@ class CreateMantraViewmodel extends ChangeNotifier {
     }
   }
 
+  Future<void> updateMantra(String mantraId) async {
+    try {
+      isLoading = true;
+      notifyListeners();
 
-    void reset() {
+      final response = await mantraService.mantraUpdate(
+        mantraId,
+        mantraName.text,
+        mantra.text,
+        uploadedImageUrl!,
+      );
+
+      if (response.code == 200) {
+        message = "Mantra created successfully";
+        isLoading = false;
+        isCompleted = true;
+
+        reset();
+        notifyListeners();
+      } else {
+        message = response.message ?? "API error";
+        isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      message = "Something went wrong: $e";
+      isLoading = false;
+      notifyListeners();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void reset() {
     mantraName.clear();
     mantra.clear();
     selectedImage = null;

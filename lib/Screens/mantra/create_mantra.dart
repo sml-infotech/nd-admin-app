@@ -6,11 +6,13 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:provider/provider.dart' show Provider;
 import 'create_mantra_viewmodel.dart';
 
 class CreateMantraScreen extends StatefulWidget {
-  const CreateMantraScreen({super.key});
+  final UpdateMantra? updateMantra;
+  const CreateMantraScreen({super.key, required this.updateMantra});
 
   @override
   State<CreateMantraScreen> createState() => _CreateMantraScreenState();
@@ -20,6 +22,20 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
   late CreateMantraViewmodel viewModel;
 
   final ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = Provider.of<CreateMantraViewmodel>(context, listen: false);
+    loadData();
+  }
+
+  void loadData() {
+    viewModel.mantraName.text = widget.updateMantra!.mantraName;
+    viewModel.mantra.text = widget.updateMantra!.mantra;
+    viewModel.uploadedImageUrl = widget.updateMantra!.image;
+    viewModel.selectedImage = null;
+  }
 
   Future<void> pickImage() async {
     final XFile? file = await picker.pickImage(source: ImageSource.gallery);
@@ -41,7 +57,7 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
 
   @override
   Widget build(BuildContext context) {
-        viewModel = Provider.of<CreateMantraViewmodel>(context);
+    viewModel = Provider.of<CreateMantraViewmodel>(context);
 
     return Scaffold(
       backgroundColor: ColorConstant.buttonColor,
@@ -128,7 +144,7 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
     return GestureDetector(
       onTap: pickImage,
       child: Padding(
-        padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         child: Container(
           height: 180,
           width: double.infinity,
@@ -136,24 +152,46 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.black54),
           ),
-          child: viewModel.selectedImage == null
-              ? Center(
-                  child: Text(
-                    "Tap to pick Mantra image",
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontFamily: font,
-                    ),
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.file(
-                    viewModel.selectedImage!,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: buildImageView(),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget buildImageView() {
+    if (viewModel.selectedImage != null) {
+      return Image.file(
+        viewModel.selectedImage!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+
+    if (viewModel.uploadedImageUrl != null &&
+        viewModel.uploadedImageUrl!.isNotEmpty) {
+      return Image.network(
+        viewModel.uploadedImageUrl!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(child: Icon(Icons.broken_image, size: 50));
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+    }
+
+    return Center(
+      child: Text(
+        "Tap to pick Mantra image",
+        style: TextStyle(color: Colors.grey.shade600),
       ),
     );
   }
@@ -170,7 +208,8 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
         ),
         const Spacer(),
         Text(
-          StringConstant.createMantra,
+          widget.updateMantra!.mantra.isEmpty?
+          StringConstant.createMantra :"Update Mantra",
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -193,11 +232,20 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
               onPressed: () async {
                 FocusScope.of(context).unfocus();
                 if (await viewmodel.validateForm()) {
-                  await viewmodel.createMantra();
+                  if (widget.updateMantra!.mantra.isEmpty) {
+                    await viewmodel.createMantra();
+                  } else {
+                    await viewmodel.updateMantra(
+                      widget.updateMantra!.mantraID!,
+                    );
+                  }
+                  if (viewmodel.isCompleted) {
+                    Navigator.pop(context);
+                  }
                   viewmodel.isLoading = false;
                 }
 
-                Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                // Fluttertoast.showToast(msg: viewmodel.message ?? "");
                 viewmodel.message = "";
               },
               style: ElevatedButton.styleFrom(
@@ -207,7 +255,9 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
                 ),
               ),
               child: Text(
-                StringConstant.create,
+                widget.updateMantra!.mantra.isEmpty
+                    ? StringConstant.create
+                    : StringConstant.update,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

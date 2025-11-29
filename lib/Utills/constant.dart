@@ -106,6 +106,7 @@ class StringConstant {
   static const String eventLocation = "Location";
   static const String addPuja = "Add Pooja / Seva";
   static const String updatePuja = "UpdatePooja";
+  static const String update = "Update";
 
   static const String search = "Search events...";
   static const String searchTemples = "Search Temples...";
