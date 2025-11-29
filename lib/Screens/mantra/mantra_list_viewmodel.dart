@@ -41,4 +41,13 @@ class MantraListViewmodel extends ChangeNotifier {
     isLoadingMore = false;
     notifyListeners();
   }
+
+  void reset(){
+     mantras = [];
+
+   page = 1;
+   hasMore = true;
+   isLoading = false;
+   isLoadingMore = false;
+  }
 }

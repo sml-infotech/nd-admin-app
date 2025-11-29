@@ -26,6 +26,12 @@ class _MantraListState extends State<MantraList> {
     _controller.addListener(_paginationListener);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    viewmodel.reset();
+  }
+
   void _paginationListener() {
     if (_controller.position.pixels >=
             _controller.position.maxScrollExtent - 300 &&
@@ -112,6 +118,7 @@ class _MantraListState extends State<MantraList> {
                 mantraID: "",
               ),
             );
+            viewmodel.reset();
           },
           icon: const Icon(Icons.add, color: Colors.white),
         ),
@@ -134,7 +141,14 @@ class _MantraListState extends State<MantraList> {
             children: [
               roundedImage(imageUrl),
               const SizedBox(width: 15),
-              titleAndContent(title, mantra, context, imageUrl, mantraId),
+              titleAndContent(
+                title,
+                mantra,
+                context,
+                imageUrl,
+                mantraId,
+                viewmodel,
+              ),
             ],
           ),
         ),
@@ -171,6 +185,7 @@ Widget titleAndContent(
   BuildContext context,
   String image,
   String mantraId,
+  MantraListViewmodel viewmodel,
 ) {
   return Expanded(
     child: Column(
@@ -199,6 +214,7 @@ Widget titleAndContent(
                     mantraID: mantraId,
                   ),
                 );
+                viewmodel.reset();
               },
               icon: Icon(Icons.edit),
               iconSize: 20,
