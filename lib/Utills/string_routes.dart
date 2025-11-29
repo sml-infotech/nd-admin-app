@@ -20,6 +20,8 @@ class StringsRoute {
 static const String contactUs="/contactUs";
 static const String create_master_temple="/createMasterTemple";
 static const String master_temple_list="/masterTempleList";
+static const String createMantra="/createMantra";
+
 
 
 }

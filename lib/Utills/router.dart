@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
@@ -102,12 +103,12 @@ class AppRouter {
           settings: settings,
           builder: (_) => UpdateRequests(),
         );
-        case StringsRoute.createEvent:
+      case StringsRoute.createEvent:
         EventItem? args = settings.arguments as EventItem?;
 
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => CreateEvent(event: args,),
+          builder: (_) => CreateEvent(event: args),
         );
       case StringsRoute.eventListScreen:
         return CupertinoPageRoute(
@@ -121,32 +122,31 @@ class AppRouter {
           settings: settings,
           builder: (_) => TempleUpdateScreen(arguments: args),
         );
-  case StringsRoute.bookings:
-       
+      case StringsRoute.bookings:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => BookingScreen(),
         );
- case StringsRoute.contactUs:
-       
+      case StringsRoute.contactUs:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => ContactScreen(),
         );
-case StringsRoute.create_master_temple:
-       
+      case StringsRoute.create_master_temple:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateMasterTemple(),
         );
-case StringsRoute.master_temple_list:
-       
+      case StringsRoute.master_temple_list:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => MasterTempleList(),
         );
-
-
+      case StringsRoute.createMantra:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateMantraScreen(),
+        );
 
       default:
         throw Exception('Route ${settings.name} not implemented');

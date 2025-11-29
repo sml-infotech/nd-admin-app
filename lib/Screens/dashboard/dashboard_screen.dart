@@ -15,6 +15,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   String? token;
   String? role;
+  String? userName;
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       token = prefs.getString('authToken');
       role = prefs.getString('userRole');
+      userName = prefs.getString('UserName');
     });
   }
 
@@ -70,11 +72,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SizedBox(height: 15),
                       if (token != null && role != null) ...[
                         Text(
-                          "Role: $role",
-                          style: const TextStyle(
+                          userName ?? "",
+                          style: TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                             fontWeight: FontWeight.w500,
+                            fontFamily: font,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -149,6 +152,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               () => Navigator.pushNamed(
                                 context,
                                 StringsRoute.master_temple_list,
+                              ),
+                            ),
+                          if (role == "Super Admin")
+                            containerWidget(
+                              ImageStrings.sevaimg,
+                              StringConstant.mantra,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.createMantra,
                               ),
                             ),
                         ],

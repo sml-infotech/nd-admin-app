@@ -9,11 +9,16 @@ class StringConstant {
   static const String enterName = "Enter Name";
   static const String enterPassword = "Enter New password";
   static const String enterConfirmPassword = "Enter Confirm password";
-  static const String termsAndCondition ="I agree to the Terms & Conditions and Privacy policy";
+  static const String termsAndCondition =
+      "I agree to the Terms & Conditions and Privacy policy";
   static const String login = "Login";
   static const String reset = "Reset";
   static const String resetPassword = "Reset Password";
-static const String masterTemples = "Master Temples";
+  static const String masterTemples = "Master Temples";
+  static const String mantra = "Mantra";
+  static const String mantraName = "Mantra Name";
+  static const String enterMantraName = "Enter Mantra Name";
+  static const String enterMantra = "Enter Mantra ";
 
   static const String resetSubText = "Enter a new password and confirm it.";
   static const String fogotSubtext =
@@ -27,6 +32,8 @@ static const String masterTemples = "Master Temples";
   static const String onlineSeva = "Online Seva & Harake Bookings";
   static const String createUser = "CreateUser";
   static const String createEvent = "Create Event";
+  static const String createMantra = "Create Mantra";
+
   static const String event = "Event Name";
   static const String updateEvent = "Update Event";
   static const String events = "Events";
@@ -40,9 +47,10 @@ static const String masterTemples = "Master Temples";
   static const String templeDetail = "Temple Details";
   static const String edit = "Edit";
   static const String phone = "Phone";
-  static const String message="Message";
+  static const String message = "Message";
   static const String searchUser = "Search User..";
-  static const String selectDeities ="Select the temple first to view deities.";
+  static const String selectDeities =
+      "Select the temple first to view deities.";
   static const String email = "Email";
   static const String verificationCode = "Enter Verification code";
   static const String otpSubTitle = "4 digits code was sent to ";
@@ -65,7 +73,7 @@ static const String masterTemples = "Master Temples";
   static const List<String> roles = ["Temple", "Agent", "Admin"];
   static const String temple = "Temples";
   static const String create = "Create";
-static const String uploadFromExcel = "Upload Temples From Excel";
+  static const String uploadFromExcel = "Upload Temples From Excel";
   static const String editUser = "Edit User";
   static const String city = "City:";
   static const String state = "State:";
@@ -96,6 +104,7 @@ static const String uploadFromExcel = "Upload Temples From Excel";
   static const String eventLocation = "Location";
   static const String addPuja = "Add Pooja / Seva";
   static const String updatePuja = "UpdatePooja";
+
   static const String search = "Search events...";
   static const String searchTemples = "Search Temples...";
   static const String pujaList = "Poojas";
@@ -140,8 +149,10 @@ static const String uploadFromExcel = "Upload Temples From Excel";
   static const String previousData = "Previous Data";
   static const String changesData = "Changes Data";
   static const String reason = "Add comment for rejection";
-  static const String rejectionComment ="Rejection Comment (applies to all rejected fields)";
-  static const String specialReq ="Special Requirements (allow user to add special requirements)";
+  static const String rejectionComment =
+      "Rejection Comment (applies to all rejected fields)";
+  static const String specialReq =
+      "Special Requirements (allow user to add special requirements)";
 }
 
 class ColorConstant {

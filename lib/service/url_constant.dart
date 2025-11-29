@@ -44,5 +44,7 @@ class UrlConstant {
   static String master_temples = "${baseUrlString()}list-master-temples";
   static String create_master_temple = "${baseUrlString()}create-master-temple";
         static String update_onboard="${baseUrlString()}update-master-temple";
+                static String create_mantra="${baseUrlString()}create-mantra";
+
 
 }
