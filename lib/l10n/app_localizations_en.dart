@@ -129,6 +129,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get addDeities => 'Add Deities';
+
+  @override
   String get phone => 'Phone';
 
   @override
@@ -166,6 +169,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get templeName => 'Temple Name';
+
+  @override
+  String get noTemplesFound => 'No Temples Found';
 
   @override
   String get pincode => 'Pincode';

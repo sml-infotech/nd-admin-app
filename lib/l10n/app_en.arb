@@ -40,6 +40,8 @@
   "wowtracker": "Seva & WOW Tracker",
   "templeDetail": "Temple Details",
   "edit": "Edit",
+  "addDeities": "Add Deities",
+
   "phone": "Phone",
   "message": "Message",
   "searchUser": "Search User..",
@@ -53,6 +55,7 @@
   "addMasterTemple": "Add Master Temple",
   "addTemple": "Add Temple",
   "templeName": "Temple Name",
+  "noTemplesFound": "No Temples Found",
   "pincode": "Pincode",
   "status": "Status",
   "deities": "Deities",

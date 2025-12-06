@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
@@ -66,7 +67,7 @@ class MultiImagePickerSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            StringConstant.uploadText,
+            AppLocalizations.of(context)!.uploadText,
             style: AppTextStyles.editTempleTitleStyle,
           ),
           const SizedBox(height: 8),
@@ -86,7 +87,7 @@ class MultiImagePickerSection extends StatelessWidget {
                   Image.asset(ImageStrings.uploadImg, height: 40),
                   const SizedBox(height: 8),
                   Text(
-                    StringConstant.uploadImageSeva,
+                   AppLocalizations.of(context)!.uploadText,
                     style: TextStyle(fontFamily: font, color: Colors.black),
                   ),
                 ],

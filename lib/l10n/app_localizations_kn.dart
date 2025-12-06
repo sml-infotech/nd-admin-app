@@ -129,6 +129,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get edit => 'ಸಂಪಾದಿಸಿ';
 
   @override
+  String get addDeities => 'ದೇವತೆಗಳನ್ನು ಸೇರಿಸಿ';
+
+  @override
   String get phone => 'ದೂರವಾಣಿ';
 
   @override
@@ -166,6 +169,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get templeName => 'ದೇಗುಲ ಹೆಸರು';
+
+  @override
+  String get noTemplesFound => 'ಹೆಚ್ಚು ದೇವಾಲಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
   String get pincode => 'ಪಿನ್ ಕೋಡ್';

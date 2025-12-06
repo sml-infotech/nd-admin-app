@@ -335,6 +335,12 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @addDeities.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Deities'**
+  String get addDeities;
+
   /// No description provided for @phone.
   ///
   /// In en, this message translates to:
@@ -412,6 +418,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Temple Name'**
   String get templeName;
+
+  /// No description provided for @noTemplesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Temples Found'**
+  String get noTemplesFound;
 
   /// No description provided for @pincode.
   ///

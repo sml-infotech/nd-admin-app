@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 
 class TempleInputWidget extends StatefulWidget {
   final dynamic viewmodel; // Can be AddTempleViewmodel or UpdateTempleViewmodel
@@ -53,8 +54,8 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
         TextField(
           controller: vm.templeController,
           decoration: InputDecoration(
-            hintText: "Add Deities",
-            labelText: "Add Deities",
+            hintText: AppLocalizations.of(context)!.addDeities,
+            labelText: AppLocalizations.of(context)!.addDeities,
             labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
             hintStyle: TextStyle(fontFamily: font, color: Colors.grey),
             border: OutlineInputBorder(

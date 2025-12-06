@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
@@ -68,50 +69,50 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                   children: [
                     SizedBox(height: screenHeight * 0.02),
                     CommonTextField(
-                      hintText: StringConstant.templeName,
-                      labelText: StringConstant.templeName,
+                      hintText:   AppLocalizations.of(context)!.templeName,
+                      labelText:  AppLocalizations.of(context)!.templeName,
                       isFromPassword: false,
                       controller: templeViewmodel.templeName,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.addresss,
-                      labelText: StringConstant.addresss,
+                      hintText:  AppLocalizations.of(context)!.address,
+                      labelText: AppLocalizations.of(context)!.address,
                       isFromPassword: false,
                       controller: templeViewmodel.address,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.cityy,
-                      labelText: StringConstant.cityy,
+                      hintText: AppLocalizations.of(context)!.city,
+                      labelText:AppLocalizations.of(context)!.city,
                       isFromPassword: false,
                       controller: templeViewmodel.city,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.statee,
-                      labelText: StringConstant.statee,
+                      hintText: AppLocalizations.of(context)!.state,
+                      labelText: AppLocalizations.of(context)!.state,
                       isFromPassword: false,
                       controller: templeViewmodel.state,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.pincode,
-                      labelText: StringConstant.pincode,
+                      hintText: AppLocalizations.of(context)!.pincode,
+                      labelText: AppLocalizations.of(context)!.pincode,
                       isFromPassword: false,
                       controller: templeViewmodel.pincode,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.architecturee,
-                      labelText: StringConstant.architecturee,
+                      hintText: AppLocalizations.of(context)!.architecture,
+                      labelText: AppLocalizations.of(context)!.architecture,
                       isFromPassword: false,
                       controller: templeViewmodel.architecture,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.email,
-                      labelText: StringConstant.email,
+                      hintText: AppLocalizations.of(context)!.email,
+                      labelText: AppLocalizations.of(context)!.email,
                       isFromPassword: false,
                       controller: templeViewmodel.email,
                     ),
                     CommonTextField(
-                      hintText: StringConstant.phone,
-                      labelText: StringConstant.phone,
+                      hintText: AppLocalizations.of(context)!.phone,
+                      labelText: AppLocalizations.of(context)!.phone,
                       isFromPassword: false,
                       controller: templeViewmodel.phone,
                       isFromPhone: true,
@@ -122,8 +123,8 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                     ),
                     _buildImagePicker(),
                     CommonTextField(
-                      hintText: StringConstant.description,
-                      labelText: StringConstant.description,
+                      hintText: AppLocalizations.of(context)!.description,
+                      labelText: AppLocalizations.of(context)!.description,
                       isFromPassword: false,
                       controller: templeViewmodel.description,
                       isFromDescription: true,
@@ -163,11 +164,9 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
       onAddImages: _pickImages,
       onRemoveImage: (index) {
         if (index >= uploadedCount) {
-          // Removing from selectedImages
           final localIndex = index - uploadedCount;
           templeViewmodel.removeImage(localIndex);
         } else {
-          // Removing from uploadedImageUrls
           templeViewmodel.uploadedImageUrls.removeAt(index);
           templeViewmodel.notifyListeners();
         }
@@ -192,7 +191,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.addTemple, style: AppTextStyles.appBarTitleStyle),
+        Text(  AppLocalizations.of(context)!.addTemple, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         const SizedBox(width: 48),
       ],
@@ -241,7 +240,7 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                 ),
               ),
               child: Text(
-                StringConstant.addTemple,
+                AppLocalizations.of(context)!.addTemple,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

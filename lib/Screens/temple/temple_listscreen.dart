@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,7 +101,7 @@ class _TempleScreenState extends State<TempleScreen> {
                     Expanded(
                       child: Center(
                         child: Text(
-                          "No Temples Found",
+                       AppLocalizations.of(context)!.noTemplesFound,
                           style: TextStyle(fontFamily: font),
                         ),
                       ),
@@ -140,7 +141,7 @@ class _TempleScreenState extends State<TempleScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.temple, style: AppTextStyles.appBarTitleStyle),
+        Text( AppLocalizations.of(context)!.temples, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         if (role == "Super Admin")
           IconButton(
@@ -359,7 +360,7 @@ class _TempleScreenState extends State<TempleScreen> {
       child: TextField(
         controller: viewModel?.searchController,
         decoration: InputDecoration(
-          hintText: StringConstant.searchTemples,
+          hintText:  AppLocalizations.of(context)!.searchTemples,
           hintStyle: TextStyle(fontFamily: font),
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
