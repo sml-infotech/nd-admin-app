@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -69,8 +70,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       forgotSubText(),
                       const SizedBox(height: 18),
                       CommonTextField(
-                        hintText: StringConstant.email,
-                        labelText: StringConstant.enterUserName,
+                        hintText: AppLocalizations.of(context)!.email,
+                        labelText: AppLocalizations.of(context)!.enterUserName,
                         isFromPassword: false,
                         controller: viewmodel.emailController,
                       ),
@@ -109,7 +110,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         const Spacer(),
         Text(
-          StringConstant.forgotPassword1,
+          AppLocalizations.of(context)!.forgotPassword1,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -128,16 +129,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget forgotSubText() {
-    return Padding(padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),child: 
-    Text(
-      StringConstant.fogotSubtext,
-      style: AppTextStyles.otpSubHeadingStyle.copyWith(
-        fontSize: 16,
-        color: Colors.black54,
-        height: 1.5,
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
+      child: Text(
+        AppLocalizations.of(context)!.fogotSubtext,
+        style: AppTextStyles.otpSubHeadingStyle.copyWith(
+          fontSize: 16,
+          color: Colors.black54,
+          height: 1.5,
+        ),
+        textAlign: TextAlign.center,
       ),
-      textAlign: TextAlign.center,
-     ) );
+    );
   }
 }
 
@@ -187,7 +190,7 @@ Widget resetButton(ForgotViewmodel viewmodel, BuildContext context) {
           ),
         ),
         child: Text(
-          StringConstant.verify,
+          AppLocalizations.of(context)!.verify,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),

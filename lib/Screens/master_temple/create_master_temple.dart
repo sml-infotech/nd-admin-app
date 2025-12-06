@@ -9,6 +9,7 @@ import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_viewmod
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:provider/provider.dart';
 
@@ -41,40 +42,40 @@ class CreateMasterTemple extends StatelessWidget {
                       children: [
                         SizedBox(height: screenHeight * 0.02),
                         CommonTextField(
-                          hintText: StringConstant.templeName,
-                          labelText: StringConstant.templeName,
+                          hintText: AppLocalizations.of(context)!.templeName,
+                          labelText: AppLocalizations.of(context)!.templeName,
                           controller: vm.templeName,
                           isFromPassword: false,
                         ),
                         const SizedBox(height: 20),
 
                         CommonTextField(
-                          hintText: StringConstant.addresss,
-                          labelText: StringConstant.addresss,
+                          hintText: AppLocalizations.of(context)!.address,
+                          labelText: AppLocalizations.of(context)!.address,
                           controller: vm.address,
                           isFromPassword: false,
                         ),
                         const SizedBox(height: 20),
 
                         CommonTextField(
-                          hintText: StringConstant.cityy,
-                          labelText: StringConstant.cityy,
+                          hintText: AppLocalizations.of(context)!.city,
+                          labelText: AppLocalizations.of(context)!.city,
                           controller: vm.city,
                           isFromPassword: false,
                         ),
                         const SizedBox(height: 20),
 
                         CommonTextField(
-                          hintText: StringConstant.statee,
-                          labelText: StringConstant.statee,
+                          hintText: AppLocalizations.of(context)!.state,
+                          labelText: AppLocalizations.of(context)!.state,
                           controller: vm.state,
                           isFromPassword: false,
                         ),
                         const SizedBox(height: 20),
 
                         CommonTextField(
-                          hintText: StringConstant.pincode,
-                          labelText: StringConstant.pincode,
+                          hintText: AppLocalizations.of(context)!.pincode,
+                          labelText: AppLocalizations.of(context)!.pincode,
                           controller: vm.pincode,
                           isFromPassword: false,
                           isFromPhone: true,
@@ -123,7 +124,7 @@ class CreateMasterTemple extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          StringConstant.addMasterTemple,
+          AppLocalizations.of(context)!.addMasterTemple,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -153,7 +154,7 @@ class CreateMasterTemple extends StatelessWidget {
           ),
           child: Column(
             children: [
-            loadedTempleTextAndCloseIcon(vm) ,
+              loadedTempleTextAndCloseIcon(vm),
               const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
@@ -194,24 +195,24 @@ class CreateMasterTemple extends StatelessWidget {
     );
   }
 
-  Widget loadedTempleTextAndCloseIcon(CreateMasterViewmodel vm){
-    return  Row(
-                children: [
-                  Text(
-                    "Loaded Temples",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: font,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.red),
-                    onPressed: () => vm.closeExcelPopup(),
-                  ),
-                ],
-              );
+  Widget loadedTempleTextAndCloseIcon(CreateMasterViewmodel vm) {
+    return Row(
+      children: [
+        Text(
+          "Loaded Temples",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: font,
+          ),
+        ),
+        const Spacer(),
+        IconButton(
+          icon: const Icon(Icons.close, color: Colors.red),
+          onPressed: () => vm.closeExcelPopup(),
+        ),
+      ],
+    );
   }
 
   // Widget loaded
@@ -270,7 +271,7 @@ class CreateMasterTemple extends StatelessWidget {
           backgroundColor: ColorConstant.buttonColor,
         ),
         child: Text(
-          StringConstant.create,
+          AppLocalizations.of(context)!.create,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),
@@ -308,7 +309,7 @@ class CreateMasterTemple extends StatelessWidget {
           backgroundColor: ColorConstant.buttonColor,
         ),
         child: Text(
-          StringConstant.addTemple,
+          AppLocalizations.of(context)!.addTemple,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),
@@ -326,7 +327,7 @@ class CreateMasterTemple extends StatelessWidget {
           backgroundColor: Colors.white,
         ),
         child: Text(
-          StringConstant.uploadFromExcel,
+          AppLocalizations.of(context)!.uploadFromExcel,
           style: TextStyle(
             fontSize: 16,
             fontFamily: font,

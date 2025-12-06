@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart'
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart'
     show ImageStrings;
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/contact_us_model/contact_us_response.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -33,7 +34,7 @@ class _ContactCardState extends State<ContactCard> {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        color:  Colors.white ,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10),
@@ -59,7 +60,6 @@ class _ContactCardState extends State<ContactCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-         
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -71,7 +71,6 @@ class _ContactCardState extends State<ContactCard> {
                     dateWidget(widget.data.createdAt),
                     const SizedBox(height: 4),
                     contactEmail(),
-                   
                   ],
                 ),
                 Icon(
@@ -81,7 +80,6 @@ class _ContactCardState extends State<ContactCard> {
                   color: widget.data.isRead ? Colors.black : Colors.red,
                   size: 28,
                 ),
-             
               ],
             ),
             expandedWidget(),
@@ -92,29 +90,29 @@ class _ContactCardState extends State<ContactCard> {
   }
 
   Widget contactName() {
-    return Row(children: [
-           
-    
-    Text(
-      widget.data.name,
-      style: TextStyle(
-        fontSize: 18,
-        fontFamily: font,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    SizedBox(width: 5,),
-      if (!widget.data.isRead)
-      Container(
-        width: 8,
-        height: 8,
-        alignment: Alignment.topRight,
-        decoration: BoxDecoration(
-          color: Colors.red, // red color
-          shape: BoxShape.circle, // circular shape
+    return Row(
+      children: [
+        Text(
+          widget.data.name,
+          style: TextStyle(
+            fontSize: 18,
+            fontFamily: font,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    ]);
+        SizedBox(width: 5),
+        if (!widget.data.isRead)
+          Container(
+            width: 8,
+            height: 8,
+            alignment: Alignment.topRight,
+            decoration: BoxDecoration(
+              color: Colors.red, // red color
+              shape: BoxShape.circle, // circular shape
+            ),
+          ),
+      ],
+    );
   }
 
   Widget contactEmail() {
@@ -125,14 +123,10 @@ class _ContactCardState extends State<ContactCard> {
   }
 
   Widget dateWidget(String apiDate) {
-    return 
-      Text(
+    return Text(
       formatApiDate(apiDate),
       style: TextStyle(color: Colors.grey[600], fontFamily: font),
-      
-  );
-    
-    
+    );
   }
 
   Widget expandedWidget() {
@@ -144,23 +138,23 @@ class _ContactCardState extends State<ContactCard> {
       firstChild: const SizedBox(),
       secondChild: Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: contactDetails(widget),
+        child: contactDetails(widget,context),
       ),
     );
   }
 }
 
-Widget contactDetails(ContactCard widget) {
+Widget contactDetails(ContactCard widget,BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "${StringConstant.phone}: ${widget.data.phoneNumber}",
+        "${AppLocalizations.of(context)!.phone}: ${widget.data.phoneNumber}",
         style: TextStyle(fontSize: 14, fontFamily: font),
       ),
       const SizedBox(height: 8),
       Text(
-        "${StringConstant.message}:",
+        "${AppLocalizations.of(context)!.message}:",
         style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
       ),
       const SizedBox(height: 4),
@@ -246,7 +240,10 @@ class _ContactScreenState extends State<ContactScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.contacts, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.contacts,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         const SizedBox(width: 48),
       ],

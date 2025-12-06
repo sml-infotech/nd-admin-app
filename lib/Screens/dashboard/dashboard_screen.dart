@@ -181,7 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           if (role == "Super Admin")
                             containerWidget(
                               ImageStrings.sevaimg,
-                             AppLocalizations.of(context)!.mantra,
+                              AppLocalizations.of(context)!.mantra,
                               () => Navigator.pushNamed(
                                 context,
                                 StringsRoute.createMantra,
@@ -208,7 +208,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const Spacer(),
         Text(
           AppLocalizations.of(context)!.nammaDaivaSmall ??
-              StringConstant.nammaDaivaSmall,
+              AppLocalizations.of(context)!.nammaDaivaSmall,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),

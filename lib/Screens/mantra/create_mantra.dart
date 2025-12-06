@@ -7,6 +7,7 @@ import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart' show Provider;
 import 'create_mantra_viewmodel.dart';
 
@@ -124,8 +125,8 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
 
   Widget mantraTextField() {
     return CommonTextField(
-      hintText: StringConstant.enterMantraName,
-      labelText: StringConstant.mantraName,
+      hintText: AppLocalizations.of(context)!.enterMantraName,
+      labelText: AppLocalizations.of(context)!.mantraName,
       controller: viewModel.mantraName,
       isFromPassword: false,
     );
@@ -133,8 +134,8 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
 
   Widget mantraNameTextField() {
     return CommonTextField(
-      hintText: StringConstant.mantra,
-      labelText: StringConstant.enterMantra,
+      hintText: AppLocalizations.of(context)!.mantra,
+      labelText: AppLocalizations.of(context)!.enterMantra,
       controller: viewModel.mantra,
       isFromPassword: false,
     );
@@ -208,8 +209,9 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
         ),
         const Spacer(),
         Text(
-          widget.updateMantra!.mantra.isEmpty?
-          StringConstant.createMantra :"Update Mantra",
+          widget.updateMantra!.mantra.isEmpty
+              ? AppLocalizations.of(context)!.createMantra
+              : "Update Mantra",
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -256,8 +258,8 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
               ),
               child: Text(
                 widget.updateMantra!.mantra.isEmpty
-                    ? StringConstant.create
-                    : StringConstant.update,
+                    ? AppLocalizations.of(context)!.create
+                    : AppLocalizations.of(context)!.update,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

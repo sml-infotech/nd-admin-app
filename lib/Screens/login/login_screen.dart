@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -51,15 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 25),
 
                       CommonTextField(
-                        hintText: StringConstant.enterUserName,
-                        labelText: StringConstant.userName,
+                        hintText: AppLocalizations.of(context)!.enterUserName,
+                        labelText: AppLocalizations.of(context)!.userName,
                         isFromPassword: false,
                         controller: viewModel.emailController,
                       ),
                       const SizedBox(height: 25),
                       CommonTextField(
-                        hintText: StringConstant.enterPassword,
-                        labelText: StringConstant.password,
+                        hintText: AppLocalizations.of(context)!.enterPassword,
+                        labelText: AppLocalizations.of(context)!.password,
                         isFromPassword: true,
                         controller: viewModel.passwordController,
                       ),
@@ -129,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   viewModel.message = '';
                 }
-              : null, 
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: isButtonEnabled
                 ? ColorConstant.buttonColor
@@ -139,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           child: Text(
-            StringConstant.login,
+            AppLocalizations.of(context)!.login,
             style: AppTextStyles.buttonTextStyle,
           ),
         ),
@@ -154,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushNamed(context, StringsRoute.forgotPassword);
       },
       child: Text(
-        StringConstant.forgotPassword,
+        AppLocalizations.of(context)!.forgotPassword,
         style: TextStyle(fontFamily: font, fontSize: 12, color: Colors.black),
       ),
     );
@@ -166,14 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget loginText() {
     return Text(
-      StringConstant.nammDaivaTitleText,
+      AppLocalizations.of(context)!.nammDaivaTitleText,
       style: AppTextStyles.loginTitleStyle,
     );
   }
 
   Widget dashBoardText() {
     return Text(
-      StringConstant.dashboard,
+      AppLocalizations.of(context)!.dashboard,
       style: AppTextStyles.loginSubTitleStyle,
     );
   }

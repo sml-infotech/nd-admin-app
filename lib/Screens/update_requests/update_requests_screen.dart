@@ -5,6 +5,7 @@ import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_view
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_request_templemodel/update_request_temple_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +26,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
 
   @override
   void initState() {
-      super.initState();
+    super.initState();
     _loadUserData();
   }
 
@@ -182,7 +183,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           ),
           const Spacer(),
           Text(
-            StringConstant.updateRequests,
+            AppLocalizations.of(context)!.updateRequests,
             style: AppTextStyles.appBarTitleStyle,
           ),
           const Spacer(),
@@ -236,20 +237,37 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoRow(StringConstant.templeName, request.templeDetails.name),
-          _infoRow(StringConstant.email, request.templeDetails.email),
-          _infoRow(StringConstant.addresss, request.templeDetails.address),
-          _infoRow(StringConstant.pincode, request.templeDetails.pincode),
-          _infoRow(StringConstant.status, request.status),
- if (_role == "Temple" )...[
-               if (request.reviewStatus != null) ...[
-   Text(
-    "Review Status",
-    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,  fontFamily: font,),
-  ),
-  const SizedBox(height: 8),
-  _buildReviewStatusSection(request.reviewStatus!),
-],],
+          _infoRow(
+            AppLocalizations.of(context)!.templeName,
+            request.templeDetails.name,
+          ),
+          _infoRow(
+            AppLocalizations.of(context)!.email,
+            request.templeDetails.email,
+          ),
+          _infoRow(
+            AppLocalizations.of(context)!.address,
+            request.templeDetails.address,
+          ),
+          _infoRow(
+            AppLocalizations.of(context)!.pincode,
+            request.templeDetails.pincode,
+          ),
+          _infoRow(AppLocalizations.of(context)!.status, request.status),
+          if (_role == "Temple") ...[
+            if (request.reviewStatus != null) ...[
+              Text(
+                "Review Status",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: font,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildReviewStatusSection(request.reviewStatus!),
+            ],
+          ],
           if (_role == "Super Admin" || _role == "Admin")
             _expandSection(vm, isExpanded, index, request),
         ],
@@ -305,8 +323,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           },
           child: Text(
             isExpanded
-                ? StringConstant.hideDetails
-                : StringConstant.viewAndApprove,
+                ? AppLocalizations.of(context)!.hideDetails
+                : AppLocalizations.of(context)!.viewAndApprove,
             style: const TextStyle(
               color: Colors.blue,
               fontWeight: FontWeight.w500,
@@ -362,8 +380,6 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         }),
         const SizedBox(height: 16),
         _buildGlobalReasonSection(vm, requestIndex),
-   
-
       ],
     );
   }
@@ -391,7 +407,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${StringConstant.current} $key",
+              "${AppLocalizations.of(context)!.currentStatus} $key",
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
             isImageField
@@ -399,7 +415,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                 : _dataBox(_formatValue(oldValue), const Color(0xFFECCBDD)),
             const SizedBox(height: 8),
             Text(
-              "${StringConstant.requested} $key",
+              "${AppLocalizations.of(context)!.requested} $key",
               style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
             isImageField
@@ -458,7 +474,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             });
           },
         ),
-        const Text(StringConstant.approve),
+         Text(AppLocalizations.of(context)!.approve),
       ],
     );
   }
@@ -488,7 +504,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
             });
           },
         ),
-        const Text(StringConstant.reject),
+         Text(AppLocalizations.of(context)!.reject),
       ],
     );
   }
@@ -501,8 +517,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (vm.rejectedReasons[requestIndex]?.isNotEmpty ?? false) ...[
-          const Text(
-            StringConstant.rejectionComment,
+           Text(
+            AppLocalizations.of(context)!.rejectionComment,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           Padding(
@@ -514,8 +530,8 @@ class _UpdateRequestsState extends State<UpdateRequests> {
                 });
               },
               maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: StringConstant.reason,
+              decoration:  InputDecoration(
+                hintText: AppLocalizations.of(context)!.reason,
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 10,
@@ -550,7 +566,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
         },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
         child: Text(
-          StringConstant.cancel,
+          AppLocalizations.of(context)!.cancel,
           style: TextStyle(color: Colors.black, fontFamily: font),
         ),
       ),
@@ -593,7 +609,7 @@ class _UpdateRequestsState extends State<UpdateRequests> {
           backgroundColor: ColorConstant.buttonColor,
         ),
         child: Text(
-          StringConstant.submitAllApprovals,
+          AppLocalizations.of(context)!.submitAllApprovals,
           style: TextStyle(color: Colors.white, fontFamily: font),
         ),
       ),
@@ -682,51 +698,50 @@ class _UpdateRequestsState extends State<UpdateRequests> {
   }
 
   Widget _buildReviewStatusSection(Map<String, dynamic> reviewStatus) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: reviewStatus.entries.map((entry) {
-      final key = entry.key;
-      final value = entry.value.toString();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: reviewStatus.entries.map((entry) {
+        final key = entry.key;
+        final value = entry.value.toString();
 
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade400),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                key[0].toUpperCase() + key.substring(1),
-                style:  TextStyle(
-                  fontFamily: font,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade400),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  key[0].toUpperCase() + key.substring(1),
+                  style: TextStyle(
                     fontFamily: font,
-                  fontSize: 14,
-                  color: value == "Approved"
-                      ? Colors.green
-                      : value == "Rejected"
-                          ? Colors.red
-                          : Colors.black,
-                  fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
-              ),
-            ],
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: font,
+                    fontSize: 14,
+                    color: value == "Approved"
+                        ? Colors.green
+                        : value == "Rejected"
+                        ? Colors.red
+                        : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    }).toList(),
-  );
-}
-
+        );
+      }).toList(),
+    );
+  }
 }

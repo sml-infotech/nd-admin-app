@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:provider/provider.dart';
@@ -245,7 +246,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
         ),
         const Spacer(),
         Text(
-          StringConstant.masterTemples,
+          AppLocalizations.of(context)!.masterTemples,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),

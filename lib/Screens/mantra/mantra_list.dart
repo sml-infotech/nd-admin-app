@@ -5,6 +5,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -104,7 +105,10 @@ class _MantraListState extends State<MantraList> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         const Spacer(),
-        Text(StringConstant.mantras, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.mantra,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         IconButton(
           onPressed: () {

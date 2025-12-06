@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TempleDetailsScreen extends StatefulWidget {
@@ -70,12 +71,12 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                     templeNameWidget(widget.arguments.name),
                     const SizedBox(height: 8),
                     templeDetailContactWidget(
-                      StringConstant.phone,
+                      AppLocalizations.of(context)!.phone,
                       widget.arguments.phoneNumber,
                       ImageStrings.phone,
                     ),
                     templeDetailContactWidget(
-                      StringConstant.email,
+                      AppLocalizations.of(context)!.email,
                       widget.arguments.email,
                       ImageStrings.phone,
                     ),
@@ -137,7 +138,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
 
   Widget _getTabIcon(int index) {
     switch (index) {
-        case 0:
+      case 0:
         return Image.asset(
           ImageStrings.abouticon,
           width: 24,
@@ -155,7 +156,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
               ? ColorConstant.buttonColor
               : Colors.grey,
         );
-    
+
       default:
         return Image.asset(
           ImageStrings.eventicon,
@@ -337,7 +338,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
           ),
           const Spacer(),
           Text(
-            StringConstant.templeDetail,
+            AppLocalizations.of(context)!.templeDetail,
             style: AppTextStyles.appBarTitleStyle,
           ),
 
@@ -364,7 +365,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
               );
             },
             child: Text(
-              StringConstant.edit,
+              AppLocalizations.of(context)!.edit,
               style: AppTextStyles.appBarTitleStyle,
             ),
           ),

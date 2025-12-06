@@ -16,6 +16,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, StringConstant;
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
 
@@ -230,7 +231,7 @@ class _CreateEventState extends State<CreateEvent> {
     return Row(
       children: [
         DatePickerField(
-          title: StringConstant.fromDate,
+          title: AppLocalizations.of(context)!.fromDate,
           selectedDate: viewmodel.selectedStartDate,
           onDatePicked: (date) => setState(() {
             viewmodel.selectedStartDate = date;
@@ -238,7 +239,7 @@ class _CreateEventState extends State<CreateEvent> {
           }),
         ),
         DatePickerField(
-          title: StringConstant.toDate,
+          title: AppLocalizations.of(context)!.toDate,
           selectedDate: viewmodel.selectedEndDate,
           fromDate: viewmodel.selectedStartDate,
           onDatePicked: (date) => setState(() {
@@ -251,8 +252,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
-      hintText: StringConstant.temple,
-      labelText: StringConstant.temple,
+      hintText: AppLocalizations.of(context)!.temple,
+      labelText: AppLocalizations.of(context)!.temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       selectedValue: viewmodel.selectedTemple?.name,
       paddingSize: 16,
@@ -272,8 +273,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget eventNameTextField() {
     return CommonTextField(
-      hintText: StringConstant.event,
-      labelText: StringConstant.event,
+      hintText: AppLocalizations.of(context)!.event,
+      labelText: AppLocalizations.of(context)!.event,
       isFromPassword: false,
       controller: viewmodel.eventController,
     );
@@ -281,8 +282,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget descriptionTextField() {
     return CommonTextField(
-      hintText: StringConstant.description,
-      labelText: StringConstant.description,
+      hintText: AppLocalizations.of(context)!.description,
+      labelText: AppLocalizations.of(context)!.description,
       isFromDescription: true,
       controller: viewmodel.descriptionContoller,
       isFromPassword: false,
@@ -291,8 +292,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget locationTextField() {
     return CommonTextField(
-      hintText: StringConstant.location,
-      labelText: StringConstant.location,
+      hintText: AppLocalizations.of(context)!.location,
+      labelText: AppLocalizations.of(context)!.location,
       isFromPassword: false,
       controller: viewmodel.locationController,
     );
@@ -300,8 +301,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget contactNameTextField() {
     return CommonTextField(
-      hintText: StringConstant.contactName,
-      labelText: StringConstant.contactName,
+      hintText: AppLocalizations.of(context)!.contactName,
+      labelText: AppLocalizations.of(context)!.contactName,
       isFromPassword: false,
       isFromPhone: false,
       controller: viewmodel.contactNameController,
@@ -310,8 +311,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget contactNumberTextField() {
     return CommonTextField(
-      hintText: StringConstant.phone,
-      labelText: StringConstant.phone,
+      hintText: AppLocalizations.of(context)!.phone,
+      labelText: AppLocalizations.of(context)!.phone,
       isFromPassword: false,
       isFromPhone: true,
       controller: viewmodel.contactNumberController,
@@ -331,8 +332,8 @@ class _CreateEventState extends State<CreateEvent> {
         const Spacer(),
         Text(
           widget.event?.id == null
-              ? StringConstant.createEvent
-              : StringConstant.updateEvent,
+              ? AppLocalizations.of(context)!.createEvent
+              : AppLocalizations.of(context)!.updateEvent,
           style: AppTextStyles.appBarTitleStyle,
         ),
         SizedBox(width: 48),
@@ -381,8 +382,8 @@ class _CreateEventState extends State<CreateEvent> {
               ),
               child: Text(
                 widget.event?.id == null
-                    ? StringConstant.createEvent
-                    : StringConstant.updateEvent,
+                    ? AppLocalizations.of(context)!.createEvent
+                    : AppLocalizations.of(context)!.updateEvent,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

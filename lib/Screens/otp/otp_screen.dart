@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart'
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -136,7 +137,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget otpTitle() {
     return Text(
-      StringConstant.verificationCode,
+      AppLocalizations.of(context)!.verificationCode,
       style: AppTextStyles.otpDetailHeadingStyle,
     );
   }
@@ -159,7 +160,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget otpSubTitle() {
     return Text(
-      StringConstant.otpSubTitle,
+      AppLocalizations.of(context)!.otpSubTitle,
       style: AppTextStyles.otpSubHeadingStyle,
     );
   }
@@ -210,7 +211,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 }
               : null,
           child: Text(
-            StringConstant.verify,
+            AppLocalizations.of(context)!.verify,
             style: AppTextStyles.buttonTextStyle,
           ),
         ),
@@ -237,7 +238,7 @@ class _OtpScreenState extends State<OtpScreen> {
             }
           : null,
       child: Text(
-        StringConstant.resend,
+        AppLocalizations.of(context)!.resend,
         style: remainingSeconds == 0
             ? AppTextStyles.resendEnableCodeStyle
             : AppTextStyles.resendCodeStyle,

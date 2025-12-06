@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -72,15 +73,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       _resetSubText(),
                       const SizedBox(height: 28),
                       CommonTextField(
-                        hintText: StringConstant.password,
-                        labelText: StringConstant.enterPassword,
+                        hintText: AppLocalizations.of(context)!.password,
+                        labelText: AppLocalizations.of(context)!.enterPassword,
                         isFromPassword: true,
                         controller: viewmodel.password,
                       ),
                       const SizedBox(height: 18),
                       CommonTextField(
-                        hintText: StringConstant.password,
-                        labelText: StringConstant.enterConfirmPassword,
+                        hintText: AppLocalizations.of(context)!.password,
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.enterConfirmPassword,
                         isFromPassword: true,
                         controller: viewmodel.confirmPassword,
                       ),
@@ -120,7 +123,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         ),
         const Spacer(),
         Text(
-          StringConstant.resetPassword,
+          AppLocalizations.of(context)!.resetPassword,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -140,7 +143,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   Widget _resetSubText() {
     return Text(
-      StringConstant.resetSubText,
+      AppLocalizations.of(context)!.resetSubText,
       style: AppTextStyles.otpSubHeadingStyle.copyWith(
         fontSize: 16,
         color: Colors.black54,
@@ -182,7 +185,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
           ),
           child: Text(
-            StringConstant.reset,
+            AppLocalizations.of(context)!.reset,
             style: AppTextStyles.buttonTextStyle,
           ),
         ),

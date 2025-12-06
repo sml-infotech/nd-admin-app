@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Common/benefits.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
@@ -242,8 +243,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           const Spacer(),
           Text(
             widget.pujaArgumrnts!.puja_name.isEmpty
-                ? StringConstant.addPuja
-                : StringConstant.updatePuja,
+                ? AppLocalizations.of(context)!.addPuja
+                : AppLocalizations.of(context)!.updatePuja,
             style: AppTextStyles.appBarTitleStyle,
           ),
           const Spacer(),
@@ -255,8 +256,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
-      hintText: StringConstant.temple,
-      labelText: StringConstant.temple,
+      hintText: AppLocalizations.of(context)!.temple,
+      labelText: AppLocalizations.of(context)!.temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       selectedValue: viewmodel.selectedTemple?.name,
       paddingSize: 16,
@@ -291,26 +292,25 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     return Column(
       children: [
         CommonTextField(
-          hintText: StringConstant.addPuja,
-          labelText: StringConstant.addPuja,
+          hintText: AppLocalizations.of(context)!.addPuja,
+          labelText: AppLocalizations.of(context)!.addPuja,
           controller: viewmodel.pujaName,
           isFromPassword: false,
         ),
         const SizedBox(height: 14),
         CommonTextField(
-          hintText: StringConstant.description,
-          labelText: StringConstant.description,
+          hintText: AppLocalizations.of(context)!.description,
+          labelText: AppLocalizations.of(context)!.description,
           controller: viewmodel.description,
           isFromDescription: true,
           isFromPassword: false,
         ),
-                const SizedBox(height: 14),
+        const SizedBox(height: 14),
 
         Padding(
-  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-  child: BenefitInputWidget(viewmodel: viewmodel),
-),
-
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: BenefitInputWidget(viewmodel: viewmodel),
+        ),
       ],
     );
   }
@@ -322,7 +322,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Text(
-            StringConstant.slot,
+            AppLocalizations.of(context)!.slot,
             style: AppTextStyles.editTempleTitleStyle,
           ),
         ),
@@ -340,7 +340,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         Row(
           children: [
             DatePickerField(
-              title: StringConstant.fromDate,
+              title: AppLocalizations.of(context)!.fromDate,
               selectedDate: viewmodel.selectedStartDate,
               onDatePicked: (date) => setState(() {
                 viewmodel.selectedStartDate = date;
@@ -348,7 +348,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
               }),
             ),
             DatePickerField(
-              title: StringConstant.toDate,
+              title: AppLocalizations.of(context)!.toDate,
               selectedDate: viewmodel.selectedEndDate,
               fromDate: viewmodel.selectedStartDate,
               onDatePicked: (date) => setState(() {
@@ -379,8 +379,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         const SizedBox(height: 10),
         Expanded(
           child: CommonTextField(
-            hintText: StringConstant.cost,
-            labelText: StringConstant.fees,
+            hintText: AppLocalizations.of(context)!.cost,
+            labelText: AppLocalizations.of(context)!.fees,
             controller: viewmodel.fee,
             isFromPassword: false,
             isFromPhone: true,
@@ -389,8 +389,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         const SizedBox(height: 10),
         Expanded(
           child: CommonTextField(
-            hintText: StringConstant.maxDevote,
-            labelText: StringConstant.maxNoDevote,
+            hintText: AppLocalizations.of(context)!.maxDevote,
+            labelText: AppLocalizations.of(context)!.maxNoDevote,
             controller: viewmodel.maxDevotees,
             isFromPassword: false,
             isFromPhone: true,
@@ -437,7 +437,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         Padding(
           padding: EdgeInsetsGeometry.fromLTRB(8, 0, 20, 0),
           child: CheckBoxRow(
-            label: StringConstant.specialReq,
+            label: AppLocalizations.of(context)!.specialReq,
             value: viewmodel.specialReq,
             onChanged: (v) => setState(() => viewmodel.specialReq = v!),
           ),
@@ -448,7 +448,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
   Widget cutOffText() {
     return Text(
-      StringConstant.cutOffText,
+      AppLocalizations.of(context)!.cutOffText,
       style: TextStyle(
         fontFamily: font,
         fontSize: 12,
@@ -575,7 +575,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
   Widget cutOffBarSelectCutOffNoticeText() {
     return Text(
-      StringConstant.cutOffNoticeText,
+      AppLocalizations.of(context)!.cutOffNoticeText,
       style: TextStyle(
         fontFamily: font,
         fontSize: 14,
@@ -622,8 +622,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
               ),
               child: Text(
                 widget.pujaArgumrnts!.puja_name.isEmpty
-                    ? StringConstant.addPuja
-                    : StringConstant.updatePuja,
+                    ? AppLocalizations.of(context)!.addPuja
+                    : AppLocalizations.of(context)!.updatePuja,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

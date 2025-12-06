@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -148,7 +149,10 @@ class _PujaListState extends State<PujaList> {
             onPressed: () => Navigator.pop(context),
           ),
           const Spacer(),
-          Text(StringConstant.pujaList, style: AppTextStyles.appBarTitleStyle),
+          Text(
+            AppLocalizations.of(context)!.pujaList,
+            style: AppTextStyles.appBarTitleStyle,
+          ),
           const Spacer(),
           IconButton(
             iconSize: 20,
@@ -363,7 +367,7 @@ class _PujaListState extends State<PujaList> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: StringConstant.deitiesText,
+              text: AppLocalizations.of(context)!.deitiesText,
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -382,7 +386,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 13, 0),
       child: ExpandableText(
-        label: StringConstant.descriptionText,
+        label: AppLocalizations.of(context)!.descriptionText,
         text: desscription,
         maxLines: 2,
         style: AppTextStyles.templeNameDetailsStyle,
@@ -393,8 +397,8 @@ class _PujaListState extends State<PujaList> {
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
       selectedValue: viewmodel.selectedTemple,
-      hintText: StringConstant.temple,
-      labelText: StringConstant.temple,
+      hintText: AppLocalizations.of(context)!.temple,
+      labelText: AppLocalizations.of(context)!.temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       paddingSize: 16,
       onChanged: (value) {
@@ -421,7 +425,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: StringConstant.from,
+                  text: AppLocalizations.of(context)!.from,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -437,7 +441,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: StringConstant.to,
+                  text: AppLocalizations.of(context)!.to,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -458,7 +462,9 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       child: Text(
-        isActive ? StringConstant.active : StringConstant.inActive,
+        isActive
+            ? AppLocalizations.of(context)!.active
+            : AppLocalizations.of(context)!.inActive,
         style: TextStyle(
           color: isActive ? Colors.green : Colors.grey,
           fontFamily: font,
@@ -478,7 +484,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: StringConstant.fee,
+                  text: AppLocalizations.of(context)!.fee,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -494,7 +500,7 @@ class _PujaListState extends State<PujaList> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: StringConstant.maxDevotee,
+                  text: AppLocalizations.of(context)!.maxDevotee,
                   style: AppTextStyles.templeNameDetailsStyle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -557,7 +563,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(
-        StringConstant.availableDays,
+        AppLocalizations.of(context)!.availableDays,
         style: AppTextStyles.templeNameDetailsStyle.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -569,7 +575,7 @@ class _PujaListState extends State<PujaList> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(
-        StringConstant.availableslot,
+        AppLocalizations.of(context)!.availableslot,
         style: AppTextStyles.templeNameDetailsStyle.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -645,7 +651,7 @@ class _PujaListState extends State<PujaList> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
         child: Text(
-          StringConstant.viewImg,
+          AppLocalizations.of(context)!.viewImg,
           style: AppTextStyles.templeNameDetailsStyle.copyWith(
             fontWeight: FontWeight.bold,
             color: ColorConstant.buttonColor,
@@ -659,7 +665,7 @@ class _PujaListState extends State<PujaList> {
     if (activeTimes.isEmpty) {
       return Center(
         child: Text(
-          StringConstant.noAvailableSlot,
+          AppLocalizations.of(context)!.noAvailableSlot,
           style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: font),
         ),
       );

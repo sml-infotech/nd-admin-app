@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 
 class DeitiesDropdown extends StatefulWidget {
   final List<String> items; // All deities list
@@ -96,7 +97,7 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Text(
-        StringConstant.selectDeities,
+        AppLocalizations.of(context)!.selectDeities,
         textAlign: TextAlign.center,
         style: TextStyle(fontFamily: font, color: Colors.black87, fontSize: 14),
       ),

@@ -12,6 +12,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class TempleUpdateScreen extends StatefulWidget {
@@ -94,7 +95,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 16),
-                            titleTextWidget(StringConstant.templeName),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templeName,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -102,7 +105,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeName,
                             ),
-                            titleTextWidget(StringConstant.templelocation),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templelocation,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -110,7 +115,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeLocation,
                             ),
-                            titleTextWidget(StringConstant.cityy),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.city,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -118,7 +125,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeCity,
                             ),
-                            titleTextWidget(StringConstant.statee),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.state,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -126,7 +135,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeState,
                             ),
-                            titleTextWidget(StringConstant.pincode),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.pincode,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -135,7 +146,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPhone: true,
                               controller: viewModel.templePincode,
                             ),
-                            titleTextWidget(StringConstant.templedescription),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templedescription,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -143,7 +156,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeDescription,
                             ),
-                            titleTextWidget(StringConstant.templephonenumber),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templephonenumber,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -152,7 +167,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPhone: true,
                               controller: viewModel.templePhoneNumber,
                             ),
-                            titleTextWidget(StringConstant.templeemail),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templeemail,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -160,7 +177,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeEmail,
                             ),
-                            titleTextWidget(StringConstant.deitiestemple),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.deitiestemple,
+                            ),
                             const SizedBox(height: 8),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -169,7 +188,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                                 isUpdateMode: true, // enables prefill
                               ),
                             ),
-                            titleTextWidget(StringConstant.templearchitecture),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.templearchitecture,
+                            ),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -177,7 +198,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeArchitecture,
                             ),
-                            titleTextWidget(StringConstant.editImages),
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.editImages,
+                            ),
                             const SizedBox(height: 8),
                             UpdateImagepickerWidget(),
                             const SizedBox(height: 30),
@@ -251,7 +274,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
           ),
           const Spacer(),
           Text(
-            StringConstant.templeDetail,
+            AppLocalizations.of(context)!.templeDetail,
             style: AppTextStyles.appBarTitleStyle,
           ),
           const Spacer(),
@@ -274,11 +297,10 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
               }
             },
             child: Text(
-              StringConstant.save,
+              AppLocalizations.of(context)!.save,
               style: AppTextStyles.appBarTitleStyle,
             ),
           ),
-     
         ],
       ),
     );

@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,11 +49,11 @@ class _UserListScreenState extends State<UserListScreen> {
       }
     });
 
-     if (!viewModel.searchController.hasListeners) {
-        viewModel.searchController.addListener(() {
-          viewModel.onSearchChanged();
-        });
-      }
+    if (!viewModel.searchController.hasListeners) {
+      viewModel.searchController.addListener(() {
+        viewModel.onSearchChanged();
+      });
+    }
   }
 
   Future<void> _loadUserData() async {
@@ -69,12 +70,10 @@ class _UserListScreenState extends State<UserListScreen> {
     setState(() => _isLoadingMore = false);
   }
 
-    
-
   @override
   void dispose() {
     _scrollController.dispose();
-    viewModel.searchController.text="";
+    viewModel.searchController.text = "";
     viewModel.resetData();
     debugPrint("🧹 User screen disposed & ViewModel reset.");
     super.dispose();
@@ -127,7 +126,10 @@ class _UserListScreenState extends State<UserListScreen> {
           },
         ),
         const Spacer(),
-        Text(StringConstant.enterUserName, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.enterUserName,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         if (role != "Admin")
           IconButton(
@@ -238,7 +240,7 @@ class _UserListScreenState extends State<UserListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${StringConstant.role} : ${user.role}",
+                "${AppLocalizations.of(context)!.role} : ${user.role}",
                 style: AppTextStyles.unTabTextStyle.copyWith(
                   fontSize: 13,
                   color: isActive ? Colors.black54 : Colors.grey,
@@ -246,7 +248,7 @@ class _UserListScreenState extends State<UserListScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                "${StringConstant.email} : ${user.email}",
+                "${AppLocalizations.of(context)!.email} : ${user.email}",
                 style: AppTextStyles.unTabTextStyle.copyWith(
                   fontSize: 13,
                   color: isActive ? Colors.black54 : Colors.grey,
@@ -254,7 +256,7 @@ class _UserListScreenState extends State<UserListScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                "${StringConstant.phone} : ${user.phoneNumber}",
+                "${AppLocalizations.of(context)!.phone} : ${user.phoneNumber}",
                 style: AppTextStyles.unTabTextStyle.copyWith(
                   fontSize: 13,
                   color: isActive ? Colors.black54 : Colors.grey,
@@ -335,7 +337,7 @@ class _UserListScreenState extends State<UserListScreen> {
       child: TextField(
         controller: viewModel.searchController,
         decoration: InputDecoration(
-          hintText: StringConstant.searchUser,
+          hintText: AppLocalizations.of(context)!.searchUser,
           hintStyle: TextStyle(fontFamily: font),
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
@@ -445,7 +447,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         children: [
                           const Spacer(),
                           Text(
-                            StringConstant.editUser,
+                            AppLocalizations.of(context)!.editUser,
                             style: AppTextStyles.loginTitleStyle.copyWith(
                               fontSize: 20,
                             ),
@@ -464,9 +466,9 @@ class _UserListScreenState extends State<UserListScreen> {
                       const SizedBox(height: 16),
                       CommonDropdownField(
                         paddingSize: 0,
-                        hintText: StringConstant.selectedRole,
-                        labelText: StringConstant.role,
-                        items: StringConstant.roles,
+                        hintText: AppLocalizations.of(context)!.selectedRole,
+                        labelText: AppLocalizations.of(context)!.role,
+                        items:StringConstant.roles,
                         selectedValue: currentRole,
                         onChanged: (value) {
                           viewModel.role.text = value ?? user.role;

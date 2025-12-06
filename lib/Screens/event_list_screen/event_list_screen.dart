@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmo
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -21,7 +22,7 @@ class _EventListScreenState extends State<EventListScreen> {
   late EventListViewmodel viewmodel;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-List<EventItem> filteredEvents = [];
+  List<EventItem> filteredEvents = [];
 
   @override
   void initState() {
@@ -156,8 +157,8 @@ List<EventItem> filteredEvents = [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: CommonDropdownField(
-        hintText: StringConstant.temple,
-        labelText: StringConstant.temple,
+        hintText: AppLocalizations.of(context)!.temple,
+        labelText: AppLocalizations.of(context)!.temple,
         items: uniqueTemples.map((t) => t.name).toList(),
         selectedValue: viewmodel.selectedTemple?.name,
         paddingSize: 0,
@@ -187,7 +188,7 @@ List<EventItem> filteredEvents = [];
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: StringConstant.search,
+          hintText: AppLocalizations.of(context)!.search,
           hintStyle: TextStyle(fontFamily: font),
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
@@ -248,7 +249,10 @@ List<EventItem> filteredEvents = [];
           icon: Icon(Icons.arrow_back, color: Colors.white),
         ),
         Spacer(),
-        Text(StringConstant.events, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.events,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
 
         const Spacer(),
         IconButton(
@@ -422,7 +426,7 @@ List<EventItem> filteredEvents = [];
 
   Widget descriptionTitleText() {
     return Text(
-      StringConstant.eventDescription,
+      AppLocalizations.of(context)!.eventDescription,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -440,7 +444,7 @@ List<EventItem> filteredEvents = [];
 
   Widget contactNameText() {
     return Text(
-      StringConstant.contactInformation,
+      AppLocalizations.of(context)!.contactInformation,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
