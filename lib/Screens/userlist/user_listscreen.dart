@@ -127,7 +127,7 @@ class _UserListScreenState extends State<UserListScreen> {
           },
         ),
         const Spacer(),
-        Text(StringConstant.userDetails, style: AppTextStyles.appBarTitleStyle),
+        Text(StringConstant.enterUserName, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
         if (role != "Admin")
           IconButton(

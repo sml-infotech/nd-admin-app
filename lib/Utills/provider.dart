@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
@@ -25,7 +26,9 @@ import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_view
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,58 +56,72 @@ class ProviderWidget extends StatelessWidget {
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
   }
+@override
+Widget build(BuildContext context) {
+  final router = AppRouter();
 
-  @override
-  Widget build(BuildContext context) {
-    final router = AppRouter();
-
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => LoginViewModel()),
-        ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
-        ChangeNotifierProvider(create: (context) => OtpViewmodel()),
-        ChangeNotifierProvider(create: (context) => CreateUserViewmodel()),
-        ChangeNotifierProvider(create: (context) => UserViewModel()),
-        ChangeNotifierProvider(create: (context) => ForgotViewmodel()),
-        ChangeNotifierProvider(create: (context) => ResetViewmodel()),
-        ChangeNotifierProvider(create: (context) => TempleViewModel()),
-        ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
-        ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
-        ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
-        ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
-        ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
-        ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
-        ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
-        ChangeNotifierProvider(create: (context) => EventListViewmodel()),
-        ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
-        ChangeNotifierProvider(create: (context) => ContactViewModel()),
-        ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
-        ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
-
-        ChangeNotifierProvider(
-          create: (context) => MasterTempleListViewmodel(),
-        ),
+  return 
+  
+  MultiProvider(
+    providers: [
+       ChangeNotifierProvider(create: (_) => LocaleProvider()),
+      ChangeNotifierProvider(create: (context) => LoginViewModel()),
+      ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
+      ChangeNotifierProvider(create: (context) => OtpViewmodel()),
+      ChangeNotifierProvider(create: (context) => CreateUserViewmodel()),
+      ChangeNotifierProvider(create: (context) => UserViewModel()),
+      ChangeNotifierProvider(create: (context) => ForgotViewmodel()),
+      ChangeNotifierProvider(create: (context) => ResetViewmodel()),
+      ChangeNotifierProvider(create: (context) => TempleViewModel()),
+      ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
+      ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
+      ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
+      ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
+      ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
+      ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
+      ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
+      ChangeNotifierProvider(create: (context) => EventListViewmodel()),
+      ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
+      ChangeNotifierProvider(create: (context) => ContactViewModel()),
+      ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
+      ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
+      ChangeNotifierProvider(create: (context) => MasterTempleListViewmodel()),
+    ],
+    child:Consumer<LocaleProvider>(
+    builder: (context, localeProvider, child) {
+      return
+    
+     MaterialApp(
+      locale: localeProvider.locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-      child: FutureBuilder<bool>(
+      supportedLocales: const [
+        Locale('en'),
+        Locale('kn'),
+      ],
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(textTheme: const TextTheme()),
+      home: FutureBuilder<bool>(
         future: _checkToken(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const MaterialApp(
-              home: Scaffold(body: Center(child: CircularProgressIndicator())),
+          if (!snapshot.hasData) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             );
           }
 
           final hasToken = snapshot.data ?? false;
 
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(textTheme: const TextTheme()),
-            initialRoute: hasToken ? StringsRoute.dashboard : '/login',
-            onGenerateRoute: router.route,
-            home: hasToken ? MantraList() : const LoginScreen(),
-          );
+          return hasToken ? const DashboardScreen() : const LoginScreen();
         },
       ),
-    );
-  }
+      onGenerateRoute: router.route,
+   ); }),
+  );
+
+}
 }

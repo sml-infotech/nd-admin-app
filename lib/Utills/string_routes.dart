@@ -1,7 +1,7 @@
 class StringsRoute {
   StringsRoute._();
   static const String login = '/login';
-  static const String dashboard = '/dashboard';
+static const String dashboard = '/dashboard';
   static const String templeDetail = '/templeDetail';
   static const String otpScreen = '/otpScreen';
   static const String createUser = '/createUser';

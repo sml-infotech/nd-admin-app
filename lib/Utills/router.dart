@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
@@ -42,11 +43,13 @@ class AppRouter {
           settings: settings,
           builder: (_) => OtpScreen(arguments: args),
         );
-      case StringsRoute.dashboard:
-        return CupertinoPageRoute(
-          settings: settings,
-          builder: (_) => DashboardScreen(),
-        );
+    case StringsRoute.dashboard:
+  return MaterialPageRoute(
+    builder: (context) => Builder(
+      builder: (localContext) => DashboardScreen(),
+    ),
+  );
+
       case StringsRoute.templeDetail:
         TempleDetailsArguments args =
             settings.arguments as TempleDetailsArguments;

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
@@ -41,6 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    AppLocalizations.of(context)!.nammDaivaTitleText;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -51,6 +55,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Column(
         children: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: () {
+              final localeProvider = Provider.of<LocaleProvider>(
+                context,
+                listen: false,
+              );
+
+              if (localeProvider.locale.languageCode == 'en') {
+                localeProvider.setLocale(const Locale('kn'));
+              } else {
+                localeProvider.setLocale(const Locale('en'));
+              }
+
+              print(
+                "Language changed to: ${localeProvider.locale.languageCode}",
+              );
+            },
+          ),
+
           SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: Container(
@@ -89,7 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           containerWidget(
                             ImageStrings.templeImage,
-                            StringConstant.templeDetailText,
+                            AppLocalizations.of(context)!.templeDetailText,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.templeScreen,
@@ -97,7 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           containerWidget(
                             ImageStrings.sevaimg,
-                            StringConstant.sevaText,
+                            AppLocalizations.of(context)!.sevaText,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.pujaList,
@@ -106,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           if (role == "Super Admin" || role == "Admin")
                             containerWidget(
                               ImageStrings.onlineseva,
-                              StringConstant.userDetails,
+                              AppLocalizations.of(context)!.userDetails,
                               () => Navigator.pushNamed(
                                 context,
                                 StringsRoute.userDetails,
@@ -114,7 +138,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           containerWidget(
                             ImageStrings.ritual,
-                            StringConstant.updateRequests,
+                            AppLocalizations.of(context)!.updateRequests,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.updateRequestsUrl,
@@ -122,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           containerWidget(
                             ImageStrings.wowtracker,
-                            StringConstant.events,
+                            AppLocalizations.of(context)!.events,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.eventListScreen,
@@ -130,7 +154,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           containerWidget(
                             ImageStrings.wowtracker,
-                            StringConstant.bookings,
+                            AppLocalizations.of(context)!.bookings,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.bookings,
@@ -139,7 +163,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                           containerWidget(
                             ImageStrings.ritual,
-                            StringConstant.contacts,
+                            AppLocalizations.of(context)!.contacts,
                             () => Navigator.pushNamed(
                               context,
                               StringsRoute.contactUs,
@@ -148,7 +172,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           if (role == "Super Admin")
                             containerWidget(
                               ImageStrings.sevaimg,
-                              StringConstant.masterTemples,
+                              AppLocalizations.of(context)!.masterTemples,
                               () => Navigator.pushNamed(
                                 context,
                                 StringsRoute.master_temple_list,
@@ -157,7 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           if (role == "Super Admin")
                             containerWidget(
                               ImageStrings.sevaimg,
-                              StringConstant.mantra,
+                             AppLocalizations.of(context)!.mantra,
                               () => Navigator.pushNamed(
                                 context,
                                 StringsRoute.createMantra,
@@ -183,7 +207,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         SizedBox(height: 24, width: 24),
         const Spacer(),
         Text(
-          StringConstant.nammaDaivaSmall,
+          AppLocalizations.of(context)!.nammaDaivaSmall ??
+              StringConstant.nammaDaivaSmall,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -201,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget welcomeText() {
     return Text(
-      StringConstant.welcomeBack,
+      AppLocalizations.of(context)!.welcomeBack,
       style: AppTextStyles.welcomeStyle,
       textAlign: TextAlign.center,
     );
