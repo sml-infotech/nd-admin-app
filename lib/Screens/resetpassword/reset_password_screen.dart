@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -19,77 +20,96 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   late ResetViewmodel viewmodel;
 
   @override
+  void dispose() {
+    print(">>>>>><<<<<<{}");
+    viewmodel.reset();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<ResetViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorConstant.buttonColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: ColorConstant.buttonColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: _buildAppBar(),
       ),
-      body:Stack(children: [
-   SafeArea(
-        child: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          child: Container(
-            width: double.infinity,
-            constraints: BoxConstraints(minHeight: screenHeight - kToolbarHeight),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+            SafeArea(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    minHeight: screenHeight - kToolbarHeight,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 24,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _resetImage(),
+                      const SizedBox(height: 20),
+                      _resetSubText(),
+                      const SizedBox(height: 28),
+                      CommonTextField(
+                        hintText: AppLocalizations.of(context)!.password,
+                        labelText: AppLocalizations.of(context)!.enterPassword,
+                        isFromPassword: true,
+                        controller: viewmodel.password,
+                      ),
+                      const SizedBox(height: 18),
+                      CommonTextField(
+                        hintText: AppLocalizations.of(context)!.password,
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.enterConfirmPassword,
+                        isFromPassword: true,
+                        controller: viewmodel.confirmPassword,
+                      ),
+                      const SizedBox(height: 30),
+                      _resetButton(viewmodel),
+                      const SizedBox(height: 60),
+                    ],
+                  ),
+                ),
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _resetImage(),
-                const SizedBox(height: 20),
-                _resetSubText(),
-                const SizedBox(height: 28),
-                CommonTextField(
-                  hintText: StringConstant.password,
-                  labelText: StringConstant.enterPassword,
-                  isFromPassword: true,
-                  controller: viewmodel.password,
+
+            if (viewmodel.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 18),
-                CommonTextField(
-                  hintText: StringConstant.password,
-                  labelText: StringConstant.enterConfirmPassword,
-                  isFromPassword: true,
-                  controller: viewmodel.confirmPassword,
-                ),
-                const SizedBox(height: 30),
-                _resetButton(viewmodel),
-                      const SizedBox(height: 60),
-              ],
-            ),
-          ),
+              ),
+          ],
         ),
       ),
-
-      if(viewmodel.isLoading)
-       Positioned.fill(
-                child: Container(
-                 color: Colors.black.withOpacity(0.4),
-                child: Center(
-                 child: CircularProgressIndicator(
-              color: ColorConstant.buttonColor,
-            ),
-          ),
-        ),
-      )
-      ],)
-      
-      
-    
     );
   }
 
@@ -102,7 +122,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text(StringConstant.resetPassword, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.resetPassword,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         const SizedBox(width: 48),
       ],
@@ -120,7 +143,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   Widget _resetSubText() {
     return Text(
-      StringConstant.resetSubText,
+      AppLocalizations.of(context)!.resetSubText,
       style: AppTextStyles.otpSubHeadingStyle.copyWith(
         fontSize: 16,
         color: Colors.black54,
@@ -136,37 +159,37 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return SizedBox(
       width: double.infinity,
       height: 50,
-      child:Padding(padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),child: 
-      
-       ElevatedButton(
-        onPressed: isButtonEnabled
-            ? () async {
-              await viewmodel.resetPassword();
-              Fluttertoast.showToast(msg: viewmodel.message);
-              if(viewmodel.isPasswordUpdated){
-Navigator.popUntil(context, (route) {
-  print(route.settings.name); // debug: see all route names
-  return route.settings.name == StringsRoute.login;
-});
+      child: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+        child: ElevatedButton(
+          onPressed: isButtonEnabled
+              ? () async {
+                  FocusScope.of(context).unfocus();
 
-              }
-              setState(() {
-                viewmodel.message="";
-              });
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isButtonEnabled ? ColorConstant.buttonColor : Colors.grey,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+                  await viewmodel.resetPassword();
+                  Fluttertoast.showToast(msg: viewmodel.message);
+                  if (viewmodel.isPasswordUpdated) {
+                    Navigator.pushReplacementNamed(context, StringsRoute.login);
+                  }
+                  setState(() {
+                    viewmodel.message = "";
+                  });
+                }
+              : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isButtonEnabled
+                ? ColorConstant.buttonColor
+                : Colors.grey,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.reset,
+            style: AppTextStyles.buttonTextStyle,
           ),
         ),
-        child: Text(
-          StringConstant.reset,
-          style: AppTextStyles.buttonTextStyle,
-        ),
       ),
-    ));
+    );
   }
 }

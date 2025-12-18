@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
+import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class CreateUserViewmodel extends ChangeNotifier {
   bool isLoading = false;
@@ -11,41 +13,45 @@ class CreateUserViewmodel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController role = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
   List<Temple> _templeData = [];
-  List<String> templeList = [];  
+  List<Map<String, dynamic>> templeList = []; // ✅ store id + name both
   String? selectedTempleName;
   String? selectedTempleId;
-
+  List<String> selectedTempleIds = [];
   int page = 1;
   final int limit = 10;
-  final AuthService authService = AuthService();
+  final UserService userService = UserService();
+  final TempleService templeService = TempleService();
 
   Future<void> validateUser() async {
+    String name = nameController.text.trim();
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    if (nameController.text.isEmpty) {
+    if (name.isEmpty) {
       message = "Please enter Name";
     } else if (!isValidEmail(email)) {
       message = "Please enter valid email";
     } else if (password.isEmpty) {
       message = "Please enter password";
-    } else if (password.length < 6) {
-      message = "Password must be at least 6 characters";
-    } else if(role.text.isEmpty){
-      message="Role is Mandaratory";
+    } else if (password.length < 8) {
+      message = "Password must be at least 8 characters";
+    } else if (phoneController.text.isEmpty) {
+      message = "Please enter Phone Number";
+    } else if (phoneController.text.length != 10) {
+      message = "Please enter valid Phone Number";
+    } else if (role.text.isEmpty) {
+      message = "Role is Mandaratory";
+    } else if ((role.text == "Temple" || role.text == "Agent") &&
+        (selectedTempleIds.isEmpty)) {
+      message = "Select Temple";
+    } else {
+      message = "";
+      await createUser();
+      return;
     }
-      else if ((role.text == "Temple" || role.text == "Agent") &&
-           (selectedTempleName == null || selectedTempleName!.isEmpty)) {
-    message = "Select Temple";
-  } 
-
-  else {
-    message = "";
-    await createUser();
-    return;
-  }
 
     notifyListeners();
   }
@@ -60,18 +66,32 @@ class CreateUserViewmodel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      final response = await authService.createUser(
+      print("${nameController.text}");
+      print("${emailController.text}");
+      print("${passwordController.text}");
+      print("${role.text}");
+      print("${selectedTempleId}");
+      print("${phoneController.text}");
+
+      final response = await userService.createUser(
         nameController.text,
         emailController.text,
         passwordController.text,
-        role.text,selectedTempleId
+        role.text,
+        selectedTempleIds,
+        phoneController.text,
       );
 
-      if (response.message?.isNotEmpty == true) {
+      if (response.code == 201) {
         message = response.message!;
         isCreateUserSuccess = true;
+        notifyListeners();
+      } else if (response.code == 409) {
+        message =response.error??"";
+        notifyListeners();
       } else {
         message = "Some error occurred";
+        notifyListeners();
       }
       isLoading = false;
       notifyListeners();
@@ -82,7 +102,6 @@ class CreateUserViewmodel extends ChangeNotifier {
     }
   }
 
-  // Fetch temples with pagination
   Future<void> getTemples({bool reset = false}) async {
     if (isLoading) return;
 
@@ -95,11 +114,13 @@ class CreateUserViewmodel extends ChangeNotifier {
       page = 1;
     }
 
-    final response = await authService.getTemples(page: page, limit: limit);
+    final response = await templeService.getTemples(page: page, limit: limit);
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
-      templeList = _templeData.map((t) => t.name).toList();
+      templeList = _templeData
+          .map((t) => {"id": t.id.toString(), "name": t.name.toString()})
+          .toList();
       page++;
     }
 
@@ -129,7 +150,6 @@ class CreateUserViewmodel extends ChangeNotifier {
     return temple.id.isNotEmpty ? temple.id : null;
   }
 
-  // Set selected temple
   void selectTemple(String? name) {
     selectedTempleName = name;
     selectedTempleId = getTempleIdByName(name ?? "");

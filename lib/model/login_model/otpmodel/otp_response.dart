@@ -42,15 +42,18 @@ class User {
     required this.email,
 
     required this.role,
+    required this.full_name
   });
   late final String id;
   late final String email;
   late final String role;
+  late final String full_name;
 
   User.fromJson(Map<String, dynamic> json){
     id = json['id'];
     email = json['email'];
     role = json['role'];
+    full_name=json['full_name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -58,6 +61,7 @@ class User {
     _data['id'] = id;
     _data['email'] = email;
     _data['role'] = role;
+    _data['full_name'] = full_name;
     return _data;
   }
 }

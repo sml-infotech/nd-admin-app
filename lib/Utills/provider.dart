@@ -1,5 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
+import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart'
+    show MantraList;
+import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
+import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
+import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +53,7 @@ class ProviderWidget extends StatelessWidget {
   Future<bool> _checkToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-     final role = prefs.getString('userRole');
+    final role = prefs.getString('userRole');
     print(">>>>>>>>>>$token");
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
@@ -34,6 +65,7 @@ class ProviderWidget extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
         ChangeNotifierProvider(create: (context) => OtpViewmodel()),
@@ -43,28 +75,52 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ResetViewmodel()),
         ChangeNotifierProvider(create: (context) => TempleViewModel()),
         ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
+        ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
+        ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
+        ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
+        ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
+        ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
+        ChangeNotifierProvider(create: (context) => EventListViewmodel()),
+        ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
+        ChangeNotifierProvider(create: (context) => ContactViewModel()),
+        ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
+        ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
+        ChangeNotifierProvider(
+          create: (context) => MasterTempleListViewmodel(),
+        ),
+        ChangeNotifierProvider(create: (context) => HighlightViewmodel()),
       ],
-      child: FutureBuilder<bool>(
-        future: _checkToken(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const MaterialApp(
-              home: Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
-            );
-          }
-
-          final hasToken = snapshot.data ?? false;
-
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, child) {
           return MaterialApp(
+            locale: localeProvider.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('en'), Locale('kn')],
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              textTheme: const TextTheme(),
+            theme: ThemeData(textTheme: const TextTheme()),
+            home: FutureBuilder<bool>(
+              future: _checkToken(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final hasToken = snapshot.data ?? false;
+
+                return hasToken
+                    ? const HighLightsUploaderScreen()
+                    : const LoginScreen();
+              },
             ),
-            initialRoute: hasToken ? StringsRoute.dashboard : '/login',
             onGenerateRoute: router.route,
-            home: hasToken ? const DashboardScreen() : const LoginScreen(),
           );
         },
       ),

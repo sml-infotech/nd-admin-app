@@ -1,6 +1,6 @@
 name: nammadaiva_dashboard
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -19,16 +19,26 @@ dependencies:
   focus_detector: ^2.0.1
   shimmer: ^3.0.0
   intl: ^0.20.2
+  excel: ^2.0.3
+  file_picker: ^10.3.3
+  image_picker: ^1.2.0
+  url_launcher: ^6.3.2
+  permission_handler: ^12.0.1
+  flutter_localizations:
+    sdk: flutter
+  video_player: ^2.10.1
+  reorderable_grid_view: ^2.2.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
+  generate: true   # <-- REQUIRED FOR gen-l10n TO WORK
 
-  # Correctly indented assets section
   assets:
     - assets/loginImage.png
     - assets/temple.png
@@ -47,17 +57,25 @@ flutter:
     - assets/about.png
     - assets/event.png
     - assets/otpimage.png
-
+    - assets/calendar.png
+    - assets/uploadimg.png
+    - assets/edit.png
 
   fonts:
-      - family: Nunito
-        fonts:
-         - asset: assets/fonts/Nunito-Regular.ttf
-         - asset: assets/fonts/Nunito-Bold.ttf
-           weight: 700
-         - asset: assets/fonts/Nunito-SemiBold.ttf
-           weight: 600
-         - asset: assets/fonts/Nunito-Medium.ttf
-           weight: 500
-         - asset: assets/fonts/Nunito-Light.ttf
-           weight: 300
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Nunito-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Nunito-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Nunito-Light.ttf
+          weight: 300
+
+l10n:
+  arb-dir: lib/l10n
+  template-arb-file: intl_en.arb
+  output-localization-file: app_localizations.dart
+  untranslated-messages-file: untranslated.txt

@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class OtpDialog extends StatefulWidget {
@@ -30,9 +31,6 @@ class _OtpDialogState extends State<OtpDialog> {
     startTimer();
   }
 
-  /// =======================
-  /// Timer logic
-  /// =======================
   void startTimer() {
     timer?.cancel();
     remainingSeconds = 60;
@@ -51,10 +49,9 @@ class _OtpDialogState extends State<OtpDialog> {
     super.dispose();
   }
 
-  /// =======================
-  /// OTP verification logic
-  /// =======================
   Future<void> verifyOtp() async {
+    FocusScope.of(context).unfocus();
+
     viewModel.isVerifyLoading = true;
     await viewModel.validOtp(widget.email);
 
@@ -64,23 +61,20 @@ class _OtpDialogState extends State<OtpDialog> {
       textColor: Colors.white,
     );
 
-   if (viewModel.isOtpSuccess) {
-  Navigator.of(context).pop();
-  Future.microtask(() {
-    Navigator.pushNamed(context, StringsRoute.resetPassword);
-  });
-  viewModel.isOtpSuccess = false;
-}
-
+    if (viewModel.isOtpSuccess) {
+      Navigator.of(context).pop();
+      Future.microtask(() {
+        viewModel.reset();
+        Navigator.pushNamed(context, StringsRoute.resetPassword);
+      });
+      viewModel.isOtpSuccess = false;
+    }
 
     setState(() {
       viewModel.message = '';
     });
   }
 
-  /// =======================
-  /// Resend OTP logic
-  /// =======================
   Future<void> resendOtp() async {
     startTimer();
     await viewModel.forgotPasswordApi();
@@ -88,18 +82,12 @@ class _OtpDialogState extends State<OtpDialog> {
     setState(() => viewModel.message = '');
   }
 
-  /// =======================
-  /// OTP Input Field Widget
-  /// =======================
   Widget buildOtpInputField() {
     return OtpInputField(
       onChanged: (value) => setState(() => viewModel.otp = value),
     );
   }
 
-  /// =======================
-  /// Verify Button Widget
-  /// =======================
   Widget buildVerifyButton() {
     return SizedBox(
       width: double.infinity,
@@ -115,16 +103,13 @@ class _OtpDialogState extends State<OtpDialog> {
           ),
         ),
         child: Text(
-          StringConstant.verify,
+          AppLocalizations.of(context)!.verify,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),
     );
   }
 
-  /// =======================
-  /// Resend Row Widget
-  /// =======================
   Widget buildResendRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +117,7 @@ class _OtpDialogState extends State<OtpDialog> {
         GestureDetector(
           onTap: remainingSeconds == 0 ? resendOtp : null,
           child: Text(
-            StringConstant.resend,
+            AppLocalizations.of(context)!.resend,
             style: remainingSeconds == 0
                 ? AppTextStyles.resendEnableCodeStyle
                 : AppTextStyles.resendCodeStyle,
@@ -146,9 +131,6 @@ class _OtpDialogState extends State<OtpDialog> {
     );
   }
 
-  /// =======================
-  /// Loading Overlay
-  /// =======================
   Widget buildLoadingOverlay() {
     if (!viewModel.isVerifyLoading) return const SizedBox.shrink();
 
@@ -162,9 +144,6 @@ class _OtpDialogState extends State<OtpDialog> {
     );
   }
 
-  /// =======================
-  /// Main Dialog Content
-  /// =======================
   Widget buildDialogContent() {
     return SingleChildScrollView(
       child: Padding(
@@ -174,13 +153,13 @@ class _OtpDialogState extends State<OtpDialog> {
           children: [
             const SizedBox(height: 10),
             Text(
-              StringConstant.verificationCode,
+              AppLocalizations.of(context)!.verificationCode,
               style: AppTextStyles.otpDetailHeadingStyle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             Text(
-              StringConstant.otpSubTitle,
+              AppLocalizations.of(context)!.otpSubTitle,
               style: AppTextStyles.otpSubHeadingStyle,
               textAlign: TextAlign.center,
             ),
@@ -212,8 +191,6 @@ class _OtpDialogState extends State<OtpDialog> {
       child: Stack(
         children: [
           buildDialogContent(),
-
-          // Close Button
           Positioned(
             top: 8,
             right: 8,
@@ -222,8 +199,6 @@ class _OtpDialogState extends State<OtpDialog> {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-
-          // Loading Overlay
           buildLoadingOverlay(),
         ],
       ),

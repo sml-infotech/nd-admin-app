@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/provider.dart';
 
-  void main() {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp( ProviderWidget());
-}
+  runApp(ProviderWidget());
+} 

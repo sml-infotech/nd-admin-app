@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class UserListScreen extends StatefulWidget {
@@ -20,20 +24,22 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   final Map<String, bool> expandedMap = {};
   final ScrollController _scrollController = ScrollController();
+  late UserViewModel viewModel;
 
   bool _isLoadingMore = false;
+  String? token;
+  String? role;
 
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<UserViewModel>(context, listen: false);
-
-    // 🔹 Load first page
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.getUsers(reset: true);
+    viewModel = context.read<UserViewModel>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadUserData();
+      await viewModel.getTemples();
+      await viewModel.getUsers(reset: true);
     });
 
-    // 🔹 Scroll listener for pagination
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
@@ -41,6 +47,20 @@ class _UserListScreenState extends State<UserListScreen> {
           viewModel.hasMore) {
         _loadMoreUsers(viewModel);
       }
+    });
+
+    if (!viewModel.searchController.hasListeners) {
+      viewModel.searchController.addListener(() {
+        viewModel.onSearchChanged();
+      });
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('authToken');
+      role = prefs.getString('userRole');
     });
   }
 
@@ -53,60 +73,76 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    viewModel.searchController.text = "";
+    viewModel.resetData();
+    debugPrint("🧹 User screen disposed & ViewModel reset.");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<UserViewModel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return FocusDetector(
-      onFocusGained: () async {
-        if (viewModel.userData.isEmpty) {
-          // await viewModel.getUsers(reset: true);
-        }
-      },
-      child: Scaffold(
-        backgroundColor:
-            viewModel.isLoading ? Colors.white : ColorConstant.buttonColor,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: ColorConstant.buttonColor,
-          elevation: 0,
-          title: _buildAppBar(),
-        ),
-          body: viewModel.isLoading && viewModel.page==1
-              ? _buildFullShimmerList()
-              : Column(
-                children: [
-                  SizedBox(height: screenHeight * 0.02),
-                  Expanded(
-                    child: _buildUserList(viewModel),
+    return Consumer<UserViewModel>(
+      builder: (context, viewModel, _) {
+        return FocusDetector(
+          onFocusGained: () async {
+            // viewModel.resetData();
+            await viewModel.getUsers(reset: true);
+          },
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: ColorConstant.buttonColor,
+              elevation: 0,
+              title: _buildAppBar(viewModel),
+            ),
+            body: viewModel.isLoading && viewModel.page == 1
+                ? _buildFullShimmerList()
+                : Column(
+                    children: [
+                      SizedBox(height: 10),
+                      userSearchBar(),
+                      SizedBox(height: 10),
+                      Expanded(child: _buildUserList(viewModel)),
+                    ],
                   ),
-                ],
-              ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(UserViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            viewModel.resetData();
+            Navigator.pop(context);
+          },
         ),
         const Spacer(),
-        Text(StringConstant.userDetails, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          "Users",
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
-        const SizedBox(width: 48),
+        if (role != "Admin")
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, StringsRoute.createUser);
+              viewModel.resetData();
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+          ),
       ],
     );
   }
 
-  /// 🔹 Full shimmer (for initial page)
   Widget _buildFullShimmerList() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -115,15 +151,10 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  /// 🔹 Actual user list + small shimmer at bottom
   Widget _buildUserList(UserViewModel viewModel) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius:
-            BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       padding: const EdgeInsets.all(16),
       child: ListView.builder(
         controller: _scrollController,
@@ -132,23 +163,46 @@ class _UserListScreenState extends State<UserListScreen> {
           if (index < viewModel.userData.length) {
             final user = viewModel.userData[index];
             final isExpanded = expandedMap[user.id] ?? false;
-            return Card(
-              elevation: 1,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.white.withOpacity(0.5)),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  _buildUserTile(user, isExpanded, viewModel),
-                  if (isExpanded) _buildUserDetails(user),
-                ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
+                child: Column(
+                  children: [
+                    _buildUserTile(user, isExpanded, viewModel),
+                    if (isExpanded)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(16),
+                          ),
+                        ),
+                        child: _buildUserDetails(user),
+                      ),
+                  ],
+                ),
               ),
             );
           }
 
-      
           return const Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: ShimmerUserCard(),
@@ -158,30 +212,98 @@ class _UserListScreenState extends State<UserListScreen> {
     );
   }
 
-  Widget _buildUserTile(UserModel user, bool isExpanded, UserViewModel viewModel) {
-    return ListTile(
-      title: Text(user.fullName, style: AppTextStyles.resendCodeStyle),
-      subtitle: Text(user.email, style: AppTextStyles.unTabTextStyle),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.black54),
-            onPressed: () => _showEditDialog(user, viewModel),
+  Widget _buildUserTile(
+    UserModel user,
+    bool isExpanded,
+    UserViewModel viewModel,
+  ) {
+    final bool canEdit = role != "Admin" && user.role != "Super Admin";
+    final bool isActive = user.isActive;
+    final Color statusColor = isActive ? Colors.green : Colors.redAccent;
+
+    return Stack(
+      children: [
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
           ),
-          IconButton(
-            icon: Icon(
-              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-              color: Colors.black54,
+          title: Text(
+            user.fullName,
+            style: AppTextStyles.resendCodeStyle.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: isActive ? Colors.black : Colors.grey,
             ),
-            onPressed: () {
-              setState(() {
-                expandedMap[user.id] = !isExpanded;
-              });
-            },
           ),
-        ],
-      ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${AppLocalizations.of(context)!.role} : ${user.role}",
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                "${AppLocalizations.of(context)!.email} : ${user.email}",
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "${AppLocalizations.of(context)!.phone} : ${user.phoneNumber}",
+                style: AppTextStyles.unTabTextStyle.copyWith(
+                  fontSize: 13,
+                  color: isActive ? Colors.black54 : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      isActive ? "Active" : "Inactive",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: statusColor,
+                        fontFamily: font,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        if (canEdit)
+          Positioned(
+            top: 6,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => _showEditBottomSheet(user, viewModel),
+              child: Container(
+                height: 30,
+                width: 30,
+                child: Center(child: Image.asset(ImageStrings.edit)),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -189,66 +311,99 @@ class _UserListScreenState extends State<UserListScreen> {
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Role: ${user.role}", style: AppTextStyles.templeNameDetailsStyle),
-            Text("Associated Temple: ${user.associatedTempleId ?? 'N/A'}",
-                style: AppTextStyles.templeNameDetailsStyle),
             Text(
-              "Active: ${user.isActive ? "Yes" : "No"}",
-              style: TextStyle(
-                fontFamily: font,
-                fontSize: 16,
-                color: user.isActive ? Colors.green : Colors.red,
-              ),
-            ),
-            Text(
-              "Created At: ${_formatDate(user.createdAt ?? user.updatedAt)}",
+              "Contact: ${user.phoneNumber}",
               style: AppTextStyles.templeNameDetailsStyle,
             ),
+            if (user.role.toLowerCase() == 'agent' ||
+                user.role.toLowerCase() == 'temple')
+              Text(
+                "Associated Temple: ${user.associatedTemples.map((t) => t.name).join(', ')}",
+                style: AppTextStyles.templeNameDetailsStyle,
+              ),
           ],
         ),
       ),
     );
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return '';
-    return DateFormat('dd-MM-yyyy').format(date);
+  Widget userSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        controller: viewModel.searchController,
+        decoration: InputDecoration(
+          hintText: AppLocalizations.of(context)!.searchUser,
+          hintStyle: TextStyle(fontFamily: font),
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(13),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 0,
+          ),
+        ),
+      ),
+    );
   }
 
-  void _showEditDialog(UserModel user, UserViewModel viewModel) {
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return "N/A";
+
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('dd-MM-yyyy').format(date);
+    } catch (e) {
+      return "Invalid Date";
+    }
+  }
+
+  void _showEditBottomSheet(UserModel user, UserViewModel viewModel) {
     final fullNameController = TextEditingController(text: user.fullName);
     final emailController = TextEditingController(text: user.email);
 
     viewModel.setTempActive(user.id, user.isActive);
+    viewModel.selectedTempleIds = user.associatedTemples
+        .map((t) => t.id)
+        .toList();
+    viewModel.role.text = user.role;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return AnimatedBuilder(
-          animation: viewModel,
-          builder: (context, _) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Stack(
-                  children: [
-                    _buildAlertDialog(
-                      user,
-                      viewModel,
-                      fullNameController,
-                      emailController,
-                    ),
-                    if (viewModel.editLoading) _buildLoadingIndicator(),
-                  ],
-                ),
-              ),
-            );
-          },
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        return SizedBox(
+          height: screenHeight / 1.5,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 12,
+            ),
+            child: _buildAlertDialog(
+              user,
+              viewModel,
+              fullNameController,
+              emailController,
+            ),
+          ),
         );
       },
     );
@@ -260,99 +415,213 @@ class _UserListScreenState extends State<UserListScreen> {
     TextEditingController fullNameController,
     TextEditingController emailController,
   ) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
-        StringConstant.editUser,
-        style: AppTextStyles.loginTitleStyle
-            .copyWith(fontSize: 18, color: Colors.black),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTextField(fullNameController, "Full Name"),
-          const SizedBox(height: 16),
-          _buildTextField(emailController, "Email"),
-          const SizedBox(height: 16),
-          CommonDropdownField(
-            paddingSize: 0,
-            hintText: StringConstant.selectedRole,
-            labelText: StringConstant.role,
-            items: StringConstant.roles,
-            selectedValue: StringConstant.roles.contains(viewModel.role.text)
-                ? viewModel.role.text
-                : user.role,
-            onChanged: (value) {
-              viewModel.role.text = value ?? user.role;
-              viewModel.notifyListeners();
-            },
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return StatefulBuilder(
+      builder: (context, setStateSB) {
+        final String currentRole = viewModel.role.text.isNotEmpty
+            ? viewModel.role.text
+            : user.role;
+
+        final bool isAgentOrTemple =
+            currentRole.toLowerCase() == 'agent' ||
+            currentRole.toLowerCase() == 'temple';
+
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Stack(
             children: [
-              Text("Is Active",
-                  style: AppTextStyles.otpSubHeadingStyle
-                      .copyWith(fontWeight: FontWeight.w600)),
-              StatefulBuilder(
-                builder: (context, setStateSB) {
-                  bool currentActive = viewModel.getTempActive(user.id);
-                  return Switch(
-                    value: currentActive,
-                    activeColor: Colors.green,
-                    onChanged: (val) {
-                      viewModel.setTempActive(user.id, val);
-                      setStateSB(() {});
-                    },
-                  );
-                },
+              SafeArea(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    left: 16,
+                    right: 16,
+                    top: 10,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          Text(
+                            AppLocalizations.of(context)!.editUser,
+                            style: AppTextStyles.loginTitleStyle.copyWith(
+                              fontSize: 20,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      _buildTextField(fullNameController, "Full Name"),
+                      const SizedBox(height: 16),
+                      // _buildTextField(emailController, "Email"),
+                      const SizedBox(height: 16),
+                      CommonDropdownField(
+                        paddingSize: 0,
+                        hintText: AppLocalizations.of(context)!.selectedRole,
+                        labelText: AppLocalizations.of(context)!.role,
+                        items:StringConstant.roles,
+                        selectedValue: currentRole,
+                        onChanged: (value) {
+                          viewModel.role.text = value ?? user.role;
+                          setStateSB(() {});
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      if (isAgentOrTemple)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Associated Temples",
+                              style: AppTextStyles.otpSubHeadingStyle.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                children: viewModel.templeList.map<Widget>((
+                                  temple,
+                                ) {
+                                  final String templeId = (temple['id'] ?? '')
+                                      .toString();
+                                  final String templeName =
+                                      (temple['name'] ??
+                                              temple['temple_name'] ??
+                                              '')
+                                          .toString();
+
+                                  final bool isSelected = viewModel
+                                      .selectedTempleIds
+                                      .contains(templeId);
+
+                                  return CheckboxListTile(
+                                    dense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Text(
+                                      templeName,
+                                      style:
+                                          AppTextStyles.templeNameDetailsStyle,
+                                    ),
+                                    value: isSelected,
+                                    activeColor: ColorConstant.buttonColor,
+                                    onChanged: (bool? value) {
+                                      if (value == true) {
+                                        viewModel.selectedTempleIds.add(
+                                          templeId,
+                                        );
+                                      } else {
+                                        viewModel.selectedTempleIds.remove(
+                                          templeId,
+                                        );
+                                      }
+                                      setStateSB(() {});
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Is Active",
+                            style: AppTextStyles.otpSubHeadingStyle.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Switch(
+                            value: viewModel.getTempActive(user.id),
+                            activeColor: Colors.green,
+                            onChanged: (val) {
+                              viewModel.setTempActive(user.id, val);
+                              setStateSB(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                          backgroundColor: ColorConstant.buttonColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final isValid = await viewModel.updateValidate(
+                            fullNameController.text,
+                          );
+                          if (viewModel.message.isNotEmpty) {
+                            Fluttertoast.showToast(msg: viewModel.message);
+                            viewModel.message = "";
+                          }
+                          if (isValid) {
+                            final isActive = viewModel.getTempActive(user.id);
+                            setStateSB(() {
+                              FocusScope.of(context).unfocus();
+                              viewModel.editLoading = true;
+                            });
+                            await viewModel.editUser(
+                              user.id,
+                              fullNameController.text,
+                              isActive,
+                              selectedTemples: viewModel.selectedTempleIds,
+                            );
+
+                            setStateSB(() {
+                              viewModel.editLoading = false;
+                            });
+                            if (context.mounted) Navigator.pop(context);
+                          }
+                        },
+                        child: Text(
+                          "Save",
+                          style: AppTextStyles.buttonTextStyle.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
+              if (viewModel.editLoading)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstant.buttonColor,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed:
-              viewModel.editLoading ? null : () => Navigator.pop(context),
-          child: Text(
-            "Cancel",
-            style: AppTextStyles.buttonTextStyle
-                .copyWith(color: Colors.grey.shade600),
-          ),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: ColorConstant.buttonColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-          onPressed: viewModel.editLoading
-              ? null
-              : () async {
-                  final isActive = viewModel.getTempActive(user.id);
-                  await viewModel.editUser(
-                      user.id, fullNameController.text, isActive);
-                  if (!viewModel.editLoading) Navigator.pop(context);
-                },
-          child: Text(
-            "Save",
-            style: AppTextStyles.buttonTextStyle.copyWith(color: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Container(
-      height: double.infinity,
-      decoration: BoxDecoration(
-          color: Colors.black38, borderRadius: BorderRadius.circular(16)),
-      child:
-          const Center(child: CircularProgressIndicator(color: Colors.white)),
+        );
+      },
     );
   }
 
@@ -376,7 +645,6 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 }
 
-/// 🔹 Full card shimmer (first load)
 class ShimmerUserCard extends StatelessWidget {
   const ShimmerUserCard({super.key});
 
@@ -398,4 +666,3 @@ class ShimmerUserCard extends StatelessWidget {
     );
   }
 }
-

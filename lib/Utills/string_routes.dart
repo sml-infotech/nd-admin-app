@@ -1,14 +1,28 @@
 class StringsRoute {
   StringsRoute._();
   static const String login = '/login';
-  static const String dashboard = '/dashboard';
+static const String dashboard = '/dashboard';
   static const String templeDetail = '/templeDetail';
   static const String otpScreen = '/otpScreen';
-  static const String createUser ='/createUser';
-  static const String forgotPassword ='/forgotPassword';
-  static const String resetPassword ='/resetPassword';
-  static const String userDetails ='/userDetails';
-  static const String templeScreen ='/templeScreen';
+  static const String createUser = '/createUser';
+  static const String forgotPassword = '/forgotPassword';
+  static const String resetPassword = '/resetPassword';
+  static const String userDetails = '/userDetails';
+  static const String templeScreen = '/templeScreen';
+  static const String addTempleScreen = '/addTempleScreen';
+  static const String updateTempleDetails = '/updateTempleDetails';
+  static const String addPuja = '/addPuja';
+  static const String pujaList = '/pujaList';
+  static const String updateRequestsUrl = '/updateRequests';
+  static const String createEvent = '/createEvent';
+  static const String eventListScreen = '/eventListScreen';
+  static const String bookings = '/bookingScreen';
+static const String contactUs="/contactUs";
+static const String create_master_temple="/createMasterTemple";
+static const String master_temple_list="/masterTempleList";
+static const String createMantra="/createMantra";
+static const String mantraList="/mantraList";
+static const String highlightUpload="/highlightUpload";
 
 
 

@@ -16,7 +16,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
- LoginViewModel() {
+  LoginViewModel() {
     // Rebuild the button reactively whenever the user types
     emailController.addListener(() => notifyListeners());
     passwordController.addListener(() => notifyListeners());
@@ -33,29 +33,25 @@ class LoginViewModel extends ChangeNotifier {
         isChecked;
   }
 
-
-
   Future<void> login() async {
     try {
       isLoading = true;
       notifyListeners();
       final response = await authService.loginUser(
-          emailController.text, passwordController.text);
-      if (response.code==200) {
+        emailController.text.trim(),
+        passwordController.text,
+      );
+      if (response.code == 200) {
         print("->>> $response");
         message = response.message ?? "success";
         isLoginSuccess = true;
         print("message $message");
         isLoading = false;
-              notifyListeners();
-
-      }
-      else if(response.code==401){
+        notifyListeners();
+      } else if (response.code == 401) {
         message = response.message ?? "Invalid email or password.";
         isLoading = false;
-      }
-      
-       else {
+      } else {
         message = response.error ?? "some error occurred";
         isLoading = false;
         print("message $message");
@@ -65,20 +61,20 @@ class LoginViewModel extends ChangeNotifier {
       message = "User not found.";
       isLoading = false;
       notifyListeners();
-   
     }
   }
-bool isValidEmail(String email) {
-  final regex = RegExp(
-      r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
-  return regex.hasMatch(email);
-}
 
+  bool isValidEmail(String email) {
+    final regex = RegExp(r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
+    return regex.hasMatch(email);
+  }
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  void reset() {
+    emailController.text = "";
+    passwordController.text = "";
+    isChecked = false;
+    isLoading = false;
+    message = '';
+    isLoginSuccess = false;
   }
 }
