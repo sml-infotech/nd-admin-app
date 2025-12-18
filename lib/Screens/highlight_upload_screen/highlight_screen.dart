@@ -31,6 +31,10 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   List<String> activeMedia = [
     "https://picsum.photos/id/1016/400/700",
     "https://picsum.photos/id/1011/400/700",
+    "https://picsum.photos/id/1016/400/700",
+    "https://picsum.photos/id/1011/400/700",
+    "https://picsum.photos/id/1016/400/700",
+    "https://picsum.photos/id/1011/400/700",
   ];
   List<String> inactiveMedia = [
     "https://picsum.photos/id/1015/400/700",
@@ -43,7 +47,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _clearPreviousVideo();
-      viewModel.addMedia([pickedFile.path], false);
+      // viewModel.addMedia([pickedFile.path], false);
       setState(() => _pickedFile = pickedFile);
     }
   }
@@ -56,7 +60,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       final controller = VideoPlayerController.file(File(pickedFile.path));
       try {
         await controller.initialize();
-        viewModel.addMedia([pickedFile.path], true);
+        // viewModel.addMedia([pickedFile.path], true);
         if (mounted) {
           setState(() {
             _pickedFile = pickedFile;
@@ -104,7 +108,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HighlightViewmodel>(context);
-   
+
     return Scaffold(
       appBar: AppBar(
         title: nammaDaivaCreateAppBar(),
@@ -112,66 +116,59 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         centerTitle: true,
       ),
       body: Column(
-        children: [
-          const SizedBox(height: 15),
-         uploadContentWidget(viewModel),
-        ],
+        children: [const SizedBox(height: 15), uploadContentWidget(viewModel)],
       ),
     );
   }
-  
-Widget uploadContentWidget(HighlightViewmodel viewModel){
+
+  Widget uploadContentWidget(HighlightViewmodel viewModel) {
     List<String> currentList = _selectedSegment == 0
         ? activeMedia
         : inactiveMedia;
-  return  Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _showPickerOptions,
-                    child: Container(
-                      height: 220,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[400]!),
-                      ),
-                      child: _buildPreview(),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  uploadButton(viewModel),
-                  const SizedBox(height: 25),
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: _showPickerOptions,
+              child: Container(
+                height: 220,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[400]!),
+                ),
+                child: _buildPreview(),
+              ),
+            ),
+            const SizedBox(height: 15),
+            uploadButton(viewModel),
+            const SizedBox(height: 25),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        _segmentButton("Active", 0),
-                        _segmentButton("Inactive", 1),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 40),
-                  activeAndInactiveSegment(),
-                  const SizedBox(height: 10),
-                  if (currentList.isNotEmpty) _buildMediaGrid(),
-                  if (currentList.isEmpty) ...[
-                    const SizedBox(height: 100),
-                   addHighlightUnderLineButton(),
-                  ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  _segmentButton("Active", 0),
+                  _segmentButton("Inactive", 1),
                 ],
               ),
             ),
-          );
-}
-
-
-
-
+            const Divider(height: 40),
+            activeAndInactiveSegment(),
+            const SizedBox(height: 10),
+            if (currentList.isNotEmpty) _buildMediaGrid(),
+            if (currentList.isEmpty) ...[
+              const SizedBox(height: 100),
+              addHighlightUnderLineButton(),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget activeAndInactiveSegment() {
     return Row(
@@ -224,22 +221,22 @@ Widget uploadContentWidget(HighlightViewmodel viewModel){
     );
   }
 
-  Widget addHighlightUnderLineButton(){
-    return  GestureDetector(
-                      onTap: _showPickerOptions,
-                      child: Center(
-                        child: Text(
-                          "+ Add Highlights ",
-                          style: TextStyle(
-                            fontFamily: font,
-                            color: Colors.black,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                            decorationThickness: 1.5,
-                          ),
-                        ),
-                      ),
-                    );
+  Widget addHighlightUnderLineButton() {
+    return GestureDetector(
+      onTap: _showPickerOptions,
+      child: Center(
+        child: Text(
+          "+ Add Highlights ",
+          style: TextStyle(
+            fontFamily: font,
+            color: Colors.black,
+            fontSize: 14,
+            decoration: TextDecoration.underline,
+            decorationThickness: 1.5,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget nammaDaivaCreateAppBar() {
@@ -271,12 +268,13 @@ Widget uploadContentWidget(HighlightViewmodel viewModel){
 
     final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
     bool isVideo = _checkIsVideo(_pickedFile!.path);
-
+    await viewModel.addMedia([_pickedFile!.path], isVideo);
     if (viewModel.uploadedImageUrls.isNotEmpty) {
       setState(() {
         String cleanUrl = viewModel.uploadedImageUrls.last.split('?').first;
         activeMedia.insert(0, cleanUrl);
         _pickedFile = null;
+
         _clearPreviousVideo();
       });
       ScaffoldMessenger.of(

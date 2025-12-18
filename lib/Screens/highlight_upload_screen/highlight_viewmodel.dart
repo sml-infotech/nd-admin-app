@@ -42,11 +42,12 @@ class HighlightViewmodel extends ChangeNotifier {
             if (!uploadedImageUrls.contains(uploadedUrl)) {
               uploadedImageUrls.add(uploadedUrl);
             }
+            notifyListeners();
             selectedImages.remove(file);
 
             print("✅ Uploaded ${file.name} -> $uploadedUrl");
           } else {
-            
+
             print("❌ Upload failed for ${file.name}");
             message = "Upload failed for ${file.name}";
           }
