@@ -4,10 +4,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
 import 'highlight_viewmodel.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 class HighLightsUploaderScreen extends StatefulWidget {
   const HighLightsUploaderScreen({super.key});
@@ -29,7 +31,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   List<String> activeMedia = [
     "https://picsum.photos/id/1016/400/700",
     "https://picsum.photos/id/1011/400/700",
-    
   ];
   List<String> inactiveMedia = [
     "https://picsum.photos/id/1015/400/700",
@@ -116,15 +117,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       body: Column(
         children: [
           const SizedBox(height: 15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _segmentButton("Active", 0),
-                _segmentButton("Inactive", 1),
-              ],
-            ),
-          ),
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -169,6 +162,17 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                             ),
                     ),
                   ),
+                  const SizedBox(height: 25),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        _segmentButton("Active", 0),
+                        _segmentButton("Inactive", 1),
+                      ],
+                    ),
+                  ),
                   const Divider(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,7 +191,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                         TextButton(
                           onPressed: _toggleStatus,
                           child: Text(
-                            _selectedSegment == 0 ? "Deactivate" : "Activate",
+                            _selectedSegment == 0
+                                ? " Move to Deactivate"
+                                : "Move to Activate",
                             style: TextStyle(
                               fontFamily: font,
                               fontWeight: FontWeight.bold,
@@ -304,7 +310,8 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     List<String> currentList = _selectedSegment == 0
         ? activeMedia
         : inactiveMedia;
-    return GridView.builder(
+
+    return ReorderableGridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -314,12 +321,39 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         childAspectRatio: 1,
       ),
       itemCount: currentList.length,
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          final item = currentList.removeAt(oldIndex);
+          currentList.insert(newIndex, item);
+        });
+      },
+      dragWidgetBuilder: (index, child) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.green, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: child,
+          ),
+        );
+      },
       itemBuilder: (context, index) {
         String path = currentList[index];
         bool isSelected = _selectedItems.contains(path);
         bool isVideo = _checkIsVideo(path);
 
+        // Each item MUST have a unique ValueKey
         return Stack(
+          key: ValueKey(path),
           clipBehavior: Clip.none,
           children: [
             GestureDetector(
@@ -337,17 +371,14 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                   child: isVideo
                       ? VideoGridThumbnail(url: path)
                       : Image.network(
-                          width: 120,
-                          height: 150,
                           path,
-                          fit: BoxFit.fill,
+                          width: 200,
+                          height: 150,
+                          fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
                                 color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
-                                ),
+                                child: const Icon(Icons.broken_image),
                               ),
                         ),
                 ),
@@ -360,11 +391,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                 value: isSelected,
                 shape: const CircleBorder(),
                 activeColor: Colors.blue,
-                onChanged: (val) => setState(
-                  () => val!
-                      ? _selectedItems.add(path)
-                      : _selectedItems.remove(path),
-                ),
+                onChanged: (val) => setState(() {
+                  val! ? _selectedItems.add(path) : _selectedItems.remove(path);
+                }),
               ),
             ),
           ],
@@ -558,7 +587,7 @@ class _MediaDialogContentState extends State<MediaDialogContent> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize:
-          MainAxisSize.min, // Dialog takes only as much space as needed
+          MainAxisSize.max, // Dialog takes only as much space as needed
       children: [
         // Close Button Row
         Align(
@@ -586,7 +615,6 @@ class _MediaDialogContentState extends State<MediaDialogContent> {
                             alignment: Alignment.center,
                             children: [
                               VideoPlayer(_videoController!),
-                              // Simple Tap-to-Pause
                               GestureDetector(
                                 onTap: () {
                                   setState(() {

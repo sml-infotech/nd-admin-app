@@ -58,73 +58,72 @@ class ProviderWidget extends StatelessWidget {
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
   }
-@override
-Widget build(BuildContext context) {
-  final router = AppRouter();
 
-  return 
-  
-  MultiProvider(
-    providers: [
-       ChangeNotifierProvider(create: (_) => LocaleProvider()),
-      ChangeNotifierProvider(create: (context) => LoginViewModel()),
-      ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
-      ChangeNotifierProvider(create: (context) => OtpViewmodel()),
-      ChangeNotifierProvider(create: (context) => CreateUserViewmodel()),
-      ChangeNotifierProvider(create: (context) => UserViewModel()),
-      ChangeNotifierProvider(create: (context) => ForgotViewmodel()),
-      ChangeNotifierProvider(create: (context) => ResetViewmodel()),
-      ChangeNotifierProvider(create: (context) => TempleViewModel()),
-      ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
-      ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
-      ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
-      ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
-      ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
-      ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
-      ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
-      ChangeNotifierProvider(create: (context) => EventListViewmodel()),
-      ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
-      ChangeNotifierProvider(create: (context) => ContactViewModel()),
-      ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
-      ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
-      ChangeNotifierProvider(create: (context) => MasterTempleListViewmodel()),
-      ChangeNotifierProvider(create: (context) => HighlightViewmodel()),
-    ],
-    child:Consumer<LocaleProvider>(
-    builder: (context, localeProvider, child) {
-      return
-    
-     MaterialApp(
-      locale: localeProvider.locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+  @override
+  Widget build(BuildContext context) {
+    final router = AppRouter();
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (context) => LoginViewModel()),
+        ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
+        ChangeNotifierProvider(create: (context) => OtpViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreateUserViewmodel()),
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
+        ChangeNotifierProvider(create: (context) => ForgotViewmodel()),
+        ChangeNotifierProvider(create: (context) => ResetViewmodel()),
+        ChangeNotifierProvider(create: (context) => TempleViewModel()),
+        ChangeNotifierProvider(create: (context) => DashboardViewmodel()),
+        ChangeNotifierProvider(create: (context) => AddTempleViewmodel()),
+        ChangeNotifierProvider(create: (context) => UpdateTempleViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreatePujaViewmodel()),
+        ChangeNotifierProvider(create: (context) => PujaListViewmodel()),
+        ChangeNotifierProvider(create: (context) => UpdateRequestViewModel()),
+        ChangeNotifierProvider(create: (context) => CreateEventViewmodel()),
+        ChangeNotifierProvider(create: (context) => EventListViewmodel()),
+        ChangeNotifierProvider(create: (context) => BookingsViewmodel()),
+        ChangeNotifierProvider(create: (context) => ContactViewModel()),
+        ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
+        ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
+        ChangeNotifierProvider(
+          create: (context) => MasterTempleListViewmodel(),
+        ),
+        ChangeNotifierProvider(create: (context) => HighlightViewmodel()),
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('kn'),
-      ],
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(textTheme: const TextTheme()),
-      home: FutureBuilder<bool>(
-        future: _checkToken(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, child) {
+          return MaterialApp(
+            locale: localeProvider.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('en'), Locale('kn')],
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(textTheme: const TextTheme()),
+            home: FutureBuilder<bool>(
+              future: _checkToken(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-          final hasToken = snapshot.data ?? false;
+                final hasToken = snapshot.data ?? false;
 
-          return hasToken ? const HighLightsUploaderScreen() : const LoginScreen();
+                return hasToken
+                    ? const HighLightsUploaderScreen()
+                    : const LoginScreen();
+              },
+            ),
+            onGenerateRoute: router.route,
+          );
         },
       ),
-      onGenerateRoute: router.route,
-   ); }),
-  );
-
-}
+    );
+  }
 }

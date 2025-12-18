@@ -27,6 +27,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   video_player: ^2.10.1
+  reorderable_grid_view: ^2.2.8
 
 dev_dependencies:
   flutter_test:
