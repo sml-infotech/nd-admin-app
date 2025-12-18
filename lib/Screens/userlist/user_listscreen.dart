@@ -127,7 +127,7 @@ class _UserListScreenState extends State<UserListScreen> {
         ),
         const Spacer(),
         Text(
-          AppLocalizations.of(context)!.enterUserName,
+          "Users",
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),

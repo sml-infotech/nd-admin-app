@@ -167,6 +167,12 @@ abstract class AppLocalizations {
   /// **'Master Temples'**
   String get masterTemples;
 
+  /// No description provided for @addHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Highlights'**
+  String get addHighlights;
+
   /// No description provided for @mantra.
   ///
   /// In en, this message translates to:

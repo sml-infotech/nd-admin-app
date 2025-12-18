@@ -45,6 +45,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get masterTemples => 'ಮಾಸ್ಟರ್ ದೇಗುಲಗಳು';
 
   @override
+  String get addHighlights => 'ಮುಖ್ಯಾಂಶಗಳನ್ನು ಸೇರಿಸಿ';
+
+  @override
   String get mantra => 'ಮಂತ್ರ';
 
   @override

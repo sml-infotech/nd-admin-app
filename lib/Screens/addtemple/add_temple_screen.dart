@@ -182,21 +182,21 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
     }
   }
 
-  Widget nammaDaivaCreateAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const Spacer(),
-        Text(  AppLocalizations.of(context)!.addTemple, style: AppTextStyles.appBarTitleStyle),
-        const Spacer(),
-        const SizedBox(width: 48),
-      ],
-    );
-  }
+Widget nammaDaivaCreateAppBar() {
+return Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    IconButton(
+      icon: Image.asset(ImageStrings.backbutton),
+      onPressed: () => Navigator.pop(context),
+    ),
+    const Spacer(),
+    Text(  AppLocalizations.of(context)!.addTemple, style: AppTextStyles.appBarTitleStyle),
+    const Spacer(),
+    const SizedBox(width: 48),
+  ],
+);
+}
 
   Widget addTempleButton() {
     return Consumer<AddTempleViewmodel>(

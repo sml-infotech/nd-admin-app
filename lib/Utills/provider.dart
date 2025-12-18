@@ -9,6 +9,8 @@ import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart'
@@ -86,6 +88,7 @@ Widget build(BuildContext context) {
       ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
       ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
       ChangeNotifierProvider(create: (context) => MasterTempleListViewmodel()),
+      ChangeNotifierProvider(create: (context) => HighlightViewmodel()),
     ],
     child:Consumer<LocaleProvider>(
     builder: (context, localeProvider, child) {
@@ -116,7 +119,7 @@ Widget build(BuildContext context) {
 
           final hasToken = snapshot.data ?? false;
 
-          return hasToken ? const DashboardScreen() : const LoginScreen();
+          return hasToken ? const HighLightsUploaderScreen() : const LoginScreen();
         },
       ),
       onGenerateRoute: router.route,

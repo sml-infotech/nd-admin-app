@@ -238,32 +238,32 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget nammaDaivaAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-        ),
-        Spacer(),
-        Text(
-          AppLocalizations.of(context)!.events,
-          style: AppTextStyles.appBarTitleStyle,
-        ),
+Widget nammaDaivaAppBar() {
+return Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: Icon(Icons.arrow_back, color: Colors.white),
+    ),
+    Spacer(),
+    Text(
+      AppLocalizations.of(context)!.events,
+      style: AppTextStyles.appBarTitleStyle,
+    ),
 
-        const Spacer(),
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, StringsRoute.createEvent);
-          },
-          icon: Icon(Icons.add, color: Colors.white),
-        ),
-      ],
-    );
-  }
+    const Spacer(),
+    IconButton(
+      onPressed: () {
+        Navigator.pushNamed(context, StringsRoute.createEvent);
+      },
+      icon: Icon(Icons.add, color: Colors.white),
+    ),
+  ],
+);
+}
 
   Widget buildEventCard(EventItem event) {
     return Padding(

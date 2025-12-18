@@ -45,6 +45,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masterTemples => 'Master Temples';
 
   @override
+  String get addHighlights => 'Add Highlights';
+
+  @override
   String get mantra => 'Mantra';
 
   @override
