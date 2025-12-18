@@ -46,6 +46,7 @@ class HighlightViewmodel extends ChangeNotifier {
 
             print("✅ Uploaded ${file.name} -> $uploadedUrl");
           } else {
+            
             print("❌ Upload failed for ${file.name}");
             message = "Upload failed for ${file.name}";
           }

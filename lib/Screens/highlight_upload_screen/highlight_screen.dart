@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/media_viewer.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -24,10 +25,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   VideoPlayerController? _videoController;
   final ImagePicker _picker = ImagePicker();
 
-  int _selectedSegment = 0; // 0: Active, 1: Inactive
+  int _selectedSegment = 0;
   final Set<String> _selectedItems = {};
 
-  // Your media lists
   List<String> activeMedia = [
     "https://picsum.photos/id/1016/400/700",
     "https://picsum.photos/id/1011/400/700",
@@ -96,7 +96,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     super.dispose();
   }
 
-  // Helper to check if a path is a video, ignoring URL parameters
   bool _checkIsVideo(String path) {
     String cleanPath = path.split('?').first.toLowerCase();
     return cleanPath.endsWith('.mp4') || cleanPath.endsWith('.mov');
@@ -105,9 +104,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HighlightViewmodel>(context);
-    List<String> currentList = _selectedSegment == 0
-        ? activeMedia
-        : inactiveMedia;
+   
     return Scaffold(
       appBar: AppBar(
         title: nammaDaivaCreateAppBar(),
@@ -117,8 +114,17 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       body: Column(
         children: [
           const SizedBox(height: 15),
-
-          Expanded(
+         uploadContentWidget(viewModel),
+        ],
+      ),
+    );
+  }
+  
+Widget uploadContentWidget(HighlightViewmodel viewModel){
+    List<String> currentList = _selectedSegment == 0
+        ? activeMedia
+        : inactiveMedia;
+  return  Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -137,31 +143,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorConstant.buttonColor,
-                      ),
-                      onPressed: viewModel.isLoading ? null : _handleUpload,
-                      child: viewModel.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              "Upload ",
-                              style: TextStyle(
-                                fontFamily: font,
-                                color: Colors.white,
-                              ),
-                            ),
-                    ),
-                  ),
+                  uploadButton(viewModel),
                   const SizedBox(height: 25),
 
                   Padding(
@@ -174,39 +156,76 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                     ),
                   ),
                   const Divider(height: 40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedSegment == 0
-                            ? "Active Highlights"
-                            : "Inactive Highlights",
-                        style: TextStyle(
-                          fontFamily: font,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      if (_selectedItems.isNotEmpty)
-                        TextButton(
-                          onPressed: _toggleStatus,
-                          child: Text(
-                            _selectedSegment == 0
-                                ? " Move to Deactivate"
-                                : "Move to Activate",
-                            style: TextStyle(
-                              fontFamily: font,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
+                  activeAndInactiveSegment(),
                   const SizedBox(height: 10),
                   if (currentList.isNotEmpty) _buildMediaGrid(),
                   if (currentList.isEmpty) ...[
                     const SizedBox(height: 100),
-                    GestureDetector(
+                   addHighlightUnderLineButton(),
+                  ],
+                ],
+              ),
+            ),
+          );
+}
+
+
+
+
+
+  Widget activeAndInactiveSegment() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          _selectedSegment == 0 ? "Active Highlights" : "Inactive Highlights",
+          style: TextStyle(
+            fontFamily: font,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        if (_selectedItems.isNotEmpty)
+          TextButton(
+            onPressed: _toggleStatus,
+            child: Text(
+              _selectedSegment == 0
+                  ? " Move to Deactivate"
+                  : "Move to Activate",
+              style: TextStyle(fontFamily: font, fontWeight: FontWeight.bold),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget uploadButton(HighlightViewmodel viewModel) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.buttonColor,
+        ),
+        onPressed: viewModel.isLoading ? null : _handleUpload,
+        child: viewModel.isLoading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                "Upload ",
+                style: TextStyle(fontFamily: font, color: Colors.white),
+              ),
+      ),
+    );
+  }
+
+  Widget addHighlightUnderLineButton(){
+    return  GestureDetector(
                       onTap: _showPickerOptions,
                       child: Center(
                         child: Text(
@@ -220,15 +239,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                    );
   }
 
   Widget nammaDaivaCreateAppBar() {
@@ -261,11 +272,8 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
     bool isVideo = _checkIsVideo(_pickedFile!.path);
 
-    // await viewModel.addMedia([_pickedFile!.path], isVideo);
-
     if (viewModel.uploadedImageUrls.isNotEmpty) {
       setState(() {
-        // We split by '?' to get the clean public S3 URL instead of the PutObject pre-signed URL
         String cleanUrl = viewModel.uploadedImageUrls.last.split('?').first;
         activeMedia.insert(0, cleanUrl);
         _pickedFile = null;
@@ -278,7 +286,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   }
 
   Widget _buildPreview() {
-    if (_pickedFile == null)
+    if (_pickedFile == null) {
       return const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -288,6 +296,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
           ],
         ),
       );
+    }
 
     if (_checkIsVideo(_pickedFile!.path)) {
       return _videoController != null && _videoController!.value.isInitialized
@@ -463,189 +472,15 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   }
 }
 
-// --- THUMBNAIL COMPONENT ---
-class VideoGridThumbnail extends StatefulWidget {
-  final String url;
-  const VideoGridThumbnail({super.key, required this.url});
-
-  @override
-  State<VideoGridThumbnail> createState() => _VideoGridThumbnailState();
-}
-
-class _VideoGridThumbnailState extends State<VideoGridThumbnail> {
-  late VideoPlayerController _controller;
-  bool _initialized = false;
-  bool _hasError = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initController();
-  }
-
-  void _initController() {
-    _controller = widget.url.startsWith('http')
-        ? VideoPlayerController.networkUrl(Uri.parse(widget.url))
-        : VideoPlayerController.file(File(widget.url));
-
-    _controller
-        .initialize()
-        .then((_) {
-          if (mounted) {
-            _controller.seekTo(const Duration(seconds: 1));
-            setState(() => _initialized = true);
-          }
-        })
-        .catchError((error) {
-          if (mounted) setState(() => _hasError = true);
-        });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_hasError)
-      return Container(
-        color: Colors.grey[300],
-        child: const Icon(Icons.error_outline, color: Colors.red),
-      );
-    if (!_initialized)
-      return const Center(
-        child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox.expand(child: VideoPlayer(_controller)),
-        const Icon(Icons.play_circle_fill, color: Colors.white, size: 30),
-      ],
-    );
-  }
-}
-
 void _showMediaDialog(BuildContext context, String url) {
   showDialog(
     context: context,
     builder: (context) {
       return Dialog(
-        backgroundColor:
-            Colors.transparent, // Makes the container look floating
-        insetPadding: const EdgeInsets.all(20), // Padding around the dialog
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(20),
         child: MediaDialogContent(url: url),
       );
     },
   );
-}
-
-class MediaDialogContent extends StatefulWidget {
-  final String url;
-  const MediaDialogContent({super.key, required this.url});
-
-  @override
-  State<MediaDialogContent> createState() => _MediaDialogContentState();
-}
-
-class _MediaDialogContentState extends State<MediaDialogContent> {
-  VideoPlayerController? _videoController;
-  bool isVideo = false;
-
-  @override
-  void initState() {
-    super.initState();
-    String cleanPath = widget.url.split('?').first.toLowerCase();
-    isVideo = cleanPath.endsWith('.mp4') || cleanPath.endsWith('.mov');
-
-    if (isVideo) {
-      _videoController = widget.url.startsWith('http')
-          ? VideoPlayerController.networkUrl(Uri.parse(widget.url))
-          : VideoPlayerController.file(File(widget.url));
-
-      _videoController!.initialize().then((_) {
-        if (mounted) setState(() {});
-        _videoController!.play();
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _videoController?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize:
-          MainAxisSize.max, // Dialog takes only as much space as needed
-      children: [
-        // Close Button Row
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            icon: const Icon(Icons.cancel, color: Colors.white, size: 30),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-
-        // Media Content
-        Flexible(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: isVideo
-                ? _videoController != null &&
-                          _videoController!.value.isInitialized
-                      ? AspectRatio(
-                          aspectRatio: _videoController!.value.aspectRatio,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              VideoPlayer(_videoController!),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _videoController!.value.isPlaying
-                                        ? _videoController!.pause()
-                                        : _videoController!.play();
-                                  });
-                                },
-                                child: Icon(
-                                  _videoController!.value.isPlaying
-                                      ? null
-                                      : Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : const Padding(
-                          padding: EdgeInsets.all(50),
-                          child: CircularProgressIndicator(),
-                        )
-                : InteractiveViewer(
-                    child: widget.url.startsWith('http')
-                        ? Image.network(widget.url, fit: BoxFit.contain)
-                        : Image.file(File(widget.url), fit: BoxFit.contain),
-                  ),
-          ),
-        ),
-      ],
-    );
-  }
 }
