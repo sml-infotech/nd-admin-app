@@ -331,104 +331,115 @@ if (viewModel.isLoading)
   }
 
   Widget _buildMediaGrid() {
-    List<String> currentList = _selectedSegment == 0
-        ? activeMedia
-        : inactiveMedia;
+  List<String> currentList = _selectedSegment == 0
+      ? activeMedia
+      : inactiveMedia;
 
-    return ReorderableGridView.builder(
-      
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 1,
-      ),
-      itemCount: currentList.length,
-      onReorder: (oldIndex, newIndex) {
-        setState(() {
-          final item = currentList.removeAt(oldIndex);
-          currentList.insert(newIndex, item);
-              debugPrint('Moved item: $item');
-    debugPrint('Old index: $oldIndex');
-    debugPrint('New index: $newIndex');
-        });
-      },
-      dragWidgetBuilder: (index, child) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.green, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: child,
+  return ReorderableGridView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 1,
+    ),
+    itemCount: currentList.length,
+    onReorder: (oldIndex, newIndex) async {
+      setState(() {
+        // Update the local list order
+        final item = currentList.removeAt(oldIndex);
+        currentList.insert(newIndex, item);
+
+        // Reorder the viewModel's highlight list too
+        final movedItem = viewModel.highlightList[oldIndex];
+        viewModel.highlightList.removeAt(oldIndex);
+        viewModel.highlightList.insert(newIndex, movedItem);
+      });
+
+      // After updating the local state, call the API
+      final movedItemId = viewModel.highlightList[oldIndex].id ?? '';
+      await viewModel.reorderHighlights(
+        movedItemId,
+        oldIndex,
+        newIndex,
+      );
+    },
+    dragWidgetBuilder: (index, child) {
+      return Material(
+        color: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.green, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
           ),
-        );
-      },
-      itemBuilder: (context, index) {
-        String path = currentList[index];
-        bool isSelected = _selectedItems.contains(path);
-        bool isVideo = _checkIsVideo(path);
+          child: child,
+        ),
+      );
+    },
+    itemBuilder: (context, index) {
+      String path = currentList[index];
+      bool isSelected = _selectedItems.contains(path);
+      bool isVideo = _checkIsVideo(path);
 
-        // Each item MUST have a unique ValueKey
-        return Stack(
-          key: ValueKey(path),
-          clipBehavior: Clip.none,
-          children: [
-            GestureDetector(
-              onTap: () => _showMediaDialog(context, path),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: isSelected ? Colors.blue : Colors.transparent,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
+      // Each item MUST have a unique ValueKey
+      return Stack(
+        key: ValueKey(path),
+        clipBehavior: Clip.none,
+        children: [
+          GestureDetector(
+            onTap: () => _showMediaDialog(context, path),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected ? Colors.blue : Colors.transparent,
+                  width: 2,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: isVideo
-                      ? VideoGridThumbnail(url: path)
-                      : Image.network(
-                          path,
-                          width: 200,
-                          height: 150,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                color: Colors.grey[300],
-                                child: const Icon(Icons.broken_image),
-                              ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: isVideo
+                    ? VideoGridThumbnail(url: path)
+                    : Image.network(
+                        path,
+                        width: 200,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image),
                         ),
-                ),
+                      ),
               ),
             ),
-            Positioned(
-              top: -8,
-              right: -8,
-              child: Checkbox(
-                value: isSelected,
-                shape: const CircleBorder(),
-                activeColor: Colors.blue,
-                onChanged: (val) => setState(() {
-                  val! ? _selectedItems.add(path) : _selectedItems.remove(path);
-                }),
-              ),
+          ),
+          Positioned(
+            top: -8,
+            right: -8,
+            child: Checkbox(
+              value: isSelected,
+              shape: const CircleBorder(),
+              activeColor: Colors.blue,
+              onChanged: (val) => setState(() {
+                val! ? _selectedItems.add(path) : _selectedItems.remove(path);
+              }),
             ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   Widget _segmentButton(String title, int index) {
     bool isSelected = _selectedSegment == index;

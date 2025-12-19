@@ -150,50 +150,32 @@ print("Adding media: $filePaths, isVideo: $isVideo");
     }
   }
 
-  // /* ===================== REORDER ===================== */
+  Future<void> reorderHighlights(
+    String id,
+    int fromPosition,
+    int toPosition,
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
 
-  // Future<void> updateHighlightOrder(List<HighlightItem> items) async {
-  //   try {
-  //     // update local positions
-  //     for (int i = 0; i < items.length; i++) {
-  //       items[i].position = i + 1;
-  //     }
+      final response = await highlightService.reOrderHighlights(
+        id,
+        fromPosition,
+        toPosition,
+      );
 
-  //     await highlightService.updateHighlightOrder(
-  //       items
-  //           .map(
-  //             (e) => {
-  //               "id": e.id,
-  //               "position": e.position,
-  //             },
-  //           )
-  //           .toList(),
-  //     );
-
-  //     notifyListeners();
-  //   } catch (e) {
-  //     debugPrint("❌ reorder error: $e");
-  //   }
-  // }
-
-  /* ===================== TOGGLE ACTIVE / INACTIVE ===================== */
-
-  // Future<void> toggleHighlightStatus(
-  //   List<String> ids, {
-  //   required bool makeActive,
-  // }) async {
-  //   try {
-  //     isLoading = true;
-  //     notifyListeners();
-
-  //     await highlightService.updateHighlightStatus(ids, makeActive);
-
-  //     await fetchHighlights(refresh: true);
-  //   } catch (e) {
-  //     debugPrint("❌ toggle status error: $e");
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
+      if (response.code == 200) {
+        await fetchHighlights(refresh: true);
+      } else {
+        throw Exception("Failed to reorder highlights");
+      }
+    } catch (e) {
+      debugPrint("❌ reorderHighlights error: $e");
+      message = "Reorder failed";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }
