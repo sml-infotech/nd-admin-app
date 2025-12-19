@@ -35,6 +35,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     "https://picsum.photos/id/1011/400/700",
     "https://picsum.photos/id/1016/400/700",
     "https://picsum.photos/id/1011/400/700",
+ 
   ];
   List<String> inactiveMedia = [
     "https://picsum.photos/id/1015/400/700",
@@ -115,9 +116,24 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         backgroundColor: ColorConstant.buttonColor,
         centerTitle: true,
       ),
-      body: Column(
+      body: Stack(children: [
+ Column(
         children: [const SizedBox(height: 15), uploadContentWidget(viewModel)],
       ),
+      if (viewModel.isLoading)
+         Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
+                  ),
+                ),
+              )
+      ],)
+      
+     ,
     );
   }
 
@@ -319,6 +335,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         : inactiveMedia;
 
     return ReorderableGridView.builder(
+      
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -332,6 +349,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         setState(() {
           final item = currentList.removeAt(oldIndex);
           currentList.insert(newIndex, item);
+              debugPrint('Moved item: $item');
+    debugPrint('Old index: $oldIndex');
+    debugPrint('New index: $newIndex');
         });
       },
       dragWidgetBuilder: (index, child) {

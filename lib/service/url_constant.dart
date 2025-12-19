@@ -47,4 +47,5 @@ class UrlConstant {
   static String create_mantra = "${baseUrlString()}create-mantra";
   static String list_mantras = "${baseUrlString()}list-mantras";
   static String update_mantra = "${baseUrlString()}update-mantra";
+  static String create_highlight = "${baseUrlString()}create-highlight";
 }
