@@ -20,6 +20,7 @@ final List<XFile> _uploadQueue = [];
 
   /// Highlights
   List<HighlightItem> highlightList = [];
+  List<HighlightItem>  inActiveList = [];
   
 
  List<HighlightItem> get activeHighlights =>
@@ -27,8 +28,10 @@ final List<XFile> _uploadQueue = [];
       ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
 
 List<HighlightItem> get inactiveHighlights =>
-    List.from(highlightList)
+    List.from(inActiveList)
       ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+
+      
   Future<void> fetchHighlights({bool refresh = false}) async {
     try {
       isLoading = true;
@@ -56,7 +59,7 @@ List<HighlightItem> get inactiveHighlights =>
       final response = await highlightService.getInactiveHighlights();
 
       if (response.data != null) {
-        highlightList = response.data; 
+        inActiveList = response.data; 
       }
     } catch (e) {
       debugPrint("❌ fetchInactiveHighlights error: $e");
@@ -178,4 +181,33 @@ print("Adding media: $filePaths, isVideo: $isVideo");
       notifyListeners();
     }
   }
+Future<void> updateHighlight(
+  List<String> ids,
+    bool isActive,
+ 
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final response = await highlightService.updateHighlight(
+        ids,
+        isActive,
+      );
+
+      if (response.code == 200) {
+      print("✅ Highlights updated successfully");
+      } else {
+        throw Exception("Failed to reorder highlights");
+      }
+    } catch (e) {
+      debugPrint("❌ reorderHighlights error: $e");
+      message = "Reorder failed";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
 }

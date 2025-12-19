@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_li
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_create_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_response_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/reorder_request_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/update_highlight_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 class HighlightService {
@@ -76,6 +77,31 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
 
 
       return ReorderResponse.fromJson(data);
+    } catch (e) {
+      print("❌  API request failed -> $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+   Future<HighlightStatusUpdateResponse> updateHighlight(
+List<String> ids,
+    bool isActive,
+   
+  ) async {
+    try {
+      final updateHighlight = HighlightStatusUpdate(ids: ids, isActive: isActive);
+        
+   
+
+      print("-------------------------------------------------------------");
+
+      final data = await apiService.put(
+        UrlConstant.updateHighlight,
+        updateHighlight.toJson(),
+      );
+
+
+      return HighlightStatusUpdateResponse.fromJson(data);
     } catch (e) {
       print("❌  API request failed -> $e");
       throw Exception('API failed: $e');

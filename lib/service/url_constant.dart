@@ -51,4 +51,5 @@ class UrlConstant {
   static String list_active_highlights = "${baseUrlString()}list-active-highlights";
   static String list_inactive_highlights = "${baseUrlString()}list-inactive-highlights";
   static String reorderHighlight = "${baseUrlString()}reorder-highlight";
+  static String updateHighlight = "${baseUrlString()}toggle-highlight-active";
 }

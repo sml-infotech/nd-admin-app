@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
 import 'highlight_viewmodel.dart';
@@ -22,12 +23,13 @@ class HighLightsUploaderScreen extends StatefulWidget {
 }
 
 class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
-  
   XFile? _pickedFile;
   VideoPlayerController? _videoController;
   final ImagePicker _picker = ImagePicker();
-late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-
+  late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(
+    context,
+    listen: false,
+  );
 
   int _selectedSegment = 0;
   final Set<String> _selectedItems = {};
@@ -42,7 +44,6 @@ late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(context, lis
       .toList();
 
   Future<void> _pickImage() async {
-
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _clearPreviousVideo();
@@ -79,15 +80,39 @@ late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(context, lis
     _videoController = null;
   }
 
-  void _toggleStatus() {
-    setState(() {
-      if (_selectedSegment == 0) {
-        inactiveMedia.addAll(_selectedItems);
+  void _toggleStatus() async {
+    // Check if no items are selected
+    if (_selectedItems.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("No items selected")));
+      return;
+    }
+
+    debugPrint("Selected items: $_selectedItems");
+    debugPrint("Active media before update: $activeMedia");
+    debugPrint("Inactive media before update: $inactiveMedia");
+
+    if (_selectedSegment == 0) {
+      await viewModel.updateHighlight(_selectedItems.toList(), false);
+      setState(() {
         activeMedia.removeWhere((item) => _selectedItems.contains(item));
-      } else {
-        activeMedia.addAll(_selectedItems);
+        inactiveMedia.addAll(_selectedItems);
+        viewModel.fetchHighlights();
+      });
+    } else {
+      await viewModel.updateHighlight(_selectedItems.toList(), true);
+      setState(() {
         inactiveMedia.removeWhere((item) => _selectedItems.contains(item));
-      }
+        activeMedia.addAll(_selectedItems);
+        viewModel.fetchInactiveHighlights();
+      });
+    }
+
+    debugPrint("Active media after update: $activeMedia");
+    debugPrint("Inactive media after update: $inactiveMedia");
+
+    setState(() {
       _selectedItems.clear();
     });
   }
@@ -117,12 +142,16 @@ late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(context, lis
         onFocusGained: () async {
           await viewModel.fetchHighlights();
         },
-        child: Stack(children: [
- Column(
-        children: [const SizedBox(height: 15), uploadContentWidget(viewModel)],
-      ),
-if (viewModel.isLoading)
-         Positioned.fill(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                const SizedBox(height: 15),
+                uploadContentWidget(viewModel),
+              ],
+            ),
+            if (viewModel.isLoading)
+              Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(0.4),
                   child: Center(
@@ -131,17 +160,17 @@ if (viewModel.isLoading)
                     ),
                   ),
                 ),
-              )
-      ],)
-      
-     ,
-    ));
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget uploadContentWidget(HighlightViewmodel viewModel) {
-   final currentList = _selectedSegment == 0
-      ? viewModel.activeHighlights
-      : viewModel.inactiveHighlights;
+    final currentList = _selectedSegment == 0
+        ? viewModel.activeHighlights
+        : viewModel.inactiveHighlights;
     return Expanded(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -331,115 +360,119 @@ if (viewModel.isLoading)
   }
 
   Widget _buildMediaGrid() {
-  List<String> currentList = _selectedSegment == 0
-      ? activeMedia
-      : inactiveMedia;
+    List<HighlightItem> currentList = _selectedSegment == 0
+        ? viewModel.activeHighlights
+        : viewModel.inactiveHighlights;
 
-  return ReorderableGridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 1,
-    ),
-    itemCount: currentList.length,
-    onReorder: (oldIndex, newIndex) async {
-      setState(() {
-        // Update the local list order
-        final item = currentList.removeAt(oldIndex);
-        currentList.insert(newIndex, item);
+    return ReorderableGridView.builder(
+      shrinkWrap: true,
+      physics:
+          _selectedSegment ==
+              0
+          ? const NeverScrollableScrollPhysics()
+          : const ClampingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1,
+      ),
+      itemCount: currentList.length,
+      onReorder: 
+      
+      (oldIndex, newIndex) {
+        if (_selectedSegment == 0) {
+          setState(() {
+            final item = currentList.removeAt(oldIndex);
+            currentList.insert(newIndex, item);
+            final movedItem = viewModel.highlightList.removeAt(oldIndex);
+            viewModel.highlightList.insert(newIndex, movedItem);
+          });
 
-        // Reorder the viewModel's highlight list too
-        final movedItem = viewModel.highlightList[oldIndex];
-        viewModel.highlightList.removeAt(oldIndex);
-        viewModel.highlightList.insert(newIndex, movedItem);
-      });
+          final movedItemId = viewModel.highlightList[newIndex].id ?? '';
+          viewModel.reorderHighlights(movedItemId, oldIndex, newIndex);
+        }
+      },
 
-      // After updating the local state, call the API
-      final movedItemId = viewModel.highlightList[oldIndex].id ?? '';
-      await viewModel.reorderHighlights(
-        movedItemId,
-        oldIndex,
-        newIndex,
-      );
-    },
-    dragWidgetBuilder: (index, child) {
-      return Material(
-        color: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.green, width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 10,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: child,
-        ),
-      );
-    },
-    itemBuilder: (context, index) {
-      String path = currentList[index];
-      bool isSelected = _selectedItems.contains(path);
-      bool isVideo = _checkIsVideo(path);
-
-      // Each item MUST have a unique ValueKey
-      return Stack(
-        key: ValueKey(path),
-        clipBehavior: Clip.none,
-        children: [
-          GestureDetector(
-            onTap: () => _showMediaDialog(context, path),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.transparent,
-                  width: 2,
+      dragWidgetBuilder: (index, child) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.green, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
                 ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: isVideo
-                    ? VideoGridThumbnail(url: path)
-                    : Image.network(
-                        path,
-                        width: 200,
-                        height: 150,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image),
-                        ),
-                      ),
-              ),
+              ],
             ),
+            child: child,
           ),
-          Positioned(
-            top: -8,
-            right: -8,
-            child: Checkbox(
-              value: isSelected,
-              shape: const CircleBorder(),
-              activeColor: Colors.blue,
-              onChanged: (val) => setState(() {
-                val! ? _selectedItems.add(path) : _selectedItems.remove(path);
-              }),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+      itemBuilder: (context, index) {
+        HighlightItem highlightItem = currentList[index];
+        String path = highlightItem.mediaUrl ?? '';
+        String id = highlightItem.id ?? '';
+        bool isSelected = _selectedItems.contains(id);
+        bool isVideo = _checkIsVideo(path);
 
+        return Stack(
+          key: ValueKey(id),
+          clipBehavior: Clip.none,
+          children: [
+            GestureDetector(
+              onTap: () => _showMediaDialog(context, path),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isSelected ? Colors.blue : Colors.transparent,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: isVideo
+                      ? VideoGridThumbnail(url: path)
+                      : Image.network(
+                          path,
+                          width: 200,
+                          height: 150,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.broken_image),
+                              ),
+                        ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: -8,
+              right: -8,
+              child: Checkbox(
+                value: isSelected,
+                shape: const CircleBorder(),
+                activeColor: Colors.blue,
+                onChanged: (val) => setState(() {
+                  if (val!) {
+                    _selectedItems.add(id);
+                  } else {
+                    _selectedItems.remove(id);
+                  }
+                }),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _segmentButton(String title, int index) {
     bool isSelected = _selectedSegment == index;
