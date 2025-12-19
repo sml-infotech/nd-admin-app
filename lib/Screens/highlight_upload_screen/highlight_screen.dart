@@ -379,7 +379,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       ),
       itemCount: currentList.length,
       onReorder: 
-      
       (oldIndex, newIndex) {
         if (_selectedSegment == 0) {
           setState(() {
@@ -388,7 +387,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
             final movedItem = viewModel.highlightList.removeAt(oldIndex);
             viewModel.highlightList.insert(newIndex, movedItem);
           });
-
           final movedItemId = viewModel.highlightList[newIndex].id ?? '';
           viewModel.reorderHighlights(movedItemId, oldIndex, newIndex);
         }
