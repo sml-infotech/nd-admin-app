@@ -1,5 +1,6 @@
 
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_create_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_response_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -22,6 +23,32 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
       return HighlightResponse.fromJson(data);
     } catch (e) {
       print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+    Future<ActiveHighlightsResponse> getHighlights() async {
+    try {
+      final url =
+          UrlConstant.list_active_highlights;
+      print('Fetching highlights: $url');
+      dynamic data = await apiService.get(url);
+      return ActiveHighlightsResponse.fromJson(data);
+    } catch (e) {
+      print("Highlight service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+    Future<ActiveHighlightsResponse> getInactiveHighlights() async {
+    try {
+      final url =
+          UrlConstant.list_inactive_highlights;
+      print('Fetching highlights: $url');
+      dynamic data = await apiService.get(url);
+      return ActiveHighlightsResponse.fromJson(data);
+    } catch (e) {
+      print("Highlight service decode fails: $e");
       throw Exception('API failed: $e');
     }
   }

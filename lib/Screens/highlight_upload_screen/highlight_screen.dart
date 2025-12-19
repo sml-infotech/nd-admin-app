@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/media_viewer.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -21,29 +22,26 @@ class HighLightsUploaderScreen extends StatefulWidget {
 }
 
 class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
+  
   XFile? _pickedFile;
   VideoPlayerController? _videoController;
   final ImagePicker _picker = ImagePicker();
+late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+
 
   int _selectedSegment = 0;
   final Set<String> _selectedItems = {};
 
-  List<String> activeMedia = [
-    "https://picsum.photos/id/1016/400/700",
-    "https://picsum.photos/id/1011/400/700",
-    "https://picsum.photos/id/1016/400/700",
-    "https://picsum.photos/id/1011/400/700",
-    "https://picsum.photos/id/1016/400/700",
-    "https://picsum.photos/id/1011/400/700",
- 
-  ];
-  List<String> inactiveMedia = [
-    "https://picsum.photos/id/1015/400/700",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-  ];
+  late List<String> activeMedia = viewModel.highlightList
+      .map((item) => item.mediaUrl)
+      .whereType<String>()
+      .toList();
+  late List<String> inactiveMedia = viewModel.highlightList
+      .map((item) => item.mediaUrl)
+      .whereType<String>()
+      .toList();
 
   Future<void> _pickImage() async {
-    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
 
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -54,7 +52,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   }
 
   Future<void> _pickVideo() async {
-    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
     final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
       _clearPreviousVideo();
@@ -116,11 +113,15 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         backgroundColor: ColorConstant.buttonColor,
         centerTitle: true,
       ),
-      body: Stack(children: [
+      body: FocusDetector(
+        onFocusGained: () async {
+          await viewModel.fetchHighlights();
+        },
+        child: Stack(children: [
  Column(
         children: [const SizedBox(height: 15), uploadContentWidget(viewModel)],
       ),
-      if (viewModel.isLoading)
+if (viewModel.isLoading)
          Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(0.4),
@@ -134,13 +135,13 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       ],)
       
      ,
-    );
+    ));
   }
 
   Widget uploadContentWidget(HighlightViewmodel viewModel) {
-    List<String> currentList = _selectedSegment == 0
-        ? activeMedia
-        : inactiveMedia;
+   final currentList = _selectedSegment == 0
+      ? viewModel.activeHighlights
+      : viewModel.inactiveHighlights;
     return Expanded(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -436,6 +437,11 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         onTap: () => setState(() {
           _selectedSegment = index;
           _selectedItems.clear();
+          if (index == 0) {
+            viewModel.fetchHighlights(refresh: true);
+          } else {
+            viewModel.fetchInactiveHighlights();
+          }
         }),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
