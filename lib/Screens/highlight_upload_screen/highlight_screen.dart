@@ -319,8 +319,6 @@ Future<void> _handleUpload() async {
 
   if (!success) return;
 
-
-
   setState(() {
     _pickedFile = null;
     _videoController?.pause();
