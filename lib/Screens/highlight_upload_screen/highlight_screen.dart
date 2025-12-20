@@ -77,7 +77,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   void _clearPreviousVideo() {
     _videoController?.pause();
     _videoController?.dispose();
-    _videoController = null;
+  _videoController = null;
   }
 
   void _toggleStatus() async {
@@ -303,31 +303,36 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       ],
     );
   }
-
-  Future<void> _handleUpload() async {
-    if (_pickedFile == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Select a file first")));
-      return;
-    }
-
-    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-    bool isVideo = _checkIsVideo(_pickedFile!.path);
-    await viewModel.addMedia([_pickedFile!.path], isVideo);
-    if (viewModel.uploadedImageUrls.isNotEmpty) {
-      setState(() {
-        String cleanUrl = viewModel.uploadedImageUrls.last.split('?').first;
-        activeMedia.insert(0, cleanUrl);
-        _pickedFile = null;
-
-        _clearPreviousVideo();
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
-    }
+Future<void> _handleUpload() async {
+  if (_pickedFile == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Select a file first")),
+    );
+    return;
   }
+
+  final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+  final bool isVideo = _checkIsVideo(_pickedFile!.path);
+
+  final bool success =
+      await viewModel.addMedia([_pickedFile!.path], isVideo);
+
+  if (!success) return;
+
+
+
+  setState(() {
+    _pickedFile = null;
+    _videoController?.pause();
+    _videoController?.dispose();
+    _videoController = null;
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Upload Successful!")),
+  );
+}
+
 
   Widget _buildPreview() {
     if (_pickedFile == null) {
