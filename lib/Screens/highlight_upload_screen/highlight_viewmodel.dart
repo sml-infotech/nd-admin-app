@@ -144,7 +144,7 @@ Future<bool> addMedia(List<String> filePaths, bool isVideo) async {
   await _createHighlight(
     presignedResponse.url!.split('?').first.trim(),
     isVideo,
-    thumbnailUrl,
+    thumbnailUrl??presignedResponse.url!.split('?').first.trim(),
   );
 
   await fetchHighlights(refresh: true);

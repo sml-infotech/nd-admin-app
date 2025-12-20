@@ -11,7 +11,7 @@ class MException implements Exception {
 }
 
 class HttpApiService {
-  Future<Map<String, dynamic>> post(
+Future<Map<String, dynamic>> post(
     String url,
     Map<String, dynamic> data,
   ) async {

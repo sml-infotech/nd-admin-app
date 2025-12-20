@@ -1,13 +1,13 @@
 class HighlightCreateModel {
   final String? media_type;
-  final String media_url;
-  final String thumbnail_url;
+  final String? media_url;
+  final String? thumbnail_url;
   
 
   HighlightCreateModel({
     this.media_type,
-    required this.media_url,
-    required this.thumbnail_url,
+     this.media_url,
+     this.thumbnail_url,
     
   });
   factory HighlightCreateModel.fromJson(Map<String, dynamic> json) {
