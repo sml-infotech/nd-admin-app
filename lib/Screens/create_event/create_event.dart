@@ -219,6 +219,7 @@ class _CreateEventState extends State<CreateEvent> {
         onChanged: (selectedSlot) {
           setState(() {
             viewmodel.timeSlots = [selectedSlot];
+            
           });
         },
         startDate: viewmodel.selectedStartDate,

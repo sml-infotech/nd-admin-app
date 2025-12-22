@@ -23,6 +23,8 @@ static const String master_temple_list="/masterTempleList";
 static const String createMantra="/createMantra";
 static const String mantraList="/mantraList";
 static const String highlightUpload="/highlightUpload";
+static const String createFestival="/createFestival";
+static const String festivalList="/festivalList";
 
 
 

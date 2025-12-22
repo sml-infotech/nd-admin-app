@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/festival_list.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
@@ -45,12 +46,11 @@ class AppRouter {
           settings: settings,
           builder: (_) => OtpScreen(arguments: args),
         );
-    case StringsRoute.dashboard:
-  return MaterialPageRoute(
-    builder: (context) => Builder(
-      builder: (localContext) => DashboardScreen(),
-    ),
-  );
+      case StringsRoute.dashboard:
+        return MaterialPageRoute(
+          builder: (context) =>
+              Builder(builder: (localContext) => DashboardScreen()),
+        );
 
       case StringsRoute.templeDetail:
         TempleDetailsArguments args =
@@ -148,7 +148,7 @@ class AppRouter {
           settings: settings,
           builder: (_) => MasterTempleList(),
         );
-              case StringsRoute.mantraList:
+      case StringsRoute.mantraList:
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => MantraList(),
@@ -163,6 +163,11 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => HighLightsUploaderScreen(),
+        );
+      case StringsRoute.festivalList:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => FestivalListScreen(),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');

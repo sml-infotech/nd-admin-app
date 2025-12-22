@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Common/time_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
-import 'package:nammadaiva_dashboard/Screens/create_festivals/create_festival_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -316,14 +316,11 @@ class _CreateFestivalState extends State<CreateFestival> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                // if (widget.event?.id != null) {
-                //   await viewmodel.updateEvent(widget.event!.id);
-                // } else {
-                //   await viewmodel.createEvent();
-                // }
+                await viewmodel.createFestival();
                 if (viewmodel.eventUpdated || viewmodel.eventCreated) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                   viewmodel.reset();
                   viewmodel.eventCreated = false;
                   viewmodel.eventUpdated = false;
                 } else {
