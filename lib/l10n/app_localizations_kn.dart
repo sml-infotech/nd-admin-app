@@ -180,6 +180,12 @@ class AppLocalizationsKn extends AppLocalizations {
   String get pincode => 'ಪಿನ್ ಕೋಡ್';
 
   @override
+  String get addfestival => 'ಹಬ್ಬವನ್ನು ಸೇರಿಸು';
+
+  @override
+  String get festivalname => 'ಹಬ್ಬದ ಹೆಸರು';
+
+  @override
   String get status => 'ಸ್ಥಿತಿ';
 
   @override

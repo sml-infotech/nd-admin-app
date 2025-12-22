@@ -7,6 +7,8 @@ import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/create_festivals/create_festival.dart';
+import 'package:nammadaiva_dashboard/Screens/create_festivals/create_festival_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
@@ -86,6 +88,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ContactViewModel()),
         ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
         ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreateFestivalViewmodel()),
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),
@@ -115,9 +118,7 @@ class ProviderWidget extends StatelessWidget {
 
                 final hasToken = snapshot.data ?? false;
 
-                return hasToken
-                    ? const HighLightsUploaderScreen()
-                    : const LoginScreen();
+                return hasToken ? const CreateFestival() : const LoginScreen();
               },
             ),
             onGenerateRoute: router.route,

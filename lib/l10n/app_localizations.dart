@@ -437,6 +437,18 @@ abstract class AppLocalizations {
   /// **'Pincode'**
   String get pincode;
 
+  /// No description provided for @addfestival.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Festival'**
+  String get addfestival;
+
+  /// No description provided for @festivalname.
+  ///
+  /// In en, this message translates to:
+  /// **'Festival Name'**
+  String get festivalname;
+
   /// No description provided for @status.
   ///
   /// In en, this message translates to:
