@@ -455,6 +455,18 @@ abstract class AppLocalizations {
   /// **'Festivals'**
   String get festivals;
 
+  /// No description provided for @festivalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Festival Details'**
+  String get festivalDetails;
+
+  /// No description provided for @updateFestival.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Festival'**
+  String get updateFestival;
+
   /// No description provided for @status.
   ///
   /// In en, this message translates to:

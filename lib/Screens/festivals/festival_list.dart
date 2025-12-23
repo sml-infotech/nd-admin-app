@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/festival_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:provider/provider.dart';
@@ -67,9 +69,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
         children: [
           FocusDetector(
             onFocusGained: () {
-              _viewmodel.fetchFestivals(
-                reset: true,
-              ); // Reload festivals when focus is gained
+              _viewmodel.fetchFestivals(reset: true);
             },
             child: Column(
               children: [
@@ -168,123 +168,187 @@ class FestivalCard extends StatelessWidget {
       festival.endDate,
     );
 
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          StringsRoute.festivalDetailsScreen,
+          arguments: FestivalArgument(
+            name: festival.name,
+            startDate: festival.startDate != null
+                ? DateFormat('yyyy-MM-dd').format(festival.startDate!)
+                : '',
+            endDate: festival.endDate != null
+                ? DateFormat('yyyy-MM-dd').format(festival.endDate!)
+                : '',
+            startTime: festival.startTime ?? '',
+            endTime: festival.endTime ?? '',
+            description: festival.description,
+            deities: festival.deityNames,
+            imageUrls: festival.images.map((e) => e.url).toList(),
+          ),
+        );
+      },
+      child: SizedBox(
+        width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            festival.images.isNotEmpty
-                                ? festival.images[0].url
-                                : '',
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              festival.images.isNotEmpty
+                                  ? festival.images[0].url
+                                  : '',
+                            ),
+                            fit: BoxFit.cover,
                           ),
-                          fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    Positioned(
-                      top: 10, // Position the date from the top
-                      right: 16, // Position the date from the right
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: 5.0,
-                            sigmaY: 5.0,
-                          ), // Applying blur effect
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(
-                                0.3,
-                              ), // Slightly transparent black
-                            ),
-                            child: Text(
-                              festivalDate,
-                              style: AppTextStyles.templeContactStyle.copyWith(
-                                color: Colors.white,
-                                fontSize: 13,
+                      Positioned(
+                        top: 10, // Position the date from the top
+                        right: 16, // Position the date from the right
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(
+                              sigmaX: 5.0,
+                              sigmaY: 5.0,
+                            ), // Applying blur effect
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(
+                                  0.3,
+                                ), // Slightly transparent black
+                              ),
+                              child: Text(
+                                festivalDate,
+                                style: AppTextStyles.templeContactStyle
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.0),
-                              Colors.black.withOpacity(0.9),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.0),
+                                Colors.black.withOpacity(0.9),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                            ),
+                          ),
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                festival.name,
+                                style: AppTextStyles.welcomeStyle.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      festival.description,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTextStyles.templeContactStyle
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        StringsRoute.createFestival,
+                                        arguments: FestivalArgument(
+                                          name: festival.name,
+                                          startDate: festival.startDate != null
+                                              ? DateFormat(
+                                                  'yyyy-MM-dd',
+                                                ).format(festival.startDate!)
+                                              : '',
+                                          endDate: festival.endDate != null
+                                              ? DateFormat(
+                                                  'yyyy-MM-dd',
+                                                ).format(festival.endDate!)
+                                              : '',
+                                          startTime: festival.startTime ?? '',
+                                          endTime: festival.endTime ?? '',
+                                          description: festival.description,
+                                          deities: festival.deityNames,
+                                          imageUrls: festival.images
+                                              .map((e) => e.url)
+                                              .toList(),
+                                          festivalId: festival.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Deities: ${festival.deityNames.join(', ')}",
+                                style: AppTextStyles.templeContactStyle
+                                    .copyWith(color: Colors.white),
+                              ),
+                              const SizedBox(height: 8),
                             ],
                           ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
-                          ),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              festival.name,
-                              style: AppTextStyles.welcomeStyle.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              festival.description,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.templeContactStyle.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Deities: ${festival.deityNames.join(', ')}",
-                              style: AppTextStyles.templeContactStyle.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

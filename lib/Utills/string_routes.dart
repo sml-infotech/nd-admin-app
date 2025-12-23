@@ -25,6 +25,7 @@ static const String mantraList="/mantraList";
 static const String highlightUpload="/highlightUpload";
 static const String createFestival="/createFestival";
 static const String festivalList="/festivalList";
+static const String festivalDetailsScreen="/festivalDetailsScreen";
 
 
 

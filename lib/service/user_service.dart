@@ -80,6 +80,43 @@ class UserService {
     }
   }
 
+  Future<CreateFestivalResponse> updateFestival(
+    String name,
+    String description,
+    List<String> deityNames,
+    String startDate,
+    String endDate,
+    String startTime,
+    String endTime,
+    List<String>? images,
+    String festivalId,
+  ) async {
+    try {
+      final updateFestival = Festival(
+        name: name,
+        description: description,
+        deityNames: deityNames,
+        startDate: startDate,
+        endDate: endDate,
+        startTime: startTime,
+        endTime: endTime,
+        images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
+        isActive: true,
+      );
+
+      print(">>>>.${updateFestival.toJson()}");
+      final data = await apiService.put(
+        '${UrlConstant.update_festival}/$festivalId',
+        updateFestival.toJson(),
+      );
+      print("1111111111$data");
+      return CreateFestivalResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
   Future<UserListResponse> getUserDetails({
     int page = 1,
     int pageSize = 10,

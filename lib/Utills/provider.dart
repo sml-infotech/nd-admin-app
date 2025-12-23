@@ -12,6 +12,7 @@ import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/festivals/festival_list.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/festival_list_detail.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
@@ -119,7 +120,9 @@ class ProviderWidget extends StatelessWidget {
 
                 final hasToken = snapshot.data ?? false;
 
-                return hasToken ? const FestivalListScreen() : const LoginScreen();
+                return hasToken
+                    ? const FestivalListScreen()
+                    : const LoginScreen();
               },
             ),
             onGenerateRoute: router.route,

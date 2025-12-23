@@ -189,6 +189,12 @@ class AppLocalizationsKn extends AppLocalizations {
   String get festivals => 'ಹಬ್ಬಗಳು';
 
   @override
+  String get festivalDetails => 'ಹಬ್ಬದ ವಿವರಗಳು';
+
+  @override
+  String get updateFestival => 'ಹಬ್ಬದ ಮಾಹಿತಿಯನ್ನು ನವೀಕರಿಸಿ';
+
+  @override
   String get status => 'ಸ್ಥಿತಿ';
 
   @override

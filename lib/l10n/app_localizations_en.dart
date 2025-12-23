@@ -189,6 +189,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get festivals => 'Festivals';
 
   @override
+  String get festivalDetails => 'Festival Details';
+
+  @override
+  String get updateFestival => 'Update Festival';
+
+  @override
   String get status => 'Status';
 
   @override

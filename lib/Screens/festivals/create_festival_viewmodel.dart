@@ -153,6 +153,44 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     }
   }
 
+  Future<void> updateFestival(
+    String festivalId,
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final templeId = selectedTempleId;
+      final response = await userService.updateFestival(
+        eventController.text.trim(),
+        descriptionContoller.text.trim(),
+        temples,
+        selectedStartDate!.toIso8601String(),
+        selectedEndDate!.toIso8601String(),
+        timeSlots.first.fromTime ?? "00:00",
+        timeSlots.first.toTime ?? "00:00",
+        uploadedImageUrls,
+        festivalId,
+      );
+
+      if (response.code == 200) {
+        message = response.message ?? "Success";
+        eventCreated = true;
+        notifyListeners();
+      } else {
+        eventCreated = false;
+        message = "❌ Error: ${response.message ?? "Unknown error"}";
+      }
+    } catch (e) {
+      message = "Something went wrong: $e";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+
   Future<void> fetchFestivals({bool reset = false}) async {
     try {
       if (reset) {

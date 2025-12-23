@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,12 +10,15 @@ import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/festival_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart'
+    show TimeSlot;
 import 'package:provider/provider.dart';
 
-
 class CreateFestival extends StatefulWidget {
-  const CreateFestival({super.key});
+  final FestivalArgument? arguments;
+  const CreateFestival({super.key, this.arguments});
 
   @override
   State<CreateFestival> createState() => _CreateFestivalState();
@@ -25,10 +27,50 @@ class CreateFestival extends StatefulWidget {
 class _CreateFestivalState extends State<CreateFestival> {
   late CreateFestivalViewmodel viewmodel;
   final ImagePicker _picker = ImagePicker();
+  bool _isPrefilled = false;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    viewmodel = Provider.of<CreateFestivalViewmodel>(context);
+
+    if (widget.arguments != null && !_isPrefilled) {
+      _prefillData(widget.arguments!);
+      _isPrefilled = true;
+    }
+  }
+
+  void _prefillData(FestivalArgument args) {
+    viewmodel.eventController.text = args.name ?? "";
+    viewmodel.descriptionContoller.text = args.description ?? "";
+
+    viewmodel.temples = args.deities;
+
+    viewmodel.selectedStartDate = args.startDate != null
+        ? DateTime.parse(args.startDate!)
+        : null;
+    viewmodel.selectedEndDate = args.endDate != null
+        ? DateTime.parse(args.endDate!)
+        : null;
+
+    if (args.startTime != null && args.endTime != null) {
+      viewmodel.timeSlots = [
+        TimeSlot(fromTime: args.startTime!, toTime: args.endTime!),
+      ];
+    }
+
+    viewmodel.uploadedImageUrls = List<String>.from(args.imageUrls ?? []);
+
+    // // ✅ Active status
+    // viewmodel.isActive = args.isActive ?? true;
+
+    viewmodel.notifyListeners();
   }
 
   String _formatForDisplay(String time) {
@@ -288,7 +330,9 @@ class _CreateFestivalState extends State<CreateFestival> {
         ),
         const Spacer(),
         Text(
-          AppLocalizations.of(context)!.addfestival,
+          widget.arguments != null
+              ? AppLocalizations.of(context)!.updateFestival
+              : AppLocalizations.of(context)!.addfestival,
 
           style: AppTextStyles.appBarTitleStyle,
         ),
@@ -316,11 +360,17 @@ class _CreateFestivalState extends State<CreateFestival> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                await viewmodel.createFestival();
+                if(widget.arguments != null){
+                  await viewmodel.updateFestival(widget.arguments!.festivalId!);
+                }
+                else{
+ await viewmodel.createFestival();
+                }
+               
                 if (viewmodel.eventUpdated || viewmodel.eventCreated) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                  // Navigator.pop(context);
-                   viewmodel.reset();
+                  Navigator.pop(context);
+                  viewmodel.reset();
                   viewmodel.eventCreated = false;
                   viewmodel.eventUpdated = false;
                 } else {
@@ -334,7 +384,9 @@ class _CreateFestivalState extends State<CreateFestival> {
                 ),
               ),
               child: Text(
-                AppLocalizations.of(context)!.addfestival,
+                widget.arguments != null
+                    ? AppLocalizations.of(context)!.updateFestival
+                    : AppLocalizations.of(context)!.addfestival,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),
