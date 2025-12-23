@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
-import 'package:nammadaiva_dashboard/service/url_constant.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart'
     show UserService;
 
@@ -26,13 +24,14 @@ class CreateFestivalViewmodel extends ChangeNotifier {
   bool eventCreated = false;
   bool eventUpdated = false;
   bool isLoading = false;
+  bool isInitialLoading = false; // first time only
+
   bool isActive = true;
   List<String> temples = [];
   TextEditingController templeController = TextEditingController();
-  int _currentPage = 1; 
-  final int _itemsPerPage = 10; 
-  bool hasMoreFestivals =
-      true;
+  int _currentPage = 1;
+  final int _itemsPerPage = 10;
+  bool hasMoreFestivals = true;
   List<FestivalListModal> festivalList = [];
 
   void addTemple(String templeName) {
@@ -46,10 +45,10 @@ class CreateFestivalViewmodel extends ChangeNotifier {
   }
 
   Future<bool> validateFestival(bool isUpdate) async {
-    if (eventController.text.isEmpty) {
+    if (eventController.text.trim().isEmpty) {
       message = "Please enter festival name";
       return false;
-    } else if (descriptionContoller.text.isEmpty) {
+    } else if (descriptionContoller.text.trim().isEmpty) {
       message = "Please enter description";
       return false;
     } else if (selectedStartDate == null) {
@@ -62,7 +61,6 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     return true;
   }
 
-  // Handle image uploading (presigned URLs and S3)
   Future<void> addImages(List<String> newImages) async {
     try {
       isLoading = true;
@@ -155,9 +153,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateFestival(
-    String festivalId,
-  ) async {
+  Future<void> updateFestival(String festivalId) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -191,103 +187,66 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     }
   }
 
-
-
   Future<void> fetchFestivals({bool reset = false}) async {
     try {
       if (reset) {
+        isInitialLoading = true;
         _currentPage = 1;
         festivalList.clear();
         hasMoreFestivals = true;
-        print('Fetching festivals (resetting)');
-      } else {
-        print('Fetching festivals (page $_currentPage)');
+        notifyListeners();
       }
 
-      if (!hasMoreFestivals) {
-        print('No more festivals to fetch');
-        return;
+      if (!hasMoreFestivals || isLoadingMore) return;
+
+      if (!reset) {
+        isLoadingMore = true;
+        notifyListeners();
       }
-
-      if (isLoadingMore)
-        return;
-
-      isLoadingMore = true; // Mark loading as true when fetching more data
-      isLoading = true; // Set isLoading to true while fetching
-      notifyListeners(); // Notify listeners to show shimmer effect
 
       final response = await userService.fetchFestivals(_currentPage);
 
-      // Handle the response and populate the list
+      final newFestivals = response.data;
+
+      festivalList.addAll(newFestivals);
+      hasMoreFestivals = newFestivals.length == _itemsPerPage;
+
+      if (hasMoreFestivals) _currentPage++;
+    } catch (e) {
+      debugPrint("Fetch failed $e");
+    } finally {
+      isInitialLoading = false;
+      isLoadingMore = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deleteFestival(String festivalId) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final response = await userService.deleteFestival(festivalId);
+
       if (response.code == 200) {
-        final newFestivals = List<FestivalListModal>.from(
-          (response.data as List).map(
-            (x) => x is FestivalListModal ? x : FestivalListModal.fromJson(x),
-          ),
-        );
+        festivalList.removeWhere((e) => e.id == festivalId);
 
-        print('Fetched ${newFestivals.length} festivals');
-
-        if (reset || _currentPage == 1) {
-          festivalList = newFestivals;
-        } else {
-          festivalList.addAll(newFestivals);
-        }
-
-        // Update pagination state
-        hasMoreFestivals = newFestivals.length == _itemsPerPage;
-
-        if (hasMoreFestivals) {
-          _currentPage++; // Increment page if there are more festivals
-        } else {
-          print('No more festivals to load.');
-        }
+        message = "Festival deleted successfully";
+        notifyListeners();
+        return true;
       } else {
-        message =
-            'Failed to load festivals: ${response.message ?? 'Unknown error'}';
-        print(message); // Log the error
+        message = response.message ?? "Delete failed";
+        return false;
       }
     } catch (e) {
-      message = "Failed to fetch festivals: $e";
-      print(message); // Log the error
-    } finally {
-      isLoadingMore = false; // Mark loading as complete
-      isLoading = false; // Set isLoading to false once the data is fetched
-      notifyListeners(); // Notify listeners to rebuild the UI
-    }
-  }
-
-
-Future<bool> deleteFestival(String festivalId) async {
-  try {
-    isLoading = true;
-    notifyListeners();
-
-    final response = await userService.deleteFestival(festivalId);
-
-    if (response.code == 200) {
-      festivalList.removeWhere((e) => e.id == festivalId);
-
-      message = "Festival deleted successfully";
-      notifyListeners();
-      return true;
-    } else {
-      message = response.message ?? "Delete failed";
+      message = "Delete failed: $e";
       return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-  } catch (e) {
-    message = "Delete failed: $e";
-    return false;
-  } finally {
-    isLoading = false;
-    notifyListeners();
   }
-}
 
-
-
-
-  // Reset the festival form
   void reset() {
     eventController.clear();
     descriptionContoller.clear();
@@ -304,6 +263,8 @@ Future<bool> deleteFestival(String festivalId) async {
     eventCreated = false;
     eventUpdated = false;
     isLoading = false;
+    temples.clear();
+    isActive = false;
     notifyListeners();
   }
 }

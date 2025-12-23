@@ -67,9 +67,6 @@ class _CreateFestivalState extends State<CreateFestival> {
 
     viewmodel.uploadedImageUrls = List<String>.from(args.imageUrls ?? []);
 
-    // // ✅ Active status
-    // viewmodel.isActive = args.isActive ?? true;
-
     viewmodel.notifyListeners();
   }
 
@@ -85,6 +82,7 @@ class _CreateFestivalState extends State<CreateFestival> {
   @override
   void dispose() {
     super.dispose();
+    viewmodel.reset();
   }
 
   @override
@@ -127,6 +125,8 @@ class _CreateFestivalState extends State<CreateFestival> {
                         physics: const BouncingScrollPhysics(),
                         child: Column(
                           children: [
+                            SizedBox(height: screenHeight * 0.02),
+
                             eventNameTextField(),
                             SizedBox(height: screenHeight * 0.02),
                             descriptionTextField(),

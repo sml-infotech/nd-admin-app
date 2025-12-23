@@ -36,14 +36,12 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     super.dispose();
   }
 
-  // Scroll listener to trigger pagination
   void _scrollListener() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
-        !_viewmodel.isLoading &&
+        !_viewmodel.isInitialLoading &&
         !_viewmodel.isLoadingMore &&
         _viewmodel.hasMoreFestivals) {
-      // Load more data if conditions are met
       _loadMoreData();
     }
   }
@@ -51,6 +49,23 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
   // Function to load more data
   Future<void> _loadMoreData() async {
     await _viewmodel.fetchFestivals();
+  }
+
+  Widget _buildBottomShimmer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          height: 120,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -73,10 +88,11 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
             },
             child: Column(
               children: [
-                if (_viewmodel.isLoading)
-                  Expanded(child: _buildShimmer())
-                else
-                  Expanded(child: _buildFestivalList(_viewmodel)),
+                Expanded(
+                  child: _viewmodel.isInitialLoading
+                      ? _buildShimmer() // FULL shimmer
+                      : _buildFestivalList(_viewmodel),
+                ),
               ],
             ),
           ),
@@ -85,12 +101,11 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     );
   }
 
-  // Shimmer effect for loading state
   Widget _buildShimmer() {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: ListView.separated(
-        itemCount: 6, // Number of shimmer items to show
+        itemCount: 6,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (_, __) => Shimmer.fromColors(
           baseColor: Colors.grey.shade300,
@@ -108,7 +123,6 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     );
   }
 
-  // AppBar UI
   Widget nammaDaivaAppBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -124,29 +138,26 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
           AppLocalizations.of(context)!.festivals,
           style: AppTextStyles.appBarTitleStyle,
         ),
-        const SizedBox(width: 48),
         const Spacer(),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.createFestival);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }
 
-  // Festival list UI
   Widget _buildFestivalList(CreateFestivalViewmodel viewmodel) {
     return ListView.builder(
       controller: _scrollController,
       itemCount:
-          _viewmodel.festivalList.length +
-          (_viewmodel.isLoadingMore
-              ? 1
-              : 0), // Add one for loading more indicator
-      itemBuilder: (context, index) {
+          _viewmodel.festivalList.length + (_viewmodel.isLoadingMore ? 1 : 0),
+
+      itemBuilder: (_, index) {
         if (index == _viewmodel.festivalList.length) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ), // Show a loader at the bottom
-          );
+          return _buildBottomShimmer();
         }
 
         final festival = _viewmodel.festivalList[index];
@@ -225,148 +236,15 @@ class FestivalCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      Positioned(
-                        top: 10, // Position the date from the top
-                        right: 16, // Position the date from the right
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 5.0,
-                              sigmaY: 5.0,
-                            ), // Applying blur effect
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(
-                                  0.3,
-                                ), // Slightly transparent black
-                              ),
-                              child: Text(
-                                festivalDate,
-                                style: AppTextStyles.templeContactStyle
-                                    .copyWith(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
+
+                      Row(
+                        children: [
+                          dateWidget(festivalDate),
+                          Spacer(),
+                          editAndDeleteIcon(context, viewmodel, festival),
+                        ],
                       ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 120,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.black.withOpacity(0.0),
-                                Colors.black.withOpacity(0.9),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                            ),
-                          ),
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                festival.name,
-                                style: AppTextStyles.welcomeStyle.copyWith(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      festival.description,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppTextStyles.templeContactStyle
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        StringsRoute.createFestival,
-                                        arguments: FestivalArgument(
-                                          name: festival.name,
-                                          startDate: festival.startDate != null
-                                              ? DateFormat(
-                                                  'yyyy-MM-dd',
-                                                ).format(festival.startDate!)
-                                              : '',
-                                          endDate: festival.endDate != null
-                                              ? DateFormat(
-                                                  'yyyy-MM-dd',
-                                                ).format(festival.endDate!)
-                                              : '',
-                                          startTime: festival.startTime ?? '',
-                                          endTime: festival.endTime ?? '',
-                                          description: festival.description,
-                                          deities: festival.deityNames,
-                                          imageUrls: festival.images
-                                              .map((e) => e.url)
-                                              .toList(),
-                                          festivalId: festival.id,
-                                        ),
-                                      );
-                                    },
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-
-                                  SizedBox(width: 6),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _showDeleteConfirmationSheet(
-                                        context,
-                                        festivalId: festival.id,
-                                        festivalName: festival.name,
-                                        viewmodel: viewmodel,
-                                      );
-                                    },
-                                    child: const Icon(
-                                      Icons.delete,
-                                      size: 12,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Deities: ${festival.deityNames.join(', ')}",
-                                style: AppTextStyles.templeContactStyle
-                                    .copyWith(color: Colors.white),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          ),
-                        ),
-                      ),
+                      nameAndDescriptionWidget(festival),
                     ],
                   ),
                 ],
@@ -379,16 +257,142 @@ class FestivalCard extends StatelessWidget {
   }
 }
 
+Widget nameAndDescriptionWidget(FestivalListModal festival) {
+  return Positioned(
+    bottom: 0,
+    left: 0,
+    right: 0,
+    child: Container(
+      // height: 120,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.0),
+            Colors.black.withOpacity(0.9),
+          ],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            festival.name,
+            style: AppTextStyles.welcomeStyle.copyWith(color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+
+          Text(
+            festival.description,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.templeContactStyle.copyWith(
+              color: Colors.white,
+            ),
+          ),
+
+          const SizedBox(width: 6),
+
+          const SizedBox(height: 8),
+          Text(
+            "Deities: ${festival.deityNames.join(', ')}",
+            style: AppTextStyles.templeContactStyle.copyWith(
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget editAndDeleteIcon(
+  BuildContext context,
+  CreateFestivalViewmodel viewmodel,
+  FestivalListModal festival,
+) {
+  return Row(
+    children: [
+      GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            StringsRoute.createFestival,
+            arguments: FestivalArgument(
+              name: festival.name,
+              startDate: festival.startDate != null
+                  ? DateFormat('yyyy-MM-dd').format(festival.startDate!)
+                  : '',
+              endDate: festival.endDate != null
+                  ? DateFormat('yyyy-MM-dd').format(festival.endDate!)
+                  : '',
+              startTime: festival.startTime ?? '',
+              endTime: festival.endTime ?? '',
+              description: festival.description,
+              deities: festival.deityNames,
+              imageUrls: festival.images.map((e) => e.url).toList(),
+              festivalId: festival.id,
+            ),
+          );
+        },
+        child: Icon(Icons.edit, size: 20, color: Colors.white),
+      ),
+      SizedBox(width: 6),
+      GestureDetector(
+        onTap: () {
+          _showDeleteConfirmationSheet(
+            context,
+            festivalId: festival.id,
+            festivalName: festival.name,
+            viewmodel: viewmodel,
+          );
+        },
+        child: const Icon(Icons.delete, size: 20, color: Colors.red),
+      ),
+      SizedBox(width: 16),
+    ],
+  );
+}
+
+Widget dateWidget(String festivalDate) {
+  return Positioned(
+    top: 10,
+    right: 16,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+          child: Text(
+            festivalDate,
+            style: AppTextStyles.templeContactStyle.copyWith(
+              color: Colors.white,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 String _formatDateRange(DateTime? startDate, DateTime? endDate) {
   if (startDate == null || endDate == null) {
     return "No Date";
   }
-
-  // Format start and end date to "Nov 1 - Nov 3"
-  String start = DateFormat('MMM d').format(startDate); // Nov 1
-  String end = DateFormat('MMM d').format(endDate); // Nov 3
-
-  return "$start - $end"; // Concatenate start and end dates
+  String start = DateFormat('MMM d').format(startDate);
+  String end = DateFormat('MMM d').format(endDate);
+  return "$start - $end";
 }
 
 void _showDeleteConfirmationSheet(

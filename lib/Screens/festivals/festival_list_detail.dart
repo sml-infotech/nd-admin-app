@@ -65,7 +65,6 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Image Slider
             Stack(
               children: [
                 SizedBox(
