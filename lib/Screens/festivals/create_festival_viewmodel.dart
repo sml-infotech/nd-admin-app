@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
+import 'package:nammadaiva_dashboard/service/url_constant.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart'
     show UserService;
 
@@ -254,6 +256,36 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       notifyListeners(); // Notify listeners to rebuild the UI
     }
   }
+
+
+Future<bool> deleteFestival(String festivalId) async {
+  try {
+    isLoading = true;
+    notifyListeners();
+
+    final response = await userService.deleteFestival(festivalId);
+
+    if (response.code == 200) {
+      festivalList.removeWhere((e) => e.id == festivalId);
+
+      message = "Festival deleted successfully";
+      notifyListeners();
+      return true;
+    } else {
+      message = response.message ?? "Delete failed";
+      return false;
+    }
+  } catch (e) {
+    message = "Delete failed: $e";
+    return false;
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
+}
+
+
+
 
   // Reset the festival form
   void reset() {

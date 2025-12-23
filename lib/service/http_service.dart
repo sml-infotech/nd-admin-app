@@ -101,7 +101,8 @@ Future<Map<String, dynamic>> get(
 
   Future<Map<String, dynamic>> delete(String url) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("SharedPreferenceConstant.jwtToken");
+       var token =    prefs.getString('authToken');
+
     final response = await http.delete(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'

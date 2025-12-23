@@ -1,5 +1,6 @@
 import 'package:nammadaiva_dashboard/model/login_model/contact_us_model/contact_us_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/create_festival_modal.dart';
+import 'package:nammadaiva_dashboard/model/login_model/create_festival/delete_festival.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
@@ -41,6 +42,19 @@ class UserService {
     } catch (e) {
       print("Auth service decode fails: $e");
       throw Exception('API failed: $e');
+    }
+  }
+
+  Future<DeleteFestivalResponse> deleteFestival(String festivalId) async {
+    try {
+      final data = await apiService.delete(
+        '${UrlConstant.delete_festival}/$festivalId',
+      );
+
+print("Delete festival response: $data");
+      return DeleteFestivalResponse.fromJson(data);
+    } catch (e) {
+      throw Exception('Delete festival API failed: $e');
     }
   }
 

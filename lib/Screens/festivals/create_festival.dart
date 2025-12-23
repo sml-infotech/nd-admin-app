@@ -360,13 +360,12 @@ class _CreateFestivalState extends State<CreateFestival> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                if(widget.arguments != null){
+                if (widget.arguments != null) {
                   await viewmodel.updateFestival(widget.arguments!.festivalId!);
+                } else {
+                  await viewmodel.createFestival();
                 }
-                else{
- await viewmodel.createFestival();
-                }
-               
+
                 if (viewmodel.eventUpdated || viewmodel.eventCreated) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   Navigator.pop(context);

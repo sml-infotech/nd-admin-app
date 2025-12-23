@@ -57,4 +57,5 @@ class UrlConstant {
   static String create_festival = "${baseUrlString()}add-festival";
   static String list_festivals = "${baseUrlString()}list-festivals";
   static String update_festival = "${baseUrlString()}edit-festival";
+  static String delete_festival = "${baseUrlString()}delete-festival";
 }

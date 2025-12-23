@@ -76,7 +76,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
                 if (_viewmodel.isLoading)
                   Expanded(child: _buildShimmer())
                 else
-                  Expanded(child: _buildFestivalList()),
+                  Expanded(child: _buildFestivalList(_viewmodel)),
               ],
             ),
           ),
@@ -131,7 +131,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
   }
 
   // Festival list UI
-  Widget _buildFestivalList() {
+  Widget _buildFestivalList(CreateFestivalViewmodel viewmodel) {
     return ListView.builder(
       controller: _scrollController,
       itemCount:
@@ -150,7 +150,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
         }
 
         final festival = _viewmodel.festivalList[index];
-        return FestivalCard(festival: festival);
+        return FestivalCard(festival: festival, viewmodel: viewmodel);
       },
     );
   }
@@ -158,8 +158,13 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
 
 class FestivalCard extends StatelessWidget {
   final FestivalListModal festival;
+  final CreateFestivalViewmodel viewmodel;
 
-  const FestivalCard({Key? key, required this.festival}) : super(key: key);
+  const FestivalCard({
+    Key? key,
+    required this.festival,
+    required this.viewmodel,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -332,6 +337,23 @@ class FestivalCard extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                   ),
+
+                                  SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _showDeleteConfirmationSheet(
+                                        context,
+                                        festivalId: festival.id,
+                                        festivalName: festival.name,
+                                        viewmodel: viewmodel,
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.delete,
+                                      size: 12,
+                                      color: Colors.red,
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -367,4 +389,88 @@ String _formatDateRange(DateTime? startDate, DateTime? endDate) {
   String end = DateFormat('MMM d').format(endDate); // Nov 3
 
   return "$start - $end"; // Concatenate start and end dates
+}
+
+void _showDeleteConfirmationSheet(
+  BuildContext context, {
+  required String festivalId,
+  required String festivalName,
+  required CreateFestivalViewmodel viewmodel,
+}) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 40),
+            const SizedBox(height: 12),
+
+            Text(
+              "Delete Festival",
+              style: AppTextStyles.appBarTitleStyle.copyWith(
+                color: Colors.black,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Text(
+              "Are you sure you want to delete \"$festivalName\"?",
+              textAlign: TextAlign.center,
+              style: AppTextStyles.templeContactStyle.copyWith(
+                color: Colors.black87,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: ColorConstant.buttonColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: AppTextStyles.buttonTextStyle.copyWith(
+                        color: ColorConstant.buttonColor,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await viewmodel.deleteFestival(festivalId);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text("Delete", style: AppTextStyles.buttonTextStyle),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
