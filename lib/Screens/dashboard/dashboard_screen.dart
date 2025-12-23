@@ -74,7 +74,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           //     );
           //   },
           // ),
-
           SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: Container(
@@ -187,6 +186,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 StringsRoute.mantraList,
                               ),
                             ),
+                          containerWidget(
+                            ImageStrings.ritual,
+                            AppLocalizations.of(context)!.festivals,
+                            () => Navigator.pushNamed(
+                              context,
+                              StringsRoute.festivalList,
+                            ),
+                          ),
                         ],
                       ),
                     ],

@@ -24,7 +24,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
   bool eventCreated = false;
   bool eventUpdated = false;
   bool isLoading = false;
-  bool isInitialLoading = false; // first time only
+  bool isInitialLoading = true; // first time only
 
   bool isActive = true;
   List<String> temples = [];
@@ -263,6 +263,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     eventCreated = false;
     eventUpdated = false;
     isLoading = false;
+    isInitialLoading = true;
     temples.clear();
     isActive = false;
     notifyListeners();

@@ -120,9 +120,7 @@ class ProviderWidget extends StatelessWidget {
 
                 final hasToken = snapshot.data ?? false;
 
-                return hasToken
-                    ? const FestivalListScreen()
-                    : const LoginScreen();
+                return hasToken ? const DashboardScreen() : const LoginScreen();
               },
             ),
             onGenerateRoute: router.route,

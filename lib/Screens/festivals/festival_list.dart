@@ -27,6 +27,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(_scrollListener);
   }
 
@@ -34,6 +35,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+    _viewmodel.reset();
   }
 
   void _scrollListener() {
@@ -46,7 +48,6 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
     }
   }
 
-  // Function to load more data
   Future<void> _loadMoreData() async {
     await _viewmodel.fetchFestivals();
   }
@@ -141,6 +142,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
         const Spacer(),
         IconButton(
           onPressed: () {
+            _viewmodel.reset();
             Navigator.pushNamed(context, StringsRoute.createFestival);
           },
           icon: Icon(Icons.add, color: Colors.white),
