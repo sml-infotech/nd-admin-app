@@ -223,6 +223,7 @@ class FestivalCard extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
+                      // Background Image
                       Container(
                         width: double.infinity,
                         height: 200,
@@ -238,15 +239,18 @@ class FestivalCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-
-                      Row(
-                        children: [
-                          dateWidget(festivalDate),
-                          Spacer(),
-                          editAndDeleteIcon(context, viewmodel, festival),
-                        ],
+                      dateWidget(festivalDate),
+                      Positioned(
+                        top: 10,
+                        right: 16,
+                        child: editAndDeleteIcon(context, viewmodel, festival),
                       ),
-                      nameAndDescriptionWidget(festival),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: nameAndDescriptionWidget(festival),
+                      ),
                     ],
                   ),
                 ],
@@ -260,58 +264,42 @@ class FestivalCard extends StatelessWidget {
 }
 
 Widget nameAndDescriptionWidget(FestivalListModal festival) {
-  return Positioned(
-    bottom: 0,
-    left: 0,
-    right: 0,
-    child: Container(
-      // height: 120,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.black.withOpacity(0.0),
-            Colors.black.withOpacity(0.9),
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-        ),
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Colors.black.withOpacity(0.0), Colors.black.withOpacity(0.9)],
       ),
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            festival.name,
-            style: AppTextStyles.welcomeStyle.copyWith(color: Colors.white),
-          ),
-          const SizedBox(height: 8),
-
-          Text(
-            festival.description,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.templeContactStyle.copyWith(
-              color: Colors.white,
-            ),
-          ),
-
-          const SizedBox(width: 6),
-
-          const SizedBox(height: 8),
-          Text(
-            "Deities: ${festival.deityNames.join(', ')}",
-            style: AppTextStyles.templeContactStyle.copyWith(
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(8),
+        bottomRight: Radius.circular(8),
       ),
+    ),
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          festival.name,
+          style: AppTextStyles.welcomeStyle.copyWith(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          festival.description,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.templeContactStyle.copyWith(color: Colors.white),
+        ),
+        const SizedBox(width: 6),
+        const SizedBox(height: 8),
+        Text(
+          "Deities: ${festival.deityNames.join(', ')}",
+          style: AppTextStyles.templeContactStyle.copyWith(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+      ],
     ),
   );
 }
@@ -366,8 +354,8 @@ Widget editAndDeleteIcon(
 
 Widget dateWidget(String festivalDate) {
   return Positioned(
-    top: 10,
-    right: 16,
+    top: 10, // Position it 10px from the top
+    left: 16, // Position it 16px from the left
     child: ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: BackdropFilter(

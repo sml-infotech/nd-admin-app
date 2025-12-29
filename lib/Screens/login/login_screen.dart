@@ -38,8 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height,
                 ),
-                child: IntrinsicHeight(
-                  child: Column(
+                child:
+                //  IntrinsicHeight(
+                //   child:
+                  
+                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -50,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 0),
                       dashBoardText(),
                       const SizedBox(height: 25),
-
                       CommonTextField(
                         hintText: AppLocalizations.of(context)!.enterUserName,
                         labelText: AppLocalizations.of(context)!.userName,
@@ -73,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-              ),
+              // ),
             ),
             if (viewModel.isLoading)
               Positioned.fill(
@@ -104,9 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: isButtonEnabled
               ? () async {
                   FocusScope.of(context).unfocus();
-
                   await viewModel.login();
-
                   Fluttertoast.showToast(
                     msg: viewModel.message,
                     backgroundColor: Colors.black87,
@@ -114,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     gravity: ToastGravity.BOTTOM,
                     toastLength: Toast.LENGTH_SHORT,
                   );
-
                   if (viewModel.isLoginSuccess) {
                     Navigator.pushNamed(
                       context,

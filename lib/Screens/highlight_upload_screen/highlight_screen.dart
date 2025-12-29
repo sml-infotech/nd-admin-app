@@ -77,7 +77,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   void _clearPreviousVideo() {
     _videoController?.pause();
     _videoController?.dispose();
-  _videoController = null;
+    _videoController = null;
   }
 
   void _toggleStatus() async {
@@ -134,6 +134,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: nammaDaivaCreateAppBar(),
         backgroundColor: ColorConstant.buttonColor,
         centerTitle: true,
@@ -303,34 +304,33 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       ],
     );
   }
-Future<void> _handleUpload() async {
-  if (_pickedFile == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Select a file first")),
-    );
-    return;
+
+  Future<void> _handleUpload() async {
+    if (_pickedFile == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Select a file first")));
+      return;
+    }
+
+    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+    final bool isVideo = _checkIsVideo(_pickedFile!.path);
+
+    final bool success = await viewModel.addMedia([_pickedFile!.path], isVideo);
+
+    if (!success) return;
+
+    setState(() {
+      _pickedFile = null;
+      _videoController?.pause();
+      _videoController?.dispose();
+      _videoController = null;
+    });
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
   }
-
-  final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-  final bool isVideo = _checkIsVideo(_pickedFile!.path);
-
-  final bool success =
-      await viewModel.addMedia([_pickedFile!.path], isVideo);
-
-  if (!success) return;
-
-  setState(() {
-    _pickedFile = null;
-    _videoController?.pause();
-    _videoController?.dispose();
-    _videoController = null;
-  });
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("Upload Successful!")),
-  );
-}
-
 
   Widget _buildPreview() {
     if (_pickedFile == null) {
@@ -369,9 +369,7 @@ Future<void> _handleUpload() async {
 
     return ReorderableGridView.builder(
       shrinkWrap: true,
-      physics:
-          _selectedSegment ==
-              0
+      physics: _selectedSegment == 0
           ? const NeverScrollableScrollPhysics()
           : const ClampingScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -381,8 +379,7 @@ Future<void> _handleUpload() async {
         childAspectRatio: 1,
       ),
       itemCount: currentList.length,
-      onReorder: 
-      (oldIndex, newIndex) {
+      onReorder: (oldIndex, newIndex) {
         if (_selectedSegment == 0) {
           setState(() {
             final item = currentList.removeAt(oldIndex);

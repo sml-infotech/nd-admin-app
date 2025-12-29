@@ -32,7 +32,6 @@ import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
-import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 
 class AppRouter {

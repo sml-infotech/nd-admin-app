@@ -186,14 +186,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 StringsRoute.mantraList,
                               ),
                             ),
-                          containerWidget(
-                            ImageStrings.ritual,
-                            AppLocalizations.of(context)!.festivals,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.festivalList,
+                          if (role == "Super Admin")
+                            containerWidget(
+                              ImageStrings.ritual,
+                              AppLocalizations.of(context)!.festivals,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.festivalList,
+                              ),
                             ),
-                          ),
+
+                            if (role == "Super Admin")
+                            containerWidget(
+                              ImageStrings.ritual,
+                              AppLocalizations.of(context)!.addHighlights,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.highlightUpload,
+                              ),
+                            ),
                         ],
                       ),
                     ],
