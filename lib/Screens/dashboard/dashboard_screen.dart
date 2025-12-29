@@ -196,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
 
-                            if (role == "Super Admin")
+                          if (role == "Super Admin")
                             containerWidget(
                               ImageStrings.ritual,
                               AppLocalizations.of(context)!.addHighlights,
@@ -234,11 +234,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: EdgeInsets.all(0),
           icon: Image.asset(ImageStrings.logout),
           onPressed: () async {
-            await deleteToken();
-            Navigator.pushReplacementNamed(context, StringsRoute.login);
+            _showLogoutDialog(context);
           },
         ),
       ],
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Logout", style: TextStyle(fontFamily: font)),
+          content: Text(
+            "Are you sure you want to logout?",
+            style: TextStyle(fontFamily: font),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel", style: TextStyle(fontFamily: font)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorConstant.buttonColor,
+              ),
+              onPressed: () async {
+                await deleteToken();
+                Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(context, StringsRoute.login);
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(fontFamily: font, color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
