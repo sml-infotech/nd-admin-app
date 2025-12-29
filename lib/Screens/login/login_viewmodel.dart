@@ -17,7 +17,6 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   LoginViewModel() {
-    // Rebuild the button reactively whenever the user types
     emailController.addListener(() => notifyListeners());
     passwordController.addListener(() => notifyListeners());
   }

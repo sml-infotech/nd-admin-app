@@ -20,7 +20,8 @@ Future<Map<String, dynamic>> post(
    prefs.getString('authToken');
     final response = await http.post(
       Uri.parse(url),
-      headers: {
+      headers:
+       {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       },

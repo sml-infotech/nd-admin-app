@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nammadaiva_dashboard/Common/splash_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
@@ -100,7 +101,8 @@ class ProviderWidget extends StatelessWidget {
 
                 final hasToken = snapshot.data ?? false;
 
-                return hasToken ? const DashboardScreen() : const LoginScreen();
+                return SplashScreen();
+                //  hasToken ? const DashboardScreen() : const LoginScreen();
               },
             ),
             onGenerateRoute: router.route,
