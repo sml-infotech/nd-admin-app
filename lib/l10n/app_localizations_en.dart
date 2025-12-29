@@ -180,6 +180,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pincode => 'Pincode';
 
   @override
+  String get addfestival => 'Add Festival';
+
+  @override
+  String get festivalname => 'Festival Name';
+
+  @override
+  String get festivals => 'Festivals';
+
+  @override
+  String get festivalDetails => 'Festival Details';
+
+  @override
+  String get updateFestival => 'Update Festival';
+
+  @override
   String get status => 'Status';
 
   @override

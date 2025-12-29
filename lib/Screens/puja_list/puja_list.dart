@@ -59,7 +59,7 @@ class _PujaListState extends State<PujaList> {
     viewmodel = Provider.of<PujaListViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return FocusDetector(
+return FocusDetector(
       onFocusGained: () async {
         await viewmodel.getTemples();
         await viewmodel.fetchPujas(reset: true);

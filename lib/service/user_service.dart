@@ -1,4 +1,7 @@
 import 'package:nammadaiva_dashboard/model/login_model/contact_us_model/contact_us_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/create_festival/create_festival_modal.dart';
+import 'package:nammadaiva_dashboard/model/login_model/create_festival/delete_festival.dart';
+import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
@@ -42,13 +45,100 @@ class UserService {
     }
   }
 
+  Future<DeleteFestivalResponse> deleteFestival(String festivalId) async {
+    try {
+      final data = await apiService.delete(
+        '${UrlConstant.delete_festival}/$festivalId',
+      );
+
+print("Delete festival response: $data");
+      return DeleteFestivalResponse.fromJson(data);
+    } catch (e) {
+      throw Exception('Delete festival API failed: $e');
+    }
+  }
+
+  Future<CreateFestivalResponse> createFestivals(
+    String name,
+    String description,
+    List<String> deityNames,
+    String startDate,
+    String endDate,
+    String startTime,
+    String endTime,
+    List<String>? images,
+  ) async {
+    try {
+      final createUser = Festival(
+        name: name,
+        description: description,
+        deityNames: deityNames,
+        startDate: startDate,
+        endDate: endDate,
+        startTime: startTime,
+        endTime: endTime,
+        images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
+        isActive: true,
+      );
+
+      print(">>>>.${createUser.toJson()}");
+      final data = await apiService.post(
+        UrlConstant.create_festival,
+        createUser.toJson(),
+      );
+      print("1111111111$data");
+      return CreateFestivalResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<CreateFestivalResponse> updateFestival(
+    String name,
+    String description,
+    List<String> deityNames,
+    String startDate,
+    String endDate,
+    String startTime,
+    String endTime,
+    List<String>? images,
+    String festivalId,
+  ) async {
+    try {
+      final updateFestival = Festival(
+        name: name,
+        description: description,
+        deityNames: deityNames,
+        startDate: startDate,
+        endDate: endDate,
+        startTime: startTime,
+        endTime: endTime,
+        images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
+        isActive: true,
+      );
+
+      print(">>>>.${updateFestival.toJson()}");
+      final data = await apiService.put(
+        '${UrlConstant.update_festival}/$festivalId',
+        updateFestival.toJson(),
+      );
+      print("1111111111$data");
+      return CreateFestivalResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
   Future<UserListResponse> getUserDetails({
     int page = 1,
     int pageSize = 10,
-    String ?search,
+    String? search,
   }) async {
     try {
-      final url = '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize&search=$search';
+      final url =
+          '${UrlConstant.userListUrl}?page=$page&pageSize=$pageSize&search=$search';
       print('Fetching users: $url');
       dynamic data = await apiService.get(url);
       return UserListResponse.fromJson(data);
@@ -58,10 +148,7 @@ class UserService {
     }
   }
 
-    Future<ContactResponse> fetchContactUsList(
-    int page ,
-    
-  ) async {
+  Future<ContactResponse> fetchContactUsList(int page) async {
     try {
       final url = '${UrlConstant.contact_us}?page=$page';
       print('Fetching users: $url');
@@ -73,41 +160,44 @@ class UserService {
     }
   }
 
-Future<ContactResponse> markAsRead(String id) async {
-  try {
-    final url = "${UrlConstant.mark_as_read}/$id/mark-as-read";
-
-    final Map<String, dynamic> data = await apiService.put(
-      url,
-      {},
-    );
-    return ContactResponse.fromJson(data);
-  } catch (e) {
-    print("Mark as read API failed: $e");
-    throw Exception('API failed: $e');
+  Future<FestivalResponse> fetchFestivals(int page) async {
+    try {
+      final url = '${UrlConstant.list_festivals}?page=$page';
+      print('Fetching users: $url');
+      dynamic data = await apiService.get(url);
+      return FestivalResponse.fromJson(data);
+    } catch (e) {
+      print("User service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
   }
-}
 
+  Future<ContactResponse> markAsRead(String id) async {
+    try {
+      final url = "${UrlConstant.mark_as_read}/$id/mark-as-read";
 
-
+      final Map<String, dynamic> data = await apiService.put(url, {});
+      return ContactResponse.fromJson(data);
+    } catch (e) {
+      print("Mark as read API failed: $e");
+      throw Exception('API failed: $e');
+    }
+  }
 
   Future<EditUserResponse> editUser(
     String id,
     String name,
     String role,
-    bool isActive,
-    {
-        List<String>? selectedTemples,
-
-    }
-  ) async {
+    bool isActive, {
+    List<String>? selectedTemples,
+  }) async {
     try {
       var editData = EditUsermodel(
         id: id,
         fullName: name,
         role: role,
         isActive: isActive,
-       associated_temple_ids:selectedTemples??[],
+        associated_temple_ids: selectedTemples ?? [],
       );
 
       final url = UrlConstant.userEditUrl;

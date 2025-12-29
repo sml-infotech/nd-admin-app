@@ -47,4 +47,15 @@ class UrlConstant {
   static String create_mantra = "${baseUrlString()}create-mantra";
   static String list_mantras = "${baseUrlString()}list-mantras";
   static String update_mantra = "${baseUrlString()}update-mantra";
+  static String create_highlight = "${baseUrlString()}create-highlight";
+  static String list_active_highlights =
+      "${baseUrlString()}list-active-highlights";
+  static String list_inactive_highlights =
+      "${baseUrlString()}list-inactive-highlights";
+  static String reorderHighlight = "${baseUrlString()}reorder-highlight";
+  static String updateHighlight = "${baseUrlString()}toggle-highlight-active";
+  static String create_festival = "${baseUrlString()}add-festival";
+  static String list_festivals = "${baseUrlString()}list-festivals";
+  static String update_festival = "${baseUrlString()}edit-festival";
+  static String delete_festival = "${baseUrlString()}delete-festival";
 }

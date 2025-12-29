@@ -1,81 +1,73 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:focus_detector/focus_detector.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Common/time_picker.dart';
-import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
-import 'package:nammadaiva_dashboard/Screens/pujabook/time_picker.dart';
-import 'package:nammadaiva_dashboard/Utills/constant.dart'
-    show ColorConstant, StringConstant;
-import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/festival_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
-import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart'
+    show TimeSlot;
 import 'package:provider/provider.dart';
 
-import '../../model/login_model/createpuja/create_pujamodel.dart';
-
-class CreateEvent extends StatefulWidget {
-  final EventItem? event;
-  const CreateEvent({super.key, required this.event});
+class CreateFestival extends StatefulWidget {
+  final FestivalArgument? arguments;
+  const CreateFestival({super.key, this.arguments});
 
   @override
-  State<CreateEvent> createState() => _CreateEventState();
+  State<CreateFestival> createState() => _CreateFestivalState();
 }
 
-class _CreateEventState extends State<CreateEvent> {
-  late CreateEventViewmodel viewmodel;
+class _CreateFestivalState extends State<CreateFestival> {
+  late CreateFestivalViewmodel viewmodel;
   final ImagePicker _picker = ImagePicker();
+  bool _isPrefilled = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await viewmodel.getTemples(reset: true);
+  }
 
-      if (widget.event != null) {
-        final selectedTempleId = widget.event!.templeId;
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (temple) => temple.id == selectedTempleId,
-          orElse: () => viewmodel.templeData.first,
-        );
-        if (widget.event!.startTime != null && widget.event!.endTime != null) {
-          viewmodel.timeSlots = [
-            TimeSlot(
-              fromTime: _formatForDisplay(widget.event!.startTime!),
-              toTime: _formatForDisplay(widget.event!.endTime!),
-            ),
-          ];
-        }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-        viewmodel.selectedTemple = selectedTemple;
-        viewmodel.selectedTempleId = selectedTemple.id;
-        viewmodel.eventController.text = widget.event!.name;
-        viewmodel.descriptionContoller.text = widget.event!.description!;
-        viewmodel.locationController.text = widget.event!.location!;
-        viewmodel.contactNameController.text = widget.event!.contactName!;
-        viewmodel.contactNumberController.text = widget.event!.contactPhone!;
-        if (widget.event!.startDate != null) {
-          viewmodel.selectedStartDate = DateTime.parse(
-            widget.event!.startDate!,
-          );
-        }
-        if (widget.event!.endDate != null) {
-          viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
-        }
+    viewmodel = Provider.of<CreateFestivalViewmodel>(context);
 
-        if (widget.event!.images != null) {
-          viewmodel.uploadedImageUrls = widget.event!.images!;
-        }
-      }
-    });
+    if (widget.arguments != null && !_isPrefilled) {
+      _prefillData(widget.arguments!);
+      _isPrefilled = true;
+    }
+  }
+
+  void _prefillData(FestivalArgument args) {
+    viewmodel.eventController.text = args.name ?? "";
+    viewmodel.descriptionContoller.text = args.description ?? "";
+
+    viewmodel.temples = args.deities;
+
+    viewmodel.selectedStartDate = args.startDate != null
+        ? DateTime.parse(args.startDate!)
+        : null;
+    viewmodel.selectedEndDate = args.endDate != null
+        ? DateTime.parse(args.endDate!)
+        : null;
+
+    if (args.startTime != null && args.endTime != null) {
+      viewmodel.timeSlots = [
+        TimeSlot(fromTime: args.startTime!, toTime: args.endTime!),
+      ];
+    }
+
+    viewmodel.uploadedImageUrls = List<String>.from(args.imageUrls ?? []);
+
+    viewmodel.notifyListeners();
   }
 
   String _formatForDisplay(String time) {
@@ -95,7 +87,7 @@ class _CreateEventState extends State<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
-    viewmodel = Provider.of<CreateEventViewmodel>(context);
+    viewmodel = Provider.of<CreateFestivalViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Stack(
@@ -134,22 +126,22 @@ class _CreateEventState extends State<CreateEvent> {
                         child: Column(
                           children: [
                             SizedBox(height: screenHeight * 0.02),
-                            _buildTempleDropdown(),
-                            SizedBox(height: screenHeight * 0.02),
+
                             eventNameTextField(),
                             SizedBox(height: screenHeight * 0.02),
                             descriptionTextField(),
                             SizedBox(height: screenHeight * 0.02),
-                            locationTextField(),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: TempleInputWidget(viewmodel: viewmodel),
+                            ),
                             SizedBox(height: screenHeight * 0.02),
-                            contactNameTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            contactNumberTextField(),
-                            SizedBox(height: 8),
                             dateWidget(),
                             timePickerWidget(),
                             SizedBox(height: screenHeight * 0.02),
                             _buildImagePicker(),
+                            SizedBox(height: screenHeight * 0.01),
+                            isActiveCheckbox(),
                             SizedBox(height: screenHeight * 0.10),
                           ],
                         ),
@@ -175,6 +167,34 @@ class _CreateEventState extends State<CreateEvent> {
             ),
           ),
       ],
+    );
+  }
+
+  Widget isActiveCheckbox() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      child: Row(
+        children: [
+          Checkbox(
+            checkColor: Colors.white,
+            activeColor: ColorConstant.buttonColor,
+            value: viewmodel.isActive,
+            onChanged: (value) {
+              setState(() {
+                viewmodel.isActive = value ?? false;
+              });
+            },
+          ),
+          Text(
+            "Active or Inactive",
+            style: TextStyle(
+              fontFamily: font,
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -219,7 +239,6 @@ class _CreateEventState extends State<CreateEvent> {
         onChanged: (selectedSlot) {
           setState(() {
             viewmodel.timeSlots = [selectedSlot];
-            
           });
         },
         startDate: viewmodel.selectedStartDate,
@@ -251,31 +270,10 @@ class _CreateEventState extends State<CreateEvent> {
     );
   }
 
-  Widget _buildTempleDropdown() {
-    return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.temple,
-      labelText: AppLocalizations.of(context)!.temple,
-      items: viewmodel.templeData.map((t) => t.name).toList(),
-      selectedValue: viewmodel.selectedTemple?.name,
-      paddingSize: 16,
-      onChanged: (value) {
-        if (value == null) return;
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (t) => t.name == value,
-        );
-        setState(() {
-          viewmodel.selectedTempleId = selectedTemple.id;
-          viewmodel.setSelectedTemple(selectedTemple);
-          viewmodel.notifyListeners();
-        });
-      },
-    );
-  }
-
   Widget eventNameTextField() {
     return CommonTextField(
-      hintText: AppLocalizations.of(context)!.event,
-      labelText: AppLocalizations.of(context)!.event,
+      hintText: AppLocalizations.of(context)!.festivalname,
+      labelText: AppLocalizations.of(context)!.festivalname,
       isFromPassword: false,
       controller: viewmodel.eventController,
     );
@@ -332,9 +330,10 @@ class _CreateEventState extends State<CreateEvent> {
         ),
         const Spacer(),
         Text(
-          widget.event?.id == null
-              ? AppLocalizations.of(context)!.createEvent
-              : AppLocalizations.of(context)!.updateEvent,
+          widget.arguments != null
+              ? AppLocalizations.of(context)!.updateFestival
+              : AppLocalizations.of(context)!.addfestival,
+
           style: AppTextStyles.appBarTitleStyle,
         ),
         SizedBox(width: 48),
@@ -356,19 +355,21 @@ class _CreateEventState extends State<CreateEvent> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                final isValid = await viewmodel.validateEvent(false);
+                final isValid = await viewmodel.validateFestival(false);
                 if (!isValid) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                if (widget.event?.id != null) {
-                  await viewmodel.updateEvent(widget.event!.id);
+                if (widget.arguments != null) {
+                  await viewmodel.updateFestival(widget.arguments!.festivalId!);
                 } else {
-                  await viewmodel.createEvent();
+                  await viewmodel.createFestival();
                 }
+
                 if (viewmodel.eventUpdated || viewmodel.eventCreated) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   Navigator.pop(context);
+                  viewmodel.reset();
                   viewmodel.eventCreated = false;
                   viewmodel.eventUpdated = false;
                 } else {
@@ -382,9 +383,9 @@ class _CreateEventState extends State<CreateEvent> {
                 ),
               ),
               child: Text(
-                widget.event?.id == null
-                    ? AppLocalizations.of(context)!.createEvent
-                    : AppLocalizations.of(context)!.updateEvent,
+                widget.arguments != null
+                    ? AppLocalizations.of(context)!.updateFestival
+                    : AppLocalizations.of(context)!.addfestival,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

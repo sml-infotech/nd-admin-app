@@ -1,95 +1,265 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'package:mime/mime.dart'; // To detect the MIME type
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
+import 'package:nammadaiva_dashboard/service/highlight_service.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class HighlightViewmodel extends ChangeNotifier {
+  final UserService userService = UserService();
+  final HighlightService highlightService = HighlightService();
+
   bool isLoading = false;
   String message = '';
-  List<XFile> selectedImages = [];
-  List<String> uploadedImageUrls = [];
-  var userService = UserService();
-  // Function to add images or videos
-  Future<void> addMedia(List<String> newFiles, bool isVideo) async {
+
+  /// Upload state
+  final List<XFile> _uploadQueue = [];
+  final List<String> uploadedImageUrls = [];
+
+  /// Highlights
+  List<HighlightItem> highlightList = [];
+  List<HighlightItem> inActiveList = [];
+
+  List<HighlightItem> get activeHighlights =>
+      List.from(highlightList)
+        ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+
+  List<HighlightItem> get inactiveHighlights =>
+      List.from(inActiveList)
+        ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+
+  Future<void> fetchHighlights({bool refresh = false}) async {
     try {
       isLoading = true;
       notifyListeners();
 
-      for (final path in newFiles) {
-        final alreadyExists = selectedImages.any((img) => img.path == path);
-        if (!alreadyExists) {
-          selectedImages.add(XFile(path));
-        }
-      }
+      final response = await highlightService.getHighlights();
 
-      print("📷 Final Selected Media: ${selectedImages.map((e) => e.path).toList()}");
-
-      // 🪣 Upload safely
-      for (final file in List<XFile>.from(selectedImages)) {
-        print("📤 Getting presigned URL for ${file.name}");
-
-        final response = await userService.presignedUrl(file.name, file.path);
-
-        if (response.url != null && response.url!.isNotEmpty) {
-          final presignedUrlForFile = response.url!;
-          print("✅ Got presigned URL for ${file.name}");
-
-          // Upload to S3 using the presigned URL
-          final uploadedUrl = await uploadToS3(presignedUrlForFile, file, isVideo);
-          if (uploadedUrl != null) {
-            if (!uploadedImageUrls.contains(uploadedUrl)) {
-              uploadedImageUrls.add(uploadedUrl);
-            }
-            selectedImages.remove(file);
-
-            print("✅ Uploaded ${file.name} -> $uploadedUrl");
-          } else {
-            
-            print("❌ Upload failed for ${file.name}");
-            message = "Upload failed for ${file.name}";
-          }
-        } else {
-          print("⚠️ Failed to get presigned URL for ${file.name}");
-          message = response.message ?? "Failed to get presigned URL for ${file.name}";
-        }
+      if (response.data != null) {
+        highlightList = response.data;
       }
     } catch (e) {
-      print("❌ Error in addMedia: $e");
-      message = "Something went wrong: $e";
+      debugPrint("❌ fetchHighlights error: $e");
+      message = "Failed to fetch highlights";
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Function to upload the file to S3 using the presigned URL
-  Future<String?> uploadToS3(String presignedUrl, XFile file, bool isVideo) async {
+  Future<void> fetchInactiveHighlights() async {
     try {
-      final fileBytes = await file.readAsBytes();
-      final mimeType = isVideo ? 'video/mp4' : lookupMimeType(file.path) ?? 'application/octet-stream';
+      isLoading = true;
+      notifyListeners();
 
-      final response = await http.put(
-        Uri.parse(presignedUrl),
-        headers: {
-          'Content-Type': mimeType,
-          'Content-Length': fileBytes.length.toString(),
-        },
-        body: fileBytes,
-      );
+      final response = await highlightService.getInactiveHighlights();
 
-      if (response.statusCode == 200) {
-        // If the response status is 200, upload was successful
-        print("✅ File uploaded successfully to S3: ${file.name}");
-        return presignedUrl;  // Return the presigned URL or the file URL in S3
-      } else {
-        print("❌ Error uploading file to S3: ${response.body}");
-        return null;
+      if (response.data != null) {
+        inActiveList = response.data;
       }
     } catch (e) {
-      print("❌ Error uploading to S3: $e");
-      return null;
+      debugPrint("❌ fetchInactiveHighlights error: $e");
+      message = "Failed to fetch highlights";
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
+
+  Future<bool> addMedia(List<String> filePaths, bool isVideo) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      for (final path in filePaths) {
+        if (_uploadQueue.any((e) => e.path == path)) continue;
+        _uploadQueue.add(XFile(path));
+      }
+
+      for (final file in List<XFile>.from(_uploadQueue)) {
+        await _processUpload(file, isVideo);
+        _uploadQueue.remove(file);
+      }
+
+      return true; // ✅ SUCCESS
+    } catch (e) {
+      debugPrint("❌ addMedia error: $e");
+      message = "Upload failed";
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _processUpload(XFile file, bool isVideo) async {
+    // 1️⃣ Upload main file (video / image)
+    final presignedResponse = await userService.presignedUrl(
+      "highlights/${file.name}",
+      file.path,
+    );
+
+    if (presignedResponse.url == null) {
+      throw Exception("Failed to get presigned URL");
+    }
+
+    final uploadedUrl = await _uploadToS3(
+      presignedResponse.url!,
+      file,
+      isVideo,
+    );
+
+    if (uploadedUrl == null) return;
+
+    String? thumbnailUrl;
+
+    // 2️⃣ If video → generate + upload thumbnail
+    if (isVideo) {
+      final thumbnailFile = await generateVideoThumbnail(file);
+
+      final thumbPresigned = await userService.presignedUrl(
+        "highlights/thumb_${file.name}.jpg",
+        thumbnailFile.path,
+      );
+
+      if (thumbPresigned.url != null) {
+        await _uploadToS3(
+          thumbPresigned.url!,
+          XFile(thumbnailFile.path),
+          false,
+        );
+
+        thumbnailUrl = thumbPresigned.url!.split('?').first.trim();
+      }
+    }
+
+    // 3️⃣ Create highlight
+    await _createHighlight(
+      presignedResponse.url!.split('?').first.trim(),
+      isVideo,
+      thumbnailUrl ?? presignedResponse.url!.split('?').first.trim(),
+    );
+
+    await fetchHighlights(refresh: true);
+    resetAfterCreate();
+  }
+
+  Future<String?> _uploadToS3(
+    String presignedUrl,
+    XFile file,
+    bool isVideo,
+  ) async {
+    final bytes = await file.readAsBytes();
+    final mimeType = isVideo
+        ? 'video/mp4'
+        : lookupMimeType(file.path) ?? 'image/jpeg';
+
+    final response = await http.put(
+      Uri.parse(presignedUrl),
+      headers: {
+        'Content-Type': mimeType,
+        'Content-Length': bytes.length.toString(),
+      },
+      body: bytes,
+    );
+
+    return response.statusCode == 200 ? presignedUrl : null;
+  }
+
+  Future<void> _createHighlight(
+    String url,
+    bool isVideo,
+    String? thumbnailUrl,
+  ) async {
+    final response = await highlightService.createHighlight(
+      thumbnailUrl ?? url,
+      isVideo ? 'video' : 'image',
+      url,
+    );
+
+    if (response.code != 200) {
+      throw Exception("Failed to create highlight");
+    }
+  }
+
+  Future<void> reorderHighlights(
+    String id,
+    int fromPosition,
+    int toPosition,
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final response = await highlightService.reOrderHighlights(
+        id,
+        fromPosition,
+        toPosition,
+      );
+
+      if (response.code == 200) {
+        await fetchHighlights(refresh: true);
+      } else {
+        throw Exception("Failed to reorder highlights");
+      }
+    } catch (e) {
+      debugPrint("❌ reorderHighlights error: $e");
+      message = "Reorder failed";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void resetAfterCreate() {
+    _uploadQueue.clear();
+    uploadedImageUrls.clear();
+    message = '';
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateHighlight(List<String> ids, bool isActive) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final response = await highlightService.updateHighlight(ids, isActive);
+
+      if (response.code == 200) {
+        print("✅ Highlights updated successfully");
+      } else {
+        throw Exception("Failed to reorder highlights");
+      }
+    } catch (e) {
+      debugPrint("❌ reorderHighlights error: $e");
+      message = "Reorder failed";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+}
+
+Future<File> generateVideoThumbnail(XFile videoFile) async {
+  final tempDir = await getTemporaryDirectory();
+
+  final thumbnailPath = await VideoThumbnail.thumbnailFile(
+    video: videoFile.path,
+    thumbnailPath: tempDir.path,
+    imageFormat: ImageFormat.JPEG,
+    quality: 75,
+    timeMs: 7, // 👈 middle frame automatically
+  );
+
+  if (thumbnailPath == null) {
+    throw Exception("Thumbnail generation failed");
+  }
+
+  return File(thumbnailPath);
 }

@@ -51,7 +51,7 @@ class AppTextStyles {
   );
 
   static final TextStyle templeContactStyle = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: Color(0xff121417),
     fontFamily: font,

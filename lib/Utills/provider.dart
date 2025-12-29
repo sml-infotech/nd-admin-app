@@ -1,39 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
+import 'package:nammadaiva_dashboard/Common/splash_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart'
-    show MantraList;
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
-import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
-import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
-import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:nammadaiva_dashboard/Screens/createuser/create_user_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
@@ -86,6 +71,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ContactViewModel()),
         ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
         ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
+        ChangeNotifierProvider(create: (context) => CreateFestivalViewmodel()),
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),
@@ -115,9 +101,8 @@ class ProviderWidget extends StatelessWidget {
 
                 final hasToken = snapshot.data ?? false;
 
-                return hasToken
-                    ? const HighLightsUploaderScreen()
-                    : const LoginScreen();
+                return SplashScreen();
+                //  hasToken ? const DashboardScreen() : const LoginScreen();
               },
             ),
             onGenerateRoute: router.route,
