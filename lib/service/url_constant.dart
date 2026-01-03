@@ -25,7 +25,7 @@ class UrlConstant {
   static String resetPasswordUrl =
       "${baseUrlString()}reset-dashboard-user-password";
   static String addTempleUrl = "${baseUrlString()}create-temple";
-  static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
+static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
   static String createPujaUrl = "${baseUrlString()}create-puja";
   static String getPujas = "${baseUrlString()}list-pujas";
   static String updateTempleUrl = "${baseUrlString()}temple-update-requests";
@@ -58,4 +58,5 @@ class UrlConstant {
   static String list_festivals = "${baseUrlString()}list-festivals";
   static String update_festival = "${baseUrlString()}edit-festival";
   static String delete_festival = "${baseUrlString()}delete-festival";
+static String editHighlight = "${baseUrlString()}edit-highlight";
 }

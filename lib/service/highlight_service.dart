@@ -1,6 +1,8 @@
 
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_create_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_response_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/reorder_request_model.dart';
@@ -102,6 +104,32 @@ List<String> ids,
 
 
       return HighlightStatusUpdateResponse.fromJson(data);
+    } catch (e) {
+      print("❌  API request failed -> $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+   Future<EditHighlightResponse> EditHighlight(
+String id,
+    String title,
+    String description,
+   
+  ) async {
+    try {
+      final updateHighlight = EditHighlightRequest(title: title, description: description);
+        print(">>>>>>>>>>>>>><>>>>>>>>${updateHighlight.toJson()}");
+   
+
+      print("-------------------------------------------------------------");
+
+      final data = await apiService.put(
+        UrlConstant.editHighlight + "/$id",
+        updateHighlight.toJson(),
+      );
+
+
+      return EditHighlightResponse.fromJson(data);
     } catch (e) {
       print("❌  API request failed -> $e");
       throw Exception('API failed: $e');

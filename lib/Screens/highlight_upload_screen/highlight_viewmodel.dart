@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
@@ -13,15 +14,15 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 class HighlightViewmodel extends ChangeNotifier {
   final UserService userService = UserService();
   final HighlightService highlightService = HighlightService();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   bool isLoading = false;
   String message = '';
 
-  /// Upload state
   final List<XFile> _uploadQueue = [];
   final List<String> uploadedImageUrls = [];
 
-  /// Highlights
   List<HighlightItem> highlightList = [];
   List<HighlightItem> inActiveList = [];
 
@@ -221,6 +222,8 @@ class HighlightViewmodel extends ChangeNotifier {
     uploadedImageUrls.clear();
     message = '';
     isLoading = false;
+    titleController.clear();
+    descriptionController.clear();
     notifyListeners();
   }
 
@@ -233,6 +236,36 @@ class HighlightViewmodel extends ChangeNotifier {
 
       if (response.code == 200) {
         print("✅ Highlights updated successfully");
+      } else {
+        throw Exception("Failed to reorder highlights");
+      }
+    } catch (e) {
+      debugPrint("❌ reorderHighlights error: $e");
+      message = "Reorder failed";
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> editHighlight(
+    String id,
+    String title,
+    String description,
+  ) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      final response = await highlightService.EditHighlight(
+        id,
+        title,
+        description,
+      );
+
+      if (response.code == 200) {
+        print("✅ Highlights updated successfully${response.title}");
+        resetAfterCreate();
       } else {
         throw Exception("Failed to reorder highlights");
       }
