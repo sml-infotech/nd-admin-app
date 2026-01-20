@@ -28,18 +28,20 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
-
-    _scaleAnimation =
-        Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
-    ));
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
     );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward();
 
@@ -53,7 +55,10 @@ class _SplashScreenState extends State<SplashScreen>
         routeToNavigate = StringsRoute.dashboard;
       }
       Navigator.pushNamedAndRemoveUntil(
-          context, routeToNavigate, (route) => false);
+        context,
+        routeToNavigate,
+        (route) => false,
+      );
     });
   }
 
@@ -70,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
           _charIndex++;
         });
       } else {
-        _timer.cancel(); 
+        _timer.cancel();
       }
     });
   }

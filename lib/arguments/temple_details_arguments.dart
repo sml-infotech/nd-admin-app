@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
+
 class TempleDetailsArguments {
   final String templeId;
   final String name;
@@ -11,6 +13,7 @@ class TempleDetailsArguments {
   final String description;
   final List<String> deities;
   final List<String> images; 
+  final List<Translation> translations;
 
   TempleDetailsArguments({
     required this.templeId,
@@ -25,5 +28,6 @@ class TempleDetailsArguments {
     required this.description,
     required this.deities,
     required this.images,
+    required this.translations,
   });
 }

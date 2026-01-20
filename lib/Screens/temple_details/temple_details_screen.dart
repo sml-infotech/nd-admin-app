@@ -361,6 +361,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                   description: widget.arguments.description,
                   deities: widget.arguments.deities,
                   images: widget.arguments.images,
+                  translations: widget.arguments.translations,
                 ),
               );
             },

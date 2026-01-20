@@ -16,14 +16,15 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class TempleService {
   final HttpApiService apiService = HttpApiService();
-  Future<TempleResponse> getTemples({
+Future<TempleResponse> getTemples({
     int page = 1,
     int limit = 10,
     String search = "",
+       String language="en",
   }) async {
     try {
       final url =
-          '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search';
+          '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search&language=$language';
       print('Fetching temples: $url');
       dynamic data = await apiService.get(url);
       return TempleResponse.fromJson(data);
@@ -45,9 +46,10 @@ class TempleService {
     String description,
     List<String> deities,
     List<String> images,
+    List<Translation> translations,
   ) async {
     try {
-      final request = AddTemple(
+    final request = AddTemple(
         name: name,
         address: address,
         city: city,
@@ -59,6 +61,7 @@ class TempleService {
         description: description,
         deities: deities,
         images: images,
+        translations: translations,
       );
 
       // Print the request as JSON

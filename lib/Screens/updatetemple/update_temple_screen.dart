@@ -52,6 +52,11 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
     viewModel.images = List<String>.from(widget.arguments.images ?? []);
+
+    viewModel.prefilledTemples = List<String>.from(widget.arguments.deities);
+    print(
+      "Prefilled Deities: ${widget.arguments.translations.firstWhere((t) => t.languageCode == 'en', orElse: () => widget.arguments.translations.first).deities}",
+    );
   }
 
   @override
@@ -115,9 +120,7 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                               isFromPassword: false,
                               controller: viewModel.templeLocation,
                             ),
-                            titleTextWidget(
-                              AppLocalizations.of(context)!.city,
-                            ),
+                            titleTextWidget(AppLocalizations.of(context)!.city),
                             const SizedBox(height: 8),
                             CommonTextField(
                               hintText: "",
@@ -184,8 +187,11 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                               child: TempleInputWidget(
-                                viewmodel: viewModel,
-                                isUpdateMode: true, // enables prefill
+                                list:
+                                    viewModel.prefilledTemples, // English list
+                                onAdd: (val) => viewModel.addTemple(val),
+                                onRemove: (idx) => viewModel.removeTemple(idx),
+                                hintText: "Add Deity",
                               ),
                             ),
                             titleTextWidget(
@@ -282,16 +288,11 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
             onTap: () async {
               FocusScope.of(context).unfocus();
               if (viewModel.validateUpdateTemple()) {
-                await viewModel.updateTemple(widget.arguments.templeId);
-                Fluttertoast.showToast(msg: viewModel.message);
-                if (viewModel.templeUpdated) {
-                  Navigator.popUntil(
-                    context,
-                    ModalRoute.withName(StringsRoute.templeScreen),
-                  );
-                  viewModel.reset();
-                  viewModel.templeUpdated = false;
-                }
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.updateTempleKn,
+                  arguments: widget.arguments,
+                );
               } else {
                 Fluttertoast.showToast(msg: viewModel.message);
               }

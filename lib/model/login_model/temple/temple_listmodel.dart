@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
+
 class TempleResponse {
   final String? message;
   final List<Temple>? data;
@@ -51,6 +53,7 @@ class Temple {
   final String updatedAt;
   final List<String>? deities;
   final List<String>? images;
+  final List<Translation>? translations;
 
   Temple({
 required this.id,
@@ -67,6 +70,7 @@ required this.id,
     required this.updatedAt,
     this.deities,
     this.images,
+    this.translations,
   });
 
   factory Temple.fromJson(Map<String, dynamic> json) {
@@ -89,6 +93,9 @@ required this.id,
       images: json['images'] != null
           ? List<String>.from(json['images'])
           : [],
+      translations: json['translations'] != null
+          ? List<Translation>.from(json['translations'].map((x) => Translation.fromJson(x)))
+          : [],
     );
   }
 
@@ -108,6 +115,7 @@ required this.id,
       'updated_at': updatedAt,
       'deities': deities,
       'images': images,
+      'translations': translations?.map((x) => x.toJson()).toList(),
     };
   }
 }

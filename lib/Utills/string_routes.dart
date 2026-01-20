@@ -9,6 +9,7 @@ static const String dashboard = '/dashboard';
   static const String resetPassword = '/resetPassword';
   static const String userDetails = '/userDetails';
   static const String templeScreen = '/templeScreen';
+static const String addTempleScreeninKannadam = '/addTempleScreenInKannadam';
   static const String addTempleScreen = '/addTempleScreen';
   static const String updateTempleDetails = '/updateTempleDetails';
   static const String addPuja = '/addPuja';
@@ -26,6 +27,7 @@ static const String highlightUpload="/highlightUpload";
 static const String createFestival="/createFestival";
 static const String festivalList="/festivalList";
 static const String festivalDetailsScreen="/festivalDetailsScreen";
+static const String updateTempleKn="/updateTempleKn";
 
 
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
@@ -24,6 +25,7 @@ import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_details_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
@@ -183,6 +185,18 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => FestivalDetailsScreen(arguments: args),
+        );
+      case StringsRoute.addTempleScreeninKannadam:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => AddTempleScreenInKannadam(),
+        );
+      case StringsRoute.updateTempleKn:
+       TempleDetailsArguments args =
+            settings.arguments as TempleDetailsArguments;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => UpdateTempleKn(arguments: args),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');

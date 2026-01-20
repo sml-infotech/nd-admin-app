@@ -57,7 +57,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.language),
-            onPressed: () {
+            onPressed: () async {
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+
               final localeProvider = Provider.of<LocaleProvider>(
                 context,
                 listen: false,
@@ -65,8 +67,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               if (localeProvider.locale.languageCode == 'en') {
                 localeProvider.setLocale(const Locale('kn'));
+                prefs.setString('language', 'kn');
+
               } else {
                 localeProvider.setLocale(const Locale('en'));
+                prefs.setString('language', 'en');
+
               }
 
               print(

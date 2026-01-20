@@ -3,100 +3,69 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 
 class TempleInputWidget extends StatefulWidget {
-  final dynamic viewmodel; // Can be AddTempleViewmodel or UpdateTempleViewmodel
-  final bool isUpdateMode; // true when coming from update screen
+  final List<String> list; // Pass the specific list (English or Kannada)
+  final Function(String) onAdd;
+  final Function(int) onRemove;
+  final String hintText;
 
   const TempleInputWidget({
     super.key,
-    required this.viewmodel,
-    this.isUpdateMode = false,
+    required this.list,
+    required this.onAdd,
+    required this.onRemove,
+    this.hintText = "Add Temple",
   });
 
   @override
-  State<TempleInputWidget> createState() => _TempleInputWidgetState();
+  _TempleInputWidgetState createState() => _TempleInputWidgetState();
 }
 
 class _TempleInputWidgetState extends State<TempleInputWidget> {
-  @override
-  void initState() {
-    super.initState();
+  // Local controller so typing in English doesn't show up in Kannada field
+  final TextEditingController _localController = TextEditingController();
 
-    // Prefill existing temples if in update mode
-    if (widget.isUpdateMode && widget.viewmodel.prefilledTemples != null) {
-      // assuming your UpdateTempleViewmodel has a List<String> prefilledTemples
-      widget.viewmodel.temples = List<String>.from(
-        widget.viewmodel.prefilledTemples,
-      );
-    }
-  }
-
-  void _addTemple() {
-    String text = widget.viewmodel.templeController.text.trim();
+  void _internalAdd() {
+    final text = _localController.text.trim();
     if (text.isNotEmpty) {
-      widget.viewmodel.addTemple(text);
-      widget.viewmodel.templeController.clear();
-      setState(() {}); // refresh UI after adding
+      widget.onAdd(text);
+      _localController.clear();
     }
-  }
-
-  void _removeTemple(int index) {
-    widget.viewmodel.removeTemple(index);
-    setState(() {}); // refresh UI after removing
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = widget.viewmodel;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
-          controller: vm.templeController,
+          controller: _localController,
           decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)!.addDeities,
-            labelText: AppLocalizations.of(context)!.addDeities,
-            labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
-            hintStyle: TextStyle(fontFamily: font, color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(13),
-              borderSide: const BorderSide(color: ColorConstant.primaryColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(13),
-              borderSide: const BorderSide(color: ColorConstant.primaryColor),
-            ),
+            hintText: widget.hintText,
+            labelText: "Temple Name",
+            border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add),
-              onPressed: _addTemple,
+              onPressed: _internalAdd,
             ),
           ),
-          onSubmitted: (_) => _addTemple(),
+          onSubmitted: (_) => _internalAdd(),
         ),
-        if (vm.temples.isNotEmpty) ...[const SizedBox(height: 15)],
+        if (widget.list.isNotEmpty) const SizedBox(height: 15),
         Wrap(
-          alignment: WrapAlignment.start,
           spacing: 8,
           runSpacing: 8,
           children: List.generate(
-            vm.temples.length,
+            widget.list.length,
             (index) => Card(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      vm.temples[index],
-                      style: TextStyle(fontFamily: font, color: Colors.black),
-                    ),
+                    Text(widget.list[index], style: const TextStyle(color: Colors.black)),
                     const SizedBox(width: 4),
                     GestureDetector(
-                      onTap: () => _removeTemple(index),
+                      onTap: () => widget.onRemove(index),
                       child: const Icon(Icons.close, size: 18),
                     ),
                   ],
