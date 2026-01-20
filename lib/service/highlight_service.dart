@@ -1,5 +1,4 @@
 
-import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight_response.dart';

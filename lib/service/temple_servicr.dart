@@ -1,5 +1,4 @@
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
-import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
@@ -11,7 +10,6 @@ import 'package:nammadaiva_dashboard/model/login_model/update_request_templemode
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_admin/admin_update_templemodal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update-temple_approval-response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update_temple_approval_modal.dart';
-import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';

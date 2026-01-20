@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:collection/collection.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
-import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -250,7 +249,7 @@ class UpdateTempleViewmodel extends ChangeNotifier {
       if (isChanged(originalTempleData?.email, templeEmail.text.trim())) {
         changes["email"] = templeEmail.text.trim();
       }
-       if (isChanged(originalTempleData?.deities, templeDeities.text.trim())) {
+      if (isChanged(originalTempleData?.deities, templeDeities.text.trim())) {
         changes["deities"] = templeDeities.text.trim();
       }
 

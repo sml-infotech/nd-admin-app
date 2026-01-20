@@ -53,7 +53,7 @@ class Temple {
   final List<String>? images;
 
   Temple({
-    required this.id,
+required this.id,
     required this.name,
     required this.address,
     required this.city,

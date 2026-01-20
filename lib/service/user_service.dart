@@ -6,7 +6,6 @@ import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_respon
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
-import 'package:nammadaiva_dashboard/model/login_model/mark_as_read/mark_as_read_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';

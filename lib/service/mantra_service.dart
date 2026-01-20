@@ -1,5 +1,4 @@
-import 'package:nammadaiva_dashboard/arguments/update_mantra.dart'
-    hide UpdateMantra;
+
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_response_model.dart';
