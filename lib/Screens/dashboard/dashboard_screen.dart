@@ -55,25 +55,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Column(
         children: [
-          // IconButton(
-          //   icon: const Icon(Icons.language),
-          //   onPressed: () {
-          //     final localeProvider = Provider.of<LocaleProvider>(
-          //       context,
-          //       listen: false,
-          //     );
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: () async {
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-          //     if (localeProvider.locale.languageCode == 'en') {
-          //       localeProvider.setLocale(const Locale('kn'));
-          //     } else {
-          //       localeProvider.setLocale(const Locale('en'));
-          //     }
+              final localeProvider = Provider.of<LocaleProvider>(
+                context,
+                listen: false,
+              );
 
-          //     print(
-          //       "Language changed to: ${localeProvider.locale.languageCode}",
-          //     );
-          //   },
-          // ),
+              if (localeProvider.locale.languageCode == 'en') {
+                localeProvider.setLocale(const Locale('kn'));
+                prefs.setString('language', 'kn');
+
+              } else {
+                localeProvider.setLocale(const Locale('en'));
+                prefs.setString('language', 'en');
+
+              }
+
+              print(
+                "Language changed to: ${localeProvider.locale.languageCode}",
+              );
+            },
+          ),
           SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: Container(

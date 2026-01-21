@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:collection/collection.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
-import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +21,14 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeCity = TextEditingController();
   TextEditingController templeState = TextEditingController();
   TextEditingController templePincode = TextEditingController();
+  TextEditingController templeNameInKannadam = TextEditingController();
+  TextEditingController templeLocationInKannadam = TextEditingController();
+  TextEditingController templeDescriptionInKannadam = TextEditingController();
+  TextEditingController templeDeitiesInKannadam = TextEditingController();
+  TextEditingController templeArchitectureInKannadam = TextEditingController();
+  TextEditingController templeCityInKannadam = TextEditingController();
+  TextEditingController templeStateInKannadam = TextEditingController();
+
   final TextEditingController templeController =
       TextEditingController(); // ✅ add this
 
@@ -33,29 +40,68 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   String message = "";
   List<String> images = [];
   TempleDetailsArguments? originalTempleData;
-
+  final listEquals = const ListEquality().equals;
+  
   List<String> temples = [];
+  List<String> templesInKannadam = [];
+  List<String> _prefilledTemples = [];
 
-  List<String> get prefilledTemples {
-    if (templeDeities.text.trim().isEmpty) return [];
-    return templeDeities.text.split(',').map((e) => e.trim()).toList();
+  List<String> get prefilledTemples => _prefilledTemples;
+
+  set prefilledTemples(List<String> deities) {
+    _prefilledTemples = deities;
+    // Keep text controller in sync for validation
+    templeDeities.text = deities.join(', ');
+    notifyListeners();
   }
 
-  void addTemple(String name) {
+  void addTemple(String temple) {
+    final trimmed = temple.trim();
+    if (trimmed.isNotEmpty && !_prefilledTemples.contains(trimmed)) {
+      _prefilledTemples.add(trimmed);
+      print("Updated Deities List: $_prefilledTemples");
+      templeDeities.text = _prefilledTemples.join(', '); 
+      notifyListeners();
+    }
+  }
+
+  void addTempleInKannadam(String name) {
     final trimmed = name.trim();
-    if (trimmed.isNotEmpty && !temples.contains(trimmed)) {
-      temples.add(trimmed);
-      templeDeities.text = temples.join(', ');
+    if (trimmed.isNotEmpty && !_prefilledTemplesInKannadam.contains(trimmed)) {
+      _prefilledTemplesInKannadam.add(trimmed);
+      // Keep the text controller in sync
+      templeDeitiesInKannadam.text = _prefilledTemplesInKannadam.join(', ');
       notifyListeners();
     }
   }
 
   void removeTemple(int index) {
-    if (index >= 0 && index < temples.length) {
-      temples.removeAt(index);
-      templeDeities.text = temples.join(', ');
+    if (index >= 0 && index < _prefilledTemples.length) {
+      _prefilledTemples.removeAt(index);
+      templeDeities.text = _prefilledTemples.join(', ');
       notifyListeners();
     }
+  }
+
+  void removeTempleInKannadam(int index) {
+    if (index >= 0 && index < _prefilledTemplesInKannadam.length) {
+      _prefilledTemplesInKannadam.removeAt(index);
+      templeDeitiesInKannadam.text = _prefilledTemplesInKannadam.join(', ');
+      notifyListeners();
+    }
+  }
+
+  // Other properties related to Kannada (prefilledTemplesInKannadam)
+  List<String> _prefilledTemplesInKannadam = [];
+  List<String> get prefilledTemplesInKannadam => _prefilledTemplesInKannadam;
+  List<String> finalKannadaDeities = [];
+
+  set prefilledTemplesInKannadam(List<String> deities) {
+    _prefilledTemplesInKannadam = deities;
+    finalKannadaDeities = deities;
+    // Keep text controller in sync for validation
+    templeDeitiesInKannadam.text = deities.join(', ');
+    notifyListeners(); 
   }
 
   bool validateUpdateTemple() {
@@ -64,7 +110,6 @@ class UpdateTempleViewmodel extends ChangeNotifier {
     final description = templeDescription.text.trim();
     final phone = templePhoneNumber.text.trim();
     final email = templeEmail.text.trim();
-    final deities = templeDeities.text.trim();
     final architecture = templeArchitecture.text.trim();
     final city = templeCity.text.trim();
     final state = templeState.text.trim();
@@ -111,7 +156,8 @@ class UpdateTempleViewmodel extends ChangeNotifier {
       message = "Phone number must be 10 digits";
       return false;
     }
-    if (deities.isEmpty) {
+    // Validate list instead of text field for better accuracy
+    if (_prefilledTemples.isEmpty) {
       message = "Please add at least one deity";
       return false;
     }
@@ -161,7 +207,6 @@ class UpdateTempleViewmodel extends ChangeNotifier {
           final uploadedUrl = await uploadToS3(presignedUrl, file);
 
           if (uploadedUrl != null) {
-            // ✅ Avoid duplicates in uploadedImageUrls and images
             if (!uploadedImageUrls.contains(uploadedUrl)) {
               uploadedImageUrls.add(uploadedUrl);
             }
@@ -213,70 +258,67 @@ class UpdateTempleViewmodel extends ChangeNotifier {
             newVal.toString().trim() != oldVal?.toString().trim();
       }
 
-      if (isChanged(originalTempleData?.name, templeName.text.trim())) {
+      // ---------------- ENGLISH FIELD CHANGES ----------------
+      if (isChanged(originalTempleData?.name, templeName.text)) {
         changes["name"] = templeName.text.trim();
       }
 
-      if (isChanged(originalTempleData?.address, templeLocation.text.trim())) {
+      if (isChanged(originalTempleData?.address, templeLocation.text)) {
         changes["address"] = templeLocation.text.trim();
       }
 
-      if (isChanged(
-        originalTempleData?.description,
-        templeDescription.text.trim(),
-      )) {
+      if (isChanged(originalTempleData?.description, templeDescription.text)) {
         changes["description"] = templeDescription.text.trim();
       }
 
-      if (isChanged(originalTempleData?.city, templeCity.text.trim())) {
-        changes["city"] = templeCity.text.trim();
+      // DETECT CHANGES IN ENGLISH DEITIES (Using List Comparison)
+      bool englishDeitiesChanged = !listEquals(originalTempleData?.deities, _prefilledTemples);
+      if (englishDeitiesChanged) {
+        changes["deities"] = _prefilledTemples;
       }
 
-      if (isChanged(originalTempleData?.state, templeState.text.trim())) {
-        changes["state"] = templeState.text.trim();
+      // ---------------- KANNADA TRANSLATION ----------------
+      final originalKnTranslation = originalTempleData?.translations.firstWhere(
+        (t) => t.languageCode == 'kn',
+        orElse: () => Translation(
+          languageCode: 'kn',
+          name: '',
+          address: '',
+          city: '',
+          state: '',
+          description: '',
+          deities: [],
+        ),
+      );
+
+      Map<String, dynamic> knChanges = {};
+
+      if (isChanged(originalKnTranslation?.name, templeNameInKannadam.text)) {
+        knChanges["name"] = templeNameInKannadam.text.trim();
+      }
+      if (isChanged(originalKnTranslation?.address, templeLocationInKannadam.text)) {
+        knChanges["address"] = templeLocationInKannadam.text.trim();
+      }
+      if (isChanged(originalKnTranslation?.description, templeDescriptionInKannadam.text)) {
+        knChanges["description"] = templeDescriptionInKannadam.text.trim();
       }
 
-      if (isChanged(originalTempleData?.pincode, templePincode.text.trim())) {
-        changes["pincode"] = templePincode.text.trim();
+      // DETECT CHANGES IN KANNADA DEITIES (Using List Comparison)
+      bool kannadaDeitiesChanged = !listEquals(originalKnTranslation?.deities, _prefilledTemplesInKannadam);
+      if (kannadaDeitiesChanged) {
+        knChanges["deities"] = _prefilledTemplesInKannadam;
       }
 
-      if (isChanged(
-        originalTempleData?.phoneNumber,
-        templePhoneNumber.text.trim(),
-      )) {
-        changes["phone_number"] = templePhoneNumber.text.trim();
-      }
+      // IMAGES CHANGE DETECTION
+      bool imagesChanged = !listEquals(originalTempleData?.images, images);
 
-      if (isChanged(originalTempleData?.email, templeEmail.text.trim())) {
-        changes["email"] = templeEmail.text.trim();
-      }
-       if (isChanged(originalTempleData?.deities, templeDeities.text.trim())) {
-        changes["deities"] = templeDeities.text.trim();
-      }
-
-      if (isChanged(
-        originalTempleData?.architecture,
-        templeArchitecture.text.trim(),
-      )) {
-        changes["architecture"] = templeArchitecture.text.trim();
-      }
-
-      final oldImages = List<String>.from(originalTempleData?.images ?? []);
-      final newImages = List<String>.from(images);
-
-      if (oldImages.length != newImages.length ||
-          !const ListEquality().equals(oldImages, newImages)) {
-        changes["images"] = newImages;
-      }
-
-      if (changes.isEmpty) {
-        message = "No changes detected.";
-        isLoading = false;
-        notifyListeners();
-        return;
-      }
-
-      debugPrint("📦 Changes to send: $changes");
+      // // FINAL CHANGE CHECK
+      // if (changes.isEmpty && knChanges.isEmpty && !imagesChanged && !englishDeitiesChanged && !kannadaDeitiesChanged) {
+      //   message = "No changes detected.";
+      //   isLoading = false;
+      //   notifyListeners();
+      //   return;
+      // }
 
       if (userRole == "Super Admin" || userRole == "Admin") {
         final updateTempleDataByAdmin = AddTemple(
@@ -290,39 +332,40 @@ class UpdateTempleViewmodel extends ChangeNotifier {
           phoneNumber: templePhoneNumber.text.trim(),
           email: templeEmail.text.trim(),
           description: templeDescription.text.trim(),
-          deities: templeDeities.text
-              .split(',')
-              .map((e) => e.trim())
-              .where((e) => e.isNotEmpty)
-              .toList(),
-          images: newImages,
+          deities: _prefilledTemples, // Use the latest list
+          images: images,
+          translations: [
+            Translation(
+              languageCode: "kn",
+              name: templeNameInKannadam.text.trim(),
+              address: templeLocationInKannadam.text.trim(),
+              city: templeCityInKannadam.text.trim(),
+              state: templeStateInKannadam.text.trim(),
+              description: templeDescriptionInKannadam.text.trim(),
+              deities: _prefilledTemplesInKannadam, // Use the latest list
+            ),
+          ],
         );
+
         final response = await templeService.updateTemplebyAdmin(
           updateTempleDataByAdmin,
         );
-
         templeUpdated = response.message == "Temple updated successfully";
-        message =
-            response.message ??
-            (templeUpdated
-                ? "Temple updated successfully."
-                : "Temple update failed.");
+        message = response.message ?? "Temple update failed";
       } else {
+        // For non-admins, ensure the "deities" is included in changes if list changed
+        if (englishDeitiesChanged) {
+          changes["deities"] = _prefilledTemples;
+        }
         final payload = {"temple_id": templeId, "changes": changes};
-        debugPrint("📤 Sending payload: $payload");
-
         final response = await templeService.updateTemple(payload);
         templeUpdated = response.code == 201;
-        message =
-            response.message ??
-            (templeUpdated
-                ? "Temple updated successfully."
-                : "Temple update failed.");
+        message = response.message ?? "Temple update failed";
       }
     } catch (e, st) {
       debugPrint("❌ Update failed: $e");
       debugPrint(st.toString());
-      message = "Update failed: $e";
+      message = "Update failed";
       templeUpdated = false;
     } finally {
       isLoading = false;
@@ -368,7 +411,16 @@ class UpdateTempleViewmodel extends ChangeNotifier {
     templeCity.clear();
     templeState.clear();
     templePincode.clear();
-
+    templeNameInKannadam.clear();
+    templeLocationInKannadam.clear();
+    templeDescriptionInKannadam.clear();
+    templeDeitiesInKannadam.clear();
+    templeArchitectureInKannadam.clear();
+    templeCityInKannadam.clear();
+    templeStateInKannadam.clear();
+    
+    _prefilledTemples.clear();
+    _prefilledTemplesInKannadam.clear();
     selectedImages.clear();
     uploadedImageUrls.clear();
     images.clear();

@@ -25,6 +25,7 @@ class _TempleScreenState extends State<TempleScreen> {
   TempleViewModel? viewModel;
   String? token;
   String? role;
+  String? language;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _TempleScreenState extends State<TempleScreen> {
     setState(() {
       token = prefs.getString('authToken');
       role = prefs.getString('userRole');
+      language = prefs.getString('language') ?? 'en';
     });
   }
 
@@ -101,7 +103,7 @@ class _TempleScreenState extends State<TempleScreen> {
                     Expanded(
                       child: Center(
                         child: Text(
-                       AppLocalizations.of(context)!.noTemplesFound,
+                          AppLocalizations.of(context)!.noTemplesFound,
                           style: TextStyle(fontFamily: font),
                         ),
                       ),
@@ -141,7 +143,10 @@ class _TempleScreenState extends State<TempleScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text( AppLocalizations.of(context)!.temples, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.temples,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         if (role == "Super Admin")
           IconButton(
@@ -175,6 +180,7 @@ class _TempleScreenState extends State<TempleScreen> {
             deities: temple.deities ?? [],
             images: temple.images ?? [],
             templeId: temple.id,
+            translations: temple.translations ?? [],
           ),
         );
         viewModel?.reset();
@@ -188,7 +194,6 @@ class _TempleScreenState extends State<TempleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with gradient overlay and temple name
             Stack(
               children: [
                 ClipRRect(
@@ -230,7 +235,9 @@ class _TempleScreenState extends State<TempleScreen> {
                   left: 16,
                   right: 16,
                   child: Text(
-                    temple.name,
+                    language == "kn"
+                        ? temple.translations?.first?.name ?? temple.name
+                        : temple.name,
                     style: AppTextStyles.templeNameTitleBoldStyle.copyWith(
                       color: Colors.white,
                       fontSize: 20,
@@ -264,7 +271,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${temple.city}, ${temple.state}",
+                          "${language == "kn" ? temple.translations?.first?.city ?? temple.city : temple.city}, ${language == "kn" ? temple.translations?.first?.state ?? temple.state : temple.state}",
                           style: AppTextStyles.templeNameDetailsStyle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -300,7 +307,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${temple.address}, ${temple.pincode}",
+                          "${language == "kn" ? temple.translations?.first?.address ?? temple.address : temple.address}, ${temple.pincode}",
                           style: AppTextStyles.templeNameDetailsAddressStyle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -360,7 +367,7 @@ class _TempleScreenState extends State<TempleScreen> {
       child: TextField(
         controller: viewModel?.searchController,
         decoration: InputDecoration(
-          hintText:  AppLocalizations.of(context)!.searchTemples,
+          hintText: AppLocalizations.of(context)!.searchTemples,
           hintStyle: TextStyle(fontFamily: font),
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(

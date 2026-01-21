@@ -1,5 +1,4 @@
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
-import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
@@ -11,21 +10,21 @@ import 'package:nammadaiva_dashboard/model/login_model/update_request_templemode
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_admin/admin_update_templemodal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update-temple_approval-response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_temple_approval/update_temple_approval_modal.dart';
-import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/updatetemple/update_temple_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class TempleService {
   final HttpApiService apiService = HttpApiService();
-  Future<TempleResponse> getTemples({
+Future<TempleResponse> getTemples({
     int page = 1,
     int limit = 10,
     String search = "",
+    String language="kn",
   }) async {
     try {
       final url =
-          '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search';
+          '${UrlConstant.templeUser}?page=$page&limit=$limit&search=$search&language=$language';
       print('Fetching temples: $url');
       dynamic data = await apiService.get(url);
       return TempleResponse.fromJson(data);
@@ -47,9 +46,10 @@ class TempleService {
     String description,
     List<String> deities,
     List<String> images,
+    List<Translation> translations,
   ) async {
     try {
-      final request = AddTemple(
+    final request = AddTemple(
         name: name,
         address: address,
         city: city,
@@ -61,6 +61,7 @@ class TempleService {
         description: description,
         deities: deities,
         images: images,
+        translations: translations,
       );
 
       // Print the request as JSON

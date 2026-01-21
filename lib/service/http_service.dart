@@ -47,26 +47,47 @@ Future<Map<String, dynamic>> post(
   }
 
 Future<Map<String, dynamic>> get(
-    String url,
-  ) async {
-    print(url);
+  String url,
+) async {
+  try {
+    print('Request URL: $url');
+    
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token =    prefs.getString('authToken');
-
-    final response = await http.get(Uri.parse(url), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    print(response.statusCode);
-    print('Bearer $token');
-    if (response.statusCode <= 200) {
-      print('200 good State getMethod');
-      print(response.body);
-      return json.decode(response.body);
+    var token = prefs.getString('authToken');
+    // var language = prefs.getString('language') ?? 'en'; 
+    
+    // print('Preferred language: $language');
+    
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', 
+        // 'Accept-Language': language,
+      },
+    );
+    
+    print('Request headers: ${response.request?.headers}');
+    
+    if (response.statusCode >= 200 && response.statusCode <= 299) {
+      print('200 OK - Success');
+      
+      print('Response Body: ${response.body}');
+      
+      var data = json.decode(response.body);
+      
+      print('Response Body (Decoded): $data');
+      
+      return data;  // Return the decoded data
     } else {
-      throw Exception('Failed to post data: ${response.statusCode}');
+      print('Failed to get data. Status Code: ${response.statusCode}');
+      throw Exception('Failed to get data: ${response.statusCode}');
     }
+  } catch (e) {
+    print('Error: $e');
+    throw Exception('Error during the GET request: $e');
   }
+}
 
 
 

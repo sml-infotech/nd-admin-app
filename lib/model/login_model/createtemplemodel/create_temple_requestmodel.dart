@@ -11,6 +11,8 @@ class AddTemple {
   final String description;
   final List<String>? deities;
   final List<String>? images;
+  final List<Translation> translations;
+
 
   AddTemple({
     this.templeId,
@@ -25,6 +27,7 @@ class AddTemple {
     required this.description,
     this.deities,
     this.images,
+    required this.translations,
   });
 
   // From JSON
@@ -42,6 +45,9 @@ class AddTemple {
       description: json['description'] ?? '',
       deities: List<String>.from(json['deities'] ?? []),
       images: List<String>.from(json['images'] ?? []),
+      translations: (json['translations'] as List<dynamic>? ?? [])
+          .map((e) => Translation.fromJson(e))
+          .toList(),
     );
   }
 
@@ -60,6 +66,52 @@ class AddTemple {
       'description': description,
       'deities': deities,
       'images': images,
+      'translations': translations.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+class Translation {
+  final String languageCode;
+  final String name;
+  final String address;
+  final String city;
+  final String state;
+  final String description;
+  final List<String> deities;
+
+Translation({
+    required this.languageCode,
+    required this.name,
+    required this.address,
+    required this.city,
+    required this.state,
+    required this.description,
+    required this.deities,
+  });
+factory Translation.fromJson(Map<String, dynamic> json) {
+  return Translation(
+    languageCode: json['language_code'] ?? '',
+    name: json['name'] ?? '',
+    address: json['address'] ?? '',
+    city: json['city'] ?? '',
+    state: json['state'] ?? '',
+    description: json['description'] ?? '',
+    deities: json['deities'] != null
+        ? List<String>.from(json['deities'])
+        : <String>[],
+  );
+}
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'language_code': languageCode,
+      'name': name,
+      'address': address,
+      'city': city,
+      'state': state,
+      'description': description,
+      'deities': deities,
     };
   }
 }

@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
-import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
-import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
-class AddTempleScreen extends StatefulWidget {
-  const AddTempleScreen({super.key});
+class AddTempleScreenInKannadam extends StatefulWidget {
+  const AddTempleScreenInKannadam({super.key});
 
   @override
-  State<AddTempleScreen> createState() => _AddTempleScreenState();
+  State<AddTempleScreenInKannadam> createState() =>
+      _AddTempleScreenInKannadamState();
 }
 
-class _AddTempleScreenState extends State<AddTempleScreen> {
+class _AddTempleScreenInKannadamState extends State<AddTempleScreenInKannadam> {
   late AddTempleViewmodel templeViewmodel;
-  final ImagePicker _picker = ImagePicker();
-  @override
-  void dispose() {
-    templeViewmodel.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+
     templeViewmodel = Provider.of<AddTempleViewmodel>(context);
 
     return Scaffold(
@@ -70,65 +64,45 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                       hintText: AppLocalizations.of(context)!.templeName,
                       labelText: AppLocalizations.of(context)!.templeName,
                       isFromPassword: false,
-                      controller: templeViewmodel.templeName,
+                      controller: templeViewmodel.templeNameInKannadam,
                     ),
                     CommonTextField(
                       hintText: AppLocalizations.of(context)!.address,
                       labelText: AppLocalizations.of(context)!.address,
                       isFromPassword: false,
-                      controller: templeViewmodel.address,
+                      controller: templeViewmodel.addressInKannadam,
                     ),
                     CommonTextField(
                       hintText: AppLocalizations.of(context)!.city,
                       labelText: AppLocalizations.of(context)!.city,
                       isFromPassword: false,
-                      controller: templeViewmodel.city,
+                      controller: templeViewmodel.cityInKannadam,
                     ),
                     CommonTextField(
                       hintText: AppLocalizations.of(context)!.state,
                       labelText: AppLocalizations.of(context)!.state,
                       isFromPassword: false,
-                      controller: templeViewmodel.state,
-                    ),
-                    CommonTextField(
-                      hintText: AppLocalizations.of(context)!.pincode,
-                      labelText: AppLocalizations.of(context)!.pincode,
-                      isFromPassword: false,
-                      controller: templeViewmodel.pincode,
+                      controller: templeViewmodel.stateInKannadam,
                     ),
                     CommonTextField(
                       hintText: AppLocalizations.of(context)!.architecture,
                       labelText: AppLocalizations.of(context)!.architecture,
                       isFromPassword: false,
-                      controller: templeViewmodel.architecture,
-                    ),
-                    CommonTextField(
-                      hintText: AppLocalizations.of(context)!.email,
-                      labelText: AppLocalizations.of(context)!.email,
-                      isFromPassword: false,
-                      controller: templeViewmodel.email,
-                    ),
-                    CommonTextField(
-                      hintText: AppLocalizations.of(context)!.phone,
-                      labelText: AppLocalizations.of(context)!.phone,
-                      isFromPassword: false,
-                      controller: templeViewmodel.phone,
-                      isFromPhone: true,
+                      controller: templeViewmodel.architectureInKannadam,
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: TempleInputWidget(
-                        list: templeViewmodel.temples,
-                        onAdd: (val) => templeViewmodel.addTemple(val),
-                        onRemove: (idx) => templeViewmodel.removeTemple(idx),
+                        list: templeViewmodel.templesInKannadam,
+                        onAdd: (val) => templeViewmodel.addTempleInKannadam(val),
+                        onRemove: (idx) => templeViewmodel.removeTempleInKannadam(idx),
                       ),
                     ),
-                    _buildImagePicker(),
                     CommonTextField(
                       hintText: AppLocalizations.of(context)!.description,
                       labelText: AppLocalizations.of(context)!.description,
                       isFromPassword: false,
-                      controller: templeViewmodel.description,
+                      controller: templeViewmodel.descriptionInKannadam,
                       isFromDescription: true,
                     ),
                     addTempleButton(),
@@ -136,59 +110,20 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
                 ),
               ),
             ),
+            if (templeViewmodel.isLoading)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildImagePicker() {
-    final uploadedCount = templeViewmodel.uploadedImageUrls.length;
-
-    final allImages = [
-      ...templeViewmodel.uploadedImageUrls,
-      ...templeViewmodel.selectedImages.map((e) => e.path),
-    ];
-
-    return MultiImagePickerSection(
-      imagePaths: allImages,
-      onAddImages: _pickImages,
-      onRemoveImage: (index) {
-        if (index >= uploadedCount) {
-          final localIndex = index - uploadedCount;
-          templeViewmodel.removeImage(localIndex);
-        } else {
-          templeViewmodel.uploadedImageUrls.removeAt(index);
-          templeViewmodel.notifyListeners();
-        }
-      },
-    );
-  }
-
-  Future<void> _pickImages() async {
-    final pickedFiles = await _picker.pickMultiImage();
-    if (pickedFiles.isNotEmpty) {
-      final imagePaths = pickedFiles.map((e) => e.path).toList();
-      templeViewmodel.addImages(imagePaths);
-    }
-  }
-
-  Widget nammaDaivaCreateAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const Spacer(),
-        Text(
-          AppLocalizations.of(context)!.addTemple,
-          style: AppTextStyles.appBarTitleStyle,
-        ),
-        const Spacer(),
-        const SizedBox(width: 48),
-      ],
     );
   }
 
@@ -204,11 +139,18 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
               onPressed: () async {
                 FocusScope.of(context).unfocus();
 
-                if (templeViewmodel.validateAddTemple()) {
-                  Navigator.pushNamed(
-                    context,
-                    StringsRoute.addTempleScreeninKannadam,
-                  );
+                if (templeViewmodel.validateAddTempleKannadam()) {
+                  templeViewmodel.isLoading = true;
+                  await templeViewmodel.presignedUrl();
+                  Fluttertoast.showToast(msg: templeViewmodel.message ?? "");
+                  if (templeViewmodel.templeAdded == true) {
+                    Navigator.pushNamed(context, StringsRoute.templeScreen);
+                    setState(() {
+                      templeViewmodel.templeAdded = false;
+                    });
+                    templeViewmodel.message = "";
+                    templeViewmodel.dispose();
+                  }
                 } else {
                   Fluttertoast.showToast(
                     msg: templeViewmodel.message,
@@ -233,6 +175,25 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget nammaDaivaCreateAppBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Image.asset(ImageStrings.backbutton),
+          onPressed: () => Navigator.pop(context),
+        ),
+        const Spacer(),
+        Text(
+          AppLocalizations.of(context)!.addTemple,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
+        const Spacer(),
+        const SizedBox(width: 48),
+      ],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
@@ -18,6 +19,14 @@ class AddTempleViewmodel extends ChangeNotifier {
   TextEditingController phone = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController templeController = TextEditingController();
+
+  TextEditingController templeNameInKannadam = TextEditingController();
+  TextEditingController addressInKannadam = TextEditingController();
+  TextEditingController cityInKannadam = TextEditingController();
+  TextEditingController stateInKannadam = TextEditingController();
+  TextEditingController architectureInKannadam = TextEditingController();
+  TextEditingController descriptionInKannadam = TextEditingController();
+
   var authService = TempleService();
   var userService = UserService();
   List<XFile> selectedImages = [];
@@ -28,6 +37,8 @@ class AddTempleViewmodel extends ChangeNotifier {
   List<String> uploadedImageUrls = [];
 
   final List<String> temples = [];
+  final List<String> templesInKannadam = [];
+
   bool templeAdded = false;
   AddTempleViewmodel() {
     templeName.addListener(_onChange);
@@ -133,6 +144,16 @@ class AddTempleViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addTempleInKannadam(String name) {
+    templesInKannadam.add(name);
+    notifyListeners();
+  }
+
+  void removeTempleInKannadam(int index) {
+    templesInKannadam.removeAt(index);
+    notifyListeners();
+  }
+
   void removeTemple(int index) {
     temples.removeAt(index);
     notifyListeners();
@@ -195,6 +216,41 @@ class AddTempleViewmodel extends ChangeNotifier {
     return true;
   }
 
+  bool validateAddTempleKannadam() {
+    if (templeNameInKannadam.text.trim().isEmpty) {
+      message = "Temple name cannot be empty";
+      return false;
+    }
+    if (addressInKannadam.text.trim().isEmpty) {
+      message = "Address cannot be empty";
+      return false;
+    }
+    if (cityInKannadam.text.trim().isEmpty) {
+      message = "City cannot be empty";
+      return false;
+    }
+    if (stateInKannadam.text.trim().isEmpty) {
+      message = "State cannot be empty";
+      return false;
+    }
+
+    if (architectureInKannadam.text.trim().isEmpty) {
+      message = "Architecture cannot be empty";
+      return false;
+    }
+    if (temples.isEmpty) {
+      message = "Please add at least one deity";
+      return false;
+    }
+
+    if (descriptionInKannadam.text.trim().isEmpty) {
+      message = "Description cannot be empty";
+      return false;
+    }
+
+    return true;
+  }
+
   bool isValidEmail(String email) {
     final regex = RegExp(r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$');
     return regex.hasMatch(email);
@@ -236,6 +292,33 @@ class AddTempleViewmodel extends ChangeNotifier {
     try {
       isLoading = true;
       notifyListeners();
+
+      final request = AddTemple(
+        name: templeName.text.trim(),
+        address: address.text.trim(),
+        city: city.text.trim(),
+        state: state.text.trim(),
+        pincode: pincode.text.trim(),
+        architecture: architecture.text.trim(),
+        phoneNumber: phone.text.trim(),
+        email: email.text.trim(),
+        description: description.text.trim(),
+        deities: temples,
+        images: uploadedImageUrls,
+        translations: [
+          Translation(
+            languageCode: 'kn',
+            name: templeNameInKannadam.text.trim(),
+            address: addressInKannadam.text.trim(),
+            city: cityInKannadam.text.trim(),
+            state: stateInKannadam.text.trim(),
+            description: descriptionInKannadam.text.trim(),
+            deities: temples,
+          ),
+        ],
+      );
+      print(">>>>>>>>>>>>>>> Request JSON >>>>>>>>>>>${request.toJson()}");
+
       final response = await authService.addTemple(
         templeName.text.trim(),
         address.text.trim(),
@@ -248,6 +331,17 @@ class AddTempleViewmodel extends ChangeNotifier {
         description.text.trim(),
         temples,
         uploadedImageUrls,
+        [
+          Translation(
+            languageCode: 'kn',
+            name: templeNameInKannadam.text.trim(),
+            address: addressInKannadam.text.trim(),
+            city: cityInKannadam.text.trim(),
+            state: stateInKannadam.text.trim(),
+            description: descriptionInKannadam.text.trim(),
+            deities: temples,
+          ),
+        ],
       );
       if (response.code == 201) {
         print("->>> $response");

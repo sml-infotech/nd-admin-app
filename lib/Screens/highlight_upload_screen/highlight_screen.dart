@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/media_viewer.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
@@ -174,43 +175,65 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         : viewModel.inactiveHighlights;
     return Expanded(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(0.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: _showPickerOptions,
-              child: Container(
-                height: 220,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[400]!),
-                ),
-                child: _buildPreview(),
-              ),
+            SizedBox(height: 10),
+            CommonTextField(
+              hintText: "Tap to select HighLights",
+              labelText: "Title",
+              isFromPassword: false,
+              controller: viewModel.titleController,
             ),
-            const SizedBox(height: 15),
-            uploadButton(viewModel),
-            const SizedBox(height: 25),
-
+            SizedBox(height: 15),
+            CommonTextField(
+              hintText: "Tap to select HighLights",
+              labelText: "Description",
+              isFromPassword: false,
+              controller: viewModel.descriptionController,
+            ),
+            SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
+              padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 6),
+              child: Column(
                 children: [
-                  _segmentButton("Active", 0),
-                  _segmentButton("Inactive", 1),
+                  GestureDetector(
+                    onTap: _showPickerOptions,
+                    child: Container(
+                      height: 220,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[400]!),
+                      ),
+                      child: _buildPreview(),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  uploadButton(viewModel),
+                  const SizedBox(height: 25),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        _segmentButton("Active", 0),
+                        _segmentButton("Inactive", 1),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 40),
+                  activeAndInactiveSegment(),
+                  const SizedBox(height: 10),
+                  if (currentList.isNotEmpty) _buildMediaGrid(),
+                  if (currentList.isEmpty) ...[
+                    const SizedBox(height: 100),
+                    addHighlightUnderLineButton(),
+                  ],
                 ],
               ),
             ),
-            const Divider(height: 40),
-            activeAndInactiveSegment(),
-            const SizedBox(height: 10),
-            if (currentList.isNotEmpty) _buildMediaGrid(),
-            if (currentList.isEmpty) ...[
-              const SizedBox(height: 100),
-              addHighlightUnderLineButton(),
-            ],
           ],
         ),
       ),
@@ -466,6 +489,16 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                 }),
               ),
             ),
+            Positioned(
+              top: 6,
+              right: 28,
+              child: GestureDetector(
+                onTap: () {
+                  _showEditBottomSheet(context, viewModel, id);
+                },
+                child: Icon(Icons.edit, color: Colors.grey[600], size: 20),
+              ),
+            ),
           ],
         );
       },
@@ -546,6 +579,100 @@ void _showMediaDialog(BuildContext context, String url) {
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.all(20),
         child: MediaDialogContent(url: url),
+      );
+    },
+  );
+}
+
+void _showEditBottomSheet(
+  BuildContext context,
+  HighlightViewmodel viewModel,
+  String id,
+) {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: 0,
+          right: 0,
+          top: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                height: 4,
+                width: 40,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+              child: Text(
+                "Edit Details",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: font,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            CommonTextField(
+              hintText: "Tap to select HighLights",
+              labelText: "Title",
+              isFromPassword: false,
+              controller: viewModel.titleController,
+            ),
+            SizedBox(height: 15),
+            CommonTextField(
+              hintText: "Tap to select HighLights",
+              labelText: "Description",
+              isFromPassword: false,
+              controller: viewModel.descriptionController,
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                 
+    Navigator.pop(context);
+   await viewModel.editHighlight(id, viewModel.titleController.text, viewModel.descriptionController.text);
+                
+                 
+                  },
+                  child: Text(
+                    "Update",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: font,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     },
   );

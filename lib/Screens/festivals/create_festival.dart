@@ -131,10 +131,10 @@ class _CreateFestivalState extends State<CreateFestival> {
                             SizedBox(height: screenHeight * 0.02),
                             descriptionTextField(),
                             SizedBox(height: screenHeight * 0.02),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: TempleInputWidget(viewmodel: viewmodel),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            //   child: TempleInputWidget(viewmodel: viewmodel),
+                            // ),
                             SizedBox(height: screenHeight * 0.02),
                             dateWidget(),
                             timePickerWidget(),
