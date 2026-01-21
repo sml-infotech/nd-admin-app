@@ -20,7 +20,7 @@ Future<TempleResponse> getTemples({
     int page = 1,
     int limit = 10,
     String search = "",
-       String language="en",
+    String language="kn",
   }) async {
     try {
       final url =

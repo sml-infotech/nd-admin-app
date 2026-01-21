@@ -25,7 +25,7 @@ class TempleUpdateScreen extends StatefulWidget {
 
 class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
   late UpdateTempleViewmodel viewModel;
-  bool _isDataLoaded = false; // ensure data sets only once
+  bool _isDataLoaded = false; 
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -40,7 +40,6 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
 
   void _setInitialData() {
     viewModel.originalTempleData = widget.arguments;
-
     viewModel.templeName.text = widget.arguments.name ?? '';
     viewModel.templeLocation.text = widget.arguments.address ?? '';
     viewModel.templeDescription.text = widget.arguments.description ?? '';
@@ -52,11 +51,8 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
     viewModel.templeState.text = widget.arguments.state ?? "";
     viewModel.templePincode.text = widget.arguments.pincode ?? "";
     viewModel.images = List<String>.from(widget.arguments.images ?? []);
-
     viewModel.prefilledTemples = List<String>.from(widget.arguments.deities);
-    print(
-      "Prefilled Deities: ${widget.arguments.translations.firstWhere((t) => t.languageCode == 'en', orElse: () => widget.arguments.translations.first).deities}",
-    );
+    print("Prefilled Deities: ${viewModel.prefilledTemples}");
   }
 
   @override
@@ -248,11 +244,9 @@ class _TempleUpdateScreenState extends State<TempleUpdateScreen> {
       onAddImages: _pickImages,
       onRemoveImage: (index) {
         if (index >= uploadedCount) {
-          // Removing from selectedImages
           final localIndex = index - uploadedCount;
           viewModel.removeImage(localIndex);
         } else {
-          // Removing from uploadedImageUrls
           viewModel.uploadedImageUrls.removeAt(index);
           viewModel.notifyListeners();
         }

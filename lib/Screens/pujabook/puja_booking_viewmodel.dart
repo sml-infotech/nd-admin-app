@@ -26,13 +26,17 @@ class CreatePujaViewmodel extends ChangeNotifier {
   List<Temple> templeData = [];
   List<String> templeList = [];
   List<String> uploadedImageUrls = [];
-
+List<String> deitiesListEn = [];
+  List<String> deitiesListKn = [];
+  List<String> selectedDeities = [];
   Temple? selectedTemple;
+  
   String message = "";
-  String selectedDeities = "";
+  // String selectedDeities = "";
   String selectedDeityId = "";
   String? presignedURL;
   String? selectedTempleId;
+  
   String? pujaId;
 
   bool bookingCutoff = false;
@@ -46,20 +50,19 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   int page = 1;
   final int limit = 10;
-final TextEditingController benefitController = TextEditingController();
+  final TextEditingController benefitController = TextEditingController();
 
-List<Benefit> benefits = [];
+  List<Benefit> benefits = [];
 
-void addBenefit(String benefit) {
-  benefits.add(Benefit(description: benefit));
-  notifyListeners();
-}
+  void addBenefit(String benefit) {
+    benefits.add(Benefit(description: benefit));
+    notifyListeners();
+  }
 
-void removeBenefit(int index) {
-  benefits.removeAt(index);
-  notifyListeners();
-}
-
+  void removeBenefit(int index) {
+    benefits.removeAt(index);
+    notifyListeners();
+  }
 
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
@@ -207,14 +210,17 @@ void removeBenefit(int index) {
       page = 1;
     }
 
-    final response = await templeService.getTemples(page: page, limit: limit);
-
+    final response = await templeService.getTemples(
+      page: page,
+      limit: limit,
+      language: "kn",
+    );
     if (response.data != null && response.data!.isNotEmpty) {
       templeData.addAll(response.data!);
       templeList = templeData.map((t) => t.name).toList();
+      print(">>>>>>>>>>>>${templeData.first.translations}");
       page++;
     }
-
     isLoading = false;
     notifyListeners();
   }
@@ -248,9 +254,8 @@ void removeBenefit(int index) {
         selectedStartDate.toString(),
         selectedEndDate.toString(),
         requestDays,
-        timeSlots,benefits
-        
-
+        timeSlots,
+        benefits,
       );
 
       if (response.code == 200) {
@@ -363,7 +368,7 @@ void removeBenefit(int index) {
     deities = [];
     deitiesList = [];
     selectedTemple = null;
-    selectedDeities = "";
+    // selectedDeities = "";
     selectedDeityId = "";
 
     bookingCutoff = false;
@@ -387,17 +392,28 @@ void removeBenefit(int index) {
     cutOffDay = 1;
   }
 
-  void setSelectedTemple(Temple temple) {
-    selectedTemple = temple;
-    if (temple.deities != null && temple.deities!.isNotEmpty) {
-      deitiesList = List<String>.from(temple.deities!);
-    } else {
-      deitiesList = [];
-    }
-    deities = [];
-    deities = List<String>.from(deities);
-    notifyListeners();
+void setSelectedTemple(Temple temple) {
+  selectedTemple = temple;
+  selectedTempleId = temple.id;
+
+   deities = []; 
+   selectedDeities = []; 
+   deitiesListEn = List<String>.from(temple.deities ?? []);
+
+  // 2. Populate Kannada Deities from translations
+  if (temple.translations != null && temple.translations!.isNotEmpty) {
+        deitiesListKn = [];
+
+    deitiesListKn = List<String>.from(temple.translations!.first.deities ?? []);
+  } else {
+    deitiesListKn = [];
   }
+
+  // 3. Keep deitiesList (legacy) synced to current locale or default to English
+  deitiesList = deitiesListEn; 
+
+  notifyListeners();
+}
 
   @override
   void dispose() {

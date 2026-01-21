@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Common/benefits.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +118,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
       if (matchedTemple.id.isNotEmpty) {
         viewmodel.selectedTempleId = matchedTemple.id;
-        viewmodel.setSelectedTemple(matchedTemple);
+        viewmodel.setSelectedTemple(matchedTemple,);
       }
 
       if (args.deities_name != null && args.deities_name!.isNotEmpty) {
@@ -254,39 +255,42 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 
-  Widget _buildTempleDropdown() {
-    return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.temple,
-      labelText: AppLocalizations.of(context)!.temple,
-      items: viewmodel.templeData.map((t) => t.name).toList(),
-      selectedValue: viewmodel.selectedTemple?.name,
-      paddingSize: 16,
-      onChanged: (value) {
-        if (value == null) return;
+// Inside PujaBookingScreen
+Widget _buildTempleDropdown() {
+  final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
 
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (t) => t.name == value,
-        );
+  return CommonDropdownField(
+    hintText: AppLocalizations.of(context)!.temple,
+    labelText: AppLocalizations.of(context)!.temple,
+    items: viewmodel.templeData.map((t) => isKannada ? (t.translations?.first.name ?? t.name) : t.name).toList(),
+    selectedValue: isKannada
+        ? viewmodel.selectedTemple?.translations?.first.name
+        : viewmodel.selectedTemple?.name,
+    paddingSize: 16,
+    onChanged: (value) {
+      if (value == null) return;
+      final selectedTemple = viewmodel.templeData.firstWhere(
+        (t) => t.name == value || (t.translations?.first.name == value),
+      );
+      viewmodel.setSelectedTemple(selectedTemple);
+      viewmodel.selectedDeities = [];
+    },
+  );
+}
+Widget _buildDeitiesDropdown() {
+  final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
 
-        setState(() {
-          viewmodel.deities.clear();
-          viewmodel.deitiesList = [];
-          viewmodel.selectedTempleId = selectedTemple.id;
-          viewmodel.setSelectedTemple(selectedTemple);
-          viewmodel.notifyListeners();
-        });
-      },
-    );
-  }
-
-  Widget _buildDeitiesDropdown() {
-    return DeitiesDropdown(
-      items: viewmodel.deitiesList,
-      selectedItems: viewmodel.deities,
-      onSelectionChanged: (selected) =>
-          setState(() => viewmodel.deities = selected),
-    );
-  }
+  return DeitiesDropdown(
+    // Dynamically choose the correct list
+    items: isKannada ? viewmodel.deitiesListKn : viewmodel.deitiesListEn,
+    selectedItems: viewmodel.selectedDeities,
+    onSelectionChanged: (selected) {
+      setState(() {
+        viewmodel.selectedDeities = selected;
+      });
+    },
+  );
+}
 
   Widget _buildPujaDetails() {
     return Column(
@@ -597,7 +601,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-
+                Navigator.pushNamed(context, StringsRoute.addPujaInkn,arguments: widget.pujaArgumrnts,);
                 final isUpdate =
                     widget.pujaArgumrnts != null &&
                     widget.pujaArgumrnts!.puja_id.isNotEmpty;

@@ -19,6 +19,7 @@ import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_password_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
@@ -192,12 +193,19 @@ class AppRouter {
           builder: (_) => AddTempleScreenInKannadam(),
         );
       case StringsRoute.updateTempleKn:
-       TempleDetailsArguments args =
+        TempleDetailsArguments args =
             settings.arguments as TempleDetailsArguments;
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => UpdateTempleKn(arguments: args),
         );
+      case StringsRoute.addPujaInkn:
+        PujaArguments args = settings.arguments as PujaArguments;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => PujaBookingKn(pujaArgumrnts: args),
+        );
+
       default:
         throw Exception('Route ${settings.name} not implemented');
     }
