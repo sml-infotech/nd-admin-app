@@ -50,7 +50,7 @@ class UserService {
         '${UrlConstant.delete_festival}/$festivalId',
       );
 
-print("Delete festival response: $data");
+      print("Delete festival response: $data");
       return DeleteFestivalResponse.fromJson(data);
     } catch (e) {
       throw Exception('Delete festival API failed: $e');
@@ -59,8 +59,11 @@ print("Delete festival response: $data");
 
   Future<CreateFestivalResponse> createFestivals(
     String name,
+    String knName,
     String description,
+    String knDescription,
     List<String> deityNames,
+    List<String> deityNamesKn,
     String startDate,
     String endDate,
     String startTime,
@@ -78,6 +81,14 @@ print("Delete festival response: $data");
         endTime: endTime,
         images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
         isActive: true,
+        translations: [
+          CreateFestivalTranslation(
+            languageCode: "kn",
+            name: knName,
+            description: knDescription,
+            deities: deityNamesKn,
+          ),
+        ],
       );
 
       print(">>>>.${createUser.toJson()}");
@@ -95,8 +106,11 @@ print("Delete festival response: $data");
 
   Future<CreateFestivalResponse> updateFestival(
     String name,
+    String knName,
     String description,
+    String knDescription,
     List<String> deityNames,
+    List<String> deityNamesKn,
     String startDate,
     String endDate,
     String startTime,
@@ -115,6 +129,14 @@ print("Delete festival response: $data");
         endTime: endTime,
         images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
         isActive: true,
+        translations: [
+          CreateFestivalTranslation(
+            languageCode: "kn",
+            name: knName,
+            description: knDescription,
+            deities: deityNamesKn,
+          ),
+        ],
       );
 
       print(">>>>.${updateFestival.toJson()}");
@@ -161,7 +183,7 @@ print("Delete festival response: $data");
 
   Future<FestivalResponse> fetchFestivals(int page) async {
     try {
-      final url = '${UrlConstant.list_festivals}?page=$page';
+      final url = '${UrlConstant.list_festivals}?page=$page&language=kn';
       print('Fetching users: $url');
       dynamic data = await apiService.get(url);
       return FestivalResponse.fromJson(data);

@@ -30,4 +30,5 @@ class StringsRoute {
   static const String updateTempleKn = "/updateTempleKn";
   static const String addPujaInkn = '/addPujaInkannadam';
   static const String createEventInKn = '/createEventInKn';
+  static const String createFestivalKn = '/CreateFestivalKn';
 }

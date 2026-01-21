@@ -38,6 +38,7 @@ import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 
 import '../Screens/create_event/create_event_kn.dart';
+import '../Screens/festivals/create_festival_kn.dart';
 
 class AppRouter {
   Route<dynamic>? route(RouteSettings settings) {
@@ -212,6 +213,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateEventKn(event: args),
+        );
+      case StringsRoute.createFestivalKn:
+        final FestivalArgument? args = settings.arguments as FestivalArgument?;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateFestivalKn(arguments: args),
         );
 
       default:
