@@ -153,7 +153,6 @@ class _PujaBookingKnState extends State<PujaBookingKn> {
     return CommonDropdownField(
       hintText: AppLocalizations.of(context)!.temple,
       labelText: AppLocalizations.of(context)!.temple,
-      // Use the name from the translation, or fallback to English name
       items: viewmodel.templeData
           .map(
             (t) => (t.translations != null && t.translations!.isNotEmpty)
@@ -161,7 +160,6 @@ class _PujaBookingKnState extends State<PujaBookingKn> {
                 : t.name,
           )
           .toList(),
-      // Correctly find the name of the currently selected temple in the ViewModel
       selectedValue:
           (viewmodel.selectedTemple?.translations != null &&
               viewmodel.selectedTemple!.translations!.isNotEmpty)
@@ -174,7 +172,7 @@ class _PujaBookingKnState extends State<PujaBookingKn> {
           (t) => (t.translations?.first.name == value || t.name == value),
         );
         viewmodel.setSelectedTemple(selectedTemple);
-        setState(() {}); // Ensure the UI updates when temple changes
+        setState(() {}); 
       },
     );
   }
@@ -182,12 +180,10 @@ class _PujaBookingKnState extends State<PujaBookingKn> {
   Widget _buildDeitiesDropdownforkn() {
     return DeitiesDropdown(
       items: viewmodel.deitiesOptionsKn,
-      // selectedDeitiesKn contains only the specific deities chosen for this Puja
       selectedItems: viewmodel.selectedDeitiesKn,
       onSelectionChanged: (selected) {
         setState(() {
           viewmodel.selectedDeitiesKn = selected;
-          // Map Kannada selections back to English for the backend API
           viewmodel.selectedDeitiesEn = selected.map((knName) {
             int index = viewmodel.deitiesOptionsKn.indexOf(knName);
             return (index != -1) ? viewmodel.deitiesOptionsEn[index] : knName;

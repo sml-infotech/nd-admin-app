@@ -6,7 +6,9 @@ import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_list_modal.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MantraList extends StatefulWidget {
@@ -24,7 +26,15 @@ class _MantraListState extends State<MantraList> {
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _controller.addListener(_paginationListener);
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      viewmodel.languageCode = prefs.getString('language') ?? 'en';
+    });
   }
 
   @override
@@ -86,9 +96,7 @@ class _MantraListState extends State<MantraList> {
 
                     return mantraItem(
                       imageUrl: item.imageUrl ?? "",
-                      title: item.mantraName ?? "",
-                      mantra: item.mantra ?? "",
-                      mantraId: item.id ?? "",
+                      item: item,
                     );
                   },
                 ),
@@ -115,11 +123,12 @@ class _MantraListState extends State<MantraList> {
             Navigator.pushNamed(
               context,
               StringsRoute.createMantra,
-              arguments: UpdateMantra(
+              arguments: UpdateMantraArguments(
                 mantraName: "",
                 mantra: "",
                 image: "",
                 mantraID: "",
+                translations: [],
               ),
             );
             viewmodel.reset();
@@ -130,12 +139,7 @@ class _MantraListState extends State<MantraList> {
     );
   }
 
-  Widget mantraItem({
-    required String imageUrl,
-    required String title,
-    required String mantra,
-    required String mantraId,
-  }) {
+  Widget mantraItem({required String imageUrl, required MantraItem item}) {
     return Column(
       children: [
         Padding(
@@ -145,14 +149,7 @@ class _MantraListState extends State<MantraList> {
             children: [
               roundedImage(imageUrl),
               const SizedBox(width: 15),
-              titleAndContent(
-                title,
-                mantra,
-                context,
-                imageUrl,
-                mantraId,
-                viewmodel,
-              ),
+              titleAndContent(item, context, viewmodel),
             ],
           ),
         ),
@@ -184,50 +181,63 @@ Widget roundedImage(String imageUrl) {
 }
 
 Widget titleAndContent(
-  String title,
-  String mantra,
+  MantraItem mantraData,
   BuildContext context,
-  String image,
-  String mantraId,
   MantraListViewmodel viewmodel,
 ) {
+  bool isKn = viewmodel.languageCode == "kn";
+  bool hasTranslation =
+      mantraData.translations != null && mantraData.translations!.isNotEmpty;
+
+  String displayTitle = (isKn && hasTranslation)
+      ? (mantraData.translations!.first.mantraName ?? "")
+      : mantraData.mantraName;
+
+  String displayMantra = (isKn && hasTranslation)
+      ? (mantraData.translations!.first.mantra ?? mantraData.mantra)
+      : mantraData.mantra;
+
   return Expanded(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: font,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(
+                displayTitle,
+                style: TextStyle(
+                  fontFamily: font,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            Spacer(),
             IconButton(
               onPressed: () {
+                viewmodel.reset();
                 Navigator.pushNamed(
                   context,
                   StringsRoute.createMantra,
-                  arguments: UpdateMantra(
-                    mantraName: title,
-                    mantra: mantra,
-                    image: image,
-                    mantraID: mantraId,
+                  arguments: UpdateMantraArguments(
+                    mantraName: displayTitle,
+                    mantra: displayMantra,
+                    image: mantraData.imageUrl,
+                    mantraID: mantraData.id,
+                    translations: mantraData.translations,
                   ),
                 );
-                viewmodel.reset();
               },
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               iconSize: 20,
             ),
           ],
         ),
         const SizedBox(height: 4),
         Text(
-          mantra,
+          displayMantra,
           style: TextStyle(
             fontSize: 14,
             fontFamily: font,

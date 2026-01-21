@@ -5,14 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
 import 'package:provider/provider.dart' show Provider;
 import 'create_mantra_viewmodel.dart';
 
 class CreateMantraScreen extends StatefulWidget {
-  final UpdateMantra? updateMantra;
+  final UpdateMantraArguments? updateMantra;
   const CreateMantraScreen({super.key, required this.updateMantra});
 
   @override
@@ -32,10 +34,21 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
   }
 
   void loadData() {
+    if (widget.updateMantra == null) return;
+
     viewModel.mantraName.text = widget.updateMantra!.mantraName;
     viewModel.mantra.text = widget.updateMantra!.mantra;
     viewModel.uploadedImageUrl = widget.updateMantra!.image;
     viewModel.selectedImage = null;
+
+    final knTranslation = widget.updateMantra!.translations?.firstWhere(
+      (t) => t.languageCode == 'kn',
+      orElse: () =>
+          MantraTranslation(languageCode: 'kn', mantraName: '', mantra: ''),
+    );
+
+    viewModel.mantraNameInKannadam.text = knTranslation?.mantraName ?? "";
+    viewModel.mantraInKannadam.text = knTranslation?.mantra ?? "";
   }
 
   Future<void> pickImage() async {
@@ -91,7 +104,6 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 16),
-
                         mantraTextField(),
                         const SizedBox(height: 16),
                         mantraNameTextField(),
@@ -233,19 +245,24 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                if (await viewmodel.validateForm()) {
-                  if (widget.updateMantra!.mantra.isEmpty) {
-                    await viewmodel.createMantra();
-                  } else {
-                    await viewmodel.updateMantra(
-                      widget.updateMantra!.mantraID!,
-                    );
-                  }
-                  if (viewmodel.isCompleted) {
-                    Navigator.pop(context);
-                  }
-                  viewmodel.isLoading = false;
-                }
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.createMantrainKn,
+                  arguments: widget.updateMantra,
+                );
+                // if (await viewmodel.validateForm()) {
+                //   if (widget.updateMantra!.mantra.isEmpty) {
+                //     await viewmodel.createMantra();
+                //   } else {
+                //     await viewmodel.updateMantra(
+                //       widget.updateMantra!.mantraID!,
+                //     );
+                //   }
+                //   if (viewmodel.isCompleted) {
+                //     Navigator.pop(context);
+                //   }
+                //   viewmodel.isLoading = false;
+                // }
 
                 // Fluttertoast.showToast(msg: viewmodel.message ?? "");
                 viewmodel.message = "";

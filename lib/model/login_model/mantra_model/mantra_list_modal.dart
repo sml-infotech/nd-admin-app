@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
+
 class MantraListModal {
   final int code;
   final String message;
@@ -36,6 +38,7 @@ class MantraItem {
   final String imageUrl;
   final String createdAt;
   final String updatedAt;
+  final List<MantraTranslation> translations;
 
   MantraItem({
     required this.id,
@@ -44,6 +47,7 @@ class MantraItem {
     required this.imageUrl,
     required this.createdAt,
     required this.updatedAt,
+    required this.translations,
   });
 
   factory MantraItem.fromJson(Map<String, dynamic> json) {
@@ -54,6 +58,9 @@ class MantraItem {
       imageUrl: json["deity_image_url"],
       createdAt: json["created_at"],
       updatedAt: json["updated_at"],
+      translations: (json["translations"] as List)
+          .map((item) => MantraTranslation.fromJson(item))
+          .toList(),
     );
   }
 }
