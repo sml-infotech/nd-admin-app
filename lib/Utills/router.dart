@@ -11,6 +11,7 @@ import 'package:nammadaiva_dashboard/Screens/festivals/create_festival.dart';
 import 'package:nammadaiva_dashboard/Screens/festivals/festival_list.dart';
 import 'package:nammadaiva_dashboard/Screens/festivals/festival_list_detail.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
+import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/add_highlight_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
@@ -161,7 +162,8 @@ class AppRouter {
           builder: (_) => MantraList(),
         );
       case StringsRoute.createMantra:
-        UpdateMantraArguments args = settings.arguments as UpdateMantraArguments;
+        UpdateMantraArguments args =
+            settings.arguments as UpdateMantraArguments;
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateMantraScreen(updateMantra: args),
@@ -208,11 +210,17 @@ class AppRouter {
           builder: (_) => PujaBookingKn(pujaArgumrnts: args),
         );
       case StringsRoute.createMantrainKn:
-        UpdateMantraArguments args = settings.arguments as UpdateMantraArguments;
+        UpdateMantraArguments args =
+            settings.arguments as UpdateMantraArguments;
 
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateMantraInKannadam(updateMantra: args),
+        );
+      case StringsRoute.highlightUploadinKn:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => AddHighlightInKannadam(),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');

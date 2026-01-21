@@ -16,6 +16,8 @@ class HighlightViewmodel extends ChangeNotifier {
   final HighlightService highlightService = HighlightService();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+   TextEditingController titleControllerInKannadam = TextEditingController();
+  TextEditingController descriptionControllerInKannadam = TextEditingController();
 
   bool isLoading = false;
   String message = '';

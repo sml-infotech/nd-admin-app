@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/media_viewer.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
@@ -273,7 +274,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,
         ),
-        onPressed: viewModel.isLoading ? null : _handleUpload,
+        onPressed: () {
+          Navigator.pushNamed(context, StringsRoute.highlightUploadinKn);
+        },
         child: viewModel.isLoading
             ? const SizedBox(
                 height: 20,
@@ -654,11 +657,12 @@ void _showEditBottomSheet(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                 
-    Navigator.pop(context);
-   await viewModel.editHighlight(id, viewModel.titleController.text, viewModel.descriptionController.text);
-                
-                 
+                    Navigator.pop(context);
+                    await viewModel.editHighlight(
+                      id,
+                      viewModel.titleController.text,
+                      viewModel.descriptionController.text,
+                    );
                   },
                   child: Text(
                     "Update",
