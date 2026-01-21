@@ -12,10 +12,14 @@ class EventService {
   Future<CreateEventResponse> createEvent(
     String templeId,
     String name,
+    String knName,
     String start_date,
     String description,
+    String knDescription,
     String location,
+    String knLocation,
     String contactName,
+    String knContactName,
     String contact_phone,
     String endDate,
     String startTime,
@@ -35,8 +39,16 @@ class EventService {
         startTime: startTime,
         endTime: endTime,
         images: images,
+        translations: [
+          CreateEventTranslation(
+            languageCode: 'kn',
+            name: knName,
+            location: knLocation,
+            description: knDescription,
+            contactName: knContactName,
+          ),
+        ],
       );
-
       final data = await apiService.post(
         UrlConstant.createEventUrl,
         createEvent.toJson(),
@@ -52,10 +64,14 @@ class EventService {
   Future<EventUpdateResponse> updateEvents(
     String eventId,
     String name,
+    String knName,
     DateTime start_date,
     String description,
+    String knDescription,
     String location,
+    String knLocation,
     String contactName,
+    String knContactName,
     String contact_phone,
     DateTime endDate,
     String startTime,
@@ -75,6 +91,15 @@ class EventService {
         endTime: endTime,
         images: images,
         isActive: true,
+        translations: [
+          CreateEventTranslation(
+            languageCode: "kn",
+            name: knName,
+            location: knLocation,
+            description: knDescription,
+            contactName: knContactName,
+          ),
+        ],
       );
 
       final data = await apiService.put(
@@ -96,7 +121,7 @@ class EventService {
   }) async {
     try {
       final url =
-          '${UrlConstant.getEventsUrl}?temple_id=$temple_id&page=$page&limit=$limit';
+          '${UrlConstant.getEventsUrl}?temple_id=$temple_id&page=$page&limit=$limit&language=kn';
       print('Fetching fetchEventes: $url');
       dynamic data = await apiService.get(url);
       return EventListResponse.fromJson(data);

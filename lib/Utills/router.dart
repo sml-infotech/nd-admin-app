@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/create_userscreen.dart';
+import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/festivals/create_festival.dart';
 import 'package:nammadaiva_dashboard/Screens/festivals/festival_list.dart';
@@ -22,7 +23,6 @@ import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/resetpassword/reset_password_screen.dart';
-import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple/temple_listscreen.dart';
 import 'package:nammadaiva_dashboard/Screens/temple_details/temple_details_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_requests_screen.dart';
@@ -36,6 +36,8 @@ import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
+
+import '../Screens/create_event/create_event_kn.dart';
 
 class AppRouter {
   Route<dynamic>? route(RouteSettings settings) {
@@ -204,6 +206,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => PujaBookingKn(pujaArgumrnts: args),
+        );
+      case StringsRoute.createEventInKn:
+        final EventItem? args = settings.arguments as EventItem?;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateEventKn(event: args),
         );
 
       default:
