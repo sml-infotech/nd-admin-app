@@ -21,7 +21,8 @@ class PujaService {
     String toDate,
     List<String> days,
     List<TimeSlot> time_slots,
-     List<Benefit> benefits
+     List<Benefit> benefits,
+     List<Translation> translations
   ) async {
     try {
       final createpuja = Puja(
@@ -39,6 +40,7 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
+        translations: translations
       );
 
       print("📦 ------------------- CREATE PUJA REQUEST -------------------");
@@ -55,6 +57,8 @@ class PujaService {
       print("To Date: $toDate");
       print("Days: $days");
       print("Time Slots: ${time_slots.map((e) => e.toJson()).toList()}");
+      print("{  'benefits': ${benefits.map((b) => b.toJson()).toList()}}");
+      print("Translations: ${translations.map((t) => t.toJson()).toList()}");
       print("-------------------------------------------------------------");
 
       final data = await apiService.post(
@@ -86,6 +90,8 @@ class PujaService {
     String toDate,
     List<String> days,
     List<TimeSlot> time_slots,
+List<Benefit> benefits,
+      List<Translation> translations
   ) async {
     try {
       final updatePuja = Puja(
@@ -103,7 +109,8 @@ class PujaService {
         toDate: toDate,
         days: days,
         timeSlots: time_slots,
-        benefits: []
+        benefits: benefits,
+        translations: translations,
       );
 
       print("📦 ------------------- UPDATE PUJA REQUEST -------------------");

@@ -16,6 +16,7 @@ class Puja {
   final String toDate;
   final List<String> days;
   final List<TimeSlot> timeSlots;
+  final List<Translation> translations;
 
   Puja({
     this.templeId,
@@ -33,6 +34,7 @@ class Puja {
     required this.toDate,
     required this.days,
     required this.timeSlots,
+    required this.translations,
   });
 
   factory Puja.fromJson(Map<String, dynamic> json) {
@@ -71,6 +73,10 @@ class Puja {
               ?.map((ts) => TimeSlot.fromJson(ts as Map<String, dynamic>))
               .toList() ??
           [],
+      translations: (json['translations'] as List<dynamic>?)
+              ?.map((t) => Translation.fromJson(t as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -91,6 +97,7 @@ class Puja {
       'to_date': toDate,
       'days': days,
       'time_slots': timeSlots.map((t) => t.toJson()).toList(),
+      'translations': translations.map((t) => t.toJson()).toList(),
     };
   }
 
@@ -134,4 +141,44 @@ class Benefit {
   Map<String, dynamic> toJson() => {
         'description': description,
       };
+}
+
+class Translation {
+  final String languageCode;
+  final String pujaName;
+  final String description;
+  final List<String> deityNames;
+  final List<String> benefits;
+
+Translation({
+    required this.languageCode,
+    required this.pujaName,
+    required this.description,
+    required this.deityNames,
+    required this.benefits,
+  });
+
+  factory Translation.fromJson(Map<String, dynamic> json) {
+    return Translation(
+      languageCode: json['language_code'] ?? '',
+      pujaName: json['puja_name'] ?? '',
+      description: json['description'] ?? '',
+      deityNames: json['deities_name'] != null
+          ? List<String>.from(json['deities_name'])
+          : [],
+      benefits: json['benefits'] != null
+          ? List<String>.from(json['benefits'])
+          : [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'language_code': languageCode,
+      'puja_name': pujaName,
+      'description': description,
+      'deities_name': deityNames,
+      'benefits': benefits,
+    };
+  }
 }

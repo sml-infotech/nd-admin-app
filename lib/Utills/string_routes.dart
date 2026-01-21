@@ -29,4 +29,5 @@ class StringsRoute {
   static const String festivalDetailsScreen = "/festivalDetailsScreen";
   static const String updateTempleKn = "/updateTempleKn";
 static const String addPujaInkn = '/addPujaInkannadam';
+static const String createMantrainKn = '/createMantraInKannadam';
 }

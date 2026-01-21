@@ -1,4 +1,4 @@
-
+import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 
 class PujaArguments {
@@ -16,6 +16,8 @@ class PujaArguments {
   final List<String> days;
   final List<String> sample_images;
   final List<PujaTimeSlot> timeSlots;
+  final List<Translation>? translations;
+  final List<Benefit> benefits;
 
   PujaArguments({
     required this.templeId,
@@ -32,5 +34,7 @@ class PujaArguments {
     required this.deities_name,
     required this.sample_images,
     required this.timeSlots,
+    required this.translations,
+    required this.benefits,
   });
 }

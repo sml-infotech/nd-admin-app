@@ -1,14 +1,18 @@
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
+
 class UpdateMantra {
   final String mantraId;
   final String mantraName;
   final String mantra;
   final String deityImageUrl;
+  final List<MantraTranslation> translations;
 
   UpdateMantra({
     required this.mantraId,
     required this.mantraName,
     required this.mantra,
     required this.deityImageUrl,
+    required this.translations,
   });
 
   factory UpdateMantra.fromJson(Map<String, dynamic> json) {
@@ -17,6 +21,9 @@ class UpdateMantra {
       mantraName: json['mantra_name'] ?? "",
       mantra: json['mantra'] ?? "",
       deityImageUrl: json['deity_image_url'] ?? "",
+      translations: (json['translations'] as List<dynamic>? ?? [])
+          .map((item) => MantraTranslation.fromJson(item))
+          .toList(),
     );
   }
 
@@ -26,6 +33,7 @@ class UpdateMantra {
       "mantra_name": mantraName,
       "mantra": mantra,
       "deity_image_url": deityImageUrl,
+      "translations": translations.map((t) => t.toJson()).toList(),
     };
   }
 }

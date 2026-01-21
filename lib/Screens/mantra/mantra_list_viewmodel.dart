@@ -7,10 +7,11 @@ class MantraListViewmodel extends ChangeNotifier {
   final mantraService = MantraService();
 
   List<MantraItem> mantras = [];
+  String languageCode = "kn";
 
   int page = 1;
   bool hasMore = true;
-  bool isLoading = false;
+  bool isLoading = true;
   bool isLoadingMore = false;
 
   Future<void> fetchMantra({bool reset = false}) async {
@@ -42,12 +43,12 @@ class MantraListViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset(){
-     mantras = [];
-
-   page = 1;
-   hasMore = true;
-   isLoading = false;
-   isLoadingMore = false;
+  void reset() {
+    mantras = [];
+    page = 1;
+    hasMore = true;
+    isLoading = true;
+    isLoadingMore = false;
+    notifyListeners();
   }
 }

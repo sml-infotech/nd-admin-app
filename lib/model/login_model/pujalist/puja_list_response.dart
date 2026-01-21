@@ -1,11 +1,10 @@
+import '../createpuja/create_pujamodel.dart';
+
 class PujaListResponse {
   final int code;
   final PujaListData data;
 
-  PujaListResponse({
-    required this.code,
-    required this.data,
-  });
+  PujaListResponse({required this.code, required this.data});
 
   factory PujaListResponse.fromJson(Map<String, dynamic> json) {
     return PujaListResponse(
@@ -15,10 +14,7 @@ class PujaListResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'code': code,
-      'data': data.toJson(),
-    };
+    return {'code': code, 'data': data.toJson()};
   }
 }
 
@@ -78,6 +74,8 @@ class PujaData {
   final DateTime updatedAt;
   final List<PujaTimeSlot> timeSlots;
   bool? isActive;
+  final List<Translation>? translations;
+  final List<Benefit> benefits;
 
   PujaData({
     required this.id,
@@ -97,6 +95,8 @@ class PujaData {
     required this.updatedAt,
     required this.timeSlots,
     this.isActive,
+    required this.translations,
+    required this.benefits,
   });
 
   factory PujaData.fromJson(Map<String, dynamic> json) {
@@ -140,10 +140,20 @@ class PujaData {
           : DateTime.now(),
       timeSlots: json['time_slots'] != null
           ? (json['time_slots'] as List)
-              .map((item) => PujaTimeSlot.fromJson(item))
-              .toList()
+                .map((item) => PujaTimeSlot.fromJson(item))
+                .toList()
           : [],
       isActive: json['is_active'],
+      translations: json['translations'] != null
+          ? (json['translations'] as List)
+                .map((item) => Translation.fromJson(item))
+                .toList()
+          : [],
+      benefits: json['benefits'] != null
+          ? (json['benefits'] as List)
+                .map((item) => Benefit.fromJson(item))
+                .toList()
+          : [],
     );
   }
 
@@ -166,6 +176,8 @@ class PujaData {
       'updated_at': updatedAt.toIso8601String(),
       'time_slots': timeSlots.map((slot) => slot.toJson()).toList(),
       'is_active': isActive,
+      'translations': translations?.map((t) => t.toJson()).toList(),
+      'benefits': benefits.map((b) => b.toJson()).toList(),
     };
   }
 }

@@ -14,6 +14,7 @@ import 'package:nammadaiva_dashboard/Screens/forgot/forgot_password.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/login/login_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
+import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
@@ -36,6 +37,7 @@ import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
+import 'package:provider/provider.dart';
 
 class AppRouter {
   Route<dynamic>? route(RouteSettings settings) {
@@ -159,7 +161,7 @@ class AppRouter {
           builder: (_) => MantraList(),
         );
       case StringsRoute.createMantra:
-        UpdateMantra args = settings.arguments as UpdateMantra;
+        UpdateMantraArguments args = settings.arguments as UpdateMantraArguments;
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateMantraScreen(updateMantra: args),
@@ -205,7 +207,13 @@ class AppRouter {
           settings: settings,
           builder: (_) => PujaBookingKn(pujaArgumrnts: args),
         );
+      case StringsRoute.createMantrainKn:
+        UpdateMantraArguments args = settings.arguments as UpdateMantraArguments;
 
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateMantraInKannadam(updateMantra: args),
+        );
       default:
         throw Exception('Route ${settings.name} not implemented');
     }
