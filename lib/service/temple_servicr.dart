@@ -89,7 +89,7 @@ Future<TempleResponse> getTemples({
   }) async {
     try {
       final url =
-          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
+          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit&language=kn';
       print('Fetching getPujas: $url');
 
       dynamic data = await apiService.get(url);

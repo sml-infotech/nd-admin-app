@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 class PujaListViewmodel extends ChangeNotifier {
   final TempleService templeService = TempleService();
   final PujaService pujaService = PujaService();
+String language = "en";
 
   List<PujaData> pujaList = [];
   List<PujaDataForActive> pujaDataForActive = [];
@@ -58,8 +59,6 @@ class PujaListViewmodel extends ChangeNotifier {
         } else {
           pujaList.addAll(newPujas);
         }
-
-        // ✅ if server returns fewer than requested items → no more data
         hasMorePujas = newPujas.length == _itemsPerPage;
         if (hasMorePujas) {
           _currentPage++;

@@ -4,11 +4,13 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 class BenefitInputWidget extends StatefulWidget {
   final dynamic viewmodel; // Can be CreatePujaViewmodel
   final bool isUpdateMode;
+  final bool isKannada ;
 
   const BenefitInputWidget({
     super.key,
     required this.viewmodel,
     this.isUpdateMode = false,
+    this.isKannada = true,
   });
 
   @override
@@ -16,53 +18,48 @@ class BenefitInputWidget extends StatefulWidget {
 }
 
 class _BenefitInputWidgetState extends State<BenefitInputWidget> {
-  @override
-  void initState() {
-    super.initState();
-
-    // Prefill existing benefits if in update mode
-    if (widget.isUpdateMode && widget.viewmodel.prefilledBenefits != null) {
-      widget.viewmodel.benefits =
-          List<String>.from(widget.viewmodel.prefilledBenefits);
-    }
-  }
-
   void addBenefit() {
-    String text = widget.viewmodel.benefitController.text.trim();
+    final controller = widget.isKannada
+        ? widget.viewmodel.benefitControllerKn
+        : widget.viewmodel.benefitController;
+
+    final text = controller.text.trim();
+
     if (text.isNotEmpty) {
-      widget.viewmodel.addBenefit(text);
-      widget.viewmodel.benefitController.clear();
-      setState(() {});
+      widget.viewmodel.addBenefit(
+        text,
+        isKannada: widget.isKannada,
+      );
+      controller.clear();
     }
   }
 
   void removeBenefit(int index) {
-    widget.viewmodel.removeBenefit(index);
-    setState(() {});
+    widget.viewmodel.removeBenefit(
+      index,
+      isKannada: widget.isKannada,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = widget.viewmodel;
 
+    final benefits =
+        widget.isKannada ? vm.benefitsKn : vm.benefitsEn;
+
+    final controller = widget.isKannada
+        ? vm.benefitControllerKn
+        : vm.benefitController;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
-          controller: vm.benefitController,
+          controller: controller,
           decoration: InputDecoration(
-            hintText: "Add Benefit",
-            labelText: "Add Benefit",
-            labelStyle: TextStyle(fontFamily: font, color: Colors.grey),
-            hintStyle: TextStyle(fontFamily: font, color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(13),
-              borderSide: const BorderSide(color: ColorConstant.primaryColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(13),
-              borderSide: const BorderSide(color: ColorConstant.primaryColor),
-            ),
+            hintText: widget.isKannada ? "ಲಾಭ ಸೇರಿಸಿ" : "Add Benefit",
+            labelText: widget.isKannada ? "ಲಾಭ" : "Benefit",
             suffixIcon: IconButton(
               icon: const Icon(Icons.add),
               onPressed: addBenefit,
@@ -70,36 +67,15 @@ class _BenefitInputWidgetState extends State<BenefitInputWidget> {
           ),
           onSubmitted: (_) => addBenefit(),
         ),
-        if (vm.benefits.isNotEmpty) ...[const SizedBox(height: 15)],
+        const SizedBox(height: 15),
         Wrap(
-          alignment: WrapAlignment.start,
           spacing: 8,
           runSpacing: 8,
           children: List.generate(
-            vm.benefits.length,
-            (index) => Card(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                       vm.benefits[index].description,
-                      style: TextStyle(fontFamily: font, color: Colors.black),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: () => removeBenefit(index),
-                      child: const Icon(Icons.close, size: 18),
-                    ),
-                  ],
-                ),
-              ),
+            benefits.length,
+            (index) => Chip(
+              label: Text(benefits[index]),
+              onDeleted: () => removeBenefit(index),
             ),
           ),
         ),
