@@ -31,7 +31,6 @@ class _AddHighlightInKannadamState extends State<AddHighlightInKannadam> {
       ),
       body: FocusDetector(
         onFocusGained: () async {
-          await viewModel.fetchHighlights();
         },
         child: Stack(
           children: [
@@ -132,31 +131,32 @@ class _AddHighlightInKannadamState extends State<AddHighlightInKannadam> {
       ),
     );
   }
+Future<void> _handleUpload() async {
+  final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
 
-  Future<void> _handleUpload() async {
-    // if (_pickedFile == null) {
-    //   ScaffoldMessenger.of(
-    //     context,
-    //   ).showSnackBar(const SnackBar(content: Text("Select a file first")));
-    //   return;
-    // }
-
-    // final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-    // final bool isVideo = _checkIsVideo(_pickedFile!.path);
-
-    // final bool success = await viewModel.addMedia([_pickedFile!.path], isVideo);
-
-    // if (!success) return;
-
-    // setState(() {
-    //   _pickedFile = null;
-    //   _videoController?.pause();
-    //   _videoController?.dispose();
-    //   _videoController = null;
-    // });
-
-    // ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
+  if (viewModel.pickedFile == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("No media selected from previous screen"))
+    );
+    return;
   }
+
+  // Use the helper from ViewModel
+  final bool isVideo = viewModel.isVideo(viewModel.pickedFile!.path);
+
+  // Call the upload logic
+  final bool success = await viewModel.addMedia(
+    [viewModel.pickedFile!.path], 
+    isVideo
+  );
+
+  if (success) {
+    viewModel.clearUploadData();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Upload Successful!"))
+    );
+    // Go back to the main list
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+}
 }
