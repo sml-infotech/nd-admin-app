@@ -419,6 +419,12 @@ abstract class AppLocalizations {
   /// **'Add Temple'**
   String get addTemple;
 
+  /// No description provided for @addTempleinkannadam.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Temple In Kannadam'**
+  String get addTempleinkannadam;
+
   /// No description provided for @templeName.
   ///
   /// In en, this message translates to:
@@ -484,6 +490,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Images'**
   String get images;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 
   /// No description provided for @userDetails.
   ///

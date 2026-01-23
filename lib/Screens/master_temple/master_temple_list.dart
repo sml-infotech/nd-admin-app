@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/master_temple_list_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MasterTempleList extends StatefulWidget {
@@ -28,7 +29,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
 
     // final vm = context.read<MasterTempleListViewmodel>();
     // vm.fetchTemples(reset: true);
-
+    _loadUserData();
     _controller.addListener(() {
       final vm = context.read<MasterTempleListViewmodel>();
 
@@ -38,6 +39,14 @@ class _MasterTempleListState extends State<MasterTempleList> {
           vm.fetchTemples();
         }
       }
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      final vm = context.read<MasterTempleListViewmodel>();
+      vm.language = prefs.getString('language') ?? 'en';
     });
   }
 
@@ -104,9 +113,9 @@ class _MasterTempleListState extends State<MasterTempleList> {
         children: [
           templeName(temple, vm),
           const SizedBox(height: 8),
-          locationAndCity(temple),
+          locationAndCity(temple, vm),
           const SizedBox(height: 4),
-          pincodeAndDate(temple),
+          pincodeAndDate(temple, vm),
         ],
       ),
     );
@@ -121,7 +130,9 @@ class _MasterTempleListState extends State<MasterTempleList> {
       children: [
         Expanded(
           child: Text(
-            temple.templeName,
+            vm.language == "kn"
+                ? temple.translations!.first.templeName
+                : temple.templeName,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -168,13 +179,16 @@ class _MasterTempleListState extends State<MasterTempleList> {
     );
   }
 
-  Widget pincodeAndDate(MasterTempleListModal temple) {
+  Widget pincodeAndDate(
+    MasterTempleListModal temple,
+    MasterTempleListViewmodel vm,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
         Text(
-          " ${temple.state} - ${temple.pincode}",
+          " ${vm.language == "kn" ? temple.translations!.first.state : temple.state} - ${temple.pincode}",
           style: TextStyle(fontFamily: font, color: Colors.grey[700]),
         ),
         const SizedBox(height: 4),
@@ -194,14 +208,17 @@ class _MasterTempleListState extends State<MasterTempleList> {
     );
   }
 
-  Widget locationAndCity(MasterTempleListModal temple) {
+  Widget locationAndCity(
+    MasterTempleListModal temple,
+    MasterTempleListViewmodel vm,
+  ) {
     return Row(
       children: [
         const Icon(Icons.location_on, size: 16, color: Colors.grey),
         const SizedBox(width: 4),
         Expanded(
           child: Text(
-            "${temple.address}, ${temple.city}",
+            "${vm.language == "kn" ? temple.translations!.first.address : temple.address}, ${vm.language == "kn" ? temple.translations!.first.city : temple.city}",
             style: TextStyle(fontFamily: font, color: Colors.grey[700]),
           ),
         ),

@@ -18,6 +18,7 @@ import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
@@ -221,6 +222,12 @@ class AppRouter {
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => AddHighlightInKannadam(),
+        );
+
+      case StringsRoute.create_master_temple_in_kn:
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateMasterTempleKn(),
         );
       default:
         throw Exception('Route ${settings.name} not implemented');

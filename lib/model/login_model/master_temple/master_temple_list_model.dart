@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master_temple_model.dart';
+
 class MasterTempleListResponse {
   final int code;
   final String message;
@@ -28,6 +30,7 @@ class MasterTempleListResponse {
     );
   }
 }
+
 class MasterTempleListModal {
   final String id;
   final String templeName;
@@ -37,6 +40,7 @@ class MasterTempleListModal {
   final String pincode;
   final bool isOnboarded;
   final String createdAt;
+  final List<MasterTranslation>? translations;
 
   MasterTempleListModal({
     required this.id,
@@ -47,6 +51,7 @@ class MasterTempleListModal {
     required this.pincode,
     required this.isOnboarded,
     required this.createdAt,
+    required this.translations,
   });
 
   factory MasterTempleListModal.fromJson(Map<String, dynamic> json) {
@@ -59,13 +64,14 @@ class MasterTempleListModal {
       pincode: json["pincode"] ?? "",
       isOnboarded: json["is_onboarded"] ?? false,
       createdAt: json["created_at"] ?? "",
+      translations: (json['translations'] as List<dynamic>?)
+          ?.map((item) => MasterTranslation.fromJson(item))
+          .toList(),
     );
   }
 
   // ✅ ADD COPYWITH
-  MasterTempleListModal copyWith({
-    bool? isOnboarded,
-  }) {
+  MasterTempleListModal copyWith({bool? isOnboarded}) {
     return MasterTempleListModal(
       id: id,
       templeName: templeName,
@@ -75,6 +81,7 @@ class MasterTempleListModal {
       pincode: pincode,
       isOnboarded: isOnboarded ?? this.isOnboarded,
       createdAt: createdAt,
+      translations: translations,
     );
   }
 }

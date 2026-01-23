@@ -171,6 +171,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addTemple => 'ದೇಗುಲ ಸೇರಿಸಿ';
 
   @override
+  String get addTempleinkannadam => 'Add Temple In Kannadam';
+
+  @override
   String get templeName => 'ದೇಗುಲ ಹೆಸರು';
 
   @override
@@ -202,6 +205,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get images => 'ಚಿತ್ರಗಳು';
+
+  @override
+  String get next => 'ಮುಂದೆ';
 
   @override
   String get userDetails => 'ಬಳಕೆದಾರರ ವಿವರಗಳು';

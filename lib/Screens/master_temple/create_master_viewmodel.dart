@@ -17,12 +17,13 @@ class CreateMasterViewmodel extends ChangeNotifier {
   final TextEditingController city = TextEditingController();
   final TextEditingController state = TextEditingController();
   final TextEditingController pincode = TextEditingController();
+  final TextEditingController templeNameInKannadam = TextEditingController();
+  final TextEditingController addressInKannadam = TextEditingController();
+  final TextEditingController cityInKannadam = TextEditingController();
+  final TextEditingController stateInKannadam = TextEditingController();
 
   List<MasterTemple> excelTemples = [];
 
-  /// -----------------------------
-  /// VALIDATION
-  /// -----------------------------
   Future<void> validateUser() async {
     String temple = templeName.text.trim();
     String Address = address.text.trim();
@@ -105,9 +106,8 @@ class CreateMasterViewmodel extends ChangeNotifier {
 
   void removeTemple(int index) {
     excelTemples.removeAt(index);
-        if(excelTemples.isEmpty){
-          showExcelPopup = false;
-
+    if (excelTemples.isEmpty) {
+      showExcelPopup = false;
     }
     notifyListeners();
   }
@@ -118,5 +118,9 @@ class CreateMasterViewmodel extends ChangeNotifier {
     city.clear();
     state.clear();
     pincode.clear();
+    templeNameInKannadam.clear();
+    addressInKannadam.clear();
+    cityInKannadam.clear();
+    stateInKannadam.clear();
   }
 }

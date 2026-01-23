@@ -31,5 +31,7 @@ class StringsRoute {
 static const String addPujaInkn = '/addPujaInkannadam';
 static const String createMantrainKn = '/createMantraInKannadam';
   static const String highlightUploadinKn = "/highlightUploadInKannadam";
+    static const String create_master_temple_in_kn = "/createMasterTempleInKannadam";
+
 
 }

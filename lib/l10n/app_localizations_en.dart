@@ -171,6 +171,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTemple => 'Add Temple';
 
   @override
+  String get addTempleinkannadam => 'Add Temple In Kannadam';
+
+  @override
   String get templeName => 'Temple Name';
 
   @override
@@ -202,6 +205,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get images => 'Images';
+
+  @override
+  String get next => 'Next';
 
   @override
   String get userDetails => 'Users';

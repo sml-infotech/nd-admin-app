@@ -10,6 +10,7 @@ import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmo
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
@@ -72,6 +73,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
         ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
         ChangeNotifierProvider(create: (context) => CreateFestivalViewmodel()),
+        ChangeNotifierProvider(create: (_) => CreateMasterViewmodel()),
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),

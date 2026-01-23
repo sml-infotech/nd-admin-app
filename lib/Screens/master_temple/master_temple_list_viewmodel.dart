@@ -12,6 +12,7 @@ class MasterTempleListViewmodel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMore = true;
   String message = "";
+  String language = "en";
 
   int page = 1;
   List<MasterTempleListModal> temples = [];
@@ -29,7 +30,6 @@ class MasterTempleListViewmodel extends ChangeNotifier {
       notifyListeners();
 
       final response = await api.fetchMasterTemples(page: page, limit: 10);
-
       if (response.data.isNotEmpty) {
         temples.addAll(response.data!);
         page++;
