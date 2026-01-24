@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
@@ -23,7 +24,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    _requestNotificationPermission();
+    _getFcmToken();
     _loadUserData();
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .getNotificationSettings();
+
+    print("Notifyyyyyyyyyy${settings.authorizationStatus}");
+  }
+
+  Future<void> _getFcmToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("🔥 FCM TOKEN: $token");
   }
 
   Future<void> _loadUserData() async {
@@ -58,7 +75,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           IconButton(
             icon: const Icon(Icons.language),
             onPressed: () async {
-                final SharedPreferences prefs = await SharedPreferences.getInstance();
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
 
               final localeProvider = Provider.of<LocaleProvider>(
                 context,
@@ -68,11 +86,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               if (localeProvider.locale.languageCode == 'en') {
                 localeProvider.setLocale(const Locale('kn'));
                 prefs.setString('language', 'kn');
-
               } else {
                 localeProvider.setLocale(const Locale('en'));
                 prefs.setString('language', 'en');
-
               }
 
               print(

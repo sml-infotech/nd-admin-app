@@ -33,6 +33,8 @@ import 'package:nammadaiva_dashboard/Screens/temple_details/temple_detail_viewmo
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/router.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class ProviderWidget extends StatelessWidget {
   const ProviderWidget({super.key});
 
@@ -82,6 +84,7 @@ class ProviderWidget extends StatelessWidget {
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
           return MaterialApp(
+            navigatorKey: navigatorKey,
             locale: localeProvider.locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,
