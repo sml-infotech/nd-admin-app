@@ -42,20 +42,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-// Register in main
 
 class FcmNotificationService {
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
-  /// Initialize notifications (call in main())
   static Future<void> init() async {
     await Firebase.initializeApp();
 
-    // Background handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       final notification = message.notification;
       if (notification != null) {
@@ -70,7 +66,6 @@ class FcmNotificationService {
       FcmNotificationService.handleNotificationTap(message);
     });
 
-    // Local notification initialization
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: androidInit);
 
@@ -82,7 +77,6 @@ class FcmNotificationService {
     );
   }
 
-  /// Show notification (used by foreground & background)
   static Future<void> showNotification({
     required String title,
     required String body,
