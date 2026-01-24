@@ -105,12 +105,12 @@ class FcmNotificationService {
     print(">>>>>>>>>>222222${data["event_name"]}");
 
     if (screen == 'event') {
-      navigatorKey.currentState?.pushNamed(StringsRoute.templeScreen);
+      navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
     } else if (screen == 'profile') {
       navigatorKey.currentState?.pushNamed('/profile');
     }
     else{
-      navigatorKey.currentState?.pushNamed(StringsRoute.pujaList);
+      navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
     }
 
     print('Notification tapped with data: $data');

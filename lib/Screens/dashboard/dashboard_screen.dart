@@ -72,31 +72,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Column(
         children: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-
-              final localeProvider = Provider.of<LocaleProvider>(
-                context,
-                listen: false,
-              );
-
-              if (localeProvider.locale.languageCode == 'en') {
-                localeProvider.setLocale(const Locale('kn'));
-                prefs.setString('language', 'kn');
-              } else {
-                localeProvider.setLocale(const Locale('en'));
-                prefs.setString('language', 'en');
-              }
-
-              print(
-                "Language changed to: ${localeProvider.locale.languageCode}",
-              );
-            },
+          Row(
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  Provider.of<LocaleProvider>(
+                    context,
+                    listen: false,
+                  ).setLocale(const Locale('en'));
+                  prefs.setString('language', 'en');
+                },
+                child: Text(
+                  'EN',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: font,
+                    fontWeight:
+                        context.watch<LocaleProvider>().locale.languageCode ==
+                            'en'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              const Text('|'),
+              TextButton(
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  Provider.of<LocaleProvider>(
+                    context,
+                    listen: false,
+                  ).setLocale(const Locale('kn'));
+                  prefs.setString('language', 'kn');
+                },
+                child: Text(
+                  'KN',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: font,
+                    fontWeight:
+                        context.watch<LocaleProvider>().locale.languageCode ==
+                            'kn'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: screenHeight * 0.02),
+          // SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: Container(
               width: double.infinity,

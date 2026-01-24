@@ -369,7 +369,7 @@ Future<File> generateVideoThumbnail(XFile videoFile) async {
     thumbnailPath: tempDir.path,
     imageFormat: ImageFormat.JPEG,
     quality: 75,
-    timeMs: 7, // 👈 middle frame automatically
+    timeMs: 7, 
   );
 
   if (thumbnailPath == null) {
