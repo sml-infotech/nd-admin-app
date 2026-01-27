@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/create_blog.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event.dart';
@@ -229,6 +230,9 @@ class AppRouter {
           settings: settings,
           builder: (_) => CreateMasterTempleKn(),
         );
+
+      case StringsRoute.create_blog:
+        return CupertinoPageRoute(builder: (_) => CreateBlogScreen());
       default:
         throw Exception('Route ${settings.name} not implemented');
     }

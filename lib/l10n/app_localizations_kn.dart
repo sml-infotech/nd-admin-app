@@ -48,6 +48,12 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addHighlights => 'ಮುಖ್ಯಾಂಶಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
+  String get enterblogName => 'ಬ್ಲಾಗ್ ಹೆಸರು ನಮೂದಿಸಿ';
+
+  @override
+  String get enterblogDescription => 'ಬ್ಲಾಗ್ ವಿವರಣೆ ನಮೂದಿಸಿ';
+
+  @override
   String get mantra => 'ಮಂತ್ರ';
 
   @override
@@ -202,6 +208,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get deities => 'ದೇವತೆಗಳು';
+
+  @override
+  String get create_blog => 'ಬ್ಲಾಗ್ ರಚಿಸಿ';
 
   @override
   String get images => 'ಚಿತ್ರಗಳು';

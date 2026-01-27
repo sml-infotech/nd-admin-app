@@ -48,6 +48,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addHighlights => 'Add Highlights';
 
   @override
+  String get enterblogName => 'Enter Blog Name ';
+
+  @override
+  String get enterblogDescription => 'Enter Blog Description';
+
+  @override
   String get mantra => 'Mantra';
 
   @override
@@ -202,6 +208,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deities => 'Deities';
+
+  @override
+  String get create_blog => 'Create Blog';
 
   @override
   String get images => 'Images';

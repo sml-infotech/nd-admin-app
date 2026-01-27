@@ -173,6 +173,18 @@ abstract class AppLocalizations {
   /// **'Add Highlights'**
   String get addHighlights;
 
+  /// No description provided for @enterblogName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Blog Name '**
+  String get enterblogName;
+
+  /// No description provided for @enterblogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Blog Description'**
+  String get enterblogDescription;
+
   /// No description provided for @mantra.
   ///
   /// In en, this message translates to:
@@ -484,6 +496,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deities'**
   String get deities;
+
+  /// No description provided for @create_blog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Blog'**
+  String get create_blog;
 
   /// No description provided for @images.
   ///

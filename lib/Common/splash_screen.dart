@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(Duration(seconds: 3), () {
       var routeToNavigate = StringsRoute.login;
       if (token.isNotEmpty) {
-        routeToNavigate = StringsRoute.dashboard;
+        routeToNavigate = StringsRoute.create_blog;
       }
       Navigator.pushNamedAndRemoveUntil(
         context,
@@ -62,9 +62,9 @@ class _SplashScreenState extends State<SplashScreen>
         (route) => false,
       );
       if (initialMessage != null) {
-    FcmNotificationService.handleNotificationTap(initialMessage!);
-    initialMessage = null; // clear after handling
-  }
+        FcmNotificationService.handleNotificationTap(initialMessage!);
+        initialMessage = null; // clear after handling
+      }
     });
   }
 
