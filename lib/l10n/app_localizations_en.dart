@@ -177,6 +177,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTemple => 'Add Temple';
 
   @override
+  String get sectionTitle => 'Section Title';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override

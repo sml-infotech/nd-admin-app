@@ -98,7 +98,19 @@ class CreatePujaViewmodel extends ChangeNotifier {
     "Sun": true,
   };
 
-  List<String> cutOffDays = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  List<String> cutOffDays = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '20',
+  ];
   int? cutOffDay;
 
   List<TimeSlot> timeSlots = [];

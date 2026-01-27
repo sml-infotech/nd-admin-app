@@ -431,6 +431,12 @@ abstract class AppLocalizations {
   /// **'Add Temple'**
   String get addTemple;
 
+  /// No description provided for @sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Section Title'**
+  String get sectionTitle;
+
   /// No description provided for @addTempleinkannadam.
   ///
   /// In en, this message translates to:

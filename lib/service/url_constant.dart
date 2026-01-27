@@ -15,6 +15,7 @@ String baseUrlString() {
 class UrlConstant {
   UrlConstant._();
   static String loginUrl = "${baseUrlString()}login-dashboard-user";
+  static String create_blog = "${baseUrlString()}create-blog";
   static String otpUrl = "${baseUrlString()}verify-dashboard-user-otp";
   static String createUser = "${baseUrlString()}create-dashboard-user";
   static String postFcmToken = "${baseUrlString()}fcm-token";

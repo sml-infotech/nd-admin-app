@@ -56,6 +56,7 @@
   "createAcc": "Create User",
   "addMasterTemple": "Add Master Temple",
   "addTemple": "Add Temple",
+  "sectionTitle":"Section Title",
   "addTempleinkannadam": "Add Temple In Kannadam",
   "templeName": "Temple Name",
   "noTemplesFound": "No Temples Found",

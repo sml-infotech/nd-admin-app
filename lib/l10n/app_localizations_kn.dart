@@ -177,6 +177,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addTemple => 'ದೇಗುಲ ಸೇರಿಸಿ';
 
   @override
+  String get sectionTitle => 'ವಿಭಾಗದ ಶೀರ್ಷಿಕೆ';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override
