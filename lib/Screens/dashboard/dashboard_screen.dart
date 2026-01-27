@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? token;
   String? role;
   String? userName;
-
+  late DashboardViewmodel dashboardViewmodel;
   @override
   void initState() {
     super.initState();
@@ -34,8 +37,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await messaging.requestPermission(alert: true, badge: true, sound: true);
     NotificationSettings settings = await FirebaseMessaging.instance
         .getNotificationSettings();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      _getFcmTokenAndSend();
+    }
+  }
 
-    print("Notifyyyyyyyyyy${settings.authorizationStatus}");
+  String _getDeviceType() {
+    if (Platform.isAndroid) return "android";
+    if (Platform.isIOS) return "ios";
+    return "unknown";
+  }
+
+  Future<void> _getFcmTokenAndSend() async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+    if (fcmToken != null) {
+      final deviceType = _getDeviceType();
+
+      print("🔥 FCM TOKEN: $fcmToken");
+      print("📱 DEVICE TYPE: $deviceType");
+
+      await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
+    }
   }
 
   Future<void> _getFcmToken() async {
@@ -54,12 +78,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> deleteToken() async {
     final prefs = await SharedPreferences.getInstance();
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    await dashboardViewmodel.logout(fcmToken ?? "");
+
     await prefs.remove('authToken');
     await prefs.remove('userRole');
   }
 
   @override
   Widget build(BuildContext context) {
+    dashboardViewmodel = Provider.of<DashboardViewmodel>(
+      context,
+      listen: false,
+    );
     final screenHeight = MediaQuery.of(context).size.height;
     AppLocalizations.of(context)!.nammDaivaTitleText;
 

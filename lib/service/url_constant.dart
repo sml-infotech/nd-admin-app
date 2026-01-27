@@ -17,6 +17,8 @@ class UrlConstant {
   static String loginUrl = "${baseUrlString()}login-dashboard-user";
   static String otpUrl = "${baseUrlString()}verify-dashboard-user-otp";
   static String createUser = "${baseUrlString()}create-dashboard-user";
+  static String postFcmToken = "${baseUrlString()}fcm-token";
+  static String logoutUrl = "${baseUrlString()}logout-dashboard-user";
   static String templeUser = "${baseUrlString()}list-temples";
   static String userListUrl = "${baseUrlString()}list-dashboard-users";
   static String userEditUrl = "${baseUrlString()}edit-dashboard-user";
@@ -25,7 +27,7 @@ class UrlConstant {
   static String resetPasswordUrl =
       "${baseUrlString()}reset-dashboard-user-password";
   static String addTempleUrl = "${baseUrlString()}create-temple";
-static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
+  static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
   static String createPujaUrl = "${baseUrlString()}create-puja";
   static String getPujas = "${baseUrlString()}list-pujas";
   static String updateTempleUrl = "${baseUrlString()}temple-update-requests";
@@ -58,5 +60,5 @@ static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
   static String list_festivals = "${baseUrlString()}list-festivals";
   static String update_festival = "${baseUrlString()}edit-festival";
   static String delete_festival = "${baseUrlString()}delete-festival";
-static String editHighlight = "${baseUrlString()}edit-highlight";
+  static String editHighlight = "${baseUrlString()}edit-highlight";
 }

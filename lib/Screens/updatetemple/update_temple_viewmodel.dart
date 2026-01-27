@@ -200,7 +200,7 @@ class UpdateTempleViewmodel extends ChangeNotifier {
 
       for (final file in uniqueNewXFiles) {
         debugPrint("📤 Getting presigned URL for ${file.name}");
-        final response = await userService.presignedUrl(file.name, file.path);
+    final response = await userService.presignedUrl(file.name, file.path);
 
         if (response.url != null && response.url!.isNotEmpty) {
           final presignedUrl = response.url!;
