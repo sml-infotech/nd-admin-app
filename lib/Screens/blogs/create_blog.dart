@@ -69,7 +69,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     );
   }
 
-  // Image picker logic
   Future<void> pickImage() async {
     final XFile? file = await picker.pickImage(source: ImageSource.gallery);
 
@@ -88,7 +87,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     }
   }
 
-  // Add section text
   Widget addSectionText(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
@@ -127,7 +125,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              // THE KEY: Nested Navigator
               child: Navigator(
                 onGenerateRoute: (_) => MaterialPageRoute(
                   builder: (navContext) => SingleChildScrollView(
@@ -176,7 +173,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     );
   }
 
-  // Image picker widget
   Widget blogImagePicker() {
     return GestureDetector(
       onTap: pickImage,
@@ -198,7 +194,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     );
   }
 
-  // Image view widget
   Widget buildImageView() {
     if (viewmodel.selectedImage != null) {
       return Image.file(
@@ -260,14 +255,11 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
     CreateBlogViewmodel viewModel,
     BuildContext navContext,
   ) {
-    // Remove keyboard focus
     FocusScope.of(navContext).unfocus();
 
-    // Validation: section title + at least one paragraph
     if (viewModel.sectionTitle.text.trim().isNotEmpty &&
         viewModel.paragraphControllers.isNotEmpty &&
         viewModel.paragraphControllers.every((c) => c.text.trim().isNotEmpty)) {
-      // Create new English section
       final newSectionEN = ArticleSection(
         title: viewModel.sectionTitle.text.trim(),
         position: viewModel.articleSectionsEN.length + 1,
@@ -296,10 +288,8 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
             : [],
       );
 
-      // Add to EN article sections
       viewModel.articleSectionsEN.add(newSectionEN);
 
-      // Navigate to Kannada screen
       Navigator.push(
         navContext,
         MaterialPageRoute(
@@ -307,7 +297,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
         ),
       );
     } else {
-      // Show toast if fields are empty
       Fluttertoast.showToast(msg: "Fill the fields");
     }
   }

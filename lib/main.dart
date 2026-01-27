@@ -10,11 +10,8 @@ RemoteMessage? initialMessage;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await FcmNotificationService.init();
-
   runApp(const ProviderWidget());
-
   WidgetsBinding.instance.addPostFrameCallback((_) async {
     initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
