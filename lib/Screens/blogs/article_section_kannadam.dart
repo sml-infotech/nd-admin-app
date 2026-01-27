@@ -225,7 +225,7 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
     viewModel.saveFullSectionKN(_paragraphControllers);
     viewModel.addBlog();
 
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true);
   }
 
   void _addParagraph() {
