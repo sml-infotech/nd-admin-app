@@ -25,7 +25,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
       children: [
         const SizedBox(height: 16),
 
-        _sectionHeader('Article Section (English) 1'),
+        _sectionHeader('Article Section (English)'),
         const SizedBox(height: 16),
 
         _label(AppLocalizations.of(context)!.sectionTitle),
@@ -37,8 +37,10 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
         ),
         const SizedBox(height: 24),
 
+        // Paragraph Fields
         ..._buildParagraphFields(),
 
+        // Add Paragraph Button
         _textButton(
           icon: Icons.add,
           label: 'Add Paragraph',
@@ -47,12 +49,20 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
 
         const SizedBox(height: 24),
 
+        // Add List Group Button
         _textButton(
           icon: Icons.add,
           label: 'Add List Group',
-          onPressed: () => setState(() => viewModel.showListGroupEN = true),
+          onPressed: () {
+            setState(() {
+              viewModel.showListGroupEN = true;
+              if (viewModel.listTypeEN.isEmpty)
+                viewModel.listTypeEN = 'Numbered';
+            });
+          },
         ),
 
+        // List Group UI
         if (viewModel.showListGroupEN) _listGroupUI(),
 
         const SizedBox(height: 16),
@@ -60,6 +70,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
+  // Section Header
   Widget _sectionHeader(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -75,7 +86,19 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
   }
 
   List<Widget> _buildParagraphFields() {
-    return List.generate(viewModel.paragraphControllers.length, (index) {
+    // Sort paragraphs by position first
+    final sortedControllers = List<TextEditingController>.from(
+      viewModel.paragraphControllers,
+    );
+
+    sortedControllers.sort((a, b) {
+      // If you stored the position in a map, use that, otherwise fallback to index
+      final aIndex = viewModel.paragraphPositions[a] ?? 0;
+      final bIndex = viewModel.paragraphPositions[b] ?? 0;
+      return aIndex.compareTo(bIndex);
+    });
+
+    return List.generate(sortedControllers.length, (index) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: Column(
@@ -83,7 +106,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
           children: [
             _label('Paragraph ${index + 1}'),
             CommonTextField(
-              controller: viewModel.paragraphControllers[index],
+              controller: sortedControllers[index],
               hintText: 'Write Paragraph',
               labelText: 'Write Paragraph',
               isFromPassword: false,
@@ -95,6 +118,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     });
   }
 
+  // List Group UI
   Widget _listGroupUI() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -109,13 +133,15 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
           children: [
             _label('List Type'),
             DropdownButtonFormField<String>(
-              value: viewModel.listTypeEN,
+              value: viewModel.listTypeEN.isNotEmpty
+                  ? viewModel.listTypeEN
+                  : 'Numbered',
               items: const [
                 DropdownMenuItem(value: 'Numbered', child: Text('Numbered')),
                 DropdownMenuItem(value: 'Bulleted', child: Text('Bulleted')),
               ],
               onChanged: (value) {
-                setState(() => viewModel.listTypeEN = value!);
+                setState(() => viewModel.listTypeEN = value ?? 'Numbered');
               },
               decoration: _inputDecoration(),
             ),
@@ -128,8 +154,10 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
             ),
             const SizedBox(height: 16),
 
+            // List Items
             ..._buildListItems(),
 
+            // Add List Item Button
             _textButton(
               icon: Icons.add,
               label: 'Add Item',
@@ -141,6 +169,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
+  // Build List Items
   List<Widget> _buildListItems() {
     return List.generate(viewModel.listItemControllersEN.length, (index) {
       return Padding(
@@ -159,6 +188,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     });
   }
 
+  // Label Widget
   Widget _label(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 16, right: 16),
@@ -173,6 +203,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
+  // Text Button
   Widget _textButton({
     required IconData icon,
     required String label,
@@ -188,6 +219,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
+  // Input Decoration
   InputDecoration _inputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
@@ -197,12 +229,14 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
+  // Add Paragraph
   void _addParagraph() {
     setState(() {
       viewModel.paragraphControllers.add(TextEditingController());
     });
   }
 
+  // Add List Item
   void _addListItem() {
     setState(() {
       viewModel.listItemControllersEN.add(TextEditingController());

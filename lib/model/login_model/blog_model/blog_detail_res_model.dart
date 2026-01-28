@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
+
 class BlogDetailsResponse {
   final String message;
   final int code;
@@ -17,6 +19,7 @@ class BlogDetailsResponse {
     );
   }
 }
+
 class BlogDetails {
   final String id;
   final String name;
@@ -27,7 +30,7 @@ class BlogDetails {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<ArticleSection> articleSections;
-  final List<BlogTranslationDetails> translations;
+  final List<Translation> translations;
 
   BlogDetails({
     required this.id,
@@ -44,52 +47,30 @@ class BlogDetails {
 
   factory BlogDetails.fromJson(Map<String, dynamic> json) {
     return BlogDetails(
-      id: json['id'],
-      name: json['name'],
-      slug: json['slug'],
-      description: json['description'],
-      image: json['image'] ?? '',
-      isActive: json['is_active'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      articleSections: (json['article_sections'] as List)
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      slug: json['slug'] ?? '',
+      description: json['description'] ?? '', // <-- default empty
+      image: json['image'] ?? '', // <-- default empty
+      isActive: json['is_active'] ?? false,
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      articleSections: (json['article_sections'] as List? ?? [])
           .map((e) => ArticleSection.fromJson(e))
           .toList(),
-      translations: (json['translations'] as List)
-          .map((e) => BlogTranslationDetails.fromJson(e))
+      translations: (json['translations'] as List? ?? [])
+          .map((e) => Translation.fromJson(e))
           .toList(),
     );
   }
 }
-class ArticleSection {
-  final String id;
-  final String title;
-  final int position;
-  final List<SectionParagraph> paragraphs;
-  final List<SectionList> lists;
 
-  ArticleSection({
-    required this.id,
-    required this.title,
-    required this.position,
-    required this.paragraphs,
-    required this.lists,
-  });
 
-  factory ArticleSection.fromJson(Map<String, dynamic> json) {
-    return ArticleSection(
-      id: json['id'],
-      title: json['title'],
-      position: json['position'],
-      paragraphs: (json['paragraphs'] as List)
-          .map((e) => SectionParagraph.fromJson(e))
-          .toList(),
-      lists: (json['lists'] as List)
-          .map((e) => SectionList.fromJson(e))
-          .toList(),
-    );
-  }
-}
+
 class SectionParagraph {
   final String id;
   final String paragraph;
@@ -109,43 +90,14 @@ class SectionParagraph {
     );
   }
 }
-class SectionList {
-  final String id;
-  final String listType; // ordered | unordered
-  final String heading;
-  final int position;
-  final List<ListPoint> points;
 
-  SectionList({
-    required this.id,
-    required this.listType,
-    required this.heading,
-    required this.position,
-    required this.points,
-  });
 
-  factory SectionList.fromJson(Map<String, dynamic> json) {
-    return SectionList(
-      id: json['id'],
-      listType: json['list_type'],
-      heading: json['heading'],
-      position: json['position'],
-      points: (json['points'] as List)
-          .map((e) => ListPoint.fromJson(e))
-          .toList(),
-    );
-  }
-}
 class ListPoint {
   final String id;
   final String point;
   final int position;
 
-  ListPoint({
-    required this.id,
-    required this.point,
-    required this.position,
-  });
+  ListPoint({required this.id, required this.point, required this.position});
 
   factory ListPoint.fromJson(Map<String, dynamic> json) {
     return ListPoint(
@@ -155,27 +107,5 @@ class ListPoint {
     );
   }
 }
-class BlogTranslationDetails {
-  final String languageCode;
-  final String name;
-  final String description;
-  final List<ArticleSection> articleSections;
 
-  BlogTranslationDetails({
-    required this.languageCode,
-    required this.name,
-    required this.description,
-    required this.articleSections,
-  });
 
-  factory BlogTranslationDetails.fromJson(Map<String, dynamic> json) {
-    return BlogTranslationDetails(
-      languageCode: json['language_code'],
-      name: json['name'],
-      description: json['description'],
-      articleSections: (json['article_sections'] as List)
-          .map((e) => ArticleSection.fromJson(e))
-          .toList(),
-    );
-  }
-}

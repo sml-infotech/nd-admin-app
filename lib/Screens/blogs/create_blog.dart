@@ -7,14 +7,18 @@ import 'package:nammadaiva_dashboard/Screens/blogs/article_section.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/create_blog_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, font;
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart'
+    hide ArticleSection;
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
 import 'package:provider/provider.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/article_section_kannadam.dart'; // Import Kannada Screen
 
 class CreateBlogScreen extends StatefulWidget {
-  const CreateBlogScreen({super.key});
+  BlogDetails? blogs;
+  CreateBlogScreen({super.key, this.blogs});
 
   @override
   State<CreateBlogScreen> createState() => _CreateBlogScreenState();
@@ -23,10 +27,21 @@ class CreateBlogScreen extends StatefulWidget {
 class _CreateBlogScreenState extends State<CreateBlogScreen> {
   late CreateBlogViewmodel viewmodel;
   final ImagePicker picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    viewmodel = Provider.of<CreateBlogViewmodel>(context, listen: false);
+
+    if (widget.blogs != null) {
+      viewmodel.prefillBlogData(widget.blogs!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     viewmodel = Provider.of<CreateBlogViewmodel>(context);
+
+    print(">>>>>>>>>>>>${widget.blogs?.slug ?? ""}");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -63,8 +78,87 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
             const SizedBox(height: 16),
             addSectionText(context),
             const SizedBox(height: 16),
+            Consumer<CreateBlogViewmodel>(
+              builder: (context, vm, child) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: vm.addedSectionsEN.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        // 1. Prefill data
+                        vm.prefillSectionForEdit(index);
+                        // 2. Open Bottom Sheet
+                        _openArticleSectionBottomSheet(context);
+                      },
+                      child: _buildSectionPreviewTile(
+                        vm.addedSectionsEN[index],
+                        index,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionPreviewTile(ArticleSection section, int index) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: ColorConstant.buttonColor,
+          child: Text(
+            "${index + 1}",
+            style: TextStyle(color: Colors.white, fontFamily: font),
+          ),
+        ),
+        title: Text(
+          section.title ?? "Untitled Section",
+          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
+        ),
+        subtitle: Text(
+          "${section.paragraphs?.length ?? 0} Paragraphs",
+          style: TextStyle(fontFamily: font),
+        ),
+        // Replaced check with Delete button
+        trailing: IconButton(
+          icon: const Icon(Icons.delete_outline, color: Colors.red),
+          onPressed: () {
+            // Trigger delete logic
+            _showDeleteConfirmation(index);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Section?"),
+        content: const Text("Are you sure you want to remove this section?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              viewmodel.removeSection(index);
+              Navigator.pop(context);
+            },
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -89,22 +183,57 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
 
   Widget addSectionText(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
-      child: InkWell(
-        onTap: () {
-          _openArticleSectionBottomSheet(context);
-        },
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Text(
-            "Add Section",
-            style: TextStyle(
-              color: Colors.pink,
-              fontWeight: FontWeight.w600,
-              fontFamily: font,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. "Add Section" Link
+          InkWell(
+            onTap: () {
+              // RESET DATA BEFORE OPENING FOR NEW SECTION
+              viewmodel.resetSectionForm();
+              _openArticleSectionBottomSheet(context);
+            },
+            child: const Text(
+              "Add Section",
+              style: TextStyle(color: Colors.pink, fontWeight: FontWeight.w600),
             ),
           ),
-        ),
+
+          const SizedBox(height: 16),
+
+          if (viewmodel.addedSectionsEN.isNotEmpty)
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await viewmodel.saveBlog(
+                    widget.blogs?.slug,
+                    widget.blogs?.id,
+                  );
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.settings.name == StringsRoute.blog_list,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorConstant.buttonColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: viewmodel.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : viewmodel.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        widget.blogs != null ? "Update Blog" : "Create Blog",
+                        style: AppTextStyles.buttonTextStyle,
+                      ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -164,10 +293,12 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: Text(
-            AppLocalizations.of(context)!.create,
-            style: AppTextStyles.buttonTextStyle,
-          ),
+          child: viewmodel.isLoading
+              ? const CircularProgressIndicator(color: Colors.white)
+              : Text(
+                  widget.blogs != null ? "Update Blog" : "Create Blog",
+                  style: AppTextStyles.buttonTextStyle,
+                ),
         ),
       ),
     );
@@ -242,7 +373,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
         ),
         const Spacer(),
         Text(
-          AppLocalizations.of(context)!.create_blog,
+          widget.blogs != null ? "Update Blog" : "Create Blog", // Dynamic Title
           style: AppTextStyles.appBarTitleStyle,
         ),
         const SizedBox(width: 48),
@@ -288,8 +419,8 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
             : [],
       );
 
+      viewModel.articleSectionsEN.clear();
       viewModel.articleSectionsEN.add(newSectionEN);
-
       Navigator.push(
         navContext,
         MaterialPageRoute(

@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
       );
       if (initialMessage != null) {
         FcmNotificationService.handleNotificationTap(initialMessage!);
-        initialMessage = null; 
+        initialMessage = null;
       }
     });
   }

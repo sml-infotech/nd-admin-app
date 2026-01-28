@@ -24,6 +24,21 @@ class BlogService {
     }
   }
 
+  Future<CreateBlogResponse> updateBlog(BlogModel request ) async {
+    try {
+      final data = await apiService.put(
+        UrlConstant.updateBlog,
+        request.toJson(),
+      );
+
+      print("✅ updateBlog API Response >>>> $data");
+      return CreateBlogResponse.fromJson(data);
+    } catch (e) {
+      print("❌ updateBlog Update service failed: $e");
+      throw Exception('Temple update API failed: $e');
+    }
+  }
+
   Future<BlogResponse> getBlogs({
     required int page,
     required int limit,
@@ -58,7 +73,7 @@ class BlogService {
   }) async {
     try {
       final uri = Uri.parse(
-        "${UrlConstant.blogDetails}?slug=$slug_name&language=$language",
+        "${UrlConstant.blogDetails}?slug=$slug_name&language=kn",
       );
 
       print('Fetching blog details: $uri');

@@ -9,7 +9,7 @@ class ListBlogsViewmodel extends ChangeNotifier {
   int page = 1;
   final int limit = 10;
   final TextEditingController searchController = TextEditingController();
-
+String language="kn";
   bool isLoading = true;
   bool isLoadingMore = false;
   bool hasMore = true;

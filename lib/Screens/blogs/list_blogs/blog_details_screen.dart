@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/list_blogs_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/blogs_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BlogDetailsScreen extends StatefulWidget {
@@ -24,7 +27,15 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
   void initState() {
     super.initState();
     viewmodel = Provider.of<ListBlogsViewmodel>(context, listen: false);
+    _loadUserData();
     viewmodel.fetchDetail(widget.slug_name.slug_name);
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      viewmodel.language = prefs.getString('language') ?? 'en';
+    });
   }
 
   @override
@@ -37,7 +48,8 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
           return Scaffold(body: _buildShimmer());
         }
 
-        BlogTranslationDetails? translation;
+        Translation? translation;
+
         if (blogDetail.translations != null &&
             blogDetail.translations!.isNotEmpty) {
           translation = blogDetail.translations!.firstWhere(
@@ -48,10 +60,15 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
           translation = null;
         }
 
-        final title = translation?.name ?? blogDetail.name;
-        final description = translation?.description ?? blogDetail.description;
-        final sections =
-            translation?.articleSections ?? blogDetail.articleSections;
+        final title = viewmodel.language == "kn"
+            ? translation?.name ?? blogDetail.name
+            : blogDetail.name;
+        final description = viewmodel.language == "kn"
+            ? translation?.description ?? blogDetail.description
+            : blogDetail.description;
+        final sections = viewmodel.language == "kn"
+            ? translation?.articleSections ?? blogDetail.articleSections
+            : blogDetail.articleSections;
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -59,7 +76,28 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
             automaticallyImplyLeading: false,
             backgroundColor: ColorConstant.buttonColor,
             elevation: 0,
-            title: nammaDaivaAppBar(),
+            title: nammaDaivaAppBar(
+              title: AppLocalizations.of(context)!.blogs_details,
+              onEdit: () {
+                // Navigate to create blog screen
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.create_blog,
+                  arguments: BlogDetails(
+                    name: blogDetail.name,
+                    description: blogDetail.description,
+                    image: blogDetail.image,
+                    articleSections: blogDetail.articleSections,
+                    translations: blogDetail.translations,
+                    id: blogDetail.id,
+                    slug: blogDetail.slug,
+                    isActive: true,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  ),
+                );
+              },
+            ),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -132,23 +170,22 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
     );
   }
 
-  Widget nammaDaivaAppBar() {
+  Widget nammaDaivaAppBar({required String title, VoidCallback? onEdit}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         const Spacer(),
-        Text(
-          AppLocalizations.of(context)!.blogs_details,
-          style: AppTextStyles.appBarTitleStyle,
-        ),
-        const SizedBox(width: 48),
+        Text(title, style: AppTextStyles.appBarTitleStyle),
         const Spacer(),
+        if (onEdit != null)
+          IconButton(
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit, color: Colors.white),
+          ),
       ],
     );
   }
@@ -157,28 +194,37 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          section.title,
-          style: AppTextStyles.templeNameDetailsStyle.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // Paragraphs
-        ...section.paragraphs.map(
-          (p) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              p.paragraph,
-              style: AppTextStyles.templeNameDetailsStyle,
+        if ((section.title ?? '').isNotEmpty)
+          Text(
+            section.title!,
+            style: AppTextStyles.templeNameDetailsStyle.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ),
 
-        // Lists
-        ...section.lists.map((list) => _buildList(list)),
+        const SizedBox(height: 8),
+
+        /// ---------- PARAGRAPHS ----------
+        if (section.paragraphs != null && section.paragraphs!.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: section.paragraphs!.map((p) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  p.text ?? '',
+                  style: AppTextStyles.templeNameDetailsStyle,
+                ),
+              );
+            }).toList(),
+          ),
+
+        /// ---------- LISTS ----------
+        if (section.lists != null && section.lists!.isNotEmpty)
+          Column(
+            children: section.lists!.map((list) => _buildList(list)).toList(),
+          ),
 
         const SizedBox(height: 24),
       ],
@@ -189,29 +235,37 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (list.heading.isNotEmpty)
+        if ((list.heading ?? '').isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 4),
+            padding: const EdgeInsets.only(top: 8, bottom: 6),
             child: Text(
-              list.heading,
+              list.heading!,
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
 
-        ...list.points.asMap().entries.map((entry) {
-          final index = entry.key;
-          final point = entry.value;
-          final prefix = list.listType == 'ordered' ? '${index + 1}. ' : '• ';
-          return Padding(
-            padding: const EdgeInsets.only(left: 8, bottom: 6),
-            child: Text(
-              '$prefix${point.point}',
-              style: AppTextStyles.templeNameDetailsStyle,
-            ),
-          );
-        }).toList(),
+        if (list.points != null && list.points!.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: list.points!.asMap().entries.map((entry) {
+              final index = entry.key;
+              final point = entry.value;
+
+              final prefix = list.listType == 'Numbered'
+                  ? '${index + 1}. '
+                  : '• ';
+
+              return Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 6),
+                child: Text(
+                  '$prefix${point.text ?? ''}',
+                  style: AppTextStyles.templeNameDetailsStyle,
+                ),
+              );
+            }).toList(),
+          ),
       ],
     );
   }

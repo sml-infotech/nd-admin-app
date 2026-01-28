@@ -42,6 +42,8 @@ import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/update_mantra.dart';
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
 
@@ -235,7 +237,11 @@ class AppRouter {
         );
 
       case StringsRoute.create_blog:
-        return CupertinoPageRoute(builder: (_) => CreateBlogScreen());
+        BlogDetails? args = settings.arguments as BlogDetails?;
+        return CupertinoPageRoute(
+          settings: settings,
+          builder: (_) => CreateBlogScreen( blogs: args,),
+        );
 
       case StringsRoute.blog_list:
         return CupertinoPageRoute(builder: (_) => ListBlogs());
