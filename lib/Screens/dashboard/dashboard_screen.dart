@@ -283,6 +283,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 StringsRoute.highlightUpload,
                               ),
                             ),
+
+                          if (role == "Super Admin")
+                            containerWidget(
+                              ImageStrings.sevaimg,
+                              AppLocalizations.of(context)!.blogs,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.blog_list,
+                              ),
+                            ),
                         ],
                       ),
                     ],

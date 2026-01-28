@@ -157,8 +157,13 @@ class _ListBlogsState extends State<ListBlogs> {
           AppLocalizations.of(context)!.blogs,
           style: AppTextStyles.appBarTitleStyle,
         ),
-        const SizedBox(width: 48),
         const Spacer(),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.create_blog);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
       ],
     );
   }

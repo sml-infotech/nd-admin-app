@@ -175,7 +175,10 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: (){
+            Navigator.pop(context);
+            
+          },
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         const Spacer(),

@@ -31,7 +31,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
   void initState() {
     super.initState();
     viewmodel = Provider.of<CreateBlogViewmodel>(context, listen: false);
-
+    viewmodel.resetEverything();
     if (widget.blogs != null) {
       viewmodel.prefillBlogData(widget.blogs!);
     }
@@ -187,11 +187,9 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. "Add Section" Link
           InkWell(
             onTap: () {
-              // RESET DATA BEFORE OPENING FOR NEW SECTION
-              viewmodel.resetSectionForm();
+              viewmodel.resetEverything();
               _openArticleSectionBottomSheet(context);
             },
             child: const Text(
@@ -212,10 +210,8 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                     widget.blogs?.slug,
                     widget.blogs?.id,
                   );
-                  Navigator.popUntil(
-                    context,
-                    (route) => route.settings.name == StringsRoute.blog_list,
-                  );
+                  viewmodel.resetEverything();
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorConstant.buttonColor,
@@ -418,7 +414,6 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
               ]
             : [],
       );
-
       viewModel.articleSectionsEN.clear();
       viewModel.articleSectionsEN.add(newSectionEN);
       Navigator.push(

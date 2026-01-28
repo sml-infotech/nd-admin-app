@@ -82,7 +82,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
       // Clean up temporary working data
       articleSectionsEN.clear();
       articleSectionsKN.clear();
-      resetSectionForm();
+      resetEverything();
 
       notifyListeners();
     }
@@ -330,17 +330,38 @@ class CreateBlogViewmodel extends ChangeNotifier {
   // Add this variable to track if we are editing
   int? editingIndex;
 
-  // Method to Clear Form for New Section
-  void resetSectionForm() {
+  void resetEverything() {
+    // 1. Reset Top-Level Blog Info (EN & KN)
+    blogName.clear();
+    blogDescription.clear();
+    blogNameKN.clear();
+    blogDescriptionKN.clear();
+
+    // 2. Reset Image State
+    selectedImage = null;
+    uploadedImageUrl = null;
+    isImageUploading = false;
+
+    // 3. Clear all stored sections
+    addedSectionsEN.clear();
+    addedSectionsKN.clear();
+    articleSectionsEN.clear();
+    articleSectionsKN.clear();
+
+    // 4. Reset Editing State
     editingIndex = null;
+
+    // 5. Reset Working Section Controllers
     sectionTitle.clear();
     sectionTitleKn.clear();
-
-    // Reset Paragraphs
+    
+    // Reset Paragraphs to a single empty field
     paragraphControllers = [TextEditingController()];
     paragraphControllersKN = [TextEditingController()];
+    paragraphPositions.clear();
+    paragraphPositionsKN.clear();
 
-    // Reset Lists
+    // 6. Reset List Group State
     showListGroupEN = false;
     showListGroupKN = false;
     listTypeEN = 'Numbered';
@@ -349,6 +370,10 @@ class CreateBlogViewmodel extends ChangeNotifier {
     listHeadingControllerKN.clear();
     listItemControllersEN = [TextEditingController()];
     listItemControllersKN = [TextEditingController()];
+
+    // 7. Reset Loading/Messages
+    isLoading = false;
+    message = null;
 
     notifyListeners();
   }
