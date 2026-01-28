@@ -1,3 +1,4 @@
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_response.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -21,4 +22,31 @@ class BlogService {
       throw Exception('API failed: $e');
     }
   }
+
+Future<BlogResponse> getBlogs({
+  required int page,
+  required int limit,
+  String? search,
+  required String language,
+}) async {
+  try {
+    final query = {
+      "page": page.toString(),
+      "limit": limit.toString(),
+      "language": language,
+      if (search != null && search.isNotEmpty) "search": search,
+    };
+
+    final uri = Uri.parse(UrlConstant.getBlogs).replace(queryParameters: query);
+
+    print('Fetching blogs: $uri');
+
+    final data = await apiService.get(uri.toString());
+    return BlogResponse.fromJson(data);
+  } catch (e) {
+    print("Blog service failed: $e");
+    throw Exception('API failed: $e');
+  }
+}
+
 }

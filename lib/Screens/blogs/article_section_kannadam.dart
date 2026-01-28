@@ -213,20 +213,18 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
   }
 
   void _onCreatePressed() {
-    FocusScope.of(context).unfocus();
-
-    if (viewModel.blogNameKN.text.isEmpty ||
-        viewModel.blogDescriptionKN.text.isEmpty ||
-        viewModel.sectionTitleKn.text.isEmpty) {
-      Fluttertoast.showToast(msg: 'Fill the fields');
-      return;
-    }
-
-    viewModel.saveFullSectionKN(_paragraphControllers);
-    viewModel.addBlog();
-
-    Navigator.of(context, rootNavigator: true);
+  FocusScope.of(context).unfocus();
+  if (viewModel.blogNameKN.text.isEmpty ||
+      viewModel.blogDescriptionKN.text.isEmpty ||
+      viewModel.sectionTitleKn.text.isEmpty) {
+    Fluttertoast.showToast(msg: 'Fill the fields');
+    return;
   }
+  viewModel.saveFullSectionKN(_paragraphControllers);
+  viewModel.addBlog();
+  Navigator.of(context, rootNavigator: true).pop();
+}
+
 
   void _addParagraph() {
     setState(() {

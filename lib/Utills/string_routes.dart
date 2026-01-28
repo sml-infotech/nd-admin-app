@@ -33,6 +33,7 @@ static const String createMantrainKn = '/createMantraInKannadam';
   static const String highlightUploadinKn = "/highlightUploadInKannadam";
     static const String create_master_temple_in_kn = "/createMasterTempleInKannadam";
     static const String create_blog="/create_blog";
+    static const String blog_list="/blog_list";
     
 
 

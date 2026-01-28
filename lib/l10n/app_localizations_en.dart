@@ -180,6 +180,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionTitle => 'Section Title';
 
   @override
+  String get blogs => 'Blogs';
+
+  @override
+  String get no_blogs_found => 'No Blogs Found';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override

@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Common/splash_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/create_blog.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/create_blog_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/list_blogs_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
@@ -79,6 +80,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CreateFestivalViewmodel()),
         ChangeNotifierProvider(create: (_) => CreateMasterViewmodel()),
         ChangeNotifierProvider(create: (_) => CreateBlogViewmodel()),
+        ChangeNotifierProvider(create: (_) => ListBlogsViewmodel()),
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),
