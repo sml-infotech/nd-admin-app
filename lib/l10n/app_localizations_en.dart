@@ -186,6 +186,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no_blogs_found => 'No Blogs Found';
 
   @override
+  String get blogs_details => 'Blog Details';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override

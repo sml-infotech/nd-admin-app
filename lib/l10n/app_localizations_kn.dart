@@ -186,6 +186,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get no_blogs_found => 'ಯಾವುದೇ ಬ್ಲಾಗ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
+  String get blogs_details => 'ಬ್ಲಾಗ್ ವಿವರಗಳು';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override

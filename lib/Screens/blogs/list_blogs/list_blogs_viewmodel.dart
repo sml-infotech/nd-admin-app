@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_list_response.dart';
 import 'package:nammadaiva_dashboard/service/blog_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ class ListBlogsViewmodel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMore = true;
   List<Blog> blogs = [];
+  BlogDetails? blogDetails;
 
   Future<void> fetchBlogs({bool refresh = false}) async {
     try {
@@ -65,4 +67,31 @@ class ListBlogsViewmodel extends ChangeNotifier {
     isLoadingMore = false;
     notifyListeners();
   }
+
+  Future<void> fetchDetail(String slug_name) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final language = prefs.getString('language') ?? 'en';
+
+    isLoading = true;
+    notifyListeners();
+
+    final response = await blogService.getBlogDetail(
+      slug_name: slug_name,
+      language: language,
+    );
+
+    if (response.data == null) {
+      throw Exception("Blog detail data is null");
+    }
+
+    blogDetails = response.data;
+  } catch (e) {
+    print("Error fetching blog detail: $e");
+  } finally {
+    isLoading = false;
+    notifyListeners();
+  }
+}
+
 }

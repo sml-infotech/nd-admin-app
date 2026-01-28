@@ -81,6 +81,7 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CreateMasterViewmodel()),
         ChangeNotifierProvider(create: (_) => CreateBlogViewmodel()),
         ChangeNotifierProvider(create: (_) => ListBlogsViewmodel()),
+        
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),

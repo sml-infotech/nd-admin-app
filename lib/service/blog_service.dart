@@ -1,3 +1,4 @@
+import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/create_blog_response.dart';
@@ -23,30 +24,55 @@ class BlogService {
     }
   }
 
-Future<BlogResponse> getBlogs({
-  required int page,
-  required int limit,
-  String? search,
-  required String language,
-}) async {
-  try {
-    final query = {
-      "page": page.toString(),
-      "limit": limit.toString(),
-      "language": language,
-      if (search != null && search.isNotEmpty) "search": search,
-    };
+  Future<BlogResponse> getBlogs({
+    required int page,
+    required int limit,
+    String? search,
+    required String language,
+  }) async {
+    try {
+      final query = {
+        "page": page.toString(),
+        "limit": limit.toString(),
+        "language": language,
+        if (search != null && search.isNotEmpty) "search": search,
+      };
 
-    final uri = Uri.parse(UrlConstant.getBlogs).replace(queryParameters: query);
+      final uri = Uri.parse(
+        UrlConstant.getBlogs,
+      ).replace(queryParameters: query);
 
-    print('Fetching blogs: $uri');
+      print('Fetching blogs: $uri');
 
-    final data = await apiService.get(uri.toString());
-    return BlogResponse.fromJson(data);
-  } catch (e) {
-    print("Blog service failed: $e");
-    throw Exception('API failed: $e');
+      final data = await apiService.get(uri.toString());
+      return BlogResponse.fromJson(data);
+    } catch (e) {
+      print("Blog service failed: $e");
+      throw Exception('API failed: $e');
+    }
   }
-}
 
+  Future<BlogDetailsResponse> getBlogDetail({
+    required String slug_name,
+    required String language,
+  }) async {
+    try {
+      final uri = Uri.parse(
+        "${UrlConstant.blogDetails}?slug=$slug_name&language=$language",
+      );
+
+      print('Fetching blog details: $uri');
+
+      final data = await apiService.get(uri.toString());
+
+      if (data == null || data.isEmpty) {
+        throw Exception("API returned null or empty for blog detail");
+      }
+
+      return BlogDetailsResponse.fromJson(data);
+    } catch (e) {
+      print("Blog service failed: $e");
+      throw Exception('API failed: $e');
+    }
+  }
 }

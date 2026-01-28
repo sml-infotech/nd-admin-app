@@ -449,6 +449,12 @@ abstract class AppLocalizations {
   /// **'No Blogs Found'**
   String get no_blogs_found;
 
+  /// No description provided for @blogs_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Blog Details'**
+  String get blogs_details;
+
   /// No description provided for @addTempleinkannadam.
   ///
   /// In en, this message translates to:

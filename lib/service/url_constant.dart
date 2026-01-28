@@ -63,5 +63,8 @@ class UrlConstant {
   static String delete_festival = "${baseUrlString()}delete-festival";
   static String editHighlight = "${baseUrlString()}edit-highlight";
   static String getBlogs = "${baseUrlString()}list-blogs";
+    static String blogDetails = "${baseUrlString()}blog-details";
+
+
 
 }

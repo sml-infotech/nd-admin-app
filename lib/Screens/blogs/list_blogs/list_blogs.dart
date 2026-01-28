@@ -4,7 +4,9 @@ import 'package:nammadaiva_dashboard/Screens/blogs/create_blog_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/list_blogs_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/arguments/blogs_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
@@ -163,7 +165,13 @@ class _ListBlogsState extends State<ListBlogs> {
 
   Widget blogCard(Blog blog) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          StringsRoute.blog_details,
+          arguments: BlogsArgument(slug_name: blog.slug),
+        );
+      },
       child: Card(
         elevation: 6,
         color: Colors.white,

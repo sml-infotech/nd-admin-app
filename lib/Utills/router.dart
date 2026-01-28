@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/create_blog.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/blog_details_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/list_blogs.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/booking_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_us_screen.dart';
@@ -35,6 +36,7 @@ import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_kn.dart'
 import 'package:nammadaiva_dashboard/Screens/updatetemple/update_temple_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/arguments/blogs_argument.dart';
 import 'package:nammadaiva_dashboard/arguments/festival_argument.dart';
 import 'package:nammadaiva_dashboard/arguments/otp_arguments.dart';
 import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
@@ -237,6 +239,12 @@ class AppRouter {
 
       case StringsRoute.blog_list:
         return CupertinoPageRoute(builder: (_) => ListBlogs());
+
+      case StringsRoute.blog_details:
+        BlogsArgument args = settings.arguments as BlogsArgument;
+        return CupertinoPageRoute(
+          builder: (_) => BlogDetailsScreen(slug_name: args),
+        );
       default:
         throw Exception('Route ${settings.name} not implemented');
     }

@@ -59,6 +59,8 @@
   "sectionTitle":"Section Title",
   "blogs":"Blogs",
   "no_blogs_found":"No Blogs Found",
+  "blogs_details":"Blog Details",
+
   "addTempleinkannadam": "Add Temple In Kannadam",
   "templeName": "Temple Name",
   "noTemplesFound": "No Temples Found",
