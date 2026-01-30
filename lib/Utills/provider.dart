@@ -45,6 +45,7 @@ class ProviderWidget extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
     final role = prefs.getString('userRole');
+   
     print(">>>>>>>>>>$token");
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
@@ -56,7 +57,7 @@ class ProviderWidget extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider(),),
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
         ChangeNotifierProvider(create: (context) => OtpViewmodel()),
@@ -90,6 +91,7 @@ class ProviderWidget extends StatelessWidget {
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
           return MaterialApp(
+            
             navigatorKey: navigatorKey,
             locale: localeProvider.locale,
             localizationsDelegates: const [

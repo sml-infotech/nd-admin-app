@@ -60,7 +60,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //   }
   // }
 
-
   Future<void> _requestNotificationPermission() async {
     final messaging = FirebaseMessaging.instance;
     await messaging.requestPermission(alert: true, badge: true, sound: true);
@@ -113,17 +112,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // ✅ Use the stored token instead of getToken() during logout
       final String? fcmToken = prefs.getString('fcm_token');
 
       if (fcmToken != null && fcmToken.isNotEmpty) {
         await dashboardViewmodel.logout(fcmToken);
       }
 
-      // Delete token from Firebase
       await FirebaseMessaging.instance.deleteToken();
 
-      // Clear local storage
       await prefs.remove('fcm_token');
       await prefs.remove('authToken');
       await prefs.remove('userRole');
@@ -402,15 +398,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
-                // await deleteToken();
+                await deleteToken();
 
                 if (!mounted) return;
 
-                // Navigator.pushNamedAndRemoveUntil(
-                //   context,
-                //   StringsRoute.login,
-                //   (route) => false,
-                // );
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  StringsRoute.login,
+                  (route) => false,
+                );
               },
 
               child: Text(
