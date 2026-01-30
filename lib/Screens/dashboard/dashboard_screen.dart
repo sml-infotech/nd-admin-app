@@ -27,81 +27,78 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? userName;
   late DashboardViewmodel dashboardViewmodel;
   @override
-void initState() {
-  super.initState();
-  _loadUserData();
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _initPushNotifications();
-  });
-}
-
-Future<void> _initPushNotifications() async {
-  final FirebaseMessaging messaging = FirebaseMessaging.instance;
-  final String deviceType = Platform.isIOS ? "ios" : "android";
-
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-      settings.authorizationStatus == AuthorizationStatus.provisional) {
-
-    print("✅ Notification permission granted on $deviceType");
-
-    // 3️⃣ Get FCM token
-    String? token = await messaging.getToken();
-
-    if (token != null) {
-      print("🔥 FCM TOKEN: $token");
-      print("📱 DEVICE TYPE: $deviceType");
-
-      await dashboardViewmodel.postFcmToken(token, deviceType);
-    }
-  } else {
-    print("❌ Notification permission denied on $deviceType");
+  void initState() {
+    super.initState();
+    _loadUserData();
+    _requestNotificationPermission();
+    _getFcmToken();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _initPushNotifications();
+    // });
   }
-}
 
+  // Future<void> _initPushNotifications() async {
+  //   final settings = await FirebaseMessaging.instance.requestPermission(
+  //     alert: true,
+  //     badge: true,
+  //     sound: true,
+  //   );
 
-  // Future<void> _requestNotificationPermission() async {
-  //   final messaging = FirebaseMessaging.instance;
-  //   await messaging.requestPermission(alert: true, badge: true, sound: true);
-  //   NotificationSettings settings = await FirebaseMessaging.instance
-  //       .getNotificationSettings();
   //   if (settings.authorizationStatus == AuthorizationStatus.authorized ||
   //       settings.authorizationStatus == AuthorizationStatus.provisional) {
-  //     _getFcmTokenAndSend();
+  //     try {
+  //       var token = await FirebaseMessaging.instance.getAPNSToken();
+  //       print("token: $token");
+  //       var token1 = await FirebaseMessaging.instance.getToken();
+
+  //       print("token1111$token1");
+  //     } catch (e) {
+  //       print(">>>>>>>>>>>>>>>>1111${e}");
+  //     }
+  //   } else {
+  //     print("❌ Notification permission denied");
   //   }
   // }
 
-  
 
-  // String _getDeviceType() {
-  //   if (Platform.isAndroid) return "android";
-  //   if (Platform.isIOS) return "ios";
-  //   return "unknown";
-  // }
+  Future<void> _requestNotificationPermission() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .getNotificationSettings();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      _getFcmTokenAndSend();
+    }
+  }
 
-  // Future<void> _getFcmTokenAndSend() async {
-  //   String? fcmToken = await FirebaseMessaging.instance.getToken();
+  String _getDeviceType() {
+    if (Platform.isAndroid) return "android";
+    if (Platform.isIOS) return "ios";
+    return "unknown";
+  }
 
-  //   if (fcmToken != null) {
-  //     final deviceType = _getDeviceType();
+  Future<void> _getFcmTokenAndSend() async {
+    String? fcmToken = await _getFcmToken();
+    ;
 
-  //     print("🔥 FCM TOKEN: $fcmToken");
-  //     print("📱 DEVICE TYPE: $deviceType");
+    if (fcmToken != null) {
+      final deviceType = _getDeviceType();
 
-  //     await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
-  //   }
-  // }
+      print("🔥 FCM TOKEN: $fcmToken");
+      print("📱 DEVICE TYPE: $deviceType");
 
-  // Future<void> _getFcmToken() async {
-  //   String? token = await FirebaseMessaging.instance.getToken();
-  //   print("🔥 FCM TOKEN: $token");
-  // }
+      await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
+    }
+  }
+
+  Future<String> _getFcmToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("🔥 FCM TOKEN: $token");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fcm_token', token ?? "");
+    return token ?? "";
+  }
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -113,12 +110,29 @@ Future<void> _initPushNotifications() async {
   }
 
   Future<void> deleteToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    await dashboardViewmodel.logout(fcmToken ?? "");
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-    await prefs.remove('authToken');
-    await prefs.remove('userRole');
+      // ✅ Use the stored token instead of getToken() during logout
+      final String? fcmToken = prefs.getString('fcm_token');
+
+      if (fcmToken != null && fcmToken.isNotEmpty) {
+        await dashboardViewmodel.logout(fcmToken);
+      }
+
+      // Delete token from Firebase
+      await FirebaseMessaging.instance.deleteToken();
+
+      // Clear local storage
+      await prefs.remove('fcm_token');
+      await prefs.remove('authToken');
+      await prefs.remove('userRole');
+
+      print("✅ Logout + FCM token deleted");
+    } catch (e, stack) {
+      print("❌ Error during logout: $e");
+      print(stack);
+    }
   }
 
   @override
@@ -388,10 +402,17 @@ Future<void> _initPushNotifications() async {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
-                await deleteToken();
-                Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, StringsRoute.login);
+                // await deleteToken();
+
+                if (!mounted) return;
+
+                // Navigator.pushNamedAndRemoveUntil(
+                //   context,
+                //   StringsRoute.login,
+                //   (route) => false,
+                // );
               },
+
               child: Text(
                 "Logout",
                 style: TextStyle(fontFamily: font, color: Colors.white),
