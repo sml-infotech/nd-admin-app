@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
+import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,47 +27,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? userName;
   late DashboardViewmodel dashboardViewmodel;
   @override
-  void initState() {
-    super.initState();
-    _requestNotificationPermission();
-    _getFcmToken();
-    _loadUserData();
-  }
+void initState() {
+  super.initState();
+  _loadUserData();
 
-  Future<void> _requestNotificationPermission() async {
-    final messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(alert: true, badge: true, sound: true);
-    NotificationSettings settings = await FirebaseMessaging.instance
-        .getNotificationSettings();
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      _getFcmTokenAndSend();
-    }
-  }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _initPushNotifications();
+  });
+}
 
-  String _getDeviceType() {
-    if (Platform.isAndroid) return "android";
-    if (Platform.isIOS) return "ios";
-    return "unknown";
-  }
+Future<void> _initPushNotifications() async {
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+  final String deviceType = Platform.isIOS ? "ios" : "android";
 
-  Future<void> _getFcmTokenAndSend() async {
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 
-    if (fcmToken != null) {
-      final deviceType = _getDeviceType();
+  if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+      settings.authorizationStatus == AuthorizationStatus.provisional) {
 
-      print("🔥 FCM TOKEN: $fcmToken");
+    print("✅ Notification permission granted on $deviceType");
+
+    // 3️⃣ Get FCM token
+    String? token = await messaging.getToken();
+
+    if (token != null) {
+      print("🔥 FCM TOKEN: $token");
       print("📱 DEVICE TYPE: $deviceType");
 
-      await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
+      await dashboardViewmodel.postFcmToken(token, deviceType);
     }
+  } else {
+    print("❌ Notification permission denied on $deviceType");
   }
+}
 
-  Future<void> _getFcmToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    print("🔥 FCM TOKEN: $token");
-  }
+
+  // Future<void> _requestNotificationPermission() async {
+  //   final messaging = FirebaseMessaging.instance;
+  //   await messaging.requestPermission(alert: true, badge: true, sound: true);
+  //   NotificationSettings settings = await FirebaseMessaging.instance
+  //       .getNotificationSettings();
+  //   if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+  //       settings.authorizationStatus == AuthorizationStatus.provisional) {
+  //     _getFcmTokenAndSend();
+  //   }
+  // }
+
+  
+
+  // String _getDeviceType() {
+  //   if (Platform.isAndroid) return "android";
+  //   if (Platform.isIOS) return "ios";
+  //   return "unknown";
+  // }
+
+  // Future<void> _getFcmTokenAndSend() async {
+  //   String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+  //   if (fcmToken != null) {
+  //     final deviceType = _getDeviceType();
+
+  //     print("🔥 FCM TOKEN: $fcmToken");
+  //     print("📱 DEVICE TYPE: $deviceType");
+
+  //     await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
+  //   }
+  // }
+
+  // Future<void> _getFcmToken() async {
+  //   String? token = await FirebaseMessaging.instance.getToken();
+  //   print("🔥 FCM TOKEN: $token");
+  // }
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();

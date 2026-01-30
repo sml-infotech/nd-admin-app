@@ -1,79 +1,80 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nammadaiva_dashboard/Utills/provider.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const InitializationSettings initSettings = InitializationSettings(
-    android: androidSettings,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
-
-  final notification = message.notification;
-  if (notification != null) {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'high_importance_channel',
-          'High Importance Notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-        );
-
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidDetails,
-    );
-
-    await flutterLocalNotificationsPlugin.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      notification.title,
-      notification.body,
-      notificationDetails,
-    );
-  }
-}
-
 
 class FcmNotificationService {
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    await Firebase.initializeApp();
+    // 🍏 REQUIRED for iOS foreground notifications
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // 🔔 Android notification channel
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      description: 'Important notifications',
+      importance: Importance.max,
+    );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final notification = message.notification;
-      if (notification != null) {
-        showNotification(
-          title: notification.title ?? 'Notification',
-          body: notification.body ?? '',
-        );
-      }
-    });
+    final androidPlugin =
+        _localNotifications.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      FcmNotificationService.handleNotificationTap(message);
-    });
+    await androidPlugin?.createNotificationChannel(channel);
 
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const settings = InitializationSettings(android: androidInit);
+    // 🔔 Init local notifications
+    const initializationSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      ),
+    );
 
     await _localNotifications.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (payload) {
-        handleNotificationTap(RemoteMessage(data: {'event_name': payload.payload ?? ''}));
+      initializationSettings,
+      onDidReceiveNotificationResponse: (response) {
+        handleNotificationTap(
+          RemoteMessage(data: {'event_name': response.payload ?? ''}),
+        );
       },
+    );
+
+    // 🔔 FOREGROUND notifications
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      final notification = message.notification;
+      if (notification == null) return;
+
+      // 🍏 iOS → system already shows notification
+      if (Platform.isIOS) return;
+
+      // 🤖 Android → show local notification
+      showNotification(
+        title: notification.title ?? 'Notification',
+        body: notification.body ?? '',
+      );
+    });
+
+    // 🔔 Notification tap (background)
+    FirebaseMessaging.onMessageOpenedApp.listen(handleNotificationTap);
+  }
+
+  /// 🔐 Request notification permission (call once)
+  static Future<void> requestPermission() async {
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
     );
   }
 
@@ -99,20 +100,19 @@ class FcmNotificationService {
   }
 
   static void handleNotificationTap(RemoteMessage message) {
-    final data = message.data;
-    final screen = data['event_name'];
+    final screen = message.data['event_name'];
 
-    print(">>>>>>>>>>222222${data["event_name"]}");
+    if (screen == null) return;
 
-    if (screen == 'event') {
-      navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
-    } else if (screen == 'profile') {
-      navigatorKey.currentState?.pushNamed('/profile');
+    switch (screen) {
+      case 'event':
+        navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
+        break;
+      case 'profile':
+        navigatorKey.currentState?.pushNamed('/profile');
+        break;
+      default:
+        navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
     }
-    else{
-      navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
-    }
-
-    print('Notification tapped with data: $data');
   }
 }
