@@ -296,14 +296,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     toastLength: Toast.LENGTH_SHORT,
                   );
                   if (viewModel.isLoginSuccess) {
-                    Navigator.pushNamed(
+                    Navigator.pushNamedAndRemoveUntil(
                       context,
-                      StringsRoute.otpScreen,
-                      arguments: OtpArguments(
-                        email: viewModel.emailController.text,
-                        password: viewModel.passwordController.text,
-                        isFromCreateUser: false,
-                      ),
+                      StringsRoute.dashboard,
+                      (Route<dynamic> route) => false,
                     );
                     viewModel.reset();
                   }

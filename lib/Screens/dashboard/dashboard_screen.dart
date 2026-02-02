@@ -410,15 +410,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
-                await deleteToken();
 
-                if (!mounted) return;
 
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   StringsRoute.login,
                   (route) => false,
                 );
+                                await deleteToken();
+
               },
 
               child: Text(

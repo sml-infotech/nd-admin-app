@@ -19,7 +19,7 @@ class DashboardViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> logout(String fcmToken) async {
+Future<void> logout(String fcmToken) async {
     try {
       var logoutRequest = LogoutRequestModel(fcmToken: fcmToken);
 
