@@ -51,6 +51,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addHighlights => 'Add Highlights';
 
   @override
+  String get enterblogName => 'Enter Blog Name ';
+
+  @override
+  String get enterblogDescription => 'Enter Blog Description';
+
+  @override
   String get mantra => 'Mantra';
 
   @override
@@ -174,6 +180,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTemple => 'Add Temple';
 
   @override
+  String get sectionTitle => 'Section Title';
+
+  @override
+  String get blogs => 'Blogs';
+
+  @override
+  String get no_blogs_found => 'No Blogs Found';
+
+  @override
+  String get blogs_details => 'Blog Details';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override
@@ -207,7 +225,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deities => 'Deities';
 
   @override
+  String get create_blog => 'Create Blog';
+
+  @override
   String get images => 'Images';
+
+  @override
+  String get next => 'Next';
 
   @override
   String get userDetails => 'Users';

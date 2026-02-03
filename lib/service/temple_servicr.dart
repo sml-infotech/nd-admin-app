@@ -16,11 +16,11 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class TempleService {
   final HttpApiService apiService = HttpApiService();
-Future<TempleResponse> getTemples({
+  Future<TempleResponse> getTemples({
     int page = 1,
     int limit = 10,
     String search = "",
-    String language="kn",
+    String language = "kn",
   }) async {
     try {
       final url =
@@ -49,7 +49,7 @@ Future<TempleResponse> getTemples({
     List<Translation> translations,
   ) async {
     try {
-    final request = AddTemple(
+      final request = AddTemple(
         name: name,
         address: address,
         city: city,
@@ -89,7 +89,7 @@ Future<TempleResponse> getTemples({
   }) async {
     try {
       final url =
-          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit';
+          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit&language=kn';
       print('Fetching getPujas: $url');
 
       dynamic data = await apiService.get(url);
@@ -125,7 +125,8 @@ Future<TempleResponse> getTemples({
     int limit = 10,
   }) async {
     try {
-      final url = '${UrlConstant.master_temples}?page=$page&limit=$limit';
+      final url =
+          '${UrlConstant.master_temples}?page=$page&limit=$limit&language=kn';
       print('Fetching MasterTemples: $url');
 
       final data = await apiService.get(url);

@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
+import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,11 +25,78 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String? token;
   String? role;
   String? userName;
-
+  late DashboardViewmodel dashboardViewmodel;
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _requestNotificationPermission();
+    _getFcmToken();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _initPushNotifications();
+    // });
+  }
+
+  // Future<void> _initPushNotifications() async {
+  //   final settings = await FirebaseMessaging.instance.requestPermission(
+  //     alert: true,
+  //     badge: true,
+  //     sound: true,
+  //   );
+
+  //   if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+  //       settings.authorizationStatus == AuthorizationStatus.provisional) {
+  //     try {
+  //       var token = await FirebaseMessaging.instance.getAPNSToken();
+  //       print("token: $token");
+  //       var token1 = await FirebaseMessaging.instance.getToken();
+
+  //       print("token1111$token1");
+  //     } catch (e) {
+  //       print(">>>>>>>>>>>>>>>>1111${e}");
+  //     }
+  //   } else {
+  //     print("❌ Notification permission denied");
+  //   }
+  // }
+
+  Future<void> _requestNotificationPermission() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .getNotificationSettings();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      _getFcmTokenAndSend();
+    }
+  }
+
+  String _getDeviceType() {
+    if (Platform.isAndroid) return "android";
+    if (Platform.isIOS) return "ios";
+    return "unknown";
+  }
+
+  Future<void> _getFcmTokenAndSend() async {
+    String? fcmToken = await _getFcmToken();
+    ;
+
+    if (fcmToken != null) {
+      final deviceType = _getDeviceType();
+
+      print("🔥 FCM TOKEN: $fcmToken");
+      print("📱 DEVICE TYPE: $deviceType");
+
+      await dashboardViewmodel.postFcmToken(fcmToken, deviceType);
+    }
+  }
+
+  Future<String> _getFcmToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("🔥 FCM TOKEN: $token");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fcm_token', token ?? "");
+    return token ?? "";
   }
 
   Future<void> _loadUserData() async {
@@ -36,14 +109,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> deleteToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('authToken');
-    await prefs.remove('userRole');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final String? fcmToken = prefs.getString('fcm_token');
+
+      if (fcmToken != null && fcmToken.isNotEmpty) {
+        await dashboardViewmodel.logout(fcmToken);
+      }
+
+      await FirebaseMessaging.instance.deleteToken();
+
+      await prefs.remove('fcm_token');
+      await prefs.remove('authToken');
+      await prefs.remove('userRole');
+
+      print("✅ Logout + FCM token deleted");
+    } catch (e, stack) {
+      print("❌ Error during logout: $e");
+      print(stack);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    dashboardViewmodel = Provider.of<DashboardViewmodel>(
+      context,
+      listen: false,
+    );
+
     AppLocalizations.of(context)!.nammDaivaTitleText;
 
     return Scaffold(
@@ -53,173 +147,179 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         title: nammaDaivaAppBar(),
       ),
-      body: Column(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () async {
-                final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-              final localeProvider = Provider.of<LocaleProvider>(
-                context,
-                listen: false,
-              );
-
-              if (localeProvider.locale.languageCode == 'en') {
-                localeProvider.setLocale(const Locale('kn'));
-                prefs.setString('language', 'kn');
-
-              } else {
-                localeProvider.setLocale(const Locale('en'));
-                prefs.setString('language', 'en');
-
-              }
-
-              print(
-                "Language changed to: ${localeProvider.locale.languageCode}",
-              );
-            },
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFF8F0), Color(0xFFFFF8F0)],
           ),
-          SizedBox(height: screenHeight * 0.02),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
+        ),
+        child: Stack(
+          children: [
+            rightImage(),
+            SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  /// 🔹 Language Switcher
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      welcomeText(),
-                      const SizedBox(height: 15),
-                      if (token != null && role != null) ...[
-                        Text(
-                          userName ?? "",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: font,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        alignment: WrapAlignment.center,
-                        children: [
-                          containerWidget(
-                            ImageStrings.templeImage,
-                            AppLocalizations.of(context)!.templeDetailText,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.templeScreen,
-                            ),
-                          ),
-                          containerWidget(
-                            ImageStrings.sevaimg,
-                            AppLocalizations.of(context)!.sevaText,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.pujaList,
-                            ),
-                          ),
-                          if (role == "Super Admin" || role == "Admin")
-                            containerWidget(
-                              ImageStrings.onlineseva,
-                              AppLocalizations.of(context)!.userDetails,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.userDetails,
-                              ),
-                            ),
-                          containerWidget(
-                            ImageStrings.ritual,
-                            AppLocalizations.of(context)!.updateRequests,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.updateRequestsUrl,
-                            ),
-                          ),
-                          containerWidget(
-                            ImageStrings.wowtracker,
-                            AppLocalizations.of(context)!.events,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.eventListScreen,
-                            ),
-                          ),
-                          containerWidget(
-                            ImageStrings.wowtracker,
-                            AppLocalizations.of(context)!.bookings,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.bookings,
-                            ),
-                          ),
-
-                          containerWidget(
-                            ImageStrings.ritual,
-                            AppLocalizations.of(context)!.contacts,
-                            () => Navigator.pushNamed(
-                              context,
-                              StringsRoute.contactUs,
-                            ),
-                          ),
-                          if (role == "Super Admin")
-                            containerWidget(
-                              ImageStrings.sevaimg,
-                              AppLocalizations.of(context)!.masterTemples,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.master_temple_list,
-                              ),
-                            ),
-                          if (role == "Super Admin")
-                            containerWidget(
-                              ImageStrings.sevaimg,
-                              AppLocalizations.of(context)!.mantra,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.mantraList,
-                              ),
-                            ),
-                          if (role == "Super Admin")
-                            containerWidget(
-                              ImageStrings.ritual,
-                              AppLocalizations.of(context)!.festivals,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.festivalList,
-                              ),
-                            ),
-
-                          if (role == "Super Admin")
-                            containerWidget(
-                              ImageStrings.ritual,
-                              AppLocalizations.of(context)!.addHighlights,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.highlightUpload,
-                              ),
-                            ),
-                        ],
-                      ),
+                      _languageButton('EN', 'en'),
+                      const Text('|'),
+                      _languageButton('KN', 'kn'),
                     ],
                   ),
-                ),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 16, 0, 20),
+                    child: Column(
+                      children: [
+                        welcomeText(),
+                        const SizedBox(height: 15),
+
+                        if (token != null && role != null) ...[
+                          Text(
+                            userName ?? "",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: font,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        /// 🔹 Dashboard Grid
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            containerWidget(
+                              ImageStrings.templeImage,
+                              AppLocalizations.of(context)!.templeDetailText,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.templeScreen,
+                              ),
+                            ),
+                            containerWidget(
+                              ImageStrings.sevaimg,
+                              AppLocalizations.of(context)!.sevaText,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.pujaList,
+                              ),
+                            ),
+
+                            if (role == "Super Admin" || role == "Admin")
+                              containerWidget(
+                                ImageStrings.onlineseva,
+                                AppLocalizations.of(context)!.userDetails,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.userDetails,
+                                ),
+                              ),
+
+                            // containerWidget(
+                            //   ImageStrings.ritual,
+                            //   AppLocalizations.of(context)!.updateRequests,
+                            //   () => Navigator.pushNamed(
+                            //     context,
+                            //     StringsRoute.updateRequestsUrl,
+                            //   ),
+                            // ),
+                            containerWidget(
+                              ImageStrings.wowtracker,
+                              AppLocalizations.of(context)!.events,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.eventListScreen,
+                              ),
+                            ),
+
+                            containerWidget(
+                              ImageStrings.wowtracker,
+                              AppLocalizations.of(context)!.bookings,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.bookings,
+                              ),
+                            ),
+
+                            containerWidget(
+                              ImageStrings.ritual,
+                              AppLocalizations.of(context)!.contacts,
+                              () => Navigator.pushNamed(
+                                context,
+                                StringsRoute.contactUs,
+                              ),
+                            ),
+
+                            if (role == "Super Admin")
+                              containerWidget(
+                                ImageStrings.sevaimg,
+                                AppLocalizations.of(context)!.masterTemples,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.master_temple_list,
+                                ),
+                              ),
+
+                            if (role == "Super Admin")
+                              containerWidget(
+                                ImageStrings.sevaimg,
+                                AppLocalizations.of(context)!.mantra,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.mantraList,
+                                ),
+                              ),
+
+                            if (role == "Super Admin")
+                              containerWidget(
+                                ImageStrings.ritual,
+                                AppLocalizations.of(context)!.festivals,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.festivalList,
+                                ),
+                              ),
+
+                            if (role == "Super Admin")
+                              containerWidget(
+                                ImageStrings.ritual,
+                                AppLocalizations.of(context)!.addHighlights,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.highlightUpload,
+                                ),
+                              ),
+
+                            if (role == "Super Admin")
+                              containerWidget(
+                                ImageStrings.sevaimg,
+                                AppLocalizations.of(context)!.blogs,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  StringsRoute.blog_list,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -247,6 +347,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _languageButton(String label, String code) {
+    return TextButton(
+      onPressed: () async {
+        final prefs = await SharedPreferences.getInstance();
+
+        Provider.of<LocaleProvider>(
+          context,
+          listen: false,
+        ).setLocale(Locale(code));
+
+        await prefs.setString('language', code);
+      },
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: font,
+          fontWeight:
+              context.watch<LocaleProvider>().locale.languageCode == code
+              ? FontWeight.bold
+              : FontWeight.normal,
+        ),
+      ),
+    );
+  }
+
+  Widget rightImage() {
+    return Align(
+      alignment: AlignmentGeometry.topRight,
+      child: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(0, 270, 0, 0),
+        child: Image.asset(
+          ImageStrings.rightimage,
+          color: Colors.amber.withOpacity(0.6),
+        ),
+      ),
+    );
+  }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -270,10 +409,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  StringsRoute.login,
+                  (route) => false,
+                );
                 await deleteToken();
-                Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, StringsRoute.login);
               },
+
               child: Text(
                 "Logout",
                 style: TextStyle(fontFamily: font, color: Colors.white),

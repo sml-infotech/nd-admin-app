@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewModel extends ChangeNotifier {
   bool isChecked = false;
@@ -46,6 +47,12 @@ class LoginViewModel extends ChangeNotifier {
         isLoginSuccess = true;
         print("message $message");
         isLoading = false;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', response.token!);
+        await prefs.setString('userRole', response.user?.role ?? "");
+        await prefs.setString('UserName', response.user?.full_name ?? "");
+        print("✅ Token saved: ${response.token}");
+
         notifyListeners();
       } else if (response.code == 401) {
         message = response.message ?? "Invalid email or password.";

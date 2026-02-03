@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nammadaiva_dashboard/Common/splash_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/addtemple/add_temple_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/create_blog.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/create_blog_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/blogs/list_blogs/list_blogs_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
@@ -10,6 +13,7 @@ import 'package:nammadaiva_dashboard/Screens/event_list_screen/event_list_viewmo
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/highlight_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
@@ -32,6 +36,8 @@ import 'package:nammadaiva_dashboard/Screens/temple_details/temple_detail_viewmo
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listviewModel.dart';
 import 'package:nammadaiva_dashboard/Utills/router.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class ProviderWidget extends StatelessWidget {
   const ProviderWidget({super.key});
 
@@ -39,6 +45,7 @@ class ProviderWidget extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
     final role = prefs.getString('userRole');
+   
     print(">>>>>>>>>>$token");
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
@@ -50,7 +57,7 @@ class ProviderWidget extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider(),),
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
         ChangeNotifierProvider(create: (context) => OtpViewmodel()),
@@ -72,6 +79,10 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CreateMantraViewmodel()),
         ChangeNotifierProvider(create: (context) => MantraListViewmodel()),
         ChangeNotifierProvider(create: (context) => CreateFestivalViewmodel()),
+        ChangeNotifierProvider(create: (_) => CreateMasterViewmodel()),
+        ChangeNotifierProvider(create: (_) => CreateBlogViewmodel()),
+        ChangeNotifierProvider(create: (_) => ListBlogsViewmodel()),
+        
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),
@@ -80,6 +91,8 @@ class ProviderWidget extends StatelessWidget {
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
           return MaterialApp(
+            
+            navigatorKey: navigatorKey,
             locale: localeProvider.locale,
             localizationsDelegates: const [
               AppLocalizations.delegate,

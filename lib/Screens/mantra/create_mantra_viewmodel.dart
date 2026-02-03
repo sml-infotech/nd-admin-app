@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart'; // <<-- mime lookup
+import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
 import 'package:path/path.dart' as path; // <<-- basename
 
 import 'package:nammadaiva_dashboard/service/mantra_service.dart';
@@ -11,6 +12,9 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 class CreateMantraViewmodel extends ChangeNotifier {
   final mantraName = TextEditingController();
   final mantra = TextEditingController();
+
+  final mantraNameInKannadam = TextEditingController();
+  final mantraInKannadam = TextEditingController();
 
   File? selectedImage;
   String? uploadedImageUrl;
@@ -100,11 +104,14 @@ class CreateMantraViewmodel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      final response = await mantraService.createMantra(
-        mantraName.text,
-        mantra.text,
-        uploadedImageUrl!,
-      );
+      final response = await mantraService
+          .createMantra(mantraName.text, mantra.text, uploadedImageUrl!, [
+            MantraTranslation(
+              languageCode: "kn",
+              mantraName: mantraNameInKannadam.text,
+              mantra: mantraInKannadam.text,
+            ),
+          ]);
 
       if (response.code == 200) {
         message = "Mantra created successfully";
@@ -137,10 +144,17 @@ class CreateMantraViewmodel extends ChangeNotifier {
         mantraName.text,
         mantra.text,
         uploadedImageUrl!,
+        [
+          MantraTranslation(
+            languageCode: "kn",
+            mantraName: mantraNameInKannadam.text,
+            mantra: mantraInKannadam.text,
+          ),
+        ],
       );
 
       if (response.code == 200) {
-        message = "Mantra created successfully";
+        message = "Mantra Updated successfully";
         isLoading = false;
         isCompleted = true;
 

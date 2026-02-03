@@ -1,25 +1,48 @@
 class LoginResponse {
   final int code;
-  final String? otp;
   final String? message;
   final String? error;
-  final String? userId;
+  final String? token;
+  final User? user;
 
   LoginResponse({
    required this.code,
-    this.otp,
     this.message,
     this.error,
-    this.userId,
+    this.token,
+    this.user,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       code: json['code'],
-      otp: json['otp']?.toString(),
       message: json['message']?.toString(),
       error: json['error']?.toString(),
-      userId: json['user_id']?.toString(),
+      token: json['token']?.toString(),
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
+    );
+  }
+}
+
+class User {
+  final String id;
+  final String email;
+  final String role;
+  final String full_name;
+
+  User({
+    required this.id,
+    required this.email,
+    required this.role,
+    required this.full_name,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      email: json['email'],
+      role: json['role'],
+      full_name: json['full_name'],
     );
   }
 }

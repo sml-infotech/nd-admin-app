@@ -13,7 +13,10 @@ import 'package:nammadaiva_dashboard/arguments/puja_arguments.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+
+import '../../model/login_model/createpuja/create_pujamodel.dart';
 
 class PujaList extends StatefulWidget {
   const PujaList({super.key});
@@ -25,12 +28,21 @@ class PujaList extends StatefulWidget {
 class _PujaListState extends State<PujaList> {
   final ScrollController _scrollController = ScrollController();
   bool isActive = false;
+
   late PujaListViewmodel viewmodel;
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      viewmodel.language = prefs.getString('language') ?? 'en';
+    });
   }
 
   @override
@@ -59,7 +71,7 @@ class _PujaListState extends State<PujaList> {
     viewmodel = Provider.of<PujaListViewmodel>(context);
     final screenHeight = MediaQuery.of(context).size.height;
 
-return FocusDetector(
+    return FocusDetector(
       onFocusGained: () async {
         await viewmodel.getTemples();
         await viewmodel.fetchPujas(reset: true);
@@ -175,6 +187,8 @@ return FocusDetector(
                   sample_images: [],
                   templeId: "",
                   timeSlots: [],
+                  translations: [],
+                  benefits: [],
                 ),
               );
               viewmodel.reset();
@@ -222,7 +236,7 @@ return FocusDetector(
             children: [
               Row(
                 children: [
-                  pujatitleName(puja.pujaName),
+                  pujatitleName(puja),
                   Spacer(),
                   SmallToggleSwitch(
                     value: puja.isActive ?? false,
@@ -247,8 +261,8 @@ return FocusDetector(
                 ],
               ),
               // isActiveTextWidget(isActive),
-              deitiesName(puja.deitiesName),
-              descriptionWidget(puja.description),
+              buildDeities(puja),
+              descriptionWidget(puja),
               SizedBox(height: 8),
               fromAndToWidget(
                 fromDate:
@@ -318,12 +332,24 @@ return FocusDetector(
     );
   }
 
-  Widget pujatitleName(String pujaName) {
+  Widget pujatitleName(PujaData puja) {
+    String nameToDisplay = puja.pujaName;
+
+    if (viewmodel.language == "kn" &&
+        puja.translations != null &&
+        puja.translations!.isNotEmpty) {
+      nameToDisplay = puja.translations!.first.pujaName;
+    }
+
     return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(12, 8, 0, 0),
+      padding: const EdgeInsets.fromLTRB(12, 8, 0, 0),
       child: SizedBox(
         width: 200,
-        child: Text(pujaName, maxLines: 2, style: AppTextStyles.welcomeStyle),
+        child: Text(
+          nameToDisplay,
+          maxLines: 2,
+          style: AppTextStyles.welcomeStyle,
+        ),
       ),
     );
   }
@@ -332,6 +358,7 @@ return FocusDetector(
     return IconButton(
       onPressed: () {
         print("Editing Puja: ${puja.sampleImages}");
+        print("Editing Puja Translations: ${puja.translations}");
         Navigator.pushNamed(
           context,
           StringsRoute.addPuja,
@@ -353,6 +380,8 @@ return FocusDetector(
             deities_name: puja.deitiesName,
             sample_images: puja.sampleImages,
             timeSlots: puja.timeSlots,
+            translations: puja.translations ?? [],
+            benefits: puja.benefits ?? [],
           ),
         );
       },
@@ -360,21 +389,37 @@ return FocusDetector(
     );
   }
 
-  Widget deitiesName(List<String> deitiesName) {
+  Widget buildDeities(PujaData puja) {
+    // Extract names safely
+    List<String> displayNames =
+        (viewmodel.language == "kn" &&
+            puja.translations != null &&
+            puja.translations!.isNotEmpty)
+        ? puja.translations!.first.deityNames ?? []
+        : puja.deitiesName ?? [];
+
+    // Remove any empty strings from the list
+    final filteredNames = displayNames
+        .where((name) => name.trim().isNotEmpty)
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       child: RichText(
         text: TextSpan(
           children: [
             TextSpan(
-              text: AppLocalizations.of(context)!.deitiesText,
+              text: "${AppLocalizations.of(context)!.deitiesText}: ",
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             TextSpan(
-              text: deitiesName.join(', '),
-              style: AppTextStyles.templeNameDetailsStyle,
+              text: filteredNames.isNotEmpty ? filteredNames.join(', ') : '---',
+              style: AppTextStyles.templeNameDetailsStyle.copyWith(
+                // Optional: change color if it's '---'
+                color: filteredNames.isNotEmpty ? null : Colors.grey,
+              ),
             ),
           ],
         ),
@@ -382,12 +427,23 @@ return FocusDetector(
     );
   }
 
-  Widget descriptionWidget(String desscription) {
+  Widget descriptionWidget(PujaData puja) {
+    String displayDescription =
+        (viewmodel.language == "kn" &&
+            puja.translations != null &&
+            puja.translations!.isNotEmpty)
+        ? (puja.translations!.first.description ?? "")
+        : (puja.description ?? "");
+
+    if (displayDescription.isEmpty) {
+      displayDescription = "---";
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 13, 0),
       child: ExpandableText(
         label: AppLocalizations.of(context)!.descriptionText,
-        text: desscription,
+        text: displayDescription,
         maxLines: 2,
         style: AppTextStyles.templeNameDetailsStyle,
       ),

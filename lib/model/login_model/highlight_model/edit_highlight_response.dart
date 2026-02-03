@@ -1,3 +1,5 @@
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_create_model.dart';
+
 class EditHighlightResponse {
   final int? code;
   final String? title;
@@ -5,6 +7,7 @@ class EditHighlightResponse {
   final String? thumbnailUrl;
   final bool? isActive;
   final String? updatedAt;
+  final List<HighLightTranslateModel> translates;
 
   EditHighlightResponse({
     this.code,
@@ -13,6 +16,7 @@ class EditHighlightResponse {
     this.thumbnailUrl,
     this.isActive,
     this.updatedAt,
+    required this.translates,
   });
 
   factory EditHighlightResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,17 @@ class EditHighlightResponse {
       thumbnailUrl: json['thumbnail_url'] ?? "",
       isActive: json['is_active'] ?? false,
       updatedAt: json['updated_at'] ?? "",
+      translates: json['translations'] != null
+          ? (json['translations'] as List)
+                .map(
+                  (e) => HighLightTranslateModel(
+                    languageCode: e['language_code'] ?? '',
+                    title: e['title'] ?? '',
+                    description: e['description'] ?? '',
+                  ),
+                )
+                .toList()
+          : [],
     );
   }
 }

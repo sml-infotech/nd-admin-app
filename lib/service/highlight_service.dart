@@ -1,4 +1,3 @@
-
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/edit_highlight_response.dart';
@@ -8,19 +7,31 @@ import 'package:nammadaiva_dashboard/model/login_model/highlight_model/reorder_r
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/update_highlight_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
+
 class HighlightService {
   final HttpApiService apiService = HttpApiService();
-Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType, String mediaUrl) async {
+  Future<HighlightResponse> createHighlight(
+    String thumbnailUrl,
+    String mediaType,
+    String mediaUrl,
+    String title,
+    String description,
+    List<HighLightTranslateModel>? translates,
+  ) async {
     try {
-      final loginRequest = HighlightCreateModel(
+      final createHighLightRequest = HighlightCreateModel(
         thumbnail_url: thumbnailUrl,
         media_type: mediaType,
         media_url: mediaUrl,
+        title: title,
+        description: description,
+        translates: translates,
       );
+      print(">>>>>>>>>>>>>><>>>>>>>>${createHighLightRequest.toJson()}");
 
       final data = await apiService.post(
         UrlConstant.create_highlight,
-        loginRequest.toJson(),
+        createHighLightRequest.toJson(),
       );
 
       return HighlightResponse.fromJson(data);
@@ -30,10 +41,9 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
     }
   }
 
-    Future<ActiveHighlightsResponse> getHighlights() async {
+  Future<ActiveHighlightsResponse> getHighlights() async {
     try {
-      final url =
-          UrlConstant.list_active_highlights;
+      final url = "${UrlConstant.list_active_highlights}?language=kn";
       print('Fetching highlights: $url');
       dynamic data = await apiService.get(url);
       return ActiveHighlightsResponse.fromJson(data);
@@ -43,10 +53,9 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
     }
   }
 
-    Future<ActiveHighlightsResponse> getInactiveHighlights() async {
+  Future<ActiveHighlightsResponse> getInactiveHighlights() async {
     try {
-      final url =
-          UrlConstant.list_inactive_highlights;
+      final url = UrlConstant.list_inactive_highlights;
       print('Fetching highlights: $url');
       dynamic data = await apiService.get(url);
       return ActiveHighlightsResponse.fromJson(data);
@@ -60,7 +69,6 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
     String id,
     int from_position,
     int to_position,
-   
   ) async {
     try {
       final updatePuja = ReorderRequestModel(
@@ -76,7 +84,6 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
         updatePuja.toJson(),
       );
 
-
       return ReorderResponse.fromJson(data);
     } catch (e) {
       print("❌  API request failed -> $e");
@@ -84,15 +91,15 @@ Future<HighlightResponse> createHighlight(String thumbnailUrl, String mediaType,
     }
   }
 
-   Future<HighlightStatusUpdateResponse> updateHighlight(
-List<String> ids,
+  Future<HighlightStatusUpdateResponse> updateHighlight(
+    List<String> ids,
     bool isActive,
-   
   ) async {
     try {
-      final updateHighlight = HighlightStatusUpdate(ids: ids, isActive: isActive);
-        
-   
+      final updateHighlight = HighlightStatusUpdate(
+        ids: ids,
+        isActive: isActive,
+      );
 
       print("-------------------------------------------------------------");
 
@@ -101,7 +108,6 @@ List<String> ids,
         updateHighlight.toJson(),
       );
 
-
       return HighlightStatusUpdateResponse.fromJson(data);
     } catch (e) {
       print("❌  API request failed -> $e");
@@ -109,16 +115,19 @@ List<String> ids,
     }
   }
 
-   Future<EditHighlightResponse> EditHighlight(
-String id,
+  Future<EditHighlightResponse> EditHighlight(
+    String id,
     String title,
     String description,
-   
+    List<HighLightTranslateModel>? translates,
   ) async {
     try {
-      final updateHighlight = EditHighlightRequest(title: title, description: description);
-        print(">>>>>>>>>>>>>><>>>>>>>>${updateHighlight.toJson()}");
-   
+      final updateHighlight = EditHighlightRequest(
+        title: title,
+        description: description,
+        translates: translates,
+      );
+      print(">>>>>>>>>>>>>><>>>>>>>>${updateHighlight.toJson()}");
 
       print("-------------------------------------------------------------");
 
@@ -126,7 +135,6 @@ String id,
         UrlConstant.editHighlight + "/$id",
         updateHighlight.toJson(),
       );
-
 
       return EditHighlightResponse.fromJson(data);
     } catch (e) {

@@ -1,4 +1,3 @@
-
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/mantra_model/mantra_response_model.dart';
@@ -14,12 +13,14 @@ class MantraService {
     String mantraName,
     String mantra,
     String mantraImage,
+    List<MantraTranslation> translations,
   ) async {
     try {
       final loginRequest = MantraModel(
         mantraName: mantraName,
         mantra: mantra,
         deityImageUrl: mantraImage,
+        translations: translations,
       );
 
       final data = await apiService.post(
@@ -36,7 +37,8 @@ class MantraService {
 
   Future<MantraListModal> fetchMantra({int page = 1, int limit = 10}) async {
     try {
-      final url = '${UrlConstant.list_mantras}?page=$page&limit=$limit';
+      final url =
+          '${UrlConstant.list_mantras}?page=$page&limit=$limit&language=kn';
       print('Fetching fetchMantra: $url');
       dynamic data = await apiService.get(url);
       return MantraListModal.fromJson(data);
@@ -47,14 +49,19 @@ class MantraService {
   }
 
   Future<MantraUpdateResponse> mantraUpdate(
-   String mantraId,String mantraName,String mantra,String image
+    String mantraId,
+    String mantraName,
+    String mantra,
+    String image,
+List<MantraTranslation> translations,
   ) async {
     try {
       final updateMantra = UpdateMantra(
         mantraId: mantraId,
         mantraName: mantraName,
-        mantra:mantra,
+        mantra: mantra,
         deityImageUrl: image,
+        translations: translations,
       );
 
       final data = await apiService.put(

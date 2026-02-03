@@ -179,6 +179,18 @@ abstract class AppLocalizations {
   /// **'Add Highlights'**
   String get addHighlights;
 
+  /// No description provided for @enterblogName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Blog Name '**
+  String get enterblogName;
+
+  /// No description provided for @enterblogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Blog Description'**
+  String get enterblogDescription;
+
   /// No description provided for @mantra.
   ///
   /// In en, this message translates to:
@@ -425,6 +437,30 @@ abstract class AppLocalizations {
   /// **'Add Temple'**
   String get addTemple;
 
+  /// No description provided for @sectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Section Title'**
+  String get sectionTitle;
+
+  /// No description provided for @blogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Blogs'**
+  String get blogs;
+
+  /// No description provided for @no_blogs_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No Blogs Found'**
+  String get no_blogs_found;
+
+  /// No description provided for @blogs_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Blog Details'**
+  String get blogs_details;
+
   /// No description provided for @addTempleinkannadam.
   ///
   /// In en, this message translates to:
@@ -491,11 +527,23 @@ abstract class AppLocalizations {
   /// **'Deities'**
   String get deities;
 
+  /// No description provided for @create_blog.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Blog'**
+  String get create_blog;
+
   /// No description provided for @images.
   ///
   /// In en, this message translates to:
   /// **'Images'**
   String get images;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 
   /// No description provided for @userDetails.
   ///
@@ -729,7 +777,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Requests'**
-  String get updateRequests;
+String get updateRequests;
 
   /// No description provided for @fee.
   ///

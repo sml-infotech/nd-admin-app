@@ -51,6 +51,12 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addHighlights => 'ಮುಖ್ಯಾಂಶಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
+  String get enterblogName => 'ಬ್ಲಾಗ್ ಹೆಸರು ನಮೂದಿಸಿ';
+
+  @override
+  String get enterblogDescription => 'ಬ್ಲಾಗ್ ವಿವರಣೆ ನಮೂದಿಸಿ';
+
+  @override
   String get mantra => 'ಮಂತ್ರ';
 
   @override
@@ -174,6 +180,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addTemple => 'ದೇಗುಲ ಸೇರಿಸಿ';
 
   @override
+  String get sectionTitle => 'ವಿಭಾಗದ ಶೀರ್ಷಿಕೆ';
+
+  @override
+  String get blogs => 'ಬ್ಲಾಗ್‌ಗಳ ಪಟ್ಟಿ';
+
+  @override
+  String get no_blogs_found => 'ಯಾವುದೇ ಬ್ಲಾಗ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get blogs_details => 'ಬ್ಲಾಗ್ ವಿವರಗಳು';
+
+  @override
   String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override
@@ -207,7 +225,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get deities => 'ದೇವತೆಗಳು';
 
   @override
+  String get create_blog => 'ಬ್ಲಾಗ್ ರಚಿಸಿ';
+
+  @override
   String get images => 'ಚಿತ್ರಗಳು';
+
+  @override
+  String get next => 'ಮುಂದೆ';
 
   @override
   String get userDetails => 'ಬಳಕೆದಾರರ ವಿವರಗಳು';

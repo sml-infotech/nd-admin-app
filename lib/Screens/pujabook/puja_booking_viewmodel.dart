@@ -13,8 +13,12 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final TextEditingController description = TextEditingController();
   final TextEditingController duration = TextEditingController();
   final TextEditingController fee = TextEditingController();
+  final TextEditingController benefitController = TextEditingController();
+
   final TextEditingController maxDevotees = TextEditingController();
   final TextEditingController deitiesController = TextEditingController();
+  final TextEditingController pujaNameInKannadam = TextEditingController();
+  final TextEditingController descriptionInKannadam = TextEditingController();
 
   final PujaService pujaService = PujaService();
   final TempleService templeService = TempleService();
@@ -26,17 +30,20 @@ class CreatePujaViewmodel extends ChangeNotifier {
   List<Temple> templeData = [];
   List<String> templeList = [];
   List<String> uploadedImageUrls = [];
-List<String> deitiesListEn = [];
+  List<String> deitiesListEn = [];
   List<String> deitiesListKn = [];
   List<String> selectedDeities = [];
   Temple? selectedTemple;
-  
+  List<String> deitiesOptionsEn = [];
+  List<String> deitiesOptionsKn = [];
+  List<String> selectedDeitiesEn = [];
+  List<String> selectedDeitiesKn = [];
   String message = "";
   // String selectedDeities = "";
   String selectedDeityId = "";
   String? presignedURL;
   String? selectedTempleId;
-  
+
   String? pujaId;
 
   bool bookingCutoff = false;
@@ -50,17 +57,29 @@ List<String> deitiesListEn = [];
 
   int page = 1;
   final int limit = 10;
-  final TextEditingController benefitController = TextEditingController();
 
   List<Benefit> benefits = [];
+  List<String> benefitsEn = [];
 
-  void addBenefit(String benefit) {
-    benefits.add(Benefit(description: benefit));
+  // KN
+  final TextEditingController benefitControllerKn = TextEditingController();
+  List<String> benefitsKn = [];
+
+  void addBenefit(String text, {required bool isKannada}) {
+    if (isKannada) {
+      benefitsKn.add(text);
+    } else {
+      benefitsEn.add(text);
+    }
     notifyListeners();
   }
 
-  void removeBenefit(int index) {
-    benefits.removeAt(index);
+  void removeBenefit(int index, {required bool isKannada}) {
+    if (isKannada) {
+      benefitsKn.removeAt(index);
+    } else {
+      benefitsEn.removeAt(index);
+    }
     notifyListeners();
   }
 
@@ -79,7 +98,19 @@ List<String> deitiesListEn = [];
     "Sun": true,
   };
 
-  List<String> cutOffDays = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  List<String> cutOffDays = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '20',
+  ];
   int? cutOffDay;
 
   List<TimeSlot> timeSlots = [];
@@ -87,9 +118,11 @@ List<String> deitiesListEn = [];
   Future<bool> validateForm(bool isFromUpdate) async {
     if (selectedTemple == null) {
       message = "Please select Temple";
-    } else if (deities.isEmpty) {
-      message = "Please select Deities";
-    } else if (pujaName.text.trim().isEmpty) {
+    }
+    //  else if (deities.isEmpty) {
+    //   message = "Please select Deities";
+    // }
+    else if (pujaName.text.trim().isEmpty) {
       message = "Please enter Puja name";
     } else if (description.text.trim().isEmpty) {
       message = "Please enter description";
@@ -241,6 +274,9 @@ List<String> deitiesListEn = [];
           .map((e) => e.key)
           .toList();
 
+      final benefitsList = benefitsEn
+          .map((b) => Benefit(description: b))
+          .toList();
       final response = await pujaService.cretaPuja(
         selectedTempleId ?? "",
         pujaName.text,
@@ -255,7 +291,16 @@ List<String> deitiesListEn = [];
         selectedEndDate.toString(),
         requestDays,
         timeSlots,
-        benefits,
+        benefitsList,
+        [
+          Translation(
+            languageCode: "kn",
+            pujaName: pujaNameInKannadam.text,
+            description: descriptionInKannadam.text,
+            deityNames: selectedDeitiesKn,
+            benefits: benefitsKn,
+          ),
+        ],
       );
 
       if (response.code == 200) {
@@ -301,7 +346,7 @@ List<String> deitiesListEn = [];
         pujaIdValue,
         "",
         pujaName.text,
-        deities, // ✅ selected deities
+        selectedDeitiesEn,
         description.text,
         int.parse(maxDevotees.text),
         double.parse(fee.text),
@@ -312,6 +357,16 @@ List<String> deitiesListEn = [];
         selectedEndDate!.toIso8601String(),
         requestDays,
         timeSlots,
+        benefitsEn.map((b) => Benefit(description: b)).toList(),
+        [
+          Translation(
+            languageCode: "kn",
+            pujaName: pujaNameInKannadam.text,
+            description: descriptionInKannadam.text,
+            deityNames: selectedDeitiesKn,
+            benefits: benefitsKn,
+          ),
+        ],
       );
 
       if (response.code == 200) {
@@ -382,38 +437,51 @@ List<String> deitiesListEn = [];
     toTime = null;
     timeSlots = [];
     notifyListeners();
-
+    deitiesListEn = [];
+    deitiesListKn = [];
+    deities = [];
+    selectedDeities = [];
+    benefits = [];
+    benefitsEn = [];
+    benefitsKn = [];
     message = "";
     isValid = false;
     isLoading = false;
+    pujaNameInKannadam.clear();
+    descriptionInKannadam.clear();
 
     uploadedImageUrls.clear();
-    selectedDays.clear();
+    // selectedDays.clear();
     cutOffDay = 1;
   }
 
-void setSelectedTemple(Temple temple) {
-  selectedTemple = temple;
-  selectedTempleId = temple.id;
+  void setSelectedTemple(Temple temple, {List<String>? initialDeitiesEn}) {
+    selectedTemple = temple;
+    selectedTempleId = temple.id;
 
-   deities = []; 
-   selectedDeities = []; 
-   deitiesListEn = List<String>.from(temple.deities ?? []);
+    deitiesOptionsEn = List<String>.from(temple.deities ?? []);
 
-  // 2. Populate Kannada Deities from translations
-  if (temple.translations != null && temple.translations!.isNotEmpty) {
-        deitiesListKn = [];
+    if (temple.translations != null && temple.translations!.isNotEmpty) {
+      deitiesOptionsKn = List<String>.from(
+        temple.translations!.first.deities ?? [],
+      );
+    } else {
+      deitiesOptionsKn = [];
+    }
 
-    deitiesListKn = List<String>.from(temple.translations!.first.deities ?? []);
-  } else {
-    deitiesListKn = [];
+    if (initialDeitiesEn != null) {
+      selectedDeitiesEn = initialDeitiesEn;
+      selectedDeitiesKn = initialDeitiesEn.map((enName) {
+        int index = deitiesOptionsEn.indexOf(enName);
+        if (index != -1 && index < deitiesOptionsKn.length) {
+          return deitiesOptionsKn[index];
+        }
+        return enName;
+      }).toList();
+    }
+
+    notifyListeners();
   }
-
-  // 3. Keep deitiesList (legacy) synced to current locale or default to English
-  deitiesList = deitiesListEn; 
-
-  notifyListeners();
-}
 
   @override
   void dispose() {

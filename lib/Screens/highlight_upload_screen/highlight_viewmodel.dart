@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
+import 'package:nammadaiva_dashboard/model/login_model/highlight_model/highlight_create_model.dart';
+import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
@@ -16,6 +18,10 @@ class HighlightViewmodel extends ChangeNotifier {
   final HighlightService highlightService = HighlightService();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController titleControllerInKannadam = TextEditingController();
+  TextEditingController descriptionControllerInKannadam =
+      TextEditingController();
+  XFile? pickedFile;
 
   bool isLoading = false;
   String message = '';
@@ -33,6 +39,40 @@ class HighlightViewmodel extends ChangeNotifier {
   List<HighlightItem> get inactiveHighlights =>
       List.from(inActiveList)
         ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+
+  VideoPlayerController? videoController;
+  bool isVideo(String path) {
+    String cleanPath = path.split('?').first.toLowerCase();
+    return cleanPath.endsWith('.mp4') || cleanPath.endsWith('.mov');
+  }
+
+  void setPickedFile(XFile? file) {
+    pickedFile = file;
+    notifyListeners();
+  }
+
+  // Initialize and manage video
+  Future<void> initializeVideo(String path) async {
+    await disposeVideo(); // Clear existing
+    videoController = VideoPlayerController.file(File(path));
+    try {
+      await videoController!.initialize();
+      videoController!.play();
+      videoController!.setLooping(true);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Video Init Error: $e");
+    }
+  }
+
+  Future<void> disposeVideo() async {
+    if (videoController != null) {
+      await videoController!.pause();
+      await videoController!.dispose();
+      videoController = null;
+      notifyListeners();
+    }
+  }
 
   Future<void> fetchHighlights({bool refresh = false}) async {
     try {
@@ -96,6 +136,26 @@ class HighlightViewmodel extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  void clearUploadData() {
+    // Clear Text Controllers
+    titleController.clear();
+    descriptionController.clear();
+    titleControllerInKannadam.clear();
+    descriptionControllerInKannadam.clear();
+
+    // Clear Media State
+    pickedFile = null;
+
+    // Dispose and nullify video controller if it exists
+    if (videoController != null) {
+      videoController!.dispose();
+      videoController = null;
+    }
+
+    // Notify listeners so the UI updates (e.g., hides the preview)
+    notifyListeners();
   }
 
   Future<void> _processUpload(XFile file, bool isVideo) async {
@@ -181,6 +241,18 @@ class HighlightViewmodel extends ChangeNotifier {
       thumbnailUrl ?? url,
       isVideo ? 'video' : 'image',
       url,
+      titleController.text.trim(),
+      descriptionController.text.trim(),
+      titleControllerInKannadam.text.isNotEmpty ||
+              descriptionControllerInKannadam.text.isNotEmpty
+          ? [
+              HighLightTranslateModel(
+                languageCode: "kn",
+                title: titleControllerInKannadam.text.trim(),
+                description: descriptionControllerInKannadam.text.trim(),
+              ),
+            ]
+          : null,
     );
 
     if (response.code != 200) {
@@ -261,10 +333,20 @@ class HighlightViewmodel extends ChangeNotifier {
         id,
         title,
         description,
+        titleControllerInKannadam.text.isNotEmpty ||
+                descriptionControllerInKannadam.text.isNotEmpty
+            ? [
+                HighLightTranslateModel(
+                  languageCode: "kn",
+                  title: titleControllerInKannadam.text.trim(),
+                  description: descriptionControllerInKannadam.text.trim(),
+                ),
+              ]
+            : null,
       );
 
       if (response.code == 200) {
-        print("✅ Highlights updated successfully${response.title}");
+        print("✅ Highlights updated successfully${response}");
         resetAfterCreate();
       } else {
         throw Exception("Failed to reorder highlights");
@@ -287,7 +369,7 @@ Future<File> generateVideoThumbnail(XFile videoFile) async {
     thumbnailPath: tempDir.path,
     imageFormat: ImageFormat.JPEG,
     quality: 75,
-    timeMs: 7, // 👈 middle frame automatically
+    timeMs: 7, 
   );
 
   if (thumbnailPath == null) {

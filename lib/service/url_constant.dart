@@ -6,7 +6,7 @@ String baseUrlString() {
     case Server.dev:
       return "";
     case Server.stage:
-      return "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/v1/";
+      return "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
     case Server.prod:
       return "";
   }
@@ -14,49 +14,57 @@ String baseUrlString() {
 
 class UrlConstant {
   UrlConstant._();
-  static String loginUrl = "${baseUrlString()}login-dashboard-user";
-  static String otpUrl = "${baseUrlString()}verify-dashboard-user-otp";
-  static String createUser = "${baseUrlString()}create-dashboard-user";
-  static String templeUser = "${baseUrlString()}list-temples";
-  static String userListUrl = "${baseUrlString()}list-dashboard-users";
-  static String userEditUrl = "${baseUrlString()}edit-dashboard-user";
+  static String loginUrl = "${baseUrlString()}v2/login-dashboard-user";
+  static String create_blog = "${baseUrlString()}v1/create-blog";
+  static String otpUrl = "${baseUrlString()}v1/verify-dashboard-user-otp";
+  static String createUser = "${baseUrlString()}v1/create-dashboard-user";
+  static String postFcmToken = "${baseUrlString()}v1/fcm-token";
+  static String logoutUrl = "${baseUrlString()}v1/logout-dashboard-user";
+  static String templeUser = "${baseUrlString()}v1/list-temples";
+  static String userListUrl = "${baseUrlString()}v1/list-dashboard-users";
+  static String userEditUrl = "${baseUrlString()}v1/edit-dashboard-user";
   static String forgotPasswordUrl =
-      "${baseUrlString()}forget-dashboard-user-password";
+      "${baseUrlString()}v1/forget-dashboard-user-password";
   static String resetPasswordUrl =
-      "${baseUrlString()}reset-dashboard-user-password";
-  static String addTempleUrl = "${baseUrlString()}create-temple";
-static String presignedUrl = "${baseUrlString()}get-presigned-url/upload";
-  static String createPujaUrl = "${baseUrlString()}create-puja";
-  static String getPujas = "${baseUrlString()}list-pujas";
-  static String updateTempleUrl = "${baseUrlString()}temple-update-requests";
+      "${baseUrlString()}v1/reset-dashboard-user-password";
+  static String addTempleUrl = "${baseUrlString()}v1/create-temple";
+  static String presignedUrl = "${baseUrlString()}v1/get-presigned-url/upload";
+  static String createPujaUrl = "${baseUrlString()}v1/create-puja";
+  static String getPujas = "${baseUrlString()}v1/list-pujas";
+  static String updateTempleUrl = "${baseUrlString()}v1/temple-update-requests";
   static String updateTempleRequestUrl =
-      "${baseUrlString()}list-temple-update-requests";
-  static String updateTempleAdminUrl = "${baseUrlString()}update-temple";
-  static String updatePuja = "${baseUrlString()}update-puja";
-  static String toggleUrl = "${baseUrlString()}toggle-puja-active";
-  static String templeApprovalUrl = "${baseUrlString()}temple-approval";
-  static String createEventUrl = "${baseUrlString()}create-event";
-  static String getEventsUrl = "${baseUrlString()}list-events";
-  static String updateEvent = "${baseUrlString()}update-event";
-  static String bookingList = "${baseUrlString()}list-bookings";
-  static String contact_us = "${baseUrlString()}list-contact-us-messages";
-  static String mark_as_read = "${baseUrlString()}contact-us";
-  static String master_temples = "${baseUrlString()}list-master-temples";
-  static String create_master_temple = "${baseUrlString()}create-master-temple";
-  static String update_onboard = "${baseUrlString()}update-master-temple";
-  static String create_mantra = "${baseUrlString()}create-mantra";
-  static String list_mantras = "${baseUrlString()}list-mantras";
-  static String update_mantra = "${baseUrlString()}update-mantra";
-  static String create_highlight = "${baseUrlString()}create-highlight";
+      "${baseUrlString()}v1/list-temple-update-requests";
+  static String updateTempleAdminUrl = "${baseUrlString()}v1/update-temple";
+  static String updatePuja = "${baseUrlString()}v1/update-puja";
+  static String toggleUrl = "${baseUrlString()}v1/toggle-puja-active";
+  static String templeApprovalUrl = "${baseUrlString()}v1/temple-approval";
+  static String createEventUrl = "${baseUrlString()}v1/create-event";
+  static String getEventsUrl = "${baseUrlString()}v1/list-events";
+  static String updateEvent = "${baseUrlString()}v1/update-event";
+  static String bookingList = "${baseUrlString()}v1/list-bookings";
+  static String contact_us = "${baseUrlString()}v1/list-contact-us-messages";
+  static String mark_as_read = "${baseUrlString()}v1/contact-us";
+  static String master_temples = "${baseUrlString()}v1/list-master-temples";
+  static String create_master_temple =
+      "${baseUrlString()}v1/create-master-temple";
+  static String update_onboard = "${baseUrlString()}v1/update-master-temple";
+  static String create_mantra = "${baseUrlString()}v1/create-mantra";
+  static String list_mantras = "${baseUrlString()}v1/list-mantras";
+  static String update_mantra = "${baseUrlString()}v1/update-mantra";
+  static String create_highlight = "${baseUrlString()}v1/create-highlight";
   static String list_active_highlights =
-      "${baseUrlString()}list-active-highlights";
+      "${baseUrlString()}v1/list-active-highlights";
   static String list_inactive_highlights =
-      "${baseUrlString()}list-inactive-highlights";
-  static String reorderHighlight = "${baseUrlString()}reorder-highlight";
-  static String updateHighlight = "${baseUrlString()}toggle-highlight-active";
-  static String create_festival = "${baseUrlString()}add-festival";
-  static String list_festivals = "${baseUrlString()}list-festivals";
-  static String update_festival = "${baseUrlString()}edit-festival";
-  static String delete_festival = "${baseUrlString()}delete-festival";
-static String editHighlight = "${baseUrlString()}edit-highlight";
+      "${baseUrlString()}v1/list-inactive-highlights";
+  static String reorderHighlight = "${baseUrlString()}v1/reorder-highlight";
+  static String updateHighlight =
+      "${baseUrlString()}v1/toggle-highlight-active";
+  static String create_festival = "${baseUrlString()}v1/add-festival";
+  static String list_festivals = "${baseUrlString()}v1/list-festivals";
+  static String update_festival = "${baseUrlString()}v1/edit-festival";
+  static String delete_festival = "${baseUrlString()}v1/delete-festival";
+  static String editHighlight = "${baseUrlString()}v1/edit-highlight";
+  static String getBlogs = "${baseUrlString()}v1/list-blogs";
+  static String blogDetails = "${baseUrlString()}v1/blog-details";
+  static String updateBlog = "${baseUrlString()}v1/update-blog";
 }

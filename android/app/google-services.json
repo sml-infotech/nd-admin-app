@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "205940126865",
+    "project_id": "nd-admin-b075a",
+    "storage_bucket": "nd-admin-b075a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205940126865:android:546b0f04be147a8377bb30",
+        "android_client_info": {
+          "package_name": "com.sml.nammadaiva_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBi8Y5ckPgHq32ivDlezUEUK8Z3LItTxXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

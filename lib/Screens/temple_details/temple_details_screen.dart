@@ -62,7 +62,6 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
               physics: const ClampingScrollPhysics(),
               child: Container(
                 width: double.infinity,
-
                 child: Column(
                   children: [
                     carouselWidget(),
@@ -216,7 +215,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     child: const Text("Upcoming events go here."),
   );
 
-  Widget carouselWidget() {
+Widget carouselWidget() {
     final images = widget.arguments.images;
 
     if (images.length == 1) {

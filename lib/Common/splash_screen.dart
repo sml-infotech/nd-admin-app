@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
+import 'package:nammadaiva_dashboard/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -59,6 +61,10 @@ class _SplashScreenState extends State<SplashScreen>
         routeToNavigate,
         (route) => false,
       );
+      if (initialMessage != null) {
+        FcmNotificationService.handleNotificationTap(initialMessage!);
+        initialMessage = null;
+      }
     });
   }
 

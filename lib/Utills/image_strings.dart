@@ -20,6 +20,12 @@ class ImageStrings {
   static const String calendar = 'assets/calendar.png';
   static const String uploadImg = 'assets/uploadimg.png';
   static const String edit='assets/edit.png';
+  static const String logo='assets/logo.png';
+    static const String leftImage='assets/leftflower.png';
+
+  static const String rightimage='assets/rightflower.png';
+
+
 
 
 }

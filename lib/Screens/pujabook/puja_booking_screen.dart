@@ -39,7 +39,6 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   @override
   void initState() {
     super.initState();
-
     Future.microtask(() {
       if (widget.pujaArgumrnts?.timeSlots != null &&
           widget.pujaArgumrnts!.timeSlots!.isNotEmpty) {
@@ -59,6 +58,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       viewmodel = Provider.of<CreatePujaViewmodel>(context, listen: false);
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        viewmodel.resetForm();
+
         await viewmodel.getTemples(reset: true);
         await prefillData();
         setState(() {});
@@ -71,17 +72,50 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   Future<void> prefillData() async {
     final args = widget.pujaArgumrnts;
     if (args == null || args.puja_id.isEmpty) return;
+
+    if (viewmodel.templeData.isEmpty) {
+      await viewmodel.getTemples(reset: true);
+    }
+
     viewmodel.pujaId = args.puja_id;
-    viewmodel.selectedDeityId = args.templeId;
+    viewmodel.selectedTempleId = args.templeId;
     viewmodel.pujaName.text = args.puja_name ?? "";
     viewmodel.description.text = args.description ?? "";
     viewmodel.maxDevotees.text = args.maximumNoOfDevotees?.toString() ?? "";
     viewmodel.fee.text = args.fee?.toString() ?? "";
     viewmodel.specialReq = args.allows_special_requirements ?? false;
-    viewmodel.bookingCutoff = args.booking_cutoff_notice != null;
 
-    if (args.sample_images != null && args.sample_images!.isNotEmpty) {
-      viewmodel.uploadedImageUrls = List<String>.from(args.sample_images!);
+    final knTranslation = args.translations!.firstWhere(
+      (t) => t.languageCode == 'kn',
+      orElse: () => Translation(
+        languageCode: 'kn',
+        pujaName: '',
+        description: '',
+        deityNames: [],
+        benefits: [],
+      ),
+    );
+
+    viewmodel.pujaNameInKannadam.text = knTranslation.pujaName;
+    viewmodel.descriptionInKannadam.text = knTranslation.description;
+    viewmodel.benefitsEn = List<String>.from(
+      args.benefits.map((b) => b.description),
+    );
+    viewmodel.benefitsKn = List<String>.from(knTranslation.benefits);
+
+    if (args.templeId != null && args.templeId!.isNotEmpty) {
+      try {
+        final matchedTemple = viewmodel.templeData.firstWhere(
+          (t) => t.id == args.templeId,
+        );
+
+        viewmodel.setSelectedTemple(
+          matchedTemple,
+          initialDeitiesEn: List<String>.from(args.deities_name),
+        );
+      } catch (e) {
+        debugPrint("Temple ID ${args.templeId} not found in templeData list.");
+      }
     }
 
     if (args.from_date != null) {
@@ -91,48 +125,22 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       viewmodel.selectedEndDate = DateTime.tryParse(args.to_date!);
     }
 
-    if (args.days != null && args.days!.isNotEmpty) {
-      for (final key in viewmodel.selectedDays.keys) {
-        viewmodel.selectedDays[key] = args.days!.contains(key);
-        print("??????????????????${viewmodel.selectedDays}");
+    if (args.days != null) {
+      viewmodel.selectedDays.updateAll((key, value) => false);
+      for (var day in args.days!) {
+        if (viewmodel.selectedDays.containsKey(day)) {
+          viewmodel.selectedDays[day] = true;
+        }
       }
     }
-    if (args.templeId != null && args.templeId!.isNotEmpty) {
-      final matchedTemple = viewmodel.templeData.firstWhere(
-        (t) => t.id == args.templeId,
-        orElse: () => Temple(
-          id: '',
-          name: '',
-          address: '',
-          city: '',
-          state: '',
-          pincode: '',
-          architecture: '',
-          phoneNumber: '',
-          email: '',
-          description: '',
-          createdAt: '',
-          updatedAt: '',
-        ),
-      );
 
-      if (matchedTemple.id.isNotEmpty) {
-        viewmodel.selectedTempleId = matchedTemple.id;
-        viewmodel.setSelectedTemple(matchedTemple,);
-      }
-
-      if (args.deities_name != null && args.deities_name!.isNotEmpty) {
-        viewmodel.deities = List<String>.from(args.deities_name!);
-      }
-
-      if (args.timeSlots != null && args.timeSlots!.isNotEmpty) {
-        setState(() {
-          viewmodel.timeSlots = args.timeSlots!.map((slot) {
-            return TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime);
-          }).toList();
-        });
-      }
+    if (args.timeSlots != null) {
+      viewmodel.timeSlots = args.timeSlots!
+          .map((slot) => TimeSlot(fromTime: slot.fromTime, toTime: slot.toTime))
+          .toList();
     }
+
+    setState(() {});
   }
 
   @override
@@ -255,42 +263,59 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     );
   }
 
-// Inside PujaBookingScreen
-Widget _buildTempleDropdown() {
-  final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
+  Widget _buildTempleDropdown() {
+    final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
 
-  return CommonDropdownField(
-    hintText: AppLocalizations.of(context)!.temple,
-    labelText: AppLocalizations.of(context)!.temple,
-    items: viewmodel.templeData.map((t) => isKannada ? (t.translations?.first.name ?? t.name) : t.name).toList(),
-    selectedValue: isKannada
-        ? viewmodel.selectedTemple?.translations?.first.name
-        : viewmodel.selectedTemple?.name,
-    paddingSize: 16,
-    onChanged: (value) {
-      if (value == null) return;
-      final selectedTemple = viewmodel.templeData.firstWhere(
-        (t) => t.name == value || (t.translations?.first.name == value),
-      );
-      viewmodel.setSelectedTemple(selectedTemple);
-      viewmodel.selectedDeities = [];
-    },
-  );
-}
-Widget _buildDeitiesDropdown() {
-  final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
+    return CommonDropdownField(
+      hintText: AppLocalizations.of(context)!.temple,
+      labelText: AppLocalizations.of(context)!.temple,
+      items: viewmodel.templeData
+          .map(
+            (t) => isKannada ? (t.translations?.first.name ?? t.name) : t.name,
+          )
+          .toList(),
+      selectedValue: isKannada
+          ? viewmodel.selectedTemple?.translations?.first.name
+          : viewmodel.selectedTemple?.name,
+      paddingSize: 16,
+      onChanged: (value) {
+        if (value == null) return;
 
-  return DeitiesDropdown(
-    // Dynamically choose the correct list
-    items: isKannada ? viewmodel.deitiesListKn : viewmodel.deitiesListEn,
-    selectedItems: viewmodel.selectedDeities,
-    onSelectionChanged: (selected) {
-      setState(() {
-        viewmodel.selectedDeities = selected;
-      });
-    },
-  );
-}
+        final selectedTemple = viewmodel.templeData.firstWhere(
+          (t) => t.name == value || (t.translations?.first.name == value),
+        );
+
+        viewmodel.setSelectedTemple(selectedTemple);
+
+        setState(() {});
+      },
+    );
+  }
+
+  Widget _buildDeitiesDropdown() {
+    final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
+
+    return DeitiesDropdown(
+      items: isKannada
+          ? viewmodel.deitiesOptionsKn
+          : viewmodel.deitiesOptionsEn,
+
+      selectedItems: isKannada
+          ? viewmodel.selectedDeitiesKn
+          : viewmodel.selectedDeitiesEn,
+
+      onSelectionChanged: (selected) {
+        setState(() {
+          if (isKannada) {
+            viewmodel.selectedDeitiesKn = selected;
+          } else {
+            viewmodel.selectedDeitiesEn = selected;
+          }
+          viewmodel.deitiesList = viewmodel.selectedDeitiesEn;
+        });
+      },
+    );
+  }
 
   Widget _buildPujaDetails() {
     return Column(
@@ -313,7 +338,7 @@ Widget _buildDeitiesDropdown() {
 
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: BenefitInputWidget(viewmodel: viewmodel),
+          child: BenefitInputWidget(viewmodel: viewmodel, isKannada: false),
         ),
       ],
     );
@@ -601,22 +626,26 @@ Widget _buildDeitiesDropdown() {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                Navigator.pushNamed(context, StringsRoute.addPujaInkn,arguments: widget.pujaArgumrnts,);
+                Navigator.pushNamed(
+                  context,
+                  StringsRoute.addPujaInkn,
+                  arguments: widget.pujaArgumrnts,
+                );
                 final isUpdate =
                     widget.pujaArgumrnts != null &&
                     widget.pujaArgumrnts!.puja_id.isNotEmpty;
-                final isValid = await viewmodel.validateForm(isUpdate);
+                // final isValid = await viewmodel.validateForm(isUpdate);
 
-                if (viewmodel.pujaCreated) {
-                  Fluttertoast.showToast(
-                    msg: viewmodel.message ?? "Puja created successfully.",
-                  );
-                  Navigator.pop(context);
-                } else {
-                  Fluttertoast.showToast(
-                    msg: viewmodel.message ?? "Failed to create puja.",
-                  );
-                }
+                // if (viewmodel.pujaCreated) {
+                //   Fluttertoast.showToast(
+                //     msg: viewmodel.message ?? "Puja created successfully.",
+                //   );
+                //   Navigator.pop(context);
+                // } else {
+                //   Fluttertoast.showToast(
+                //     msg: viewmodel.message ?? "Failed to create puja.",
+                //   );
+                // }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,

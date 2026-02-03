@@ -6,6 +6,10 @@ import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_respon
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
+import 'package:nammadaiva_dashboard/model/login_model/fcm_post_model/fcm_request_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/fcm_post_model/fcm_response_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/logout/logout_request_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/logout/logout_response_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -246,6 +250,36 @@ class UserService {
       );
       print("1111111111$data");
       return PresignedUrlResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<FcmResponseModel> postFcmToken(FcmRequestModel fcmRequestModel) async {
+    try {
+      final data = await apiService.post(
+        UrlConstant.postFcmToken,
+        fcmRequestModel.toJson(),
+      );
+      print("1111111111$data");
+      return FcmResponseModel.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<LogoutResponseModal> logout(
+    LogoutRequestModel logout_request_model,
+  ) async {
+    try {
+      final data = await apiService.post(
+        UrlConstant.logoutUrl,
+        logout_request_model.toJson(),
+      );
+      print("1111111111$data");
+      return LogoutResponseModal.fromJson(data);
     } catch (e) {
       print("Auth service decode fails: $e");
       throw Exception('API failed: $e');

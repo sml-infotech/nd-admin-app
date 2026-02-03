@@ -6,6 +6,7 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/highlight_upload_screen/media_viewer.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
@@ -24,7 +25,6 @@ class HighLightsUploaderScreen extends StatefulWidget {
 }
 
 class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
-  XFile? _pickedFile;
   VideoPlayerController? _videoController;
   final ImagePicker _picker = ImagePicker();
   late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(
@@ -48,30 +48,17 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _clearPreviousVideo();
-      // viewModel.addMedia([pickedFile.path], false);
-      setState(() => _pickedFile = pickedFile);
+      viewModel.pickedFile = pickedFile;
+      setState(() {});
     }
   }
 
   Future<void> _pickVideo() async {
     final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
-      _clearPreviousVideo();
-      final controller = VideoPlayerController.file(File(pickedFile.path));
-      try {
-        await controller.initialize();
-        // viewModel.addMedia([pickedFile.path], true);
-        if (mounted) {
-          setState(() {
-            _pickedFile = pickedFile;
-            _videoController = controller;
-            _videoController!.play();
-            _videoController!.setLooping(true);
-          });
-        }
-      } catch (e) {
-        debugPrint("Error: $e");
-      }
+      viewModel.setPickedFile(pickedFile);
+      await viewModel.initializeVideo(pickedFile.path);
+      if (mounted) setState(() {});
     }
   }
 
@@ -82,7 +69,6 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   }
 
   void _toggleStatus() async {
-    // Check if no items are selected
     if (_selectedItems.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -273,7 +259,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,
         ),
-        onPressed: viewModel.isLoading ? null : _handleUpload,
+        onPressed: () {
+          Navigator.pushNamed(context, StringsRoute.highlightUploadinKn);
+        },
         child: viewModel.isLoading
             ? const SizedBox(
                 height: 20,
@@ -328,61 +316,50 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     );
   }
 
-  Future<void> _handleUpload() async {
-    if (_pickedFile == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Select a file first")));
-      return;
-    }
+  // Future<void> _handleUpload() async {
+  //   if (_pickedFile == null) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(const SnackBar(content: Text("Select a file first")));
+  //     return;
+  //   }
 
-    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-    final bool isVideo = _checkIsVideo(_pickedFile!.path);
+  //   final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+  //   final bool isVideo = _checkIsVideo(_pickedFile!.path);
 
-    final bool success = await viewModel.addMedia([_pickedFile!.path], isVideo);
+  //   final bool success = await viewModel.addMedia([_pickedFile!.path], isVideo);
 
-    if (!success) return;
+  //   if (!success) return;
 
-    setState(() {
-      _pickedFile = null;
-      _videoController?.pause();
-      _videoController?.dispose();
-      _videoController = null;
-    });
+  //   setState(() {
+  //     _pickedFile = null;
+  //     _videoController?.pause();
+  //     _videoController?.dispose();
+  //     _videoController = null;
+  //   });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
-  }
+  //   ScaffoldMessenger.of(
+  //     context,
+  //   ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
+  // }
 
   Widget _buildPreview() {
-    if (_pickedFile == null) {
-      return const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_upload_outlined, size: 40),
-            Text("Tap to select HighLights"),
-          ],
-        ),
-      );
+    final controller = viewModel.videoController;
+
+    if (viewModel.pickedFile == null) {
+      return const Center(child: Text("No Media Selected"));
     }
 
-    if (_checkIsVideo(_pickedFile!.path)) {
-      return _videoController != null && _videoController!.value.isInitialized
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: AspectRatio(
-                aspectRatio: _videoController!.value.aspectRatio,
-                child: VideoPlayer(_videoController!),
-              ),
+    if (viewModel.isVideo(viewModel.pickedFile!.path)) {
+      return controller != null && controller.value.isInitialized
+          ? AspectRatio(
+              aspectRatio: controller.value.aspectRatio,
+              child: VideoPlayer(controller),
             )
-          : const Center(child: CircularProgressIndicator());
+          : const CircularProgressIndicator();
     }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.file(File(_pickedFile!.path), fit: BoxFit.cover),
-    );
+
+    return Image.file(File(viewModel.pickedFile!.path));
   }
 
   Widget _buildMediaGrid() {
@@ -494,7 +471,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
               right: 28,
               child: GestureDetector(
                 onTap: () {
-                  _showEditBottomSheet(context, viewModel, id);
+                  _showEditBottomSheet(context, viewModel, id, highlightItem);
                 },
                 child: Icon(Icons.edit, color: Colors.grey[600], size: 20),
               ),
@@ -588,9 +565,22 @@ void _showEditBottomSheet(
   BuildContext context,
   HighlightViewmodel viewModel,
   String id,
+  HighlightItem? item,
 ) {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  titleController.text = item?.title ?? '';
+  descriptionController.text = item?.description ?? '';
+  viewModel.titleControllerInKannadam.text =
+      item?.translates != null && item!.translates!.isNotEmpty
+      ? item.translates!.first.title ?? ''
+      : '';
+  viewModel.descriptionControllerInKannadam.text =
+      item?.translates != null && item!.translates!.isNotEmpty
+      ? item.translates!.first.description ?? ''
+      : '';
+
+  final PageController _pageController = PageController();
 
   showModalBottomSheet(
     context: context,
@@ -599,81 +589,159 @@ void _showEditBottomSheet(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          left: 0,
-          right: 0,
-          top: 20,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                height: 4,
-                width: 40,
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
             ),
-            Padding(
-              padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
-              child: Text(
-                "Edit Details",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: font,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            CommonTextField(
-              hintText: "Tap to select HighLights",
-              labelText: "Title",
-              isFromPassword: false,
-              controller: viewModel.titleController,
-            ),
-            SizedBox(height: 15),
-            CommonTextField(
-              hintText: "Tap to select HighLights",
-              labelText: "Description",
-              isFromPassword: false,
-              controller: viewModel.descriptionController,
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsetsGeometry.fromLTRB(20, 0, 20, 0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                 
-    Navigator.pop(context);
-   await viewModel.editHighlight(id, viewModel.titleController.text, viewModel.descriptionController.text);
-                
-                 
-                  },
-                  child: Text(
-                    "Update",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: font,
-                      color: Colors.black,
-                    ),
+            child: SizedBox(
+              height: 380,
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildEditPage(
+                    title: "Edit Details (English)",
+                    children: [
+                      CommonTextField(
+                        hintText: "Enter English Title",
+                        labelText: "Title (EN)",
+                        isFromPassword: false,
+                        controller: titleController,
+                      ),
+                      const SizedBox(height: 15),
+                      CommonTextField(
+                        hintText: "Enter English Description",
+                        labelText: "Description (EN)",
+                        isFromPassword: false,
+                        controller: descriptionController,
+                      ),
+                      const SizedBox(height: 25),
+                      Spacer(),
+                      _buildFullWidthButton(
+                        text: "Next",
+                        onPressed: () {
+                          _pageController.animateToPage(
+                            1,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ),
+
+                  _buildEditPage(
+                    title: "Edit Details (ಕನ್ನಡ)",
+                    onBack: () {
+                      _pageController.animateToPage(
+                        0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                    children: [
+                      CommonTextField(
+                        hintText: "ಶೀರ್ಷಿಕೆಯನ್ನು ನಮೂದಿಸಿ",
+                        labelText: "ಶೀರ್ಷಿಕೆ (KN)",
+                        isFromPassword: false,
+                        controller: viewModel.titleControllerInKannadam,
+                      ),
+                      const SizedBox(height: 15),
+                      CommonTextField(
+                        hintText: "ವಿವರಣೆಯನ್ನು ನಮೂದಿಸಿ",
+                        labelText: "ವಿವರಣೆ (KN)",
+                        isFromPassword: false,
+                        controller: viewModel.descriptionControllerInKannadam,
+                      ),
+                      const SizedBox(height: 25),
+                      Spacer(),
+                      _buildFullWidthButton(
+                        text: "Update",
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await viewModel.editHighlight(
+                            id,
+                            titleController.text,
+                            descriptionController.text,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget _buildEditPage({
+  required String title,
+  required List<Widget> children,
+  VoidCallback? onBack,
+}) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Container(
+            height: 4,
+            width: 40,
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            if (onBack != null)
+              IconButton(
+                onPressed: onBack,
+                icon: const Icon(Icons.arrow_back_ios, size: 18),
+              ),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                fontFamily: font,
               ),
             ),
           ],
         ),
-      );
-    },
+        const SizedBox(height: 16),
+        ...children,
+      ],
+    ),
+  );
+}
+
+Widget _buildFullWidthButton({
+  required String text,
+  required VoidCallback onPressed,
+}) {
+  return SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: ColorConstant.buttonColor,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 16, fontFamily: font, color: Colors.white),
+      ),
+    ),
   );
 }
