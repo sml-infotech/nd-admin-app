@@ -771,7 +771,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Requests'**
-  String get updateRequests;
+String get updateRequests;
 
   /// No description provided for @fee.
   ///

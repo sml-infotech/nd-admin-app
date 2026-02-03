@@ -165,7 +165,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   /// 🔹 Language Switcher
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _languageButton('EN', 'en'),
                       const Text('|'),
@@ -226,15 +226,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
 
-                            containerWidget(
-                              ImageStrings.ritual,
-                              AppLocalizations.of(context)!.updateRequests,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.updateRequestsUrl,
-                              ),
-                            ),
-
+                            // containerWidget(
+                            //   ImageStrings.ritual,
+                            //   AppLocalizations.of(context)!.updateRequests,
+                            //   () => Navigator.pushNamed(
+                            //     context,
+                            //     StringsRoute.updateRequestsUrl,
+                            //   ),
+                            // ),
                             containerWidget(
                               ImageStrings.wowtracker,
                               AppLocalizations.of(context)!.events,
@@ -410,15 +409,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
-
-
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   StringsRoute.login,
                   (route) => false,
                 );
-                                await deleteToken();
-
+                await deleteToken();
               },
 
               child: Text(
