@@ -15,18 +15,17 @@ import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamod
     show TimeSlot;
 import 'package:provider/provider.dart';
 
-import '../../Utills/string_routes.dart';
 import '../addtemple/temple_input_widget.dart';
 
-class CreateFestival extends StatefulWidget {
+class CreateFestivalKn extends StatefulWidget {
   final FestivalArgument? arguments;
-  const CreateFestival({super.key, this.arguments});
+  const CreateFestivalKn({super.key, this.arguments});
 
   @override
-  State<CreateFestival> createState() => _CreateFestivalState();
+  State<CreateFestivalKn> createState() => _CreateFestivalKnState();
 }
 
-class _CreateFestivalState extends State<CreateFestival> {
+class _CreateFestivalKnState extends State<CreateFestivalKn> {
   late CreateFestivalViewmodel viewmodel;
   final ImagePicker _picker = ImagePicker();
   bool _isPrefilled = false;
@@ -42,21 +41,15 @@ class _CreateFestivalState extends State<CreateFestival> {
 
     viewmodel = Provider.of<CreateFestivalViewmodel>(context);
 
-    if (widget.arguments != null && !_isPrefilled) {
-      _prefillData(widget.arguments!);
-      _isPrefilled = true;
-    }
+    // if (widget.arguments != null && !_isPrefilled) {
+    //   _prefillData(widget.arguments!);
+    //   _isPrefilled = true;
+    // }
   }
 
   void _prefillData(FestivalArgument args) {
     viewmodel.eventController.text = args.name ?? "";
     viewmodel.descriptionContoller.text = args.description ?? "";
-    if (args.translation?.isNotEmpty == true) {
-      viewmodel.knEventNameController.text = args.translation?.first.name ?? "";
-      viewmodel.knDescriptionContoller.text =
-          args.translation?.first.description ?? "";
-      viewmodel.deitiesKn = args.translation?.first.deities ?? [];
-    }
 
     viewmodel.deities = args.deities;
 
@@ -90,7 +83,7 @@ class _CreateFestivalState extends State<CreateFestival> {
   @override
   void dispose() {
     super.dispose();
-    viewmodel.reset();
+    // viewmodel.reset();
   }
 
   @override
@@ -134,7 +127,6 @@ class _CreateFestivalState extends State<CreateFestival> {
                         child: Column(
                           children: [
                             SizedBox(height: screenHeight * 0.02),
-
                             eventNameTextField(),
                             SizedBox(height: screenHeight * 0.02),
                             descriptionTextField(),
@@ -142,24 +134,24 @@ class _CreateFestivalState extends State<CreateFestival> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                               child: TempleInputWidget(
-                                list: viewmodel.deities,
+                                list: viewmodel.deitiesKn,
                                 onAdd: (String p1) {
-                                  viewmodel.addDeity(p1);
+                                  viewmodel.addDeityKn(p1);
                                 },
                                 onRemove: (int p1) {
-                                  viewmodel.removeDeity(p1);
+                                  viewmodel.removeDeityKn(p1);
                                 },
                                 hintText: "Add Deity",
                               ),
                             ),
-                            SizedBox(height: screenHeight * 0.02),
-                            dateWidget(),
-                            timePickerWidget(),
-                            SizedBox(height: screenHeight * 0.02),
-                            _buildImagePicker(),
-                            SizedBox(height: screenHeight * 0.01),
-                            isActiveCheckbox(),
-                            SizedBox(height: screenHeight * 0.10),
+                            // SizedBox(height: screenHeight * 0.02),
+                            // dateWidget(),
+                            // timePickerWidget(),
+                            // SizedBox(height: screenHeight * 0.02),
+                            // _buildImagePicker(),
+                            // SizedBox(height: screenHeight * 0.01),
+                            // isActiveCheckbox(),
+                            // SizedBox(height: screenHeight * 0.10),
                           ],
                         ),
                       ),
@@ -292,7 +284,7 @@ class _CreateFestivalState extends State<CreateFestival> {
       hintText: AppLocalizations.of(context)!.festivalname,
       labelText: AppLocalizations.of(context)!.festivalname,
       isFromPassword: false,
-      controller: viewmodel.eventController,
+      controller: viewmodel.knEventNameController,
     );
   }
 
@@ -301,7 +293,7 @@ class _CreateFestivalState extends State<CreateFestival> {
       hintText: AppLocalizations.of(context)!.description,
       labelText: AppLocalizations.of(context)!.description,
       isFromDescription: true,
-      controller: viewmodel.descriptionContoller,
+      controller: viewmodel.knDescriptionContoller,
       isFromPassword: false,
     );
   }
@@ -311,7 +303,7 @@ class _CreateFestivalState extends State<CreateFestival> {
       hintText: AppLocalizations.of(context)!.location,
       labelText: AppLocalizations.of(context)!.location,
       isFromPassword: false,
-      controller: viewmodel.locationController,
+      controller: viewmodel.knLocationController,
     );
   }
 
@@ -372,31 +364,26 @@ class _CreateFestivalState extends State<CreateFestival> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                final isValid = await viewmodel.validateFestival(false);
+                final isValid = await viewmodel.validateFestivalKn();
                 if (!isValid) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.createFestivalKn,
-                  arguments: widget.arguments,
-                );
-                // if (widget.arguments != null) {
-                //   await viewmodel.updateFestival(widget.arguments!.festivalId!);
-                // } else {
-                //   await viewmodel.createFestival();
-                // }
-                //
-                // if (viewmodel.eventUpdated || viewmodel.eventCreated) {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                //   Navigator.pop(context);
-                //   viewmodel.reset();
-                //   viewmodel.eventCreated = false;
-                //   viewmodel.eventUpdated = false;
-                // } else {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                // }
+                if (widget.arguments != null) {
+                  await viewmodel.updateFestival(widget.arguments!.festivalId!);
+                } else {
+                  await viewmodel.createFestival();
+                }
+                if (viewmodel.eventUpdated || viewmodel.eventCreated) {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  viewmodel.reset();
+                  viewmodel.eventCreated = false;
+                  viewmodel.eventUpdated = false;
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,
@@ -405,7 +392,9 @@ class _CreateFestivalState extends State<CreateFestival> {
                 ),
               ),
               child: Text(
-                AppLocalizations.of(context)!.next,
+                widget.arguments != null
+                    ? AppLocalizations.of(context)!.updateFestival
+                    : AppLocalizations.of(context)!.addfestival,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

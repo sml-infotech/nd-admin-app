@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
+import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -10,8 +11,8 @@ import 'package:nammadaiva_dashboard/arguments/festival_argument.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:nammadaiva_dashboard/Screens/festivals/create_festival_viewmodel.dart';
 
 class FestivalListScreen extends StatefulWidget {
   const FestivalListScreen({super.key});
@@ -23,11 +24,18 @@ class FestivalListScreen extends StatefulWidget {
 class _FestivalListScreenState extends State<FestivalListScreen> {
   late CreateFestivalViewmodel _viewmodel;
   final ScrollController _scrollController = ScrollController();
+  String? language;
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      language = prefs.getString('language') ?? 'en';
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-
+    _loadUserData();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -163,7 +171,11 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
         }
 
         final festival = _viewmodel.festivalList[index];
-        return FestivalCard(festival: festival, viewmodel: viewmodel);
+        return FestivalCard(
+          festival: festival,
+          viewmodel: viewmodel,
+          language: language ?? "en",
+        );
       },
     );
   }
@@ -172,11 +184,12 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
 class FestivalCard extends StatelessWidget {
   final FestivalListModal festival;
   final CreateFestivalViewmodel viewmodel;
-
+  final String language;
   const FestivalCard({
     Key? key,
     required this.festival,
     required this.viewmodel,
+    required this.language,
   }) : super(key: key);
 
   @override
@@ -204,6 +217,7 @@ class FestivalCard extends StatelessWidget {
             description: festival.description,
             deities: festival.deityNames,
             imageUrls: festival.images.map((e) => e.url).toList(),
+            translation: festival.translations,
           ),
         );
       },
@@ -249,7 +263,7 @@ class FestivalCard extends StatelessWidget {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: nameAndDescriptionWidget(festival),
+                        child: nameAndDescriptionWidget(festival, language),
                       ),
                     ],
                   ),
@@ -263,7 +277,7 @@ class FestivalCard extends StatelessWidget {
   }
 }
 
-Widget nameAndDescriptionWidget(FestivalListModal festival) {
+Widget nameAndDescriptionWidget(FestivalListModal festival, String language) {
   return Container(
     decoration: BoxDecoration(
       gradient: LinearGradient(
@@ -282,12 +296,16 @@ Widget nameAndDescriptionWidget(FestivalListModal festival) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          festival.name,
+          language == "kn" && festival.translations.isNotEmpty == true
+              ? festival.translations.first.name
+              : festival.name,
           style: AppTextStyles.welcomeStyle.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 8),
         Text(
-          festival.description,
+          language == "kn" && festival.translations.isNotEmpty == true
+              ? festival.translations.first.description
+              : festival.description,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.templeContactStyle.copyWith(color: Colors.white),
@@ -330,6 +348,7 @@ Widget editAndDeleteIcon(
               deities: festival.deityNames,
               imageUrls: festival.images.map((e) => e.url).toList(),
               festivalId: festival.id,
+              translation: festival.translations,
             ),
           );
         },

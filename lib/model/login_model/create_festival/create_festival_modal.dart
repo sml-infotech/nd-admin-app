@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'festival_list_modal.dart';
 
 class Festival {
   String name;
@@ -10,6 +10,7 @@ class Festival {
   String endTime;
   List<Image> images;
   bool isActive;
+  final List<CreateFestivalTranslation> translations;
 
   Festival({
     required this.name,
@@ -21,6 +22,7 @@ class Festival {
     required this.endTime,
     required this.images,
     required this.isActive,
+    required this.translations,
   });
 
   factory Festival.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class Festival {
       endTime: json['end_time'],
       images: List<Image>.from(json['images'].map((x) => Image.fromJson(x))),
       isActive: json['is_active'],
+      translations: json['translations'],
     );
   }
 
@@ -48,6 +51,7 @@ class Festival {
       'end_time': endTime,
       'images': images.map((x) => x.toJson()).toList(),
       'is_active': isActive,
+      "translations": translations,
     };
   }
 }
@@ -56,23 +60,14 @@ class Image {
   String url;
   bool isPrimary;
 
-  Image({
-    required this.url,
-    required this.isPrimary,
-  });
+  Image({required this.url, required this.isPrimary});
 
   factory Image.fromJson(Map<String, dynamic> json) {
-    return Image(
-      url: json['url'],
-      isPrimary: json['is_primary'],
-    );
+    return Image(url: json['url'], isPrimary: json['is_primary']);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'is_primary': isPrimary,
-    };
+    return {'url': url, 'is_primary': isPrimary};
   }
 }
 
@@ -89,10 +84,11 @@ class CreateFestivalResponse {
 
   factory CreateFestivalResponse.fromJson(Map<String, dynamic> json) {
     return CreateFestivalResponse(
-      code: json['code']??0,
+      code: json['code'] ?? 0,
       message: json['message'],
-      festival:
-          json['festival'] != null ? Festival.fromJson(json['festival']) : null,
+      festival: json['festival'] != null
+          ? Festival.fromJson(json['festival'])
+          : null,
     );
   }
 }

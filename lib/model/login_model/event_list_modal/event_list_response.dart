@@ -1,4 +1,6 @@
-  class EventListResponse {
+import 'package:nammadaiva_dashboard/model/login_model/create_event/create_eventmodal.dart';
+
+class EventListResponse {
   final int code;
   final String message;
   final int total;
@@ -22,7 +24,8 @@
       total: json['total'] ?? 0,
       totalPages: json['totalPages'] ?? 0,
       currentPage: json['currentPage'] ?? 0,
-      events: (json['events'] as List<dynamic>?)
+      events:
+          (json['events'] as List<dynamic>?)
               ?.map((e) => EventItem.fromJson(e))
               .toList() ??
           [],
@@ -59,6 +62,7 @@ class EventItem {
   final String? createdAt;
   final String? updatedAt;
   final String? createdByName;
+  final List<CreateEventTranslation> translations;
 
   EventItem({
     required this.id,
@@ -78,6 +82,7 @@ class EventItem {
     this.createdAt,
     this.updatedAt,
     this.createdByName,
+    required this.translations,
   });
 
   factory EventItem.fromJson(Map<String, dynamic> json) {
@@ -93,14 +98,17 @@ class EventItem {
       endDate: json['end_date'],
       startTime: json['start_time'],
       endTime: json['end_time'],
-      images: json['images'] != null
-          ? List<String>.from(json['images'])
-          : null,
+      images: json['images'] != null ? List<String>.from(json['images']) : null,
       isActive: json['is_active'],
       createdBy: json['created_by'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       createdByName: json['created_by_name'],
+      translations:
+          (json['translations'] as List<dynamic>?)
+              ?.map((e) => CreateEventTranslation.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -123,6 +131,7 @@ class EventItem {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (createdByName != null) 'created_by_name': createdByName,
+      'translations': translations.map((e) => e.toJson()).toList(),
     };
   }
 }

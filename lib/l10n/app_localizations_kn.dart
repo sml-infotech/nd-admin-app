@@ -15,6 +15,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get userName => 'ಬಳಕೆದಾರಹೆಸರು';
 
   @override
+  String get next => 'ಮುಂದೆ';
+
+  @override
   String get password => 'ಪಾಸ್ವರ್ಡ್';
 
   @override
@@ -169,6 +172,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get addTemple => 'ದೇಗುಲ ಸೇರಿಸಿ';
+
+  @override
+  String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override
   String get templeName => 'ದೇಗುಲ ಹೆಸರು';

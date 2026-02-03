@@ -1,4 +1,4 @@
-import 'dart:convert';
+import '../create_event/create_eventmodal.dart';
 
 class EventUpdate {
   String name;
@@ -12,6 +12,7 @@ class EventUpdate {
   String endTime;
   List<String> images;
   bool isActive;
+  final List<CreateEventTranslation> translations;
 
   EventUpdate({
     required this.name,
@@ -25,6 +26,7 @@ class EventUpdate {
     required this.endTime,
     required this.images,
     required this.isActive,
+    required this.translations,
   });
 
   factory EventUpdate.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class EventUpdate {
       endTime: json['end_time'],
       images: List<String>.from(json['images']),
       isActive: json['is_active'],
+      translations: json['translations'],
     );
   }
 
@@ -56,6 +59,7 @@ class EventUpdate {
       'end_time': endTime,
       'images': images,
       'is_active': isActive,
+      "translations": translations,
     };
   }
 }

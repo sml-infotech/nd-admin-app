@@ -28,5 +28,7 @@ class StringsRoute {
   static const String festivalList = "/festivalList";
   static const String festivalDetailsScreen = "/festivalDetailsScreen";
   static const String updateTempleKn = "/updateTempleKn";
-static const String addPujaInkn = '/addPujaInkannadam';
+  static const String addPujaInkn = '/addPujaInkannadam';
+  static const String createEventInKn = '/createEventInKn';
+  static const String createFestivalKn = '/CreateFestivalKn';
 }

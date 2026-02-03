@@ -1,4 +1,5 @@
 // Festival.dart
+
 class FestivalResponse {
   final int code;
   final String message;
@@ -16,7 +17,9 @@ class FestivalResponse {
     return FestivalResponse(
       code: json['code'],
       message: json['message'],
-      data: List<FestivalListModal>.from(json['data'].map((x) => FestivalListModal.fromJson(x))),
+      data: List<FestivalListModal>.from(
+        json['data'].map((x) => FestivalListModal.fromJson(x)),
+      ),
       pagination: Pagination.fromJson(json['pagination']),
     );
   }
@@ -34,6 +37,7 @@ class FestivalListModal {
   final List<ImageData> images;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<CreateFestivalTranslation> translations;
 
   FestivalListModal({
     required this.id,
@@ -47,6 +51,7 @@ class FestivalListModal {
     required this.images,
     required this.createdAt,
     required this.updatedAt,
+    required this.translations,
   });
 
   factory FestivalListModal.fromJson(Map<String, dynamic> json) {
@@ -59,9 +64,16 @@ class FestivalListModal {
       endDate: DateTime.parse(json['end_date']),
       startTime: json['start_time'],
       endTime: json['end_time'],
-      images: List<ImageData>.from(json['images'].map((x) => ImageData.fromJson(x))),
+      images: List<ImageData>.from(
+        json['images'].map((x) => ImageData.fromJson(x)),
+      ),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
+      translations:
+          (json['translations'] as List<dynamic>?)
+              ?.map((e) => CreateFestivalTranslation.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }
@@ -70,16 +82,10 @@ class ImageData {
   final String url;
   final bool isPrimary;
 
-  ImageData({
-    required this.url,
-    required this.isPrimary,
-  });
+  ImageData({required this.url, required this.isPrimary});
 
   factory ImageData.fromJson(Map<String, dynamic> json) {
-    return ImageData(
-      url: json['url'],
-      isPrimary: json['is_primary'],
-    );
+    return ImageData(url: json['url'], isPrimary: json['is_primary']);
   }
 }
 
@@ -103,5 +109,39 @@ class Pagination {
       total: json['total'],
       totalPages: json['total_pages'],
     );
+  }
+}
+
+class CreateFestivalTranslation {
+  final String languageCode;
+  final String name;
+  final String description;
+  final List<String>? deities;
+
+  CreateFestivalTranslation({
+    required this.languageCode,
+    required this.name,
+    required this.description,
+    this.deities,
+  });
+
+  factory CreateFestivalTranslation.fromJson(Map<String, dynamic> json) {
+    return CreateFestivalTranslation(
+      languageCode: json['language_code'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      deities: json['deity_names'] != null
+          ? List<String>.from(json['deity_names'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'language_code': languageCode,
+      'name': name,
+      'description': description,
+      'deity_names': deities,
+    };
   }
 }

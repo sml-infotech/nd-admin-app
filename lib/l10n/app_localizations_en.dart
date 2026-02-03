@@ -15,6 +15,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userName => 'Username';
 
   @override
+  String get next => 'Next';
+
+  @override
   String get password => 'Password';
 
   @override
@@ -169,6 +172,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addTemple => 'Add Temple';
+
+  @override
+  String get addTempleinkannadam => 'Add Temple In Kannadam';
 
   @override
   String get templeName => 'Temple Name';

@@ -1,101 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Common/time_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
-import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart' show ColorConstant;
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
 
-import '../../Utills/string_routes.dart';
-import '../../model/login_model/createpuja/create_pujamodel.dart';
-
-class CreateEvent extends StatefulWidget {
+class CreateEventKn extends StatefulWidget {
   final EventItem? event;
-  const CreateEvent({super.key, required this.event});
+  const CreateEventKn({super.key, required this.event});
 
   @override
-  State<CreateEvent> createState() => _CreateEventState();
+  State<CreateEventKn> createState() => _CreateEventKnState();
 }
 
-class _CreateEventState extends State<CreateEvent> {
+class _CreateEventKnState extends State<CreateEventKn> {
   late CreateEventViewmodel viewmodel;
-  final ImagePicker _picker = ImagePicker();
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await viewmodel.getTemples(reset: true);
-
-      if (widget.event != null) {
-        final selectedTempleId = widget.event!.templeId;
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (temple) => temple.id == selectedTempleId,
-          orElse: () => viewmodel.templeData.first,
-        );
-        if (widget.event!.startTime != null && widget.event!.endTime != null) {
-          viewmodel.timeSlots = [
-            TimeSlot(
-              fromTime: _formatForDisplay(widget.event!.startTime!),
-              toTime: _formatForDisplay(widget.event!.endTime!),
-            ),
-          ];
-        }
-
-        viewmodel.selectedTemple = selectedTemple;
-        viewmodel.selectedTempleId = selectedTemple.id;
-        viewmodel.eventController.text = widget.event!.name;
-        viewmodel.descriptionContoller.text = widget.event!.description!;
-        viewmodel.locationController.text = widget.event!.location!;
-        viewmodel.contactNameController.text = widget.event!.contactName!;
-        viewmodel.contactNumberController.text = widget.event!.contactPhone!;
-        if (widget.event?.translations.isNotEmpty == true) {
-          viewmodel.knLocationController.text =
-              widget.event!.translations.first.location;
-          viewmodel.knContactNameController.text =
-              widget.event!.translations.first.contactName;
-          viewmodel.knEventNameController.text =
-              widget.event!.translations.first.name;
-          viewmodel.knDescriptionContoller.text =
-              widget.event!.translations.first.description;
-        }
-        if (widget.event!.startDate != null) {
-          viewmodel.selectedStartDate = DateTime.parse(
-            widget.event!.startDate!,
-          );
-        }
-        if (widget.event!.endDate != null) {
-          viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
-        }
-
-        if (widget.event!.images != null) {
-          viewmodel.uploadedImageUrls = widget.event!.images!;
-        }
-      }
-    });
-  }
-
-  String _formatForDisplay(String time) {
-    try {
-      final parsed = DateFormat("HH:mm:ss").parse(time);
-      return DateFormat("hh:mm a").format(parsed);
-    } catch (_) {
-      return time;
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    viewmodel.reset();
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   await viewmodel.getTemples(reset: true);
+    //
+    //   if (widget.event != null) {
+    //     final selectedTempleId = widget.event!.templeId;
+    //     final selectedTemple = viewmodel.templeData.firstWhere(
+    //       (temple) => temple.id == selectedTempleId,
+    //       orElse: () => viewmodel.templeData.first,
+    //     );
+    //     if (widget.event!.startTime != null && widget.event!.endTime != null) {
+    //       viewmodel.timeSlots = [
+    //         TimeSlot(
+    //           fromTime: _formatForDisplay(widget.event!.startTime!),
+    //           toTime: _formatForDisplay(widget.event!.endTime!),
+    //         ),
+    //       ];
+    //     }
+    //
+    //     viewmodel.selectedTemple = selectedTemple;
+    //     viewmodel.selectedTempleId = selectedTemple.id;
+    //     viewmodel.eventController.text = widget.event!.name;
+    //     viewmodel.descriptionContoller.text = widget.event!.description!;
+    //     viewmodel.locationController.text = widget.event!.location!;
+    //     viewmodel.contactNameController.text = widget.event!.contactName!;
+    //     viewmodel.contactNumberController.text = widget.event!.contactPhone!;
+    //     if (widget.event!.startDate != null) {
+    //       viewmodel.selectedStartDate = DateTime.parse(
+    //         widget.event!.startDate!,
+    //       );
+    //     }
+    //     if (widget.event!.endDate != null) {
+    //       viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
+    //     }
+    //
+    //     if (widget.event!.images != null) {
+    //       viewmodel.uploadedImageUrls = widget.event!.images!;
+    //     }
+    //   }
+    // });
   }
 
   @override
@@ -138,8 +105,8 @@ class _CreateEventState extends State<CreateEvent> {
                         physics: const BouncingScrollPhysics(),
                         child: Column(
                           children: [
-                            SizedBox(height: screenHeight * 0.02),
-                            _buildTempleDropdown(),
+                            // SizedBox(height: screenHeight * 0.02),
+                            // _buildTempleDropdown(),
                             SizedBox(height: screenHeight * 0.02),
                             eventNameTextField(),
                             SizedBox(height: screenHeight * 0.02),
@@ -148,14 +115,6 @@ class _CreateEventState extends State<CreateEvent> {
                             locationTextField(),
                             SizedBox(height: screenHeight * 0.02),
                             contactNameTextField(),
-                            SizedBox(height: screenHeight * 0.02),
-                            contactNumberTextField(),
-                            SizedBox(height: 8),
-                            dateWidget(),
-                            timePickerWidget(),
-                            SizedBox(height: screenHeight * 0.02),
-                            _buildImagePicker(),
-                            SizedBox(height: screenHeight * 0.10),
                           ],
                         ),
                       ),
@@ -183,36 +142,36 @@ class _CreateEventState extends State<CreateEvent> {
     );
   }
 
-  Widget _buildImagePicker() {
-    final uploadedCount = viewmodel.uploadedImageUrls.length;
+  // Widget _buildImagePicker() {
+  //   final uploadedCount = viewmodel.uploadedImageUrls.length;
+  //
+  //   final allImages = [
+  //     ...viewmodel.uploadedImageUrls,
+  //     ...viewmodel.selectedImages.map((e) => e.path),
+  //   ];
+  //
+  //   return MultiImagePickerSection(
+  //     imagePaths: allImages,
+  //     onAddImages: _pickImages,
+  //     onRemoveImage: (index) {
+  //       if (index >= uploadedCount) {
+  //         final localIndex = index - uploadedCount;
+  //         viewmodel.removeImage(localIndex);
+  //       } else {
+  //         viewmodel.uploadedImageUrls.removeAt(index);
+  //         viewmodel.notifyListeners();
+  //       }
+  //     },
+  //   );
+  // }
 
-    final allImages = [
-      ...viewmodel.uploadedImageUrls,
-      ...viewmodel.selectedImages.map((e) => e.path),
-    ];
-
-    return MultiImagePickerSection(
-      imagePaths: allImages,
-      onAddImages: _pickImages,
-      onRemoveImage: (index) {
-        if (index >= uploadedCount) {
-          final localIndex = index - uploadedCount;
-          viewmodel.removeImage(localIndex);
-        } else {
-          viewmodel.uploadedImageUrls.removeAt(index);
-          viewmodel.notifyListeners();
-        }
-      },
-    );
-  }
-
-  Future<void> _pickImages() async {
-    final pickedFiles = await _picker.pickMultiImage();
-    if (pickedFiles.isNotEmpty) {
-      final imagePaths = pickedFiles.map((e) => e.path).toList();
-      viewmodel.addImages(imagePaths);
-    }
-  }
+  // Future<void> _pickImages() async {
+  //   final pickedFiles = await _picker.pickMultiImage();
+  //   if (pickedFiles.isNotEmpty) {
+  //     final imagePaths = pickedFiles.map((e) => e.path).toList();
+  //     viewmodel.addImages(imagePaths);
+  //   }
+  // }
 
   Widget timePickerWidget() {
     return Padding(
@@ -281,7 +240,7 @@ class _CreateEventState extends State<CreateEvent> {
       hintText: AppLocalizations.of(context)!.event,
       labelText: AppLocalizations.of(context)!.event,
       isFromPassword: false,
-      controller: viewmodel.eventController,
+      controller: viewmodel.knEventNameController,
     );
   }
 
@@ -290,7 +249,7 @@ class _CreateEventState extends State<CreateEvent> {
       hintText: AppLocalizations.of(context)!.description,
       labelText: AppLocalizations.of(context)!.description,
       isFromDescription: true,
-      controller: viewmodel.descriptionContoller,
+      controller: viewmodel.knDescriptionContoller,
       isFromPassword: false,
     );
   }
@@ -300,7 +259,7 @@ class _CreateEventState extends State<CreateEvent> {
       hintText: AppLocalizations.of(context)!.location,
       labelText: AppLocalizations.of(context)!.location,
       isFromPassword: false,
-      controller: viewmodel.locationController,
+      controller: viewmodel.knLocationController,
     );
   }
 
@@ -310,7 +269,7 @@ class _CreateEventState extends State<CreateEvent> {
       labelText: AppLocalizations.of(context)!.contactName,
       isFromPassword: false,
       isFromPhone: false,
-      controller: viewmodel.contactNameController,
+      controller: viewmodel.knContactNameController,
     );
   }
 
@@ -360,29 +319,25 @@ class _CreateEventState extends State<CreateEvent> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                final isValid = await viewmodel.validateEvent();
+                final isValid = await viewmodel.validateKNnEvent();
                 if (!isValid) {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   return;
                 }
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.createEventInKn,
-                  arguments: widget.event,
-                );
-                // if (widget.event?.id != null) {
-                //   await viewmodel.updateEvent(widget.event!.id);
-                // } else {
-                //   await viewmodel.createEvent();
-                // }
-                // if (viewmodel.eventUpdated || viewmodel.eventCreated) {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                //   Navigator.pop(context);
-                //   viewmodel.eventCreated = false;
-                //   viewmodel.eventUpdated = false;
-                // } else {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                // }
+                if (widget.event?.id != null) {
+                  await viewmodel.updateEvent(widget.event!.id);
+                } else {
+                  await viewmodel.createEvent();
+                }
+                if (viewmodel.eventUpdated || viewmodel.eventCreated) {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  viewmodel.eventCreated = false;
+                  viewmodel.eventUpdated = false;
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,
@@ -391,7 +346,9 @@ class _CreateEventState extends State<CreateEvent> {
                 ),
               ),
               child: Text(
-                AppLocalizations.of(context)!.next,
+                widget.event?.id == null
+                    ? AppLocalizations.of(context)!.createEvent
+                    : AppLocalizations.of(context)!.updateEvent,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

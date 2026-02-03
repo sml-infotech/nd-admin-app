@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
@@ -9,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_list_response.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class EventListScreen extends StatefulWidget {
@@ -23,10 +23,12 @@ class _EventListScreenState extends State<EventListScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   List<EventItem> filteredEvents = [];
+  String? language;
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     viewmodel = Provider.of<EventListViewmodel>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -238,32 +240,32 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-Widget nammaDaivaAppBar() {
-return Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    IconButton(
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      icon: Icon(Icons.arrow_back, color: Colors.white),
-    ),
-    Spacer(),
-    Text(
-      AppLocalizations.of(context)!.events,
-      style: AppTextStyles.appBarTitleStyle,
-    ),
+  Widget nammaDaivaAppBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        Spacer(),
+        Text(
+          AppLocalizations.of(context)!.events,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
 
-    const Spacer(),
-    IconButton(
-      onPressed: () {
-        Navigator.pushNamed(context, StringsRoute.createEvent);
-      },
-      icon: Icon(Icons.add, color: Colors.white),
-    ),
-  ],
-);
-}
+        const Spacer(),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, StringsRoute.createEvent);
+          },
+          icon: Icon(Icons.add, color: Colors.white),
+        ),
+      ],
+    );
+  }
 
   Widget buildEventCard(EventItem event) {
     return Padding(
@@ -280,7 +282,11 @@ return Row(
             children: [
               Row(
                 children: [
-                  eventTitle(event.name),
+                  eventTitle(
+                    language == "kn" && event.translations.isNotEmpty
+                        ? event.translations.first.name
+                        : event.name,
+                  ),
                   Spacer(),
                   IconButton(
                     onPressed: () {
@@ -295,7 +301,11 @@ return Row(
                 ],
               ),
               const SizedBox(height: 8),
-              locationText(event.location ?? ''),
+              locationText(
+                language == "kn" && event.translations.isNotEmpty
+                    ? event.translations.first.location
+                    : event.location ?? '',
+              ),
               const SizedBox(height: 8),
               fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
               const SizedBox(height: 8),
@@ -303,11 +313,19 @@ return Row(
               const Divider(height: 24),
               descriptionTitleText(),
               const SizedBox(height: 6),
-              descriptionText(event.description ?? ''),
+              descriptionText(
+                language == "kn" && event.translations.isNotEmpty
+                    ? event.translations.first.description
+                    : event.description ?? '',
+              ),
               const Divider(height: 24),
               contactNameText(),
               const SizedBox(height: 8),
-              contactName(event.contactName ?? ''),
+              contactName(
+                language == "kn" && event.translations.isNotEmpty
+                    ? event.translations.first.contactName
+                    : event.contactName ?? '',
+              ),
               const SizedBox(height: 4),
               contactPhone(event.contactPhone ?? ''),
               const Divider(height: 24),
@@ -492,5 +510,12 @@ return Row(
     final date = DateTime.tryParse(dateStr);
     if (date == null) return '';
     return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      language = prefs.getString('language') ?? 'en';
+    });
   }
 }
