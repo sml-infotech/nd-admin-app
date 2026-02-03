@@ -63,8 +63,11 @@ class UserService {
 
   Future<CreateFestivalResponse> createFestivals(
     String name,
+    String knName,
     String description,
+    String knDescription,
     List<String> deityNames,
+    List<String> deityNamesKn,
     String startDate,
     String endDate,
     String startTime,
@@ -82,6 +85,14 @@ class UserService {
         endTime: endTime,
         images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
         isActive: true,
+        translations: [
+          CreateFestivalTranslation(
+            languageCode: "kn",
+            name: knName,
+            description: knDescription,
+            deities: deityNamesKn,
+          ),
+        ],
       );
 
       print(">>>>.${createUser.toJson()}");
@@ -99,8 +110,11 @@ class UserService {
 
   Future<CreateFestivalResponse> updateFestival(
     String name,
+    String knName,
     String description,
+    String knDescription,
     List<String> deityNames,
+    List<String> deityNamesKn,
     String startDate,
     String endDate,
     String startTime,
@@ -119,6 +133,14 @@ class UserService {
         endTime: endTime,
         images: images!.map((url) => Image(url: url, isPrimary: true)).toList(),
         isActive: true,
+        translations: [
+          CreateFestivalTranslation(
+            languageCode: "kn",
+            name: knName,
+            description: knDescription,
+            deities: deityNamesKn,
+          ),
+        ],
       );
 
       print(">>>>.${updateFestival.toJson()}");
@@ -165,7 +187,7 @@ class UserService {
 
   Future<FestivalResponse> fetchFestivals(int page) async {
     try {
-      final url = '${UrlConstant.list_festivals}?page=$page';
+      final url = '${UrlConstant.list_festivals}?page=$page&language=kn';
       print('Fetching users: $url');
       dynamic data = await apiService.get(url);
       return FestivalResponse.fromJson(data);

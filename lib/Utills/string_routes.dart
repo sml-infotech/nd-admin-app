@@ -39,4 +39,6 @@ static const String createMantrainKn = '/createMantraInKannadam';
     
 
 
+  static const String createEventInKn = '/createEventInKn';
+  static const String createFestivalKn = '/CreateFestivalKn';
 }

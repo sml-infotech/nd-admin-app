@@ -8,8 +8,11 @@ import 'package:nammadaiva_dashboard/service/user_service.dart'
 
 class CreateFestivalViewmodel extends ChangeNotifier {
   TextEditingController eventController = TextEditingController();
+  TextEditingController knEventNameController = TextEditingController();
   TextEditingController descriptionContoller = TextEditingController();
+  TextEditingController knDescriptionContoller = TextEditingController();
   TextEditingController locationController = TextEditingController();
+  TextEditingController knLocationController = TextEditingController();
   TextEditingController contactNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   UserService userService = UserService();
@@ -27,20 +30,31 @@ class CreateFestivalViewmodel extends ChangeNotifier {
   bool isInitialLoading = true; // first time only
 
   bool isActive = true;
-  List<String> temples = [];
+  List<String> deities = [];
+  List<String> deitiesKn = [];
   TextEditingController templeController = TextEditingController();
   int _currentPage = 1;
   final int _itemsPerPage = 10;
   bool hasMoreFestivals = true;
   List<FestivalListModal> festivalList = [];
 
-  void addTemple(String templeName) {
-    temples.add(templeName);
+  void addDeity(String templeName) {
+    deities.add(templeName);
     notifyListeners();
   }
 
-  void removeTemple(int index) {
-    temples.removeAt(index);
+  void removeDeity(int index) {
+    deities.removeAt(index);
+    notifyListeners();
+  }
+
+  void addDeityKn(String templeName) {
+    deitiesKn.add(templeName);
+    notifyListeners();
+  }
+
+  void removeDeityKn(int index) {
+    deitiesKn.removeAt(index);
     notifyListeners();
   }
 
@@ -56,6 +70,17 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       return false;
     } else if (selectedEndDate == null) {
       message = "Please select end date";
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> validateFestivalKn() async {
+    if (knEventNameController.text.trim().isEmpty) {
+      message = "Please enter festival name in Kannada";
+      return false;
+    } else if (knDescriptionContoller.text.trim().isEmpty) {
+      message = "Please enter description in Kannada";
       return false;
     }
     return true;
@@ -128,8 +153,11 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       final templeId = selectedTempleId;
       final response = await userService.createFestivals(
         eventController.text.trim(),
+        knEventNameController.text.trim(),
         descriptionContoller.text.trim(),
-        temples,
+        knDescriptionContoller.text.trim(),
+        deities,
+        deitiesKn,
         selectedStartDate!.toIso8601String(),
         selectedEndDate!.toIso8601String(),
         timeSlots.first.fromTime ?? "00:00",
@@ -161,8 +189,11 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       final templeId = selectedTempleId;
       final response = await userService.updateFestival(
         eventController.text.trim(),
+        knEventNameController.text.trim(),
         descriptionContoller.text.trim(),
-        temples,
+        knDescriptionContoller.text.trim(),
+        deities,
+        deitiesKn,
         selectedStartDate!.toIso8601String(),
         selectedEndDate!.toIso8601String(),
         timeSlots.first.fromTime ?? "00:00",
@@ -249,7 +280,9 @@ class CreateFestivalViewmodel extends ChangeNotifier {
 
   void reset() {
     eventController.clear();
+    knEventNameController.clear();
     descriptionContoller.clear();
+    knDescriptionContoller.clear();
     locationController.clear();
     contactNameController.clear();
     contactNumberController.clear();
@@ -264,7 +297,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     eventUpdated = false;
     isLoading = false;
     isInitialLoading = true;
-    temples.clear();
+    deities.clear();
     isActive = false;
     notifyListeners();
   }

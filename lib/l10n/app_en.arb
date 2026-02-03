@@ -2,6 +2,7 @@
     "@@locale": "en",
   "nammDaivaTitleText": "NAMMA DAIVA",
   "userName": "Username",
+  "next": "Next",
   "password": "Password",
   "enterUserName": "Enter your email",
   "enterName": "Enter Name",

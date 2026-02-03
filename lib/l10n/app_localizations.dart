@@ -107,6 +107,12 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get userName;
 
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
   /// No description provided for @password.
   ///
   /// In en, this message translates to:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/event_service.dart';
@@ -16,9 +15,13 @@ class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
   EventService eventService = EventService();
   TextEditingController eventController = TextEditingController();
+  TextEditingController knEventNameController = TextEditingController();
   TextEditingController descriptionContoller = TextEditingController();
+  TextEditingController knDescriptionContoller = TextEditingController();
   TextEditingController locationController = TextEditingController();
+  TextEditingController knLocationController = TextEditingController();
   TextEditingController contactNameController = TextEditingController();
+  TextEditingController knContactNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   UserService userService = UserService();
   List<TimeSlot> timeSlots = [];
@@ -114,7 +117,23 @@ class CreateEventViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<bool> validateEvent(bool isFromUpdate) async {
+  Future<bool> validateKNnEvent() async {
+    if (knEventNameController.text.isEmpty) {
+      message = "Please enter event name in Kannada.";
+      return false;
+    }
+    if (knDescriptionContoller.text.isEmpty) {
+      message = "Please enter description in Kannada.";
+      return false;
+    }
+    if (knLocationController.text.isEmpty) {
+      message = "Please enter location in Kannada.";
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> validateEvent() async {
     if (selectedTemple == null) {
       message = "Please select a temple.";
       return false;
@@ -214,10 +233,14 @@ class CreateEventViewmodel extends ChangeNotifier {
       final response = await eventService.createEvent(
         templeId,
         eventController.text,
+        knEventNameController.text,
         selectedStartDate!.toIso8601String(),
         descriptionContoller.text,
+        knDescriptionContoller.text,
         locationController.text,
+        knLocationController.text,
         contactNameController.text,
+        knContactNameController.text,
         contactNumberController.text,
         selectedEndDate!.toIso8601String(),
         timeSlots.first.fromTime,
@@ -261,10 +284,14 @@ class CreateEventViewmodel extends ChangeNotifier {
       final response = await eventService.updateEvents(
         eventId,
         eventController.text,
+        knEventNameController.text,
         selectedStartDate!,
         descriptionContoller.text,
+        knDescriptionContoller.text,
         locationController.text,
+        knLocationController.text,
         contactNameController.text,
+        knContactNameController.text,
         contactNumberController.text,
         selectedEndDate!,
         timeSlots.first.fromTime,
@@ -293,9 +320,13 @@ class CreateEventViewmodel extends ChangeNotifier {
 
   void reset() {
     eventController.clear();
+    knEventNameController.clear();
     descriptionContoller.clear();
+    knDescriptionContoller.clear();
     locationController.clear();
+    knLocationController.clear();
     contactNameController.clear();
+    knContactNameController.clear();
     contactNumberController.clear();
 
     timeSlots = [];

@@ -15,6 +15,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get userName => 'ಬಳಕೆದಾರಹೆಸರು';
 
   @override
+  String get next => 'ಮುಂದೆ';
+
+  @override
   String get password => 'ಪಾಸ್ವರ್ಡ್';
 
   @override

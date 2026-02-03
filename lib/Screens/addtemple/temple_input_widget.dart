@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nammadaiva_dashboard/Utills/constant.dart';
-import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 
 class TempleInputWidget extends StatefulWidget {
   final List<String> list; // Pass the specific list (English or Kannada)
@@ -41,7 +39,7 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
           controller: _localController,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            labelText: "Temple Name",
+            labelText: widget.hintText,
             border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add),
@@ -62,7 +60,10 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(widget.list[index], style: const TextStyle(color: Colors.black)),
+                    Text(
+                      widget.list[index],
+                      style: const TextStyle(color: Colors.black),
+                    ),
                     const SizedBox(width: 4),
                     GestureDetector(
                       onTap: () => widget.onRemove(index),
