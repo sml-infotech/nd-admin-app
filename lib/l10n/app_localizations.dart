@@ -461,10 +461,16 @@ abstract class AppLocalizations {
   /// **'Blog Details'**
   String get blogs_details;
 
+  /// No description provided for @create_mantra_inKannadam.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Mantra in Kannada'**
+  String get create_mantra_inKannadam;
+
   /// No description provided for @addTempleinkannadam.
   ///
   /// In en, this message translates to:
-  /// **'Add Temple In Kannadam'**
+  /// **'Add Temple In Kannada'**
   String get addTempleinkannadam;
 
   /// No description provided for @templeName.
@@ -538,6 +544,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Images'**
   String get images;
+
+  /// No description provided for @mantra_name_kn.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra Name in Kannada'**
+  String get mantra_name_kn;
+
+  /// No description provided for @mantra_kn.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra in Kannada'**
+  String get mantra_kn;
+
+  /// No description provided for @deities_en.
+  ///
+  /// In en, this message translates to:
+  /// **'Deities'**
+  String get deities_en;
 
   /// No description provided for @userDetails.
   ///

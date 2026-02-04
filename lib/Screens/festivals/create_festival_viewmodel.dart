@@ -254,14 +254,14 @@ class CreateFestivalViewmodel extends ChangeNotifier {
 
   Future<bool> deleteFestival(String festivalId) async {
     try {
-      isLoading = true;
+      isInitialLoading = true;
       notifyListeners();
 
       final response = await userService.deleteFestival(festivalId);
 
       if (response.code == 200) {
         festivalList.removeWhere((e) => e.id == festivalId);
-
+        isInitialLoading = false;
         message = "Festival deleted successfully";
         notifyListeners();
         return true;
@@ -273,7 +273,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       message = "Delete failed: $e";
       return false;
     } finally {
-      isLoading = false;
+      isInitialLoading = false;
       notifyListeners();
     }
   }

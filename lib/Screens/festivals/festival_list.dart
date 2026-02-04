@@ -99,7 +99,7 @@ class _FestivalListScreenState extends State<FestivalListScreen> {
               children: [
                 Expanded(
                   child: _viewmodel.isInitialLoading
-                      ? _buildShimmer() // FULL shimmer
+                      ? _buildShimmer()
                       : _buildFestivalList(_viewmodel),
                 ),
               ],
@@ -263,7 +263,11 @@ class FestivalCard extends StatelessWidget {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: nameAndDescriptionWidget(festival, language),
+                        child: nameAndDescriptionWidget(
+                          festival,
+                          language,
+                          context,
+                        ),
                       ),
                     ],
                   ),
@@ -277,7 +281,11 @@ class FestivalCard extends StatelessWidget {
   }
 }
 
-Widget nameAndDescriptionWidget(FestivalListModal festival, String language) {
+Widget nameAndDescriptionWidget(
+  FestivalListModal festival,
+  String language,
+  BuildContext context,
+) {
   return Container(
     decoration: BoxDecoration(
       gradient: LinearGradient(
@@ -306,14 +314,14 @@ Widget nameAndDescriptionWidget(FestivalListModal festival, String language) {
           language == "kn" && festival.translations.isNotEmpty == true
               ? festival.translations.first.description
               : festival.description,
-          maxLines: 3,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.templeContactStyle.copyWith(color: Colors.white),
         ),
         const SizedBox(width: 6),
         const SizedBox(height: 8),
         Text(
-          "Deities: ${festival.deityNames.join(', ')}",
+          "${language == "kn" ? "${AppLocalizations.of(context)?.deities_en} : " ?? 'Deities:' : 'Deities:'} ${language == "kn" && festival.translations.isNotEmpty == true ? festival.translations.first.deities?.join(', ') ?? '' : festival.deityNames.join(', ')}",
           style: AppTextStyles.templeContactStyle.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 8),

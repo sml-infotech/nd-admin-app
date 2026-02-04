@@ -9,7 +9,7 @@ import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class CreateMantraInKannadam extends StatefulWidget {
-final UpdateMantraArguments updateMantra;
+  final UpdateMantraArguments updateMantra;
   const CreateMantraInKannadam({super.key, required this.updateMantra});
 
   @override
@@ -87,8 +87,8 @@ class _CreateMantraInKannadamState extends State<CreateMantraInKannadam> {
 
   Widget mantraTextField() {
     return CommonTextField(
-      hintText: AppLocalizations.of(context)!.enterMantraName,
-      labelText: AppLocalizations.of(context)!.mantraName,
+      hintText: AppLocalizations.of(context)!.mantra_name_kn,
+      labelText: AppLocalizations.of(context)!.mantra_name_kn,
       controller: viewModel.mantraNameInKannadam,
       isFromPassword: false,
     );
@@ -96,8 +96,8 @@ class _CreateMantraInKannadamState extends State<CreateMantraInKannadam> {
 
   Widget mantraNameTextField() {
     return CommonTextField(
-      hintText: AppLocalizations.of(context)!.mantra,
-      labelText: AppLocalizations.of(context)!.enterMantra,
+      hintText: AppLocalizations.of(context)!.mantra_kn,
+      labelText: AppLocalizations.of(context)!.mantra_kn,
       controller: viewModel.mantraInKannadam,
       isFromPassword: false,
     );
@@ -114,10 +114,9 @@ class _CreateMantraInKannadamState extends State<CreateMantraInKannadam> {
         ),
         const Spacer(),
         Text(
-          // widget.updateMantra!.mantra.isEmpty
-          //     ? AppLocalizations.of(context)!.createMantra
-          //     :
-          "Update Mantra",
+          widget.updateMantra!.mantra.isEmpty
+              ? AppLocalizations.of(context)!.create_mantra_inKannadam
+              : "Update Mantra",
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -166,10 +165,9 @@ class _CreateMantraInKannadamState extends State<CreateMantraInKannadam> {
                 ),
               ),
               child: Text(
-                // widget.updateMantra!.mantra.isEmpty
-                //     ? AppLocalizations.of(context)!.create
-                //     :
-                AppLocalizations.of(context)!.update,
+                widget.updateMantra!.mantra.isEmpty
+                    ? AppLocalizations.of(context)!.create
+                    : AppLocalizations.of(context)!.update,
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

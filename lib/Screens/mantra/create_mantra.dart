@@ -245,12 +245,17 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.createMantrainKn,
-                  arguments: widget.updateMantra,
-                );
-                // if (await viewmodel.validateForm()) {
+
+                if (await viewmodel.validateForm()) {
+                  Navigator.pushNamed(
+                    context,
+                    StringsRoute.createMantrainKn,
+                    arguments: widget.updateMantra,
+                  );
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  viewmodel.message = "";
+                }
                 //   if (widget.updateMantra!.mantra.isEmpty) {
                 //     await viewmodel.createMantra();
                 //   } else {
@@ -274,9 +279,8 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
                 ),
               ),
               child: Text(
-                widget.updateMantra!.mantra.isEmpty
-                    ? AppLocalizations.of(context)!.create
-                    : AppLocalizations.of(context)!.update,
+                AppLocalizations.of(context)!.next,
+
                 style: AppTextStyles.buttonTextStyle,
               ),
             ),

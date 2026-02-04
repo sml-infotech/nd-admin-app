@@ -108,7 +108,7 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                   const SizedBox(height: 8),
                   descriptionWidget(),
                   const SizedBox(height: 8),
-                  descriptionWidget(),
+                  // descriptionWidget(),
                 ],
               ),
             ),

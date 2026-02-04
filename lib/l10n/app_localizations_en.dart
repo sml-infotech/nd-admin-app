@@ -192,7 +192,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get blogs_details => 'Blog Details';
 
   @override
-  String get addTempleinkannadam => 'Add Temple In Kannadam';
+  String get create_mantra_inKannadam => 'Create Mantra in Kannada';
+
+  @override
+  String get addTempleinkannadam => 'Add Temple In Kannada';
 
   @override
   String get templeName => 'Temple Name';
@@ -229,6 +232,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get images => 'Images';
+
+  @override
+  String get mantra_name_kn => 'Mantra Name in Kannada';
+
+  @override
+  String get mantra_kn => 'Mantra in Kannada';
+
+  @override
+  String get deities_en => 'Deities';
 
   @override
   String get userDetails => 'Users';

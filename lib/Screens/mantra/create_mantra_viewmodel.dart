@@ -27,6 +27,9 @@ class CreateMantraViewmodel extends ChangeNotifier {
   final userService = UserService();
 
   bool validateForm() {
+    print(
+      "Validating: ${mantraName.text}, ${mantra.text}, $selectedImage, $uploadedImageUrl",
+    );
     if (mantraName.text.isEmpty) {
       message = "Please fill Mantra Name";
       return false;
@@ -35,7 +38,8 @@ class CreateMantraViewmodel extends ChangeNotifier {
       message = "Please fill Mantra";
       return false;
     }
-    if (uploadedImageUrl == null) {
+
+    if (selectedImage == null && uploadedImageUrl == "") {
       message = "Upload the image first";
       return false;
     }
