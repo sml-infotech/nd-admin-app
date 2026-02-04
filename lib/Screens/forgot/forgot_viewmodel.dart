@@ -12,7 +12,7 @@ class ForgotViewmodel extends ChangeNotifier {
   bool isVerifyLoading = false;
   var authService = AuthService();
   var passwordService = PasswordService();
-  String otp = '';
+String otp = '';
   bool isOtpSuccess = false;
 
   ForgotViewmodel() {

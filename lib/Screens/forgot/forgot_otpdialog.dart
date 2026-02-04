@@ -23,6 +23,7 @@ class _OtpDialogState extends State<OtpDialog> {
   late ForgotViewmodel viewModel;
   int remainingSeconds = 60;
   Timer? timer;
+  final GlobalKey<OtpInputFieldState> otpKey = GlobalKey<OtpInputFieldState>();
 
   @override
   void initState() {
@@ -52,7 +53,6 @@ class _OtpDialogState extends State<OtpDialog> {
   Future<void> verifyOtp() async {
     FocusScope.of(context).unfocus();
 
-    viewModel.isVerifyLoading = true;
     await viewModel.validOtp(widget.email);
 
     Fluttertoast.showToast(
@@ -77,13 +77,18 @@ class _OtpDialogState extends State<OtpDialog> {
 
   Future<void> resendOtp() async {
     startTimer();
+    otpKey.currentState?.clearFields();
     await viewModel.forgotPasswordApi();
     Fluttertoast.showToast(msg: viewModel.message);
-    setState(() => viewModel.message = '');
+    setState(() {
+      viewModel.message = '';
+      viewModel.otp = '';
+    });
   }
 
   Widget buildOtpInputField() {
     return OtpInputField(
+      key: otpKey,
       onChanged: (value) => setState(() => viewModel.otp = value),
     );
   }
@@ -132,8 +137,6 @@ class _OtpDialogState extends State<OtpDialog> {
   }
 
   Widget buildLoadingOverlay() {
-    if (!viewModel.isVerifyLoading) return const SizedBox.shrink();
-
     return Positioned.fill(
       child: Container(
         color: Colors.black.withOpacity(0.4),
@@ -184,24 +187,39 @@ class _OtpDialogState extends State<OtpDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      insetPadding: const EdgeInsets.all(20),
-      child: Stack(
-        children: [
-          buildDialogContent(),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.grey),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+    return Consumer<ForgotViewmodel>(
+      builder: (context, viewModel, _) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          buildLoadingOverlay(),
-        ],
-      ),
+          insetPadding: const EdgeInsets.all(20),
+          child: Stack(
+            children: [
+              IgnorePointer(
+                ignoring: viewModel.isVerifyLoading || viewModel.isLoading,
+                child: buildDialogContent(),
+              ),
+
+              Positioned(
+                top: 8,
+                right: 8,
+                child: IgnorePointer(
+                  ignoring: viewModel.isVerifyLoading || viewModel.isLoading,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.grey),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
+
+              if (viewModel.isVerifyLoading || viewModel.isLoading)
+                buildLoadingOverlay(),
+            ],
+          ),
+        );
+      },
     );
   }
 }
