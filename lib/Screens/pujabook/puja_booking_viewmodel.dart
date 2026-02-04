@@ -438,6 +438,8 @@ class CreatePujaViewmodel extends ChangeNotifier {
     timeSlots = [];
     notifyListeners();
     deitiesListEn = [];
+    selectedDeitiesEn = [];
+    selectedDeitiesKn = [];
     deitiesListKn = [];
     deities = [];
     selectedDeities = [];
@@ -449,10 +451,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
     isLoading = false;
     pujaNameInKannadam.clear();
     descriptionInKannadam.clear();
-
+    cutOffDay = null;
     uploadedImageUrls.clear();
     // selectedDays.clear();
     cutOffDay = 1;
+deitiesOptionsEn = [];
+    deitiesOptionsKn = [];
+    notifyListeners();
   }
 
   void setSelectedTemple(Temple temple, {List<String>? initialDeitiesEn}) {

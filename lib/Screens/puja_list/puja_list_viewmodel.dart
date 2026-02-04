@@ -16,19 +16,19 @@ String language = "en";
   List<String> templeList = [];
 
   bool isLoading = true;
-  bool isLoadingMore = false;
+bool isLoadingMore = false;
   bool hasMorePujas = true;
   bool isToggling = false;
-
+bool isFetchingNextPage = false; // To show loader at the bottom of the list
   int _currentPage = 1;
   int _itemsPerPage = 10;
-
+bool hasNextPage = true;
   String? selectedTemple;
   String templeId = '';
   String message = '';
   bool? isActive;
 
-  Future<void> fetchPujas({bool reset = false}) async {
+Future<void> fetchPujas({bool reset = false}) async {
     try {
       if (reset) {
         _currentPage = 1;
@@ -82,26 +82,48 @@ String language = "en";
   }
 
   Future<void> getTemples({bool reset = false}) async {
-    isLoading = true;
-    notifyListeners();
+  if (reset) {
+    _currentPage = 1;
+    hasNextPage = true;
+    templeData.clear();
+    templeList.clear();
+    isLoading = true; 
+  } else {
+    if (!hasNextPage || isFetchingNextPage) return;
+    isFetchingNextPage = true;
+  }
+  
+  notifyListeners();
 
-    if (reset) {
-      templeData.clear();
-      templeList.clear();
-    }
-
-    final response = await templeService.getTemples(page: 1, limit: 2000);
+  try {
+    final response = await templeService.getTemples(page: _currentPage, limit: 20);
 
     if (response.data != null && response.data!.isNotEmpty) {
-      templeData = response.data!;
-      templeId = templeData.first.id;
-      selectedTemple = templeData.first.name;
+      templeData.addAll(response.data!);
+      
       templeList = templeData.map((t) => t.name).toList();
-    }
 
+      if (response.data!.length < 20) {
+        hasNextPage = false;
+      } else {
+        _currentPage++;
+      }
+      
+      if ( templeData.isNotEmpty) {
+        templeId = templeData.first.id;
+        selectedTemple = templeData.first.name;
+      }
+    } else {
+      hasNextPage = false;
+    }
+  } catch (e) {
+    debugPrint("Error fetching temples: $e");
+  } finally {
     isLoading = false;
+    isFetchingNextPage = false;
     notifyListeners();
   }
+}
 
   Future<bool> toggleActivate(String pujaId, bool toggle) async {
     try {

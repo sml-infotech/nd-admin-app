@@ -280,6 +280,12 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       paddingSize: 16,
       onChanged: (value) {
         if (value == null) return;
+        setState(() {
+          viewmodel.deitiesOptionsEn = [];
+          viewmodel.deitiesOptionsKn = [];
+          viewmodel.selectedDeitiesEn = [];
+          viewmodel.selectedDeitiesKn = [];
+        });
 
         final selectedTemple = viewmodel.templeData.firstWhere(
           (t) => t.name == value || (t.translations?.first.name == value),

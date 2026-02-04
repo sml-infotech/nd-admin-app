@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
@@ -16,6 +17,7 @@ class CreateUserViewmodel extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
 
   List<Temple> _templeData = [];
+  List<Temple> get templeData => _templeData;
   List<Map<String, dynamic>> templeList = []; // ✅ store id + name both
   String? selectedTempleName;
   String? selectedTempleId;
@@ -87,7 +89,7 @@ class CreateUserViewmodel extends ChangeNotifier {
         isCreateUserSuccess = true;
         notifyListeners();
       } else if (response.code == 409) {
-        message =response.error??"";
+        message = response.error ?? "";
         notifyListeners();
       } else {
         message = "Some error occurred";
@@ -102,31 +104,45 @@ class CreateUserViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> getTemples({bool reset = false}) async {
-    if (isLoading) return;
+Future<void> getTemples({bool reset = false}) async {
+  // 1. Prevent multiple simultaneous calls
+  if (isLoading) return; 
 
-    isLoading = true;
-    notifyListeners();
+  if (reset) {
+    _templeData.clear();
+    templeList.clear();
+    page = 1;
+    isLoading = true; // Show main loader for first time/reset
+  } else {
+    // If we are paginating, we use a different flag or just skip main loader
+    // You could add an 'isFetchingMore' bool here if you want a bottom spinner
+  }
+  
+  notifyListeners();
 
-    if (reset) {
-      _templeData.clear();
-      templeList.clear();
-      page = 1;
-    }
-
+  try {
     final response = await templeService.getTemples(page: page, limit: limit);
 
     if (response.data != null && response.data!.isNotEmpty) {
       _templeData.addAll(response.data!);
-      templeList = _templeData
-          .map((t) => {"id": t.id.toString(), "name": t.name.toString()})
-          .toList();
+      
+      // Map each Temple to a Map with id and name
+      templeList = _templeData.map((t) {
+        return {
+          'id': t.id,
+          'name': t.name.toString().replaceAll(RegExp(r'[{}]'), '').trim(),
+        };
+      }).toList();
+      
       page++;
     }
-
+  } catch (e) {
+    debugPrint("Error: $e");
+  } finally {
     isLoading = false;
     notifyListeners();
   }
+}
 
   // Get temple ID by name
   String? getTempleIdByName(String name) {
