@@ -163,13 +163,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  /// 🔹 Language Switcher
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _languageButton('EN', 'en'),
                       const Text('|'),
                       _languageButton('KN', 'kn'),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.notifications,
+                          color: Colors.black87.withOpacity(0.6),
+                        ),
+                      ),
                     ],
                   ),
 

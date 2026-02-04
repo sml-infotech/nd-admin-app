@@ -231,9 +231,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get images => 'Images';
 
   @override
-  String get next => 'Next';
-
-  @override
   String get userDetails => 'Users';
 
   @override

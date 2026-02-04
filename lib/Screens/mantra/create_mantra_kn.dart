@@ -9,7 +9,7 @@ import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class CreateMantraInKannadam extends StatefulWidget {
-  final UpdateMantraArguments updateMantra;
+final UpdateMantraArguments updateMantra;
   const CreateMantraInKannadam({super.key, required this.updateMantra});
 
   @override

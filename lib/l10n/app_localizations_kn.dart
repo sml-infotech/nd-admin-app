@@ -231,9 +231,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get images => 'ಚಿತ್ರಗಳು';
 
   @override
-  String get next => 'ಮುಂದೆ';
-
-  @override
   String get userDetails => 'ಬಳಕೆದಾರರ ವಿವರಗಳು';
 
   @override

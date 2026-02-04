@@ -539,12 +539,6 @@ abstract class AppLocalizations {
   /// **'Images'**
   String get images;
 
-  /// No description provided for @next.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get next;
-
   /// No description provided for @userDetails.
   ///
   /// In en, this message translates to:
@@ -777,7 +771,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Requests'**
-String get updateRequests;
+  String get updateRequests;
 
   /// No description provided for @fee.
   ///
