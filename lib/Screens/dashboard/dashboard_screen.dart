@@ -428,8 +428,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
+                setState(() {
+                                  dashboardViewmodel.isLoading = true;
+
+                });
+                Navigator.of(context).pop();
                
-                await deleteToken();
+                // await deleteToken();
               },
 
               child: Text(
