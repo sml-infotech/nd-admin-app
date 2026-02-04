@@ -148,6 +148,7 @@ class _ListBlogsState extends State<ListBlogs> {
       children: [
         IconButton(
           onPressed: () {
+            viewmodel.reset();
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -160,6 +161,8 @@ class _ListBlogsState extends State<ListBlogs> {
         const Spacer(),
         IconButton(
           onPressed: () {
+            viewmodel.reset();
+
             Navigator.pushNamed(context, StringsRoute.create_blog);
           },
           icon: Icon(Icons.add, color: Colors.white),
@@ -247,6 +250,7 @@ class _ListBlogsState extends State<ListBlogs> {
                                   blog.translations!.isNotEmpty
                               ? blog.translations!.first.name
                               : blog.name,
+                          maxLines: 3,
                           style: AppTextStyles.templeNameDetailsStyle,
                         ),
                       ),
@@ -268,6 +272,7 @@ class _ListBlogsState extends State<ListBlogs> {
                                   blog.translations!.isNotEmpty
                               ? blog.translations!.first.description
                               : blog.description,
+                          maxLines: 3,
                           style: AppTextStyles.templeNameDetailsStyle,
                         ),
                       ),

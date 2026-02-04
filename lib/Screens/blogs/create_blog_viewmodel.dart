@@ -28,7 +28,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
   //   TextEditingController(),
   // ];
 
-  // -------------------- LIST CONTROLLERS --------------------
+  bool isOnlyListEditing = false; // Add this variable
   bool showListGroupEN = false;
   bool showListGroupKN = false;
 
@@ -82,7 +82,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
       // Clean up temporary working data
       articleSectionsEN.clear();
       articleSectionsKN.clear();
-      resetEverything();
+      // resetEverything();
 
       notifyListeners();
     }
@@ -239,6 +239,8 @@ class CreateBlogViewmodel extends ChangeNotifier {
     List<TextEditingController> controllers,
     Map<TextEditingController, int> positions,
   ) {
+    isOnlyListEditing = false;
+
     controllers.clear();
     positions.clear();
     for (var section in sections) {
@@ -263,10 +265,11 @@ class CreateBlogViewmodel extends ChangeNotifier {
     TextEditingController headingCtrl,
     List<TextEditingController> itemCtrls,
   ) {
+    isOnlyListEditing = true;
     setShow(false);
     itemCtrls.clear();
     headingCtrl.text = '';
-
+    notifyListeners();
     for (final section in sections) {
       if (section.lists != null && section.lists!.isNotEmpty) {
         final list = section.lists!.first;
@@ -354,7 +357,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
     // 5. Reset Working Section Controllers
     sectionTitle.clear();
     sectionTitleKn.clear();
-    
+
     // Reset Paragraphs to a single empty field
     paragraphControllers = [TextEditingController()];
     paragraphControllersKN = [TextEditingController()];
@@ -378,64 +381,80 @@ class CreateBlogViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to Prefill Form for Editing
+  // Inside CreateBlogViewmodel
+
   void prefillSectionForEdit(int index) {
     editingIndex = index;
     final en = addedSectionsEN[index];
     final kn = addedSectionsKN[index];
 
-    // English Prefill
+    // --- English Prefill ---
     sectionTitle.text = en.title ?? '';
-    paragraphControllers =
-        en.paragraphs
-            ?.map((p) => TextEditingController(text: p.text))
-            .toList() ??
-        [TextEditingController()];
 
+    // Paragraphs
+    paragraphControllers = en.paragraphs?.isNotEmpty == true
+        ? en.paragraphs!
+              .map((p) => TextEditingController(text: p.text))
+              .toList()
+        : [TextEditingController()];
+
+    // Lists (EN)
     if (en.lists != null && en.lists!.isNotEmpty) {
+      final list = en.lists!.first;
       showListGroupEN = true;
-      listTypeEN = en.lists!.first.listType ?? 'Numbered';
-      listHeadingControllerEN.text = en.lists!.first.heading ?? '';
-      listItemControllersEN =
-          en.lists!.first.points
-              ?.map((p) => TextEditingController(text: p.text))
-              .toList() ??
-          [TextEditingController()];
+      listTypeEN = list.listType ?? 'Numbered';
+      listHeadingControllerEN.text = list.heading ?? '';
+
+      // Crucial: Clear and Map points to new controllers
+      listItemControllersEN = list.points?.isNotEmpty == true
+          ? list.points!
+                .map((p) => TextEditingController(text: p.text))
+                .toList()
+          : [TextEditingController()];
     } else {
       showListGroupEN = false;
+      listHeadingControllerEN.clear();
+      listItemControllersEN = [TextEditingController()];
     }
 
-    // Kannada Prefill
+    // --- Kannada Prefill ---
     sectionTitleKn.text = kn.title ?? '';
-    paragraphControllersKN =
-        kn.paragraphs
-            ?.map((p) => TextEditingController(text: p.text))
-            .toList() ??
-        [TextEditingController()];
 
+    // Paragraphs
+    paragraphControllersKN = kn.paragraphs?.isNotEmpty == true
+        ? kn.paragraphs!
+              .map((p) => TextEditingController(text: p.text))
+              .toList()
+        : [TextEditingController()];
+
+    // Lists (KN)
     if (kn.lists != null && kn.lists!.isNotEmpty) {
+      final listKn = kn.lists!.first;
       showListGroupKN = true;
-      listTypeKN = kn.lists!.first.listType ?? 'Numbered';
-      listHeadingControllerKN.text = kn.lists!.first.heading ?? '';
-      listItemControllersKN =
-          kn.lists!.first.points
-              ?.map((p) => TextEditingController(text: p.text))
-              .toList() ??
-          [TextEditingController()];
+      listTypeKN = listKn.listType ?? 'Numbered';
+      listHeadingControllerKN.text = listKn.heading ?? '';
+
+      listItemControllersKN = listKn.points?.isNotEmpty == true
+          ? listKn.points!
+                .map((p) => TextEditingController(text: p.text))
+                .toList()
+          : [TextEditingController()];
     } else {
       showListGroupKN = false;
+      listHeadingControllerKN.clear();
+      listItemControllersKN = [TextEditingController()];
     }
 
     notifyListeners();
   }
 
-  Future<void> saveBlog(String? slug,String? blog_id) async {
+  Future<void> saveBlog(String? slug, String? blog_id) async {
     try {
       isLoading = true;
       notifyListeners();
 
       final payload = BlogModel(
-        blogId:blog_id ,
+        blogId: blog_id,
         name: blogName.text.trim(),
         description: blogDescription.text.trim(),
         image: uploadedImageUrl ?? '',
@@ -453,7 +472,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
 
       dynamic res;
       if (slug != null && slug.isNotEmpty) {
-        res = await blogService.updateBlog( payload);
+        res = await blogService.updateBlog(payload);
       } else {
         res = await blogService.createBlog(payload);
       }
