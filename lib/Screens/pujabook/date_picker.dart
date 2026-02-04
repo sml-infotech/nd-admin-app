@@ -17,7 +17,8 @@ class DatePickerField extends StatelessWidget {
     this.fromDate,
   });
 
-  bool get _isEndDate => fromDate != null; // Helps us know if this is "To Date" field
+  bool get _isEndDate =>
+      fromDate != null; // Helps us know if this is "To Date" field
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,14 @@ class DatePickerField extends StatelessWidget {
               onTap: () async {
                 final now = DateTime.now();
 
-                // Determine valid range
                 final DateTime firstDate = _isEndDate
-                    ? fromDate!.add(const Duration(days: 0)) // End date must be >= start date
-                    : now;
+                    ? fromDate! // End date cannot be before start date
+                    : DateTime(1900); // or any early date you want
 
                 final DateTime initialDate =
                     selectedDate != null && selectedDate!.isAfter(firstDate)
-                        ? selectedDate!
-                        : firstDate;
+                    ? selectedDate!
+                    : firstDate;
 
                 final picked = await showDatePicker(
                   context: context,
@@ -64,7 +64,10 @@ class DatePickerField extends StatelessWidget {
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
@@ -79,7 +82,9 @@ class DatePickerField extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: font,
                         fontSize: 15,
-                        color: selectedDate == null ? Colors.grey : Colors.black,
+                        color: selectedDate == null
+                            ? Colors.grey
+                            : Colors.black,
                       ),
                     ),
                     Image.asset(ImageStrings.calendar, height: 22),

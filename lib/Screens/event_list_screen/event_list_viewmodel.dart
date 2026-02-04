@@ -32,7 +32,6 @@ class EventListViewmodel extends ChangeNotifier {
       hasMore = true;
     }
 
-    // Set loading state based on page
     if (page == 1) {
       isLoading = true;
     } else {
@@ -49,7 +48,6 @@ class EventListViewmodel extends ChangeNotifier {
 
       events.addAll(response.events);
 
-      // Check if more data is available
       if (response.events.length < limit) {
         hasMore = false;
       } else {

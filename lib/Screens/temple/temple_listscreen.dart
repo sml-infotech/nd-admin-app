@@ -136,18 +136,21 @@ class _TempleScreenState extends State<TempleScreen> {
 
   Widget _buildAppBar(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
           onPressed: () => Navigator.pop(context),
         ),
-        const Spacer(),
-        Text(
-          AppLocalizations.of(context)!.temples,
-          style: AppTextStyles.appBarTitleStyle,
+
+        Expanded(
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context)!.temples,
+              style: AppTextStyles.appBarTitleStyle,
+            ),
+          ),
         ),
-        const Spacer(),
+
         if (role == "Super Admin")
           IconButton(
             onPressed: () async {
@@ -155,8 +158,9 @@ class _TempleScreenState extends State<TempleScreen> {
               await viewModel?.resetAndFetch();
             },
             icon: const Icon(Icons.add, color: Colors.white),
-          ),
-        SizedBox(width: 5),
+          )
+        else
+          const SizedBox(width: 48),
       ],
     );
   }
@@ -291,6 +295,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       Expanded(
                         child: Text(
                           temple.architecture,
+                          maxLines: 3,
                           style: AppTextStyles.templeNameDetailsStyle,
                         ),
                       ),

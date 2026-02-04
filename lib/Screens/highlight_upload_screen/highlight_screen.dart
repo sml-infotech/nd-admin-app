@@ -25,12 +25,17 @@ class HighLightsUploaderScreen extends StatefulWidget {
 }
 
 class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
-  VideoPlayerController? _videoController;
   final ImagePicker _picker = ImagePicker();
-  late HighlightViewmodel viewModel = Provider.of<HighlightViewmodel>(
-    context,
-    listen: false,
-  );
+  late HighlightViewmodel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.fetchHighlights();
+    });
+  }
 
   int _selectedSegment = 0;
   final Set<String> _selectedItems = {};
@@ -63,9 +68,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
   }
 
   void _clearPreviousVideo() {
-    _videoController?.pause();
-    _videoController?.dispose();
-    _videoController = null;
+    viewModel.disposeVideo();
   }
 
   void _toggleStatus() async {
@@ -128,14 +131,14 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       ),
       body: FocusDetector(
         onFocusGained: () async {
-          await viewModel.fetchHighlights();
+          // await viewModel.fetchHighlights();
         },
         child: Stack(
           children: [
             Column(
               children: [
                 const SizedBox(height: 15),
-                uploadContentWidget(viewModel),
+                Expanded(child: uploadContentWidget(viewModel)),
               ],
             ),
             if (viewModel.isLoading)
@@ -159,69 +162,67 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     final currentList = _selectedSegment == 0
         ? viewModel.activeHighlights
         : viewModel.inactiveHighlights;
-    return Expanded(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            CommonTextField(
-              hintText: "Tap to select HighLights",
-              labelText: "Title",
-              isFromPassword: false,
-              controller: viewModel.titleController,
-            ),
-            SizedBox(height: 15),
-            CommonTextField(
-              hintText: "Tap to select HighLights",
-              labelText: "Description",
-              isFromPassword: false,
-              controller: viewModel.descriptionController,
-            ),
-            SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 6),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _showPickerOptions,
-                    child: Container(
-                      height: 220,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[400]!),
-                      ),
-                      child: _buildPreview(),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(0.0),
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          CommonTextField(
+            hintText: "Tap to select HighLights",
+            labelText: "Title",
+            isFromPassword: false,
+            controller: viewModel.titleController,
+          ),
+          SizedBox(height: 15),
+          CommonTextField(
+            hintText: "Tap to select HighLights",
+            labelText: "Description",
+            isFromPassword: false,
+            controller: viewModel.descriptionController,
+          ),
+          SizedBox(height: 15),
+          Padding(
+            padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 6),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: _showPickerOptions,
+                  child: Container(
+                    height: 220,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[400]!),
                     ),
+                    child: _buildPreview(),
                   ),
-                  const SizedBox(height: 15),
-                  uploadButton(viewModel),
-                  const SizedBox(height: 25),
+                ),
+                const SizedBox(height: 15),
+                uploadButton(viewModel),
+                const SizedBox(height: 25),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        _segmentButton("Active", 0),
-                        _segmentButton("Inactive", 1),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      _segmentButton("Active", 0),
+                      _segmentButton("Inactive", 1),
+                    ],
                   ),
-                  const Divider(height: 40),
-                  activeAndInactiveSegment(),
-                  const SizedBox(height: 10),
-                  if (currentList.isNotEmpty) _buildMediaGrid(),
-                  if (currentList.isEmpty) ...[
-                    const SizedBox(height: 100),
-                    addHighlightUnderLineButton(),
-                  ],
+                ),
+                const Divider(height: 40),
+                activeAndInactiveSegment(),
+                const SizedBox(height: 10),
+                if (currentList.isNotEmpty) _buildMediaGrid(),
+                if (currentList.isEmpty) ...[
+                  const SizedBox(height: 100),
+                  addHighlightUnderLineButton(),
                 ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -414,7 +415,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       itemBuilder: (context, index) {
         HighlightItem highlightItem = currentList[index];
         String path = highlightItem.mediaUrl ?? '';
-        String id = highlightItem.id ?? '';
+        String id = highlightItem.id ?? 'item_$index';
         bool isSelected = _selectedItems.contains(id);
         bool isVideo = _checkIsVideo(path);
 
