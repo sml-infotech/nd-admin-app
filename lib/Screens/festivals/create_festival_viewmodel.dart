@@ -298,6 +298,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     isLoading = false;
     isInitialLoading = true;
     deities.clear();
+    deitiesKn.clear();
     isActive = false;
     notifyListeners();
   }

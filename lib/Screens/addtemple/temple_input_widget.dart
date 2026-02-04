@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nammadaiva_dashboard/Utills/constant.dart';
 
 class TempleInputWidget extends StatefulWidget {
   final List<String> list; // Pass the specific list (English or Kannada)
@@ -40,7 +41,10 @@ class _TempleInputWidgetState extends State<TempleInputWidget> {
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.hintText,
-            border: const OutlineInputBorder(),
+            labelStyle: TextStyle(color: Colors.grey[700], fontFamily: font),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add),
               onPressed: _internalAdd,
