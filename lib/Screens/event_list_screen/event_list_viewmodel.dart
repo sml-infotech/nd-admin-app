@@ -79,8 +79,8 @@ class EventListViewmodel extends ChangeNotifier {
 
     if (response.data != null && response.data!.isNotEmpty) {
       templeData.addAll(response.data!);
-      templeList = templeData.map((t) => t.name).toList();
-      selectedTempleId = templeData.first.id;
+      // templeList = templeData.map((t) => t.name).toList();
+      // selectedTempleId = templeData.first.id;
       page++;
       notifyListeners();
     }

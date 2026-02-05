@@ -110,8 +110,8 @@ Future<void> fetchPujas({bool reset = false}) async {
       }
       
       if ( templeData.isNotEmpty) {
-        templeId = templeData.first.id;
-        selectedTemple = templeData.first.name;
+        // templeId = templeData.first.id;
+        // selectedTemple = templeData.first.name;
       }
     } else {
       hasNextPage = false;

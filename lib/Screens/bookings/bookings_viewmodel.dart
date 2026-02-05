@@ -14,7 +14,7 @@ class BookingsViewmodel extends ChangeNotifier {
   List<Temple> templeData = [];
   String? selectedTemple;
   String? selectedTempleId;
-  int selectedSegment = 0;
+  int selectedSegment = 2;
   final List<String> segments = ["Today", "Tomorrow", "Upcoming", "Past"];
   final TempleService api = TempleService();
   int page = 1;
@@ -48,8 +48,8 @@ class BookingsViewmodel extends ChangeNotifier {
 
     if (response.data != null && response.data!.isNotEmpty) {
       templeData = response.data!;
-      selectedTemple = templeData.first.name;
-      selectedTempleId = templeData.first.id;
+      // selectedTemple = templeData.first.name;
+      // selectedTempleId = templeData.first.id;
 
       await fetchBookings();
     }
@@ -60,10 +60,8 @@ class BookingsViewmodel extends ChangeNotifier {
 
   Future<void> fetchBookings({
     bool reset = false,
-    String filter = "today",
+    String filter = "upcoming",
   }) async {
-    if (selectedTempleId == null) return;
-
     if (reset) {
       page = 1;
       bookings.clear();
@@ -76,44 +74,54 @@ class BookingsViewmodel extends ChangeNotifier {
 
     try {
       final result = await api.fetchBookings(
-        selectedTempleId!,
+        selectedTempleId ?? "",
         page: page,
         filter: filter,
       );
+
       final newItems = result.data ?? [];
 
-      List<BookingModel> filtered = newItems;
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final tomorrow = today.add(const Duration(days: 1));
 
+      List<BookingModel> filtered;
+
       if (filter == "today") {
-        filtered = newItems
-            .where(
-              (b) =>
-                  DateTime.parse(
-                    b.pujaDate,
-                  ).toLocal().difference(today).inDays ==
-                  0,
-            )
-            .toList();
+        filtered = newItems.where((b) {
+          final d = DateTime.parse(b.pujaDate).toLocal();
+          final day = DateTime(d.year, d.month, d.day);
+          return day == today;
+        }).toList();
       } else if (filter == "tomorrow") {
-        filtered = newItems
-            .where(
-              (b) =>
-                  DateTime.parse(
-                    b.pujaDate,
-                  ).toLocal().difference(today).inDays ==
-                  1,
-            )
-            .toList();
+        filtered = newItems.where((b) {
+          final d = DateTime.parse(b.pujaDate).toLocal();
+          final day = DateTime(d.year, d.month, d.day);
+          return day == tomorrow;
+        }).toList();
+      } else if (filter == "upcoming") {
+        filtered = newItems.where((b) {
+          final d = DateTime.parse(b.pujaDate).toLocal();
+          final day = DateTime(d.year, d.month, d.day);
+          return day.isAfter(today); // ✅ REAL upcoming
+        }).toList();
+      } else if (filter == "past") {
+        filtered = newItems.where((b) {
+          final d = DateTime.parse(b.pujaDate).toLocal();
+          final day = DateTime(d.year, d.month, d.day);
+          return day.isBefore(today);
+        }).toList();
+      } else {
+        filtered = newItems;
       }
 
       if (filtered.isNotEmpty) {
         bookings.addAll(filtered);
-        page++; // increment page only if API returned data
-      } else if (newItems.length < result.limit) {
-        hasMore = false; // no more pages
+        page++;
+      }
+
+      if (newItems.length < result.limit) {
+        hasMore = false;
       }
     } catch (e) {
       debugPrint("Fetch error: $e");
@@ -168,7 +176,7 @@ class BookingsViewmodel extends ChangeNotifier {
     templeData = [];
     selectedTemple = null;
     selectedTempleId = null;
-    selectedSegment = 0;
+    selectedSegment = 2;
     page = 1;
     expandedIndex = null;
 

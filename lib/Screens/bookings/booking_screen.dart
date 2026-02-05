@@ -69,7 +69,6 @@ class _BookingScreenState extends State<BookingScreen> {
         return FocusDetector(
           onFocusGained: () async {
             vm.fetchTemples();
-            vm.fetchBookings(reset: true);
           },
           child: Scaffold(
             backgroundColor: Colors.white,
@@ -132,7 +131,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return RefreshIndicator(
       color: ColorConstant.buttonColor,
       onRefresh: () {
-        vm.selectedSegment = 0;
+        vm.selectedSegment = 2;
 
         return vm.fetchBookings(reset: true);
       },
@@ -177,7 +176,6 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Row(
         children: List.generate(vm.segments.length, (index) {
           bool active = index == vm.selectedSegment;
-
           return Expanded(
             child: GestureDetector(
               onTap: () {

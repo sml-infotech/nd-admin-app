@@ -575,6 +575,12 @@ abstract class AppLocalizations {
   /// **'Bookings'**
   String get bookings;
 
+  /// No description provided for @optional_temple.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple (Optional)'**
+  String get optional_temple;
+
   /// No description provided for @no_bookings_found.
   ///
   /// In en, this message translates to:

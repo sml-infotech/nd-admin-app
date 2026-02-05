@@ -121,7 +121,12 @@ class EventService {
   }) async {
     try {
       final url =
-          '${UrlConstant.getEventsUrl}?temple_id=$temple_id&page=$page&limit=$limit&language=kn';
+          '${UrlConstant.getEventsUrl}'
+          '?page=$page'
+          '&limit=$limit'
+          '&language=kn'
+          '${temple_id != null && temple_id.isNotEmpty ? '&temple_id=$temple_id' : ''}';
+
       print('Fetching fetchEventes: $url');
       dynamic data = await apiService.get(url);
       return EventListResponse.fromJson(data);

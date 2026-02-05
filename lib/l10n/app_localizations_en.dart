@@ -249,6 +249,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookings => 'Bookings';
 
   @override
+  String get optional_temple => 'Temple (Optional)';
+
+  @override
   String get no_bookings_found => 'No Bookings Found';
 
   @override

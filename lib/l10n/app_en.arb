@@ -81,6 +81,7 @@
 "next": "Next",
   "userDetails": "Users",
   "bookings": "Bookings",
+  "optional_temple": "Temple (Optional)",
   "no_bookings_found": "No Bookings Found",
   "no_media_selected": "No Media Selected",
   "created": "Created:",

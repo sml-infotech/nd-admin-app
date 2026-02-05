@@ -265,8 +265,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     final bool isKannada = Localizations.localeOf(context).languageCode == 'kn';
 
     return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.temple,
-      labelText: AppLocalizations.of(context)!.temple,
+      hintText: AppLocalizations.of(context)!.optional_temple,
+      labelText: AppLocalizations.of(context)!.optional_temple,
       items: viewmodel.templeData
           .map(
             (t) => isKannada ? (t.translations?.first.name ?? t.name) : t.name,

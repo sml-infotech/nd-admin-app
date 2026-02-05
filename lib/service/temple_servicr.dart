@@ -89,7 +89,12 @@ class TempleService {
   }) async {
     try {
       final url =
-          '${UrlConstant.getPujas}?temple_id=$templeId&page=$page&limit=$limit&language=kn';
+          '${UrlConstant.getPujas}'
+          '?page=$page'
+          '&limit=$limit'
+          '&language=kn'
+          '${templeId != null && templeId.isNotEmpty ? '&temple_id=$templeId' : ''}';
+
       print('Fetching getPujas: $url');
 
       dynamic data = await apiService.get(url);
@@ -108,7 +113,11 @@ class TempleService {
   }) async {
     try {
       final url =
-          '${UrlConstant.bookingList}?temple_id=$templeId&page=$page&limit=$limit&$filter=${true}';
+          '${UrlConstant.bookingList}'
+          '?page=$page'
+          '&limit=$limit'
+          '&$filter=true'
+          '${templeId != null && templeId.isNotEmpty ? '&temple_id=$templeId' : ''}';
 
       print('Fetching bookings: $url');
 

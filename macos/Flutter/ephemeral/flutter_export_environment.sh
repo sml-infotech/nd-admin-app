@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/qualitazmacmini1/development/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/qualitazmacmini1/Documents/GitHubprojects/namma_daiva_dashboard/nd-admin-app"
+export "FLUTTER_ROOT=/Users/smlmacmini1/development/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/smlmacmini1/Documents/git/nammaDaivaDashboard/nd-admin-app"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"

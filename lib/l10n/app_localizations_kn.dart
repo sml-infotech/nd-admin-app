@@ -249,6 +249,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get bookings => 'ಬುಕಿಂಗ್‌ಗಳು';
 
   @override
+  String get optional_temple => 'ದೇವಾಲಯ (ಐಚ್ಛಿಕ)';
+
+  @override
   String get no_bookings_found => 'ಯಾವುದೇ ಬುಕಿಂಗ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
