@@ -154,11 +154,14 @@ class _AddTempleScreenState extends State<AddTempleScreen> {
     return MultiImagePickerSection(
       imagePaths: allImages,
       onAddImages: _pickImages,
-      onRemoveImage: (index) {
+      onRemoveImage: (index) async {
         if (index >= uploadedCount) {
           final localIndex = index - uploadedCount;
           templeViewmodel.removeImage(localIndex);
         } else {
+          await templeViewmodel.removeS3(
+            templeViewmodel.uploadedImageUrls[index],
+          );
           templeViewmodel.uploadedImageUrls.removeAt(index);
           templeViewmodel.notifyListeners();
         }

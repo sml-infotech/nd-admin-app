@@ -17,7 +17,7 @@ class PujaArguments {
   final List<String> sample_images;
   final List<PujaTimeSlot> timeSlots;
   final List<Translation>? translations;
-  final List<Benefit> benefits;
+  final List<String> benefits;
 
   PujaArguments({
     required this.templeId,

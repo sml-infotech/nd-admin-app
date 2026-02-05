@@ -189,7 +189,10 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
 
       viewmodel.selectedImage = imageFile;
       setState(() {});
-
+      if (viewmodel.uploadedImageUrl != null &&
+          viewmodel.uploadedImageUrl!.isNotEmpty) {
+        await viewmodel.removeS3(viewmodel.uploadedImageUrl!);
+      }
       await viewmodel.uploadImageToS3(imageFile);
 
       if (viewmodel.message != null && viewmodel.message!.isNotEmpty) {

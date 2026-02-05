@@ -95,7 +95,27 @@ class CreateBlogViewmodel extends ChangeNotifier {
       notifyListeners(); // Refresh the UI
     }
   }
-
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+        isLoading = false;
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
   void saveFullSectionKN(List<TextEditingController> paragraphCtrls) {
     // Build paragraphs
     final paragraphs = paragraphCtrls

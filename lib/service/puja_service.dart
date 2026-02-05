@@ -1,3 +1,4 @@
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
@@ -21,8 +22,8 @@ class PujaService {
     String toDate,
     List<String> days,
     List<TimeSlot> time_slots,
-     List<Benefit> benefits,
-     List<Translation> translations
+    List<String> benefits,
+    List<Translation> translations,
   ) async {
     try {
       final createpuja = Puja(
@@ -40,7 +41,7 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
-        translations: translations
+        translations: translations,
       );
 
       print("📦 ------------------- CREATE PUJA REQUEST -------------------");
@@ -57,7 +58,7 @@ class PujaService {
       print("To Date: $toDate");
       print("Days: $days");
       print("Time Slots: ${time_slots.map((e) => e.toJson()).toList()}");
-      print("{  'benefits': ${benefits.map((b) => b.toJson()).toList()}}");
+      print("{  'benefits': ${benefits.map((b) => b).toList()} }");
       print("Translations: ${translations.map((t) => t.toJson()).toList()}");
       print("-------------------------------------------------------------");
 
@@ -90,12 +91,12 @@ class PujaService {
     String toDate,
     List<String> days,
     List<TimeSlot> time_slots,
-List<Benefit> benefits,
-      List<Translation> translations
+    List<String> benefits,
+    List<Translation> translations,
   ) async {
     try {
       final updatePuja = Puja(
-        pujaId  : pujaId,
+        pujaId: pujaId,
         templeId: templeId,
         pujaName: pujaName,
         deitiesName: deitiesName,

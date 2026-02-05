@@ -76,6 +76,28 @@ class CreateMantraViewmodel extends ChangeNotifier {
     }
   }
 
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+        isLoading = false;
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<String?> uploadToS3(String presignedUrl, File imageFile) async {
     try {
       final fileBytes = await imageFile.readAsBytes();

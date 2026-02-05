@@ -55,6 +55,7 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
     final XFile? file = await picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {
+      await viewModel.removeS3(viewModel.uploadedImageUrl!);
       final imageFile = File(file.path);
 
       viewModel.selectedImage = imageFile;

@@ -140,11 +140,34 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     return null;
   }
 
-  void removeImage(int index) {
+  Future<void> removeImage(int index) async {
+    await removeS3(uploadedImageUrls[index]);
     selectedImages.removeAt(index);
     notifyListeners();
   }
 
+
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+        isLoading = false;
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
   Future<void> createFestival() async {
     try {
       isLoading = true;

@@ -98,9 +98,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
     viewmodel.pujaNameInKannadam.text = knTranslation.pujaName;
     viewmodel.descriptionInKannadam.text = knTranslation.description;
-    viewmodel.benefitsEn = List<String>.from(
-      args.benefits.map((b) => b.description),
-    );
+    viewmodel.benefitsEn = List<String>.from(args.benefits);
     viewmodel.benefitsKn = List<String>.from(knTranslation.benefits);
 
     if (args.templeId != null && args.templeId!.isNotEmpty) {
@@ -446,11 +444,12 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
     return MultiImagePickerSection(
       imagePaths: allImages,
       onAddImages: _pickImages,
-      onRemoveImage: (index) {
+      onRemoveImage: (index) async {
         if (index >= uploadedCount) {
           final localIndex = index - uploadedCount;
           viewmodel.removeImage(localIndex);
         } else {
+          await viewmodel.removeS3(viewmodel.uploadedImageUrls[index]);
           viewmodel.uploadedImageUrls.removeAt(index);
           viewmodel.notifyListeners();
         }

@@ -89,9 +89,31 @@ class CreateEventViewmodel extends ChangeNotifier {
     }
   }
 
-  void removeImage(int index) {
+  Future<void> removeImage(int index) async {
+    await removeS3(uploadedImageUrls[index]);
     selectedImages.removeAt(index);
     notifyListeners();
+  }
+
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
