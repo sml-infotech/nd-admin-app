@@ -78,6 +78,7 @@ class Translation {
   final String state;
   final String description;
   final List<String> deities;
+  final String? architecture;
 
 Translation({
     required this.languageCode,
@@ -87,6 +88,7 @@ Translation({
     required this.state,
     required this.description,
     required this.deities,
+    this.architecture,
   });
 factory Translation.fromJson(Map<String, dynamic> json) {
   return Translation(
@@ -99,6 +101,7 @@ factory Translation.fromJson(Map<String, dynamic> json) {
     deities: json['deities'] != null
         ? List<String>.from(json['deities'])
         : <String>[],
+    architecture: json['architecture'],
   );
 }
 
@@ -112,6 +115,7 @@ factory Translation.fromJson(Map<String, dynamic> json) {
       'state': state,
       'description': description,
       'deities': deities,
+      'architecture': architecture,
     };
   }
 }

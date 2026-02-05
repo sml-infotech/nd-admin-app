@@ -106,7 +106,7 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
 
   Widget selectDietiesText() {
     return Text(
-      "Select Deities",
+      AppLocalizations.of(context)!.selectDeities,
       style: TextStyle(
         fontFamily: font,
         fontSize: 17,
@@ -214,15 +214,15 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Label
-          Text(
-            "Deities",
-            style: TextStyle(
-              fontFamily: font,
-              color: Colors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          // Text(
+          //   "Deities",
+          //   style: TextStyle(
+          //     fontFamily: font,
+          //     color: Colors.black,
+          //     fontSize: 14,
+          //     fontWeight: FontWeight.w500,
+          //   ),
+          // ),
           const SizedBox(height: 8),
 
           // Dropdown-style display
@@ -246,7 +246,7 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
                       children: _selectedItems.isEmpty
                           ? [
                               Text(
-                                "Select Deities",
+                                AppLocalizations.of(context)!.selectDeities,
                                 style: TextStyle(
                                   fontFamily: font,
                                   color: Colors.grey.shade600,

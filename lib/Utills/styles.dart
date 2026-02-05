@@ -27,7 +27,7 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
     color: Colors.white,
     fontFamily: font,
-  );
+);
 
   static final TextStyle welcomeStyle = TextStyle(
     fontSize: 16,

@@ -12,10 +12,12 @@ class CommonDropdownField extends StatefulWidget {
   final Function(List<String>)? onMultiChanged;
   final bool isTempleSelection;
   final double paddingSize;
+  final VoidCallback? onLoadMore;
+  final bool isLoadingMore; // New: To show/hide loader at bottom
 
   const CommonDropdownField({
     super.key,
-    required this.hintText,
+  required this.hintText,
     required this.labelText,
     required this.items,
     this.selectedValue,
@@ -24,6 +26,8 @@ class CommonDropdownField extends StatefulWidget {
     this.onMultiChanged,
     this.isTempleSelection = false,
     required this.paddingSize,
+    this.onLoadMore,
+    this.isLoadingMore = false,
   });
 
   @override
@@ -76,25 +80,32 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
-                    borderSide:
-                        const BorderSide(color: ColorConstant.primaryColor),
+                    borderSide: const BorderSide(
+                      color: ColorConstant.primaryColor,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
-                    borderSide:
-                        const BorderSide(color: ColorConstant.primaryColor),
+                    borderSide: const BorderSide(
+                      color: ColorConstant.primaryColor,
+                    ),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-                  suffixIcon: const Icon(Icons.arrow_drop_down,
-                      color: Colors.black),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 18,
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
                 ),
                 child: Text(
                   selectedNames.isEmpty ? widget.hintText : selectedNames,
                   style: TextStyle(
                     fontFamily: font,
-                    color:
-                        selectedNames.isEmpty ? Colors.grey[600] : Colors.black,
+                    color: selectedNames.isEmpty
+                        ? Colors.grey[600]
+                        : Colors.black,
                     fontSize: 15,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -102,7 +113,6 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                 ),
               ),
             )
-
           /// ✅ Single Select: Bottom Sheet Dropdown
           : InkWell(
               onTap: _showBottomSheetDropdown,
@@ -113,18 +123,24 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
-                    borderSide:
-                        const BorderSide(color: ColorConstant.primaryColor),
+                    borderSide: const BorderSide(
+                      color: ColorConstant.primaryColor,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
-                    borderSide:
-                        const BorderSide(color: ColorConstant.primaryColor),
+                    borderSide: const BorderSide(
+                      color: ColorConstant.primaryColor,
+                    ),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-                  suffixIcon: const Icon(Icons.arrow_drop_down,
-                      color: Colors.black),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 18,
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
                 ),
                 child: Text(
                   _currentValue ?? widget.hintText,
@@ -142,76 +158,117 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
     );
   }
 
-  /// ✅ Single-select Bottom Sheet
-  void _showBottomSheetDropdown() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                height: 5,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                widget.labelText,
-                style: TextStyle(
-                  fontFamily: font,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Divider(),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.items.length,
-                  itemBuilder: (context, index) {
-                    final item = widget.items[index];
-                    final name = item.toString();
-                    final isSelected = _currentValue == name;
-
-                    return ListTile(
-                      title: Text(
-                        name,
-                        style: TextStyle(
-                          fontFamily: font,
-                          fontSize: 15,
-                          color: isSelected
-                              ? ColorConstant.primaryColor
-                              : Colors.black,
-                        ),
+void _showBottomSheetDropdown() {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      // ✅ Use StatefulBuilder to refresh the internal state of the sheet
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setSheetState) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.6,
+            minChildSize: 0.4,
+            maxChildSize: 0.9,
+            expand: false,
+            builder: (context, scrollController) {
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  // Trigger onLoadMore when near the bottom
+                  if (scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 50) {
+                    
+                    if (!widget.isLoadingMore) {
+                       widget.onLoadMore?.call();
+                       
+                       // ✅ Force the sheet to rebuild to show new items from widget.items
+                       setSheetState(() {}); 
+                    }
+                  }
+                  return true;
+                },
+                child: Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    _buildHandle(),
+                    const SizedBox(height: 16),
+                    Text(
+                      widget.labelText,
+                      style: TextStyle(
+                        fontFamily: font,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
                       ),
-                      trailing: isSelected
-                          ? const Icon(Icons.check,
-                              color: ColorConstant.primaryColor)
-                          : null,
-                      onTap: () {
-                        setState(() => _currentValue = name);
-                        widget.onChanged?.call(name);
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        // Use widget.items directly; it stays updated because 
+                        // the parent screen rebuilds the CommonDropdownField
+                        itemCount: widget.items.length + (widget.isLoadingMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == widget.items.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            );
+                          }
+
+                          final item = widget.items[index];
+                          final name = item.toString();
+                          final isSelected = _currentValue == name;
+
+                          return ListTile(
+                            title: Text(
+                              name,
+                              style: TextStyle(
+                                fontFamily: font,
+                                fontSize: 15,
+                                color: isSelected
+                                    ? ColorConstant.primaryColor
+                                    : Colors.black,
+                              ),
+                            ),
+                            trailing: isSelected
+                                ? const Icon(
+                                    Icons.check,
+                                    color: ColorConstant.primaryColor,
+                                  )
+                                : null,
+                            onTap: () {
+                              setState(() => _currentValue = name);
+                              widget.onChanged?.call(name);
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+  Widget _buildHandle() {
+    return Container(
+      height: 5,
+      width: 40,
+      decoration: BoxDecoration(
+        color: Colors.grey[400],
+        borderRadius: BorderRadius.circular(12),
+      ),
     );
   }
 
@@ -228,9 +285,9 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               title: Text(widget.labelText, style: TextStyle(fontFamily: font)),
               content: SingleChildScrollView(
                 child: Column(
-                  children: widget.items
-                      .whereType<Map<String, dynamic>>()
-                      .map((item) {
+                  children: widget.items.whereType<Map<String, dynamic>>().map((
+                    item,
+                  ) {
                     final id = item['id'].toString();
                     final name = item['name'].toString();
                     final isSelected = tempSelectedIds.contains(id);

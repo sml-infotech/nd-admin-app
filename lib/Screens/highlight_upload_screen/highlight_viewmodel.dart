@@ -32,9 +32,11 @@ class HighlightViewmodel extends ChangeNotifier {
   List<HighlightItem> highlightList = [];
   List<HighlightItem> inActiveList = [];
 
-  List<HighlightItem> get activeHighlights =>
-      List.from(highlightList)
-        ..sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+  List<HighlightItem> get activeHighlights {
+    final list = List<HighlightItem>.from(highlightList);
+    list.sort((a, b) => (a.position ?? 0).compareTo(b.position ?? 0));
+    return list;
+  }
 
   List<HighlightItem> get inactiveHighlights =>
       List.from(inActiveList)
@@ -73,25 +75,25 @@ class HighlightViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+Future<void> fetchHighlights({bool refresh = false}) async {
+  try {
+    isLoading = true;
+    notifyListeners(); 
 
-  Future<void> fetchHighlights({bool refresh = false}) async {
-    try {
-      isLoading = true;
-      notifyListeners();
+    final response = await highlightService.getHighlights();
 
-      final response = await highlightService.getHighlights();
-
-      if (response.data != null) {
-        highlightList = response.data;
-      }
-    } catch (e) {
-      debugPrint("❌ fetchHighlights error: $e");
-      message = "Failed to fetch highlights";
-    } finally {
-      isLoading = false;
-      notifyListeners();
+    if (response != null && response.data != null) {
+      highlightList = response.data; 
+      debugPrint("✅ Fetched ${highlightList.length} active items");
     }
+  } catch (e) {
+    debugPrint("❌ fetchHighlights Error: $e"); // Check your console for this!
+    message = "Failed to load active highlights";
+  } finally {
+    isLoading = false;
+    notifyListeners(); 
   }
+}
 
   Future<void> fetchInactiveHighlights() async {
     try {
@@ -369,7 +371,7 @@ Future<File> generateVideoThumbnail(XFile videoFile) async {
     thumbnailPath: tempDir.path,
     imageFormat: ImageFormat.JPEG,
     quality: 75,
-    timeMs: 7, 
+    timeMs: 7,
   );
 
   if (thumbnailPath == null) {

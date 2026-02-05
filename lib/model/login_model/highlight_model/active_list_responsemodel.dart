@@ -12,20 +12,21 @@ class ActiveHighlightsResponse {
   });
 
   factory ActiveHighlightsResponse.fromJson(Map<String, dynamic> json) {
-    return ActiveHighlightsResponse(
-      code: json['code'],
-      message: json['message'],
-      data: (json['data'] as List)
-          .map((e) => HighlightItem.fromJson(e))
-          .toList(),
-    );
-  }
+  return ActiveHighlightsResponse(
+    code: json['code'] ?? 0,
+    message: json['message'] ?? '',
+    data: (json['highlights'] as List?) 
+            ?.map((e) => HighlightItem.fromJson(e))
+            .toList() ??
+        [],
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {
       'code': code,
       'message': message,
-      'data': data.map((e) => e.toJson()).toList(),
+      'highlights': data.map((e) => e.toJson()).toList(),
     };
   }
 }

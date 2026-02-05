@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_otpdialog.dart';
 import 'package:nammadaiva_dashboard/Screens/forgot/forgot_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
+import 'package:nammadaiva_dashboard/Screens/otp/otp_textfield.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';

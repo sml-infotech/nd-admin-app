@@ -94,4 +94,14 @@ String language="kn";
   }
 }
 
+void reset() {
+    page = 1;
+    isLoading = true;
+    isLoadingMore = false;
+    hasMore = true;
+    blogs.clear();
+    blogDetails = null;
+    notifyListeners();
+  }
+
 }

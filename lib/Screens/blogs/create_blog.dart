@@ -108,11 +108,18 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
   }
 
   Widget _buildSectionPreviewTile(ArticleSection section, int index) {
+    bool hasList = section.lists != null && section.lists!.isNotEmpty;
+    int listPoints = hasList ? (section.lists!.first.points?.length ?? 0) : 0;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
+        onTap: () {
+          viewmodel.prefillSectionForEdit(index);
+          _openArticleSectionBottomSheet(context);
+        },
         leading: CircleAvatar(
           backgroundColor: ColorConstant.buttonColor,
           child: Text(
@@ -124,17 +131,28 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           section.title ?? "Untitled Section",
           style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
         ),
-        subtitle: Text(
-          "${section.paragraphs?.length ?? 0} Paragraphs",
-          style: TextStyle(fontFamily: font),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${section.paragraphs?.length ?? 0} Paragraphs",
+              style: TextStyle(fontFamily: font, fontSize: 12),
+            ),
+            if (hasList)
+              Text(
+                "List: $listPoints points (${section.lists!.first.listType})",
+                style: TextStyle(
+                  fontFamily: font,
+                  fontSize: 12,
+                  color: Colors.pink.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+          ],
         ),
-        // Replaced check with Delete button
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.red),
-          onPressed: () {
-            // Trigger delete logic
-            _showDeleteConfirmation(index);
-          },
+          onPressed: () => _showDeleteConfirmation(index),
         ),
       ),
     );
@@ -171,7 +189,10 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
 
       viewmodel.selectedImage = imageFile;
       setState(() {});
-
+      if (viewmodel.uploadedImageUrl != null &&
+          viewmodel.uploadedImageUrl!.isNotEmpty) {
+        await viewmodel.removeS3(viewmodel.uploadedImageUrl!);
+      }
       await viewmodel.uploadImageToS3(imageFile);
 
       if (viewmodel.message != null && viewmodel.message!.isNotEmpty) {

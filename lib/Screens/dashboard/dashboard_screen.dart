@@ -123,7 +123,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       await prefs.remove('fcm_token');
       await prefs.remove('authToken');
       await prefs.remove('userRole');
-
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        StringsRoute.login,
+        (route) => false,
+      );
       print("✅ Logout + FCM token deleted");
     } catch (e, stack) {
       print("❌ Error during logout: $e");
@@ -163,13 +167,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  /// 🔹 Language Switcher
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _languageButton('EN', 'en'),
                       const Text('|'),
                       _languageButton('KN', 'kn'),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.notifications,
+                          color: Colors.black87.withOpacity(0.6),
+                        ),
+                      ),
                     ],
                   ),
 
@@ -318,6 +329,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
+
+            if (dashboardViewmodel.isLoading)
+              Container(
+                color: Colors.black26,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
           ],
         ),
       ),
@@ -409,11 +426,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 backgroundColor: ColorConstant.buttonColor,
               ),
               onPressed: () async {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  StringsRoute.login,
-                  (route) => false,
-                );
+                setState(() {
+                  dashboardViewmodel.isLoading = true;
+                });
+                Navigator.of(context).pop();
+
                 await deleteToken();
               },
 

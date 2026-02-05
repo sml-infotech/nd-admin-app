@@ -5,7 +5,7 @@ class Puja {
   final String? pujaId;
   final String pujaName;
   final List<String> deitiesName;
-  final List<Benefit> benefits;
+  final List<String> benefits;
   final String description;
   final int maximumNoOfDevotees;
   final double fee;
@@ -47,7 +47,7 @@ class Puja {
               .toList() ??
           [],
       benefits: (json['benefits'] as List<dynamic>?)
-              ?.map((b) => Benefit.fromJson(b as Map<String, dynamic>))
+              ?.map((e) => e as String)
               .toList() ??
           [],
       description: json['description'] as String,
@@ -86,7 +86,7 @@ class Puja {
       'puja_id': pujaId,
       'puja_name': pujaName,
       'deities_name': deitiesName,
-      'benefits': benefits.map((b) => b.toJson()).toList(),
+      'benefits': benefits,
       'description': description,
       'maximumNoOfDevotees': maximumNoOfDevotees,
       'fee': fee,

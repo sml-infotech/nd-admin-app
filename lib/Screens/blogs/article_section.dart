@@ -133,8 +133,11 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
           children: [
             _label('List Type'),
             DropdownButtonFormField<String>(
-              value: viewModel.listTypeEN.isNotEmpty
-                  ? viewModel.listTypeEN
+              // Use a helper to normalize the value so it always matches an item
+              value:
+                  (viewModel.listTypeEN.toLowerCase() == 'unordered' ||
+                      viewModel.listTypeEN == 'Bulleted')
+                  ? 'Bulleted'
                   : 'Numbered',
               items: const [
                 DropdownMenuItem(value: 'Numbered', child: Text('Numbered')),

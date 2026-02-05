@@ -114,9 +114,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get events => 'ಈವೆಂಟ್ಗಳು';
 
   @override
-  String get bookings => 'ಬುಕಿಂಗ್‌ಗಳು';
-
-  @override
   String get contacts => 'ಸಂಪರ್ಕಗಳು';
 
   @override
@@ -129,7 +126,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get audittext => 'ಆಡಿಟ್ & ಸಮಿತಿಗಳ ವರದಿ';
 
   @override
-  String get transactionText => 'ಲೆನ್ದೆನು ವರದಿಗಳು';
+  String get transactionText => 'ಲೆನ್ವರದಿಗಳು';
 
   @override
   String get wowtracker => 'ಸೇವಾ & WOW ಟ್ರ್ಯಾಕರ್';
@@ -174,6 +171,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get createAcc => 'ಬಳಕೆದಾರ ರಚಿಸಿ';
 
   @override
+  String get select_deities => 'ದೇವತೆಗದೆನು ಳನ್ನು ಆಯ್ಕೆ ';
+
+  @override
   String get addMasterTemple => 'ಮಾಸ್ಟರ್ ದೇಗುಲ ಸೇರಿಸಿ';
 
   @override
@@ -192,7 +192,10 @@ class AppLocalizationsKn extends AppLocalizations {
   String get blogs_details => 'ಬ್ಲಾಗ್ ವಿವರಗಳು';
 
   @override
-  String get addTempleinkannadam => 'Add Temple In Kannadam';
+  String get create_mantra_inKannadam => 'ಕನ್ನಡದಲ್ಲಿ ಮಂತ್ರ ರಚಿಸಿ';
+
+  @override
+  String get addTempleinkannadam => 'Add Temple In Kannada';
 
   @override
   String get templeName => 'ದೇಗುಲ ಹೆಸರು';
@@ -231,16 +234,58 @@ class AppLocalizationsKn extends AppLocalizations {
   String get images => 'ಚಿತ್ರಗಳು';
 
   @override
-  String get next => 'ಮುಂದೆ';
+  String get mantra_name_kn => 'ಮಂತ್ರದ ಹೆಸರು (ಕನ್ನಡದಲ್ಲಿ)';
+
+  @override
+  String get mantra_kn => 'ಮಂತ್ರ (ಕನ್ನಡದಲ್ಲಿ)';
+
+  @override
+  String get deities_en => 'ದೇವತೆಗಳು';
 
   @override
   String get userDetails => 'ಬಳಕೆದಾರರ ವಿವರಗಳು';
+
+  @override
+  String get bookings => 'ಬುಕಿಂಗ್‌ಗಳು';
+
+  @override
+  String get no_bookings_found => 'ಯಾವುದೇ ಬುಕಿಂಗ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get no_media_selected => 'ಮಾಧ್ಯಮ ಆಯ್ಕೆಮಾಡಿಲ್ಲ';
+
+  @override
+  String get created => 'ರಚಿಸಲಾಗಿದೆ:';
+
+  @override
+  String get active_highlights => 'ಸಕ್ರಿಯ ಹೈಲೈಟ್ಸ್';
+
+  @override
+  String get inactive_highlights => 'ನಿಷ್ಕ್ರಿಯ ಹೈಲೈಟ್ಸ್';
+
+  @override
+  String get move_to_deactivate => 'ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲು ಸ್ಥಳಾಂತರಿಸಿ';
+
+  @override
+  String get move_to_activate => 'ಸಕ್ರಿಯಗೊಳಿಸಲು ಸ್ಥಳಾಂತರಿಸಿ';
+
+  @override
+  String get add_highlights => '+ ಹೈಲೈಟ್ಸ್ ಸೇರಿಸಿ';
+
+  @override
+  String get title => 'ಶೀರ್ಷಿಕೆ';
+
+  @override
+  String get upload => 'ಅಪ್‌ಲೋಡ್';
 
   @override
   String get selectedRole => 'ರೋಲ್ ಆಯ್ಕೆಮಾಡಿ';
 
   @override
   String get role => 'ಪಾತ್ರ';
+
+  @override
+  String get add_time_slot => 'ಸಮಯ ಸ್ಲಾಟ್ ಸೇರಿಸಿ';
 
   @override
   String get temples => 'ದೇಗುಲಗಳು';
@@ -250,6 +295,15 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get temple => 'ದೇಗುಲ';
+
+  @override
+  String get users => 'ಬಳಕೆದಾರರು';
+
+  @override
+  String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
+
+  @override
+  String get end_time => 'ಅಂತ್ಯ ಸಮಯ';
 
   @override
   String get create => 'ಸೃಷ್ಟಿಸಿ';
@@ -262,6 +316,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get city => 'ನಗರ';
+
+  @override
+  String get add_benefit => 'ಲಾಭವನ್ನು ಸೇರಿಸಿ';
 
   @override
   String get state => 'ರಾಜ್ಯ';

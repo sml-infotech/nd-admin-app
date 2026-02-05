@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -94,7 +95,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 if (!vm.isLoading && vm.bookings.isEmpty)
                   Center(
                     child: Text(
-                      "No Bookings Found",
+                      AppLocalizations.of(context)!.no_bookings_found,
                       style: TextStyle(fontFamily: font),
                     ),
                   ),
@@ -115,13 +116,15 @@ class _BookingScreenState extends State<BookingScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text("Bookings", style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.bookings,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         const SizedBox(width: 48),
       ],
     );
   }
-
 
   Widget _buildBody(BookingsViewmodel vm) {
     if (vm.isLoading && vm.bookings.isEmpty) return _buildShimmer();
@@ -182,7 +185,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 print("_selectedSegment${vm.segments[index].toLowerCase()}");
                 vm.fetchBookings(
                   reset: true,
-                  filter: vm.segments[index].toLowerCase()
+                  filter: vm.segments[index].toLowerCase(),
                 );
                 // vm.applyBookingFilter(_segments[index].toLowerCase());
               },
@@ -212,7 +215,6 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
     );
   }
-
 
   Widget _buildTempleDropdown() {
     return GestureDetector(
@@ -378,8 +380,6 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
     );
   }
-
-
 
   Widget _buildShimmer() {
     return ListView.builder(

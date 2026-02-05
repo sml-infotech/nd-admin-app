@@ -387,12 +387,15 @@ class _EventListScreenState extends State<EventListScreen> {
   }
 
   Widget eventTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        fontFamily: font,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.7,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          fontFamily: font,
+        ),
       ),
     );
   }

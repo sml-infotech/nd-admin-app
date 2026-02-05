@@ -194,11 +194,12 @@ class _CreateEventState extends State<CreateEvent> {
     return MultiImagePickerSection(
       imagePaths: allImages,
       onAddImages: _pickImages,
-      onRemoveImage: (index) {
+      onRemoveImage: (index) async {
         if (index >= uploadedCount) {
           final localIndex = index - uploadedCount;
           viewmodel.removeImage(localIndex);
         } else {
+          await viewmodel.removeS3(viewmodel.uploadedImageUrls[index]);
           viewmodel.uploadedImageUrls.removeAt(index);
           viewmodel.notifyListeners();
         }

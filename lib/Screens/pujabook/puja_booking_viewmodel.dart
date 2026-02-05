@@ -216,8 +216,10 @@ class CreatePujaViewmodel extends ChangeNotifier {
     }
   }
 
-  void removeImage(int index) {
+  Future<void> removeImage(int index) async {
+    await removeS3(uploadedImageUrls[index]);
     selectedImages.removeAt(index);
+
     notifyListeners();
   }
 
@@ -274,9 +276,9 @@ class CreatePujaViewmodel extends ChangeNotifier {
           .map((e) => e.key)
           .toList();
 
-      final benefitsList = benefitsEn
-          .map((b) => Benefit(description: b))
-          .toList();
+      final benefitsList = benefitsEn.toList();
+
+
       final response = await pujaService.cretaPuja(
         selectedTempleId ?? "",
         pujaName.text,
@@ -321,7 +323,28 @@ class CreatePujaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+                isLoading = false;
 
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
   Future<void> updatepuja() async {
     try {
       isLoading = true;
@@ -357,7 +380,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         selectedEndDate!.toIso8601String(),
         requestDays,
         timeSlots,
-        benefitsEn.map((b) => Benefit(description: b)).toList(),
+        benefitsEn.toList(),
         [
           Translation(
             languageCode: "kn",
@@ -438,6 +461,8 @@ class CreatePujaViewmodel extends ChangeNotifier {
     timeSlots = [];
     notifyListeners();
     deitiesListEn = [];
+    selectedDeitiesEn = [];
+    selectedDeitiesKn = [];
     deitiesListKn = [];
     deities = [];
     selectedDeities = [];
@@ -449,10 +474,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
     isLoading = false;
     pujaNameInKannadam.clear();
     descriptionInKannadam.clear();
-
+    cutOffDay = null;
     uploadedImageUrls.clear();
     // selectedDays.clear();
     cutOffDay = 1;
+    deitiesOptionsEn = [];
+    deitiesOptionsKn = [];
+    notifyListeners();
   }
 
   void setSelectedTemple(Temple temple, {List<String>? initialDeitiesEn}) {

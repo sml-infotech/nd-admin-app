@@ -27,6 +27,9 @@ class CreateMantraViewmodel extends ChangeNotifier {
   final userService = UserService();
 
   bool validateForm() {
+    print(
+      "Validating: ${mantraName.text}, ${mantra.text}, $selectedImage, $uploadedImageUrl",
+    );
     if (mantraName.text.isEmpty) {
       message = "Please fill Mantra Name";
       return false;
@@ -35,7 +38,8 @@ class CreateMantraViewmodel extends ChangeNotifier {
       message = "Please fill Mantra";
       return false;
     }
-    if (uploadedImageUrl == null) {
+
+    if (selectedImage == null && uploadedImageUrl == "") {
       message = "Upload the image first";
       return false;
     }
@@ -68,6 +72,28 @@ class CreateMantraViewmodel extends ChangeNotifier {
       message = "Upload error: $e";
     } finally {
       isImageUploading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> removeS3(String filename) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      final response = await userService.removeS3(filename);
+      if (response.code == 200) {
+        print("->>> $response");
+        message = "success";
+        isLoading = false;
+        notifyListeners();
+      } else {
+        isLoading = false;
+        notifyListeners();
+        message = "some error occurred";
+        print("message $message");
+      }
+    } catch (e) {
+      isLoading = false;
       notifyListeners();
     }
   }

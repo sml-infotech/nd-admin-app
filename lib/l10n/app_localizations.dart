@@ -305,12 +305,6 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get events;
 
-  /// No description provided for @bookings.
-  ///
-  /// In en, this message translates to:
-  /// **'Bookings'**
-  String get bookings;
-
   /// No description provided for @contacts.
   ///
   /// In en, this message translates to:
@@ -425,6 +419,12 @@ abstract class AppLocalizations {
   /// **'Create User'**
   String get createAcc;
 
+  /// No description provided for @select_deities.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Deities'**
+  String get select_deities;
+
   /// No description provided for @addMasterTemple.
   ///
   /// In en, this message translates to:
@@ -461,10 +461,16 @@ abstract class AppLocalizations {
   /// **'Blog Details'**
   String get blogs_details;
 
+  /// No description provided for @create_mantra_inKannadam.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Mantra in Kannada'**
+  String get create_mantra_inKannadam;
+
   /// No description provided for @addTempleinkannadam.
   ///
   /// In en, this message translates to:
-  /// **'Add Temple In Kannadam'**
+  /// **'Add Temple In Kannada'**
   String get addTempleinkannadam;
 
   /// No description provided for @templeName.
@@ -539,17 +545,95 @@ abstract class AppLocalizations {
   /// **'Images'**
   String get images;
 
-  /// No description provided for @next.
+  /// No description provided for @mantra_name_kn.
   ///
   /// In en, this message translates to:
-  /// **'Next'**
-  String get next;
+  /// **'Mantra Name in Kannada'**
+  String get mantra_name_kn;
+
+  /// No description provided for @mantra_kn.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra in Kannada'**
+  String get mantra_kn;
+
+  /// No description provided for @deities_en.
+  ///
+  /// In en, this message translates to:
+  /// **'Deities'**
+  String get deities_en;
 
   /// No description provided for @userDetails.
   ///
   /// In en, this message translates to:
   /// **'Users'**
   String get userDetails;
+
+  /// No description provided for @bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get bookings;
+
+  /// No description provided for @no_bookings_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No Bookings Found'**
+  String get no_bookings_found;
+
+  /// No description provided for @no_media_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No Media Selected'**
+  String get no_media_selected;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created:'**
+  String get created;
+
+  /// No description provided for @active_highlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Highlights'**
+  String get active_highlights;
+
+  /// No description provided for @inactive_highlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive Highlights'**
+  String get inactive_highlights;
+
+  /// No description provided for @move_to_deactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Deactivate'**
+  String get move_to_deactivate;
+
+  /// No description provided for @move_to_activate.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Activate'**
+  String get move_to_activate;
+
+  /// No description provided for @add_highlights.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add Highlights'**
+  String get add_highlights;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
 
   /// No description provided for @selectedRole.
   ///
@@ -562,6 +646,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Role'**
   String get role;
+
+  /// No description provided for @add_time_slot.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Time Slot'**
+  String get add_time_slot;
 
   /// No description provided for @temples.
   ///
@@ -580,6 +670,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Temple'**
   String get temple;
+
+  /// No description provided for @users.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get users;
+
+  /// No description provided for @start_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get start_time;
+
+  /// No description provided for @end_time.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get end_time;
 
   /// No description provided for @create.
   ///
@@ -604,6 +712,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'City'**
   String get city;
+
+  /// No description provided for @add_benefit.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Benefit'**
+  String get add_benefit;
 
   /// No description provided for @state.
   ///
@@ -777,7 +891,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Requests'**
-String get updateRequests;
+  String get updateRequests;
 
   /// No description provided for @fee.
   ///

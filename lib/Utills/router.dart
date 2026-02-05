@@ -219,9 +219,7 @@ class AppRouter {
           settings: settings,
           builder: (_) => PujaBookingKn(pujaArgumrnts: args),
         );
-      case StringsRoute.createMantrainKn:
-        UpdateMantraArguments args =
-            settings.arguments as UpdateMantraArguments;
+     
       case StringsRoute.createEventInKn:
         final EventItem? args = settings.arguments as EventItem?;
         return CupertinoPageRoute(
@@ -235,6 +233,10 @@ class AppRouter {
           builder: (_) => CreateFestivalKn(arguments: args),
         );
 
+        
+ case StringsRoute.createMantrainKn:
+        UpdateMantraArguments args =
+            settings.arguments as UpdateMantraArguments;
         return CupertinoPageRoute(
           settings: settings,
           builder: (_) => CreateMantraInKannadam(updateMantra: args),

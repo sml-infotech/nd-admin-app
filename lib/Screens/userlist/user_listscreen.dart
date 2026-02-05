@@ -49,11 +49,11 @@ class _UserListScreenState extends State<UserListScreen> {
       }
     });
 
-    if (!viewModel.searchController.hasListeners) {
-      viewModel.searchController.addListener(() {
-        viewModel.onSearchChanged();
-      });
-    }
+    // if (!viewModel.searchController.hasListeners) {
+    //   viewModel.searchController.addListener(() {
+    //     viewModel.onSearchChanged();
+    //   });
+    // }
   }
 
   Future<void> _loadUserData() async {
@@ -105,6 +105,7 @@ class _UserListScreenState extends State<UserListScreen> {
                       SizedBox(height: 10),
                       userSearchBar(),
                       SizedBox(height: 10),
+
                       Expanded(child: _buildUserList(viewModel)),
                     ],
                   ),
@@ -127,7 +128,7 @@ class _UserListScreenState extends State<UserListScreen> {
         ),
         const Spacer(),
         Text(
-          "Users",
+          AppLocalizations.of(context)!.users,
           style: AppTextStyles.appBarTitleStyle,
         ),
         const Spacer(),
@@ -152,6 +153,15 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _buildUserList(UserViewModel viewModel) {
+    if (viewModel.userData.isEmpty) {
+      return Center(
+        child: Text(
+          "No Users Found",
+          style: AppTextStyles.resendCodeStyle.copyWith(color: Colors.black54),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(color: Colors.white),
@@ -336,6 +346,9 @@ class _UserListScreenState extends State<UserListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
         controller: viewModel.searchController,
+        onChanged: (value) {
+          viewModel.onSearchChanged();
+        },
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.searchUser,
           hintStyle: TextStyle(fontFamily: font),
@@ -468,7 +481,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         paddingSize: 0,
                         hintText: AppLocalizations.of(context)!.selectedRole,
                         labelText: AppLocalizations.of(context)!.role,
-                        items:StringConstant.roles,
+                        items: StringConstant.roles,
                         selectedValue: currentRole,
                         onChanged: (value) {
                           viewModel.role.text = value ?? user.role;

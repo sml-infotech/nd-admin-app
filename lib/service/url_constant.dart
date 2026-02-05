@@ -66,5 +66,7 @@ class UrlConstant {
   static String editHighlight = "${baseUrlString()}v1/edit-highlight";
   static String getBlogs = "${baseUrlString()}v1/list-blogs";
   static String blogDetails = "${baseUrlString()}v1/blog-details";
-  static String updateBlog = "${baseUrlString()}v1/update-blog";
+static String updateBlog = "${baseUrlString()}v1/update-blog";
+    static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
+
 }

@@ -162,6 +162,11 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
   }
 
   Widget _listGroupContainer() {
+    String normalizedValue =
+        (viewModel.listTypeKN == 'Bulleted' ||
+            viewModel.listTypeKN == 'unordered')
+        ? 'Bulleted'
+        : 'Numbered';
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(12),
@@ -174,7 +179,7 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
         children: [
           _label('ಪಟ್ಟಿ ಪ್ರಕಾರ'),
           DropdownButtonFormField<String>(
-            value: viewModel.listTypeKN,
+            value: normalizedValue,
             decoration: _inputDecoration(),
             items: const [
               DropdownMenuItem(
@@ -252,10 +257,10 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
 
     viewModel.saveFullSectionKN(viewModel.paragraphControllersKN);
     viewModel.finalizeSection();
-Navigator.popUntil(
-                      context,
-                      (route) => route.settings.name == StringsRoute.create_blog,
-                    );
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == StringsRoute.create_blog,
+    );
   }
 
   void _addParagraph() {

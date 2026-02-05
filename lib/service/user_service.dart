@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/model/login_model/create_festival/delete_fe
 import 'package:nammadaiva_dashboard/model/login_model/create_festival/festival_list_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createmodel/create_usermodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/delete_s3_model/delete_s3_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_usermodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/edit_userresponse.dart';
 import 'package:nammadaiva_dashboard/model/login_model/fcm_post_model/fcm_request_model.dart';
@@ -250,6 +251,22 @@ class UserService {
       );
       print("1111111111$data");
       return PresignedUrlResponse.fromJson(data);
+    } catch (e) {
+      print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<DeleteS3ModelResponse> removeS3(String filename) async {
+    try {
+      final removes3 = DeleteS3Model(key: filename);
+
+      final data = await apiService.post(
+        UrlConstant.removeS3,
+        removes3.toJson(),
+      );
+      print("1111111111$data");
+      return DeleteS3ModelResponse.fromJson(data);
     } catch (e) {
       print("Auth service decode fails: $e");
       throw Exception('API failed: $e');

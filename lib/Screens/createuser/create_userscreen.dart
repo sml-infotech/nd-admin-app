@@ -69,31 +69,47 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                        const SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     CommonTextField(
-                                      hintText:  AppLocalizations.of(context)!.enterName,
-                                      labelText:  AppLocalizations.of(context)!.userName,
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.enterName,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.userName,
                                       isFromPassword: false,
                                       controller: viewModel.nameController,
                                     ),
                                     const SizedBox(height: 20),
                                     CommonTextField(
-                                      hintText:  AppLocalizations.of(context)!.email,
-                                      labelText:  AppLocalizations.of(context)!.email,
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.email,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.email,
                                       isFromPassword: false,
                                       controller: viewModel.emailController,
                                     ),
                                     const SizedBox(height: 20),
                                     CommonTextField(
-                                      hintText:  AppLocalizations.of(context)!.password,
-                                      labelText:  AppLocalizations.of(context)!.password,
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.password,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.password,
                                       isFromPassword: true,
                                       controller: viewModel.passwordController,
                                     ),
                                     const SizedBox(height: 20),
                                     CommonTextField(
-                                      hintText:  AppLocalizations.of(context)!.phone,
-                                      labelText:  AppLocalizations.of(context)!.phone,
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.phone,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.phone,
                                       isFromPassword: false,
                                       isFromPhone: true,
                                       controller: viewModel.phoneController,
@@ -103,17 +119,22 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                     // 🔹 Role Dropdown
                                     CommonDropdownField(
                                       paddingSize: 20,
-                                      hintText:  AppLocalizations.of(context)!.selectedRole,
-                                      labelText:  AppLocalizations.of(context)!.role,
-                                      items:  StringConstant.roles,
+                                      hintText: AppLocalizations.of(
+                                        context,
+                                      )!.selectedRole,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      )!.role,
+                                      items: StringConstant.roles,
                                       selectedValue:
-                                           StringConstant.roles.contains(
+                                          StringConstant.roles.contains(
                                             viewModel.role.text,
                                           )
                                           ? viewModel.role.text
                                           : null,
                                       onChanged: (value) {
                                         viewModel.role.text = value ?? "";
+                                        viewModel.selectedTempleIds = [];
                                         viewModel.notifyListeners();
                                       },
                                     ),
@@ -121,8 +142,12 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                         viewModel.role.text == "Agent") ...[
                                       const SizedBox(height: 20),
                                       CommonDropdownField(
-                                        hintText:  AppLocalizations.of(context)!.selectTemples,
-                                        labelText:  AppLocalizations.of(context)!.temples,
+                                        hintText: AppLocalizations.of(
+                                          context,
+                                        )!.selectTemples,
+                                        labelText: AppLocalizations.of(
+                                          context,
+                                        )!.temples,
                                         items: viewModel.templeList,
                                         selectedValue:
                                             viewModel.selectedTempleName,
@@ -189,7 +214,10 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         const Spacer(),
-        Text( AppLocalizations.of(context)!.createAcc, style: AppTextStyles.appBarTitleStyle),
+        Text(
+          AppLocalizations.of(context)!.createAcc,
+          style: AppTextStyles.appBarTitleStyle,
+        ),
         const Spacer(),
         const SizedBox(width: 48),
       ],
@@ -230,7 +258,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           ),
         ),
         child: Text(
-           AppLocalizations.of(context)!.create,
+          AppLocalizations.of(context)!.create,
           style: AppTextStyles.buttonTextStyle,
         ),
       ),

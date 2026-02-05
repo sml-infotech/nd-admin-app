@@ -49,7 +49,7 @@ class ArticleSection {
   String title;
   int position;
   List<Paragraph> paragraphs;
-  List<SectionList> lists;
+List<SectionList> lists;
 
   ArticleSection({
     required this.title,
@@ -82,7 +82,7 @@ class Paragraph {
   String text;
   int position;
 
-  Paragraph({required this.text, required this.position});
+Paragraph({required this.text, required this.position});
 
   factory Paragraph.fromJson(Map<String, dynamic> json) {
     return Paragraph(

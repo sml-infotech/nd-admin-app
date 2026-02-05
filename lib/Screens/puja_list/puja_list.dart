@@ -73,7 +73,7 @@ class _PujaListState extends State<PujaList> {
 
     return FocusDetector(
       onFocusGained: () async {
-        await viewmodel.getTemples();
+        await viewmodel.getTemples(reset: true);
         await viewmodel.fetchPujas(reset: true);
       },
       child: Scaffold(
@@ -457,6 +457,13 @@ class _PujaListState extends State<PujaList> {
       labelText: AppLocalizations.of(context)!.temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       paddingSize: 16,
+      isLoadingMore: viewmodel.isFetchingNextPage,
+      onLoadMore: () {
+        print("Load more temples called");
+        if (!viewmodel.isFetchingNextPage && viewmodel.hasNextPage) {
+          viewmodel.getTemples(reset: false);
+        }
+      },
       onChanged: (value) {
         final idx = viewmodel.templeData.indexWhere(
           (temple) => temple.name == value,

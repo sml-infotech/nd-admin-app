@@ -75,7 +75,7 @@ class PujaData {
   final List<PujaTimeSlot> timeSlots;
   bool? isActive;
   final List<Translation>? translations;
-  final List<Benefit> benefits;
+  final List<String> benefits;
 
   PujaData({
     required this.id,
@@ -151,7 +151,7 @@ class PujaData {
           : [],
       benefits: json['benefits'] != null
           ? (json['benefits'] as List)
-                .map((item) => Benefit.fromJson(item))
+                .map((item) => Translation.fromJson(item).description)
                 .toList()
           : [],
     );
@@ -177,7 +177,7 @@ class PujaData {
       'time_slots': timeSlots.map((slot) => slot.toJson()).toList(),
       'is_active': isActive,
       'translations': translations?.map((t) => t.toJson()).toList(),
-      'benefits': benefits.map((b) => b.toJson()).toList(),
+      'benefits': benefits,
     };
   }
 }

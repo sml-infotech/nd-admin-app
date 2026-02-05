@@ -114,9 +114,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get events => 'Events';
 
   @override
-  String get bookings => 'Bookings';
-
-  @override
   String get contacts => 'Contacts';
 
   @override
@@ -174,6 +171,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAcc => 'Create User';
 
   @override
+  String get select_deities => 'Select Deities';
+
+  @override
   String get addMasterTemple => 'Add Master Temple';
 
   @override
@@ -192,7 +192,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get blogs_details => 'Blog Details';
 
   @override
-  String get addTempleinkannadam => 'Add Temple In Kannadam';
+  String get create_mantra_inKannadam => 'Create Mantra in Kannada';
+
+  @override
+  String get addTempleinkannadam => 'Add Temple In Kannada';
 
   @override
   String get templeName => 'Temple Name';
@@ -231,16 +234,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get images => 'Images';
 
   @override
-  String get next => 'Next';
+  String get mantra_name_kn => 'Mantra Name in Kannada';
+
+  @override
+  String get mantra_kn => 'Mantra in Kannada';
+
+  @override
+  String get deities_en => 'Deities';
 
   @override
   String get userDetails => 'Users';
+
+  @override
+  String get bookings => 'Bookings';
+
+  @override
+  String get no_bookings_found => 'No Bookings Found';
+
+  @override
+  String get no_media_selected => 'No Media Selected';
+
+  @override
+  String get created => 'Created:';
+
+  @override
+  String get active_highlights => 'Active Highlights';
+
+  @override
+  String get inactive_highlights => 'Inactive Highlights';
+
+  @override
+  String get move_to_deactivate => 'Move to Deactivate';
+
+  @override
+  String get move_to_activate => 'Move to Activate';
+
+  @override
+  String get add_highlights => '+ Add Highlights';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get upload => 'Upload';
 
   @override
   String get selectedRole => 'Select Role';
 
   @override
   String get role => 'Role';
+
+  @override
+  String get add_time_slot => 'Add Time Slot';
 
   @override
   String get temples => 'Temples';
@@ -250,6 +295,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get temple => 'Temple';
+
+  @override
+  String get users => 'Users';
+
+  @override
+  String get start_time => 'Start Time';
+
+  @override
+  String get end_time => 'End Time';
 
   @override
   String get create => 'Create';
@@ -262,6 +316,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get city => 'City';
+
+  @override
+  String get add_benefit => 'Add Benefit';
 
   @override
   String get state => 'State';
