@@ -169,14 +169,14 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
           SizedBox(height: 10),
           CommonTextField(
             hintText: "Tap to select HighLights",
-            labelText: "Title",
+            labelText: AppLocalizations.of(context)!.title,
             isFromPassword: false,
             controller: viewModel.titleController,
           ),
           SizedBox(height: 15),
           CommonTextField(
             hintText: "Tap to select HighLights",
-            labelText: "Description",
+            labelText: AppLocalizations.of(context)!.description,
             isFromPassword: false,
             controller: viewModel.descriptionController,
           ),
@@ -206,8 +206,14 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      _segmentButton("Active", 0),
-                      _segmentButton("Inactive", 1),
+                      _segmentButton(
+                        AppLocalizations.of(context)!.active_highlights,
+                        0,
+                      ),
+                      _segmentButton(
+                        AppLocalizations.of(context)!.inactive_highlights,
+                        1,
+                      ),
                     ],
                   ),
                 ),
@@ -232,7 +238,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          _selectedSegment == 0 ? "Active Highlights" : "Inactive Highlights",
+          _selectedSegment == 0
+              ? AppLocalizations.of(context)!.active_highlights
+              : AppLocalizations.of(context)!.inactive_highlights,
           style: TextStyle(
             fontFamily: font,
             fontWeight: FontWeight.bold,
@@ -244,8 +252,8 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
             onPressed: _toggleStatus,
             child: Text(
               _selectedSegment == 0
-                  ? " Move to Deactivate"
-                  : "Move to Activate",
+                  ? AppLocalizations.of(context)!.move_to_deactivate
+                  : AppLocalizations.of(context)!.move_to_activate,
               style: TextStyle(fontFamily: font, fontWeight: FontWeight.bold),
             ),
           ),
@@ -273,7 +281,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
                 ),
               )
             : Text(
-                "Upload ",
+                AppLocalizations.of(context)!.upload,
                 style: TextStyle(fontFamily: font, color: Colors.white),
               ),
       ),
@@ -285,7 +293,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
       onTap: _showPickerOptions,
       child: Center(
         child: Text(
-          "+ Add Highlights ",
+          AppLocalizations.of(context)!.add_highlights,
           style: TextStyle(
             fontFamily: font,
             color: Colors.black,
@@ -348,7 +356,9 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     final controller = viewModel.videoController;
 
     if (viewModel.pickedFile == null) {
-      return const Center(child: Text("No Media Selected"));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.no_media_selected),
+      );
     }
 
     if (viewModel.isVideo(viewModel.pickedFile!.path)) {

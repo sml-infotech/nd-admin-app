@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart'; // ensure this defines TimeSlot
 
 class TimeSlotSelector extends StatefulWidget {
@@ -205,7 +206,7 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
               ),
               onPressed: () => _pickSlot(context),
               child: Text(
-                "Add Time Slot",
+                AppLocalizations.of(context)!.add_time_slot,
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: font,

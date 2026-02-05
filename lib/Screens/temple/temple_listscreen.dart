@@ -294,7 +294,8 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          temple.architecture,
+                          "${language == "kn" ? temple.translations?.first?.architecture ?? temple.architecture : temple.architecture}",
+
                           maxLines: 3,
                           style: AppTextStyles.templeNameDetailsStyle,
                         ),

@@ -196,7 +196,7 @@ class _MasterTempleListState extends State<MasterTempleList> {
         Padding(
           padding: EdgeInsetsGeometry.fromLTRB(4, 0, 0, 0),
           child: Text(
-            "Created: ${formatApiDate(temple.createdAt)}",
+            " ${AppLocalizations.of(context)!.created} ${formatApiDate(temple.createdAt)}",
             style: TextStyle(
               fontFamily: font,
               fontSize: 12,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
+import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 
 class SingleTimePicker extends StatefulWidget {
@@ -138,7 +139,9 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
               child: InkWell(
                 onTap: () => _pickTime(isStart: true),
                 child: _timeBox(
-                  label: fromTime.isNotEmpty ? fromTime : 'Start Time',
+                  label: fromTime.isNotEmpty
+                      ? fromTime
+                      : AppLocalizations.of(context)!.start_time,
                   icon: Icons.access_time,
                   time: fromTime,
                 ),
@@ -149,7 +152,9 @@ class _SingleTimePickerState extends State<SingleTimePicker> {
               child: InkWell(
                 onTap: () => _pickTime(isStart: false),
                 child: _timeBox(
-                  label: toTime.isNotEmpty ? toTime : 'End Time',
+                  label: toTime.isNotEmpty
+                      ? toTime
+                      : AppLocalizations.of(context)!.end_time,
                   icon: Icons.access_time,
                   isError: _errorText != null,
                   time: toTime,
