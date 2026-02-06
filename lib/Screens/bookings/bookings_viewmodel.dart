@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
+import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class BookingsViewmodel extends ChangeNotifier {
   List<BookingModel> bookings = [];
@@ -10,6 +13,7 @@ class BookingsViewmodel extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMore = true;
   bool isUpdating = false;
+  var userService = UserService();
 
   List<Temple> templeData = [];
   String? selectedTemple;
@@ -19,8 +23,71 @@ class BookingsViewmodel extends ChangeNotifier {
   final TempleService api = TempleService();
   int page = 1;
   int? expandedIndex;
-
+  List<String> uploadedImageUrls = [];
+  bool isUploading = false;
   String? userRole;
+
+  final ImagePicker _picker = ImagePicker();
+  Future<void> uploadSelectedImages() async {
+    if (selectedImages.isEmpty) return;
+
+    try {
+      isUploading = true;
+      notifyListeners();
+
+      for (final file in List<XFile>.from(selectedImages)) {
+        final response = await userService.presignedUrl(file.name, file.path);
+
+        if (response.url != null) {
+          final uploadedUrl = await uploadToS3(response.url!, file);
+          if (uploadedUrl != null) {
+            uploadedImageUrls.add(uploadedUrl);
+            selectedImages.remove(file);
+          }
+        }
+      }
+    } finally {
+      isUploading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<String?> uploadToS3(String presignedUrl, XFile imageFile) async {
+    try {
+      final fileBytes = await imageFile.readAsBytes();
+
+      final response = await http.put(
+        Uri.parse(presignedUrl),
+        body: fileBytes,
+        headers: {'Content-Type': 'image/jpeg'},
+      );
+      if (response.statusCode == 200) {
+        final imageUrl = presignedUrl.split('?').first;
+        print("✅ Uploaded successfully: $imageUrl");
+        return imageUrl;
+      } else {
+        print("❌ Upload failed: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("⚠️ Error uploading to S3: $e");
+      return null;
+    }
+  }
+
+  List<XFile> selectedImages = [];
+  Future<void> pickImages() async {
+    final images = await _picker.pickMultiImage();
+    if (images.isNotEmpty) {
+      selectedImages.addAll(images);
+      notifyListeners();
+    }
+  }
+
+  void removeImage(int index) {
+    selectedImages.removeAt(index);
+    notifyListeners();
+  }
 
   void setExpanded(int index) {
     expandedIndex = expandedIndex == index ? null : index;
@@ -140,7 +207,6 @@ class BookingsViewmodel extends ChangeNotifier {
 
     Navigator.pop(_bottomSheetContext!);
 
-    /// Fetch bookings for the newly selected temple
     await fetchBookings(reset: true);
   }
 

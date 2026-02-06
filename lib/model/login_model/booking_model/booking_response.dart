@@ -145,7 +145,7 @@ class SankalpaDetail {
 class PaymentDetail {
   final int amount;
   final String paymentId;
-  final String paymentStatus;
+final String paymentStatus;
   final String transactionDate; // ISO string
   final String razorpayOrderId;
   final String? razorpayPaymentId;

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -311,6 +315,11 @@ class _BookingScreenState extends State<BookingScreen> {
             _infoRow("Date", request.pujaDateFormatted),
             _infoRow("Amount", "₹ ${request.totalAmount}"),
 
+            request.bookingStatus.toLowerCase() == "confirmed" ||
+                    request.bookingStatus.toLowerCase() == "pending"
+                ? markedAsCompletedWidget()
+                : SizedBox(),
+
             Align(
               alignment: Alignment.centerRight,
               child: Icon(
@@ -335,10 +344,11 @@ class _BookingScreenState extends State<BookingScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Payment Details",
                       style: TextStyle(
                         fontSize: 15,
+                        fontFamily: font,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -369,6 +379,7 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           Text(
             "$title: ",
+            textAlign: TextAlign.start,
             style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
           ),
           Expanded(
@@ -398,10 +409,199 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _loadingMore() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Center(child: CircularProgressIndicator(color: Colors.grey)),
+  Widget markedAsCompletedWidget() {
+    return GestureDetector(
+      onTap: () {
+        _openUploadPoojaDialog();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          border: Border.all(color: ColorConstant.buttonColor),
+          color: Colors.white.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          "Mark as Completed",
+          style: TextStyle(
+            fontFamily: font,
+            color: ColorConstant.buttonColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
+
+  void _openUploadPoojaDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Consumer<BookingsViewmodel>(
+          builder: (context, vm, _) {
+            return Stack(
+              children: [
+                Dialog(
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        titleAndCloseIcon(),
+                        const SizedBox(height: 16),
+                        _buildImagePicker(),
+                        const SizedBox(height: 20),
+                        submitButton(),
+                      ],
+                    ),
+                  ),
+                ),
+
+                if (vm.isUploading)
+                  Container(
+                    color: Colors.black26,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstant.buttonColor,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget submitButton() {
+    return SizedBox(
+      width: double.infinity,
+
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.buttonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: () async {
+          await vm.uploadSelectedImages();
+          Navigator.pop(context);
+        },
+        child: Text(
+          "Mark as Completed",
+          style: TextStyle(fontSize: 16, fontFamily: font, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget titleAndCloseIcon() {
+    return Row(
+      children: [
+        Spacer(),
+        Text(
+          "Upload Pooja Image",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: font,
+          ),
+        ),
+
+        const Spacer(),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: vm.pickImages,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_a_photo),
+                SizedBox(width: 8),
+                Text(
+                  "Add Images",
+                  style: TextStyle(fontSize: 16, fontFamily: font),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        /// 🔹 SHOW LOCAL IMAGES FIRST
+        if (vm.selectedImages.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: List.generate(
+              vm.selectedImages.length,
+              (index) => Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(vm.selectedImages[index].path),
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: GestureDetector(
+                      onTap: () => vm.removeImage(index),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+Widget _loadingMore() {
+  return const Padding(
+    padding: EdgeInsets.symmetric(vertical: 20),
+    child: Center(child: CircularProgressIndicator(color: Colors.grey)),
+  );
 }
