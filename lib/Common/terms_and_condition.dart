@@ -8,9 +8,9 @@ class TermsAndConditionText extends StatelessWidget {
   const TermsAndConditionText({super.key, required this.font});
 
   final String termsUrl =
-      "https://risen-now.s3.us-east-2.amazonaws.com/TermsandConditions.html";
+      "https://www.nammadaiva.com/terms-and-conditions";
   final String privacyUrl =
-      "https://risen-now.s3.us-east-2.amazonaws.com/TermsandConditions.html";
+      "https://www.nammadaiva.com/privacy-policy";
 
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri.parse(url);

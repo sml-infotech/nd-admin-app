@@ -112,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(ImageStrings.loginImage, width: 120),
+              Image.asset(ImageStrings.splashImage, width: 120),
               SizedBox(height: 16),
               Text(
                 _displayedText,
