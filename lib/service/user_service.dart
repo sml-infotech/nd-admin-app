@@ -12,6 +12,7 @@ import 'package:nammadaiva_dashboard/model/login_model/fcm_post_model/fcm_respon
 import 'package:nammadaiva_dashboard/model/login_model/logout/logout_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/logout/logout_response_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_payment_status/update_booking.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
@@ -254,6 +255,23 @@ class UserService {
     } catch (e) {
       print("Auth service decode fails: $e");
       throw Exception('API failed: $e');
+    }
+  }
+
+  Future<DeleteS3ModelResponse> updateBooking(
+    BookingCompletionRequest data,
+    String bookingId,
+  ) async {
+    try {
+      final response = await apiService.put(
+        "${UrlConstant.updateBooking}/$bookingId",
+        data.toJson(),
+      );
+      print("✅ updateBooking Update API Response >>>> $data");
+      return DeleteS3ModelResponse.fromJson(response);
+    } catch (e) {
+      print("❌ updateBooking Update service failed: $e");
+      throw Exception('updateBooking update API failed: $e');
     }
   }
 

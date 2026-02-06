@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/update_payment_status/update_booking.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
@@ -28,7 +29,7 @@ class BookingsViewmodel extends ChangeNotifier {
   String? userRole;
 
   final ImagePicker _picker = ImagePicker();
-  Future<void> uploadSelectedImages() async {
+  Future<void> uploadSelectedImages(String bookingId) async {
     if (selectedImages.isEmpty) return;
 
     try {
@@ -43,6 +44,7 @@ class BookingsViewmodel extends ChangeNotifier {
           if (uploadedUrl != null) {
             uploadedImageUrls.add(uploadedUrl);
             selectedImages.remove(file);
+            await updateBooking(bookingId);
           }
         }
       }
@@ -230,6 +232,33 @@ class BookingsViewmodel extends ChangeNotifier {
         },
       ),
     );
+  }
+
+  Future<void> updateBooking(String bookingId) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      var data = BookingCompletionRequest(
+        bookingStatus: "completed",
+        images: uploadedImageUrls,
+      );
+
+      final response = await userService.updateBooking(data, bookingId);
+      if (response.code == 200) {
+        reset();
+        debugPrint("Booking updated successfully");
+        await fetchBookings(reset: true);
+      } else {
+        debugPrint("Failed to update booking: ${response.code}");
+      }
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   void reset() {

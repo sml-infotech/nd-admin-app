@@ -68,5 +68,7 @@ class UrlConstant {
   static String blogDetails = "${baseUrlString()}v1/blog-details";
 static String updateBlog = "${baseUrlString()}v1/update-blog";
     static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
+        static String updateBooking = "${baseUrlString()}v1/update-booking";
+
 
 }

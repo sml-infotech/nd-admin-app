@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:provider/provider.dart';
@@ -317,7 +318,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             request.bookingStatus.toLowerCase() == "confirmed" ||
                     request.bookingStatus.toLowerCase() == "pending"
-                ? markedAsCompletedWidget()
+                ? markedAsCompletedWidget(request.bookingId)
                 : SizedBox(),
 
             Align(
@@ -409,10 +410,10 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget markedAsCompletedWidget() {
+  Widget markedAsCompletedWidget(String bookingId) {
     return GestureDetector(
       onTap: () {
-        _openUploadPoojaDialog();
+        _openUploadPoojaDialog(bookingId);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -433,7 +434,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  void _openUploadPoojaDialog() {
+  void _openUploadPoojaDialog(String bookingId) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -456,7 +457,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         const SizedBox(height: 16),
                         _buildImagePicker(),
                         const SizedBox(height: 20),
-                        submitButton(),
+                        submitButton(bookingId),
                       ],
                     ),
                   ),
@@ -479,7 +480,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget submitButton() {
+  Widget submitButton(String bookingId) {
     return SizedBox(
       width: double.infinity,
 
@@ -491,8 +492,13 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         onPressed: () async {
-          await vm.uploadSelectedImages();
-          Navigator.pop(context);
+          if (vm.selectedImages.isEmpty) {
+            await vm.updateBooking(bookingId);
+            Navigator.pop(context);
+          } else {
+            await vm.uploadSelectedImages(bookingId);
+            Navigator.pop(context);
+          }
         },
         child: Text(
           "Mark as Completed",
@@ -553,7 +559,6 @@ class _BookingScreenState extends State<BookingScreen> {
 
         const SizedBox(height: 12),
 
-        /// 🔹 SHOW LOCAL IMAGES FIRST
         if (vm.selectedImages.isNotEmpty)
           Wrap(
             spacing: 8,

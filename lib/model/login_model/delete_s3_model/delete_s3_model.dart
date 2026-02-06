@@ -15,19 +15,19 @@ class DeleteS3Model {
 }
 
 class DeleteS3ModelResponse {
-  final int code;
+final int code;
 
-  DeleteS3ModelResponse({required this.code,});
+DeleteS3ModelResponse({required this.code,});
 
-  factory DeleteS3ModelResponse.fromJson(Map<String, dynamic> json) {
-    return DeleteS3ModelResponse(
-      code: json['code'] ?? 0,
-    );
-  }
+factory DeleteS3ModelResponse.fromJson(Map<String, dynamic> json) {
+return DeleteS3ModelResponse(
+  code: json['code'] ?? 0,
+);
+}
 
-  Map<String, dynamic> toJson() {
-    return {'code': code, };
-  }
+Map<String, dynamic> toJson() {
+return {'code': code, };
+}
 }
    
 
