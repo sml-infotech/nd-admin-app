@@ -116,13 +116,13 @@ class CreatePujaViewmodel extends ChangeNotifier {
   List<TimeSlot> timeSlots = [];
 
   Future<bool> validateForm(bool isFromUpdate) async {
-    // if (selectedTemple == null) {
-    //   message = "Please select Temple";
+    if (selectedTemple == null) {
+      message = "Please select Temple";
+    }
+    //  else if (deities.isEmpty) {
+    //   message = "Please select Deities";
     // }
-    // //  else if (deities.isEmpty) {
-    // //   message = "Please select Deities";
-    // // }
-    // else
+    else
      if (pujaName.text.trim().isEmpty) {
       message = "Please enter Puja name";
     } else if (description.text.trim().isEmpty) {
