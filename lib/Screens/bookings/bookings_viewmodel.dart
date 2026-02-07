@@ -23,6 +23,8 @@ class BookingsViewmodel extends ChangeNotifier {
   final List<String> segments = ["Today", "Tomorrow", "Upcoming", "Past"];
   final TempleService api = TempleService();
   int page = 1;
+  bool uploadCompleted = false;
+
   int? expandedIndex;
   List<String> uploadedImageUrls = [];
   bool isUploading = false;
@@ -43,13 +45,10 @@ class BookingsViewmodel extends ChangeNotifier {
           final uploadedUrl = await uploadToS3(response.url!, file);
           if (uploadedUrl != null) {
             uploadedImageUrls.add(uploadedUrl);
-            selectedImages.remove(file);
-            await updateBooking(bookingId);
           }
         }
       }
     } finally {
-      isUploading = false;
       notifyListeners();
     }
   }
@@ -236,7 +235,7 @@ class BookingsViewmodel extends ChangeNotifier {
 
   Future<void> updateBooking(String bookingId) async {
     try {
-      isLoading = true;
+      // isLoading = true;
       notifyListeners();
 
       var data = BookingCompletionRequest(
@@ -245,36 +244,41 @@ class BookingsViewmodel extends ChangeNotifier {
       );
 
       final response = await userService.updateBooking(data, bookingId);
+      uploadedImageUrls.clear();
       if (response.code == 200) {
-        reset();
+        await reset();
+        uploadCompleted = true;
+        Future.delayed(const Duration(seconds: 1), () {
+          fetchBookings(reset: true);
+        });
         debugPrint("Booking updated successfully");
-        await fetchBookings(reset: true);
       } else {
         debugPrint("Failed to update booking: ${response.code}");
       }
 
-      isLoading = false;
+      // isLoading = false;
       notifyListeners();
     } catch (e) {
-      isLoading = false;
+      // isLoading = false;
       notifyListeners();
     }
   }
 
-  void reset() {
+  Future<void> reset() async {
     bookings = [];
     isLoading = false;
     isLoadingMore = false;
     hasMore = true;
     isUpdating = false;
-
+    isUploading = false;
     templeData = [];
     selectedTemple = null;
     selectedTempleId = null;
     selectedSegment = 2;
     page = 1;
     expandedIndex = null;
-
+    uploadedImageUrls = [];
+    selectedImages = [];
     bookings.clear();
     hasMore = true;
     notifyListeners();

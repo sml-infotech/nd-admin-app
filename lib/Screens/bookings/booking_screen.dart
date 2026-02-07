@@ -316,8 +316,7 @@ class _BookingScreenState extends State<BookingScreen> {
             _infoRow("Date", request.pujaDateFormatted),
             _infoRow("Amount", "₹ ${request.totalAmount}"),
 
-            request.bookingStatus.toLowerCase() == "confirmed" ||
-                    request.bookingStatus.toLowerCase() == "pending"
+            request.bookingStatus.toLowerCase() == "confirmed"
                 ? markedAsCompletedWidget(request.bookingId)
                 : SizedBox(),
 
@@ -439,6 +438,14 @@ class _BookingScreenState extends State<BookingScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) {
+          if (!vm.isUploading && vm.uploadCompleted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      });
+    }
+
         return Consumer<BookingsViewmodel>(
           builder: (context, vm, _) {
             return Stack(
@@ -497,6 +504,8 @@ class _BookingScreenState extends State<BookingScreen> {
             Navigator.pop(context);
           } else {
             await vm.uploadSelectedImages(bookingId);
+            await vm.updateBooking(bookingId);
+
             Navigator.pop(context);
           }
         },

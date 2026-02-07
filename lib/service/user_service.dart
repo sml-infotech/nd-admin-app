@@ -258,7 +258,7 @@ class UserService {
     }
   }
 
-  Future<DeleteS3ModelResponse> updateBooking(
+Future<DeleteS3ModelResponse> updateBooking(
     BookingCompletionRequest data,
     String bookingId,
   ) async {
