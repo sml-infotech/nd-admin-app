@@ -430,7 +430,7 @@ class _BookingScreenState extends State<BookingScreen> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          "Mark as Completed",
+          "Mark as Complete",
           style: TextStyle(
             fontFamily: font,
             fontWeight: FontWeight.bold,
@@ -448,23 +448,36 @@ class _BookingScreenState extends State<BookingScreen> {
       builder: (_) {
         return Consumer<BookingsViewmodel>(
           builder: (context, vm, _) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    titleAndCloseIcon(),
-                    const SizedBox(height: 16),
-                    _buildImagePicker(),
-                    const SizedBox(height: 20),
-                    submitButton(bookingId),
-                  ],
+            return Stack(
+              children: [
+                Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        titleAndCloseIcon(),
+                        const SizedBox(height: 16),
+                        _buildImagePicker(),
+                        const SizedBox(height: 20),
+                        submitButton(bookingId),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (vm.isUploading)
+                  Container(
+                    color: Colors.black26,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstant.buttonColor,
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
         );
@@ -512,7 +525,10 @@ class _BookingScreenState extends State<BookingScreen> {
         const Spacer(),
         IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            vm.selectedImages.clear();
+            Navigator.pop(context);
+          },
         ),
       ],
     );

@@ -75,6 +75,7 @@ class _TempleScreenState extends State<TempleScreen> {
 
         return FocusDetector(
           onFocusGained: () async {
+            viewModel?.isLoading = true;
             await model.resetAndFetch();
           },
           child: Scaffold(
@@ -276,7 +277,8 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${language == "kn" ? temple.translations?.first?.city ?? temple.city : temple.city}, ${language == "kn" ? temple.translations?.first?.state ?? temple.state : temple.state}",
+                          
+                          "${language == "kn" ? temple.translations?.first?.village_name ?? temple.village_name : temple.village_name}, ${language == "kn" ? temple.translations?.first?.taluk ?? temple.taluk : temple.taluk}",
                           style: AppTextStyles.templeNameDetailsStyle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -295,6 +297,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
+                          
                           "${language == "kn"
                               ? temple.translations?.first?.architecture ?? "-"
                               : temple.architecture.isEmpty

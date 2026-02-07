@@ -12,10 +12,10 @@ class FcmNotificationService {
     // 🍏 REQUIRED for iOS foreground notifications
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     // 🔔 Android notification channel
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -25,9 +25,10 @@ class FcmNotificationService {
       importance: Importance.max,
     );
 
-    final androidPlugin =
-        _localNotifications.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     await androidPlugin?.createNotificationChannel(channel);
 
@@ -45,7 +46,7 @@ class FcmNotificationService {
       initializationSettings,
       onDidReceiveNotificationResponse: (response) {
         handleNotificationTap(
-          RemoteMessage(data: {'event_name': response.payload ?? ''}),
+          RemoteMessage(data: {'type': response.payload ?? ''}),
         );
       },
     );
@@ -100,12 +101,16 @@ class FcmNotificationService {
   }
 
   static void handleNotificationTap(RemoteMessage message) {
-    final screen = message.data['event_name'];
+    final screen = message.data['type'];
 
+    print(
+      " Notification tapped, navigating to: $screen"
+      "with data: ${message.data}",
+    );
     if (screen == null) return;
 
     switch (screen) {
-      case 'event':
+      case 'new_puja_booking':
         navigatorKey.currentState?.pushNamed(StringsRoute.bookings);
         break;
       case 'profile':
@@ -116,4 +121,3 @@ class FcmNotificationService {
     }
   }
 }
-

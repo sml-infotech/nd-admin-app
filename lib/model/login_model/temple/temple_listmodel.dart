@@ -55,6 +55,8 @@ class Temple {
   final List<String>? images;
   final List<Translation>? translations;
   final String? googleMapLink;
+  final String? taluk;
+  final String? village_name;
 
   Temple({
     required this.id,
@@ -73,6 +75,8 @@ class Temple {
     this.images,
     this.translations,
     this.googleMapLink,
+    this.taluk,
+    this.village_name,
   });
 
   factory Temple.fromJson(Map<String, dynamic> json) {
@@ -100,6 +104,8 @@ class Temple {
             )
           : [],
       googleMapLink: json['google_map_link'],
+      taluk: json['taluk'],
+      village_name: json['village_name'],
     );
   }
 
@@ -121,6 +127,8 @@ class Temple {
       'images': images,
       'translations': translations?.map((x) => x.toJson()).toList(),
       'google_map_link': googleMapLink,
+      'taluk': taluk,
+      'village_name': village_name,
     };
   }
 }
