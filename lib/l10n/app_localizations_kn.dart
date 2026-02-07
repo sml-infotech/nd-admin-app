@@ -324,6 +324,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get add_benefit => 'ಲಾಭವನ್ನು ಸೇರಿಸಿ';
 
   @override
+  String get notification => 'ಅಧಿಸೂಚನೆಗಳು';
+
+  @override
   String get state => 'ರಾಜ್ಯ';
 
   @override

@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(Duration(seconds: 3), () {
       var routeToNavigate = StringsRoute.login;
       if (token.isNotEmpty) {
-        routeToNavigate = StringsRoute.dashboard;
+        routeToNavigate = StringsRoute.notification_screen;
       }
       Navigator.pushNamedAndRemoveUntil(
         context,

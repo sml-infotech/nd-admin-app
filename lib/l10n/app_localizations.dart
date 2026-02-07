@@ -725,6 +725,12 @@ abstract class AppLocalizations {
   /// **'Add Benefit'**
   String get add_benefit;
 
+  /// No description provided for @notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notification;
+
   /// No description provided for @state.
   ///
   /// In en, this message translates to:

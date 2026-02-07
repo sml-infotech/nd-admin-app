@@ -324,6 +324,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add_benefit => 'Add Benefit';
 
   @override
+  String get notification => 'Notifications';
+
+  @override
   String get state => 'State';
 
   @override

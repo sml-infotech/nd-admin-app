@@ -28,17 +28,16 @@ class StringsRoute {
   static const String festivalList = "/festivalList";
   static const String festivalDetailsScreen = "/festivalDetailsScreen";
   static const String updateTempleKn = "/updateTempleKn";
-static const String addPujaInkn = '/addPujaInkannadam';
-static const String createMantrainKn = '/createMantraInKannadam';
+  static const String addPujaInkn = '/addPujaInkannadam';
+  static const String createMantrainKn = '/createMantraInKannadam';
   static const String highlightUploadinKn = "/highlightUploadInKannadam";
-    static const String create_master_temple_in_kn = "/createMasterTempleInKannadam";
-    static const String create_blog="/create_blog";
-    static const String blog_list="/blog_list";
-        static const String blog_details="/blogDetailScreen";
-
-    
-
+  static const String create_master_temple_in_kn =
+      "/createMasterTempleInKannadam";
+  static const String create_blog = "/create_blog";
+  static const String blog_list = "/blog_list";
+  static const String blog_details = "/blogDetailScreen";
 
   static const String createEventInKn = '/createEventInKn';
   static const String createFestivalKn = '/CreateFestivalKn';
+  static const String notification_screen = "/notificationScreen";
 }
