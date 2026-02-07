@@ -133,39 +133,31 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _buildBody(BookingsViewmodel vm) {
     if (vm.isLoading && vm.bookings.isEmpty) return _buildShimmer();
 
-    return RefreshIndicator(
-      color: ColorConstant.buttonColor,
-      onRefresh: () {
-        vm.selectedSegment = 2;
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      itemCount: vm.bookings.length + 2 + (vm.isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildTempleDropdown(),
+          );
+        }
 
-        return vm.fetchBookings(reset: true);
+        if (index == 1) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildSegmentedControl(),
+          );
+        }
+
+        if (index - 2 < vm.bookings.length) {
+          return _buildCard(vm.bookings[index - 2], index - 2);
+        }
+
+        return _loadingMore();
       },
-      child: ListView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.all(16),
-        itemCount: vm.bookings.length + 2 + (vm.isLoadingMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildTempleDropdown(),
-            );
-          }
-
-          if (index == 1) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildSegmentedControl(),
-            );
-          }
-
-          if (index - 2 < vm.bookings.length) {
-            return _buildCard(vm.bookings[index - 2], index - 2);
-          }
-
-          return _loadingMore();
-        },
-      ),
     );
   }
 
@@ -438,13 +430,13 @@ class _BookingScreenState extends State<BookingScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) {
-          if (!vm.isUploading && vm.uploadCompleted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
+        if (!vm.isUploading && vm.uploadCompleted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          });
         }
-      });
-    }
 
         return Consumer<BookingsViewmodel>(
           builder: (context, vm, _) {

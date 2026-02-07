@@ -185,6 +185,7 @@ class _TempleScreenState extends State<TempleScreen> {
             images: temple.images ?? [],
             templeId: temple.id,
             translations: temple.translations ?? [],
+            google_map_link: temple.googleMapLink,
           ),
         );
         viewModel?.reset();
@@ -294,9 +295,13 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${language == "kn" ? temple.translations?.first?.architecture ?? temple.architecture : temple.architecture}",
+                          "${language == "kn"
+                              ? temple.translations?.first?.architecture ?? "-"
+                              : temple.architecture.isEmpty
+                              ? "-"
+                              : temple.architecture}",
 
-                          maxLines: 3,
+                          maxLines: 2,
                           style: AppTextStyles.templeNameDetailsStyle,
                         ),
                       ),

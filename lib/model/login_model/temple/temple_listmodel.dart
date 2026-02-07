@@ -54,9 +54,10 @@ class Temple {
   final List<String>? deities;
   final List<String>? images;
   final List<Translation>? translations;
+  final String? googleMapLink;
 
   Temple({
-required this.id,
+    required this.id,
     required this.name,
     required this.address,
     required this.city,
@@ -71,6 +72,7 @@ required this.id,
     this.deities,
     this.images,
     this.translations,
+    this.googleMapLink,
   });
 
   factory Temple.fromJson(Map<String, dynamic> json) {
@@ -87,15 +89,17 @@ required this.id,
       description: json['description'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
+
       deities: json['deities'] != null
           ? List<String>.from(json['deities'])
           : [],
-      images: json['images'] != null
-          ? List<String>.from(json['images'])
-          : [],
+      images: json['images'] != null ? List<String>.from(json['images']) : [],
       translations: json['translations'] != null
-          ? List<Translation>.from(json['translations'].map((x) => Translation.fromJson(x)))
+          ? List<Translation>.from(
+              json['translations'].map((x) => Translation.fromJson(x)),
+            )
           : [],
+      googleMapLink: json['google_map_link'],
     );
   }
 
@@ -116,6 +120,7 @@ required this.id,
       'deities': deities,
       'images': images,
       'translations': translations?.map((x) => x.toJson()).toList(),
+      'google_map_link': googleMapLink,
     };
   }
 }

@@ -14,6 +14,7 @@ class TempleDetailsArguments {
   final List<String> deities;
   final List<String> images; 
   final List<Translation> translations;
+  final String ?google_map_link;
 
   TempleDetailsArguments({
     required this.templeId,
@@ -29,5 +30,6 @@ class TempleDetailsArguments {
     required this.deities,
     required this.images,
     required this.translations,
+    this.google_map_link,
   });
 }

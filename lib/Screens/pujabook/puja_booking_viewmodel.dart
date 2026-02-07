@@ -115,6 +115,38 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   List<TimeSlot> timeSlots = [];
 
+  Future<bool> validateFormForCreatePoojaEn(bool isFromUpdate) async {
+    if (selectedTemple == null) {
+      message = "Please select Temple";
+    }
+    //  else if (deities.isEmpty) {
+    //   message = "Please select Deities";
+    // }
+    else if (pujaName.text.trim().isEmpty) {
+      message = "Please enter Puja name";
+    } else if (description.text.trim().isEmpty) {
+      message = "Please enter description";
+    } else if (!selectedDays.containsValue(true)) {
+      message = "Select at least one day";
+    } else if (fee.text.trim().isEmpty || double.tryParse(fee.text) == null) {
+      print("fee.text ${fee.text}");
+      message = "Enter a valid fee";
+    } else if (maxDevotees.text.trim().isEmpty ||
+        int.tryParse(maxDevotees.text) == null) {
+      message = "Enter valid maximum devotees";
+    } else if (selectedStartDate == null) {
+      message = "Please select a start date";
+    } else if (selectedEndDate == null) {
+      message = "Please select an end date";
+    } else if (timeSlots.isEmpty) {
+      message = "Please add at least one time slot";
+    } else {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<bool> validateForm(bool isFromUpdate) async {
     if (selectedTemple == null) {
       message = "Please select Temple";
@@ -122,8 +154,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     //  else if (deities.isEmpty) {
     //   message = "Please select Deities";
     // }
-    else
-     if (pujaName.text.trim().isEmpty) {
+    else if (pujaName.text.trim().isEmpty) {
       message = "Please enter Puja name";
     } else if (description.text.trim().isEmpty) {
       message = "Please enter description";
@@ -279,7 +310,6 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
       final benefitsList = benefitsEn.toList();
 
-
       final response = await pujaService.cretaPuja(
         selectedTempleId ?? "",
         pujaName.text,
@@ -324,6 +354,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> removeS3(String filename) async {
     try {
       isLoading = true;
@@ -332,7 +363,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       if (response.code == 200) {
         print("->>> $response");
         message = "success";
-                isLoading = false;
+        isLoading = false;
 
         notifyListeners();
       } else {
@@ -346,6 +377,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> updatepuja() async {
     try {
       isLoading = true;

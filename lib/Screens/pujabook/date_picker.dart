@@ -7,7 +7,8 @@ class DatePickerField extends StatelessWidget {
   final DateTime? selectedDate;
   final ValueChanged<DateTime> onDatePicked;
   final String title;
-  final DateTime? fromDate; // For end-date validation (start date)
+  final DateTime? fromDate;
+  final bool isFromPooja;
 
   const DatePickerField({
     super.key,
@@ -15,6 +16,7 @@ class DatePickerField extends StatelessWidget {
     required this.onDatePicked,
     required this.title,
     this.fromDate,
+    this.isFromPooja = false,
   });
 
   bool get _isEndDate =>
@@ -33,9 +35,11 @@ class DatePickerField extends StatelessWidget {
               onTap: () async {
                 final now = DateTime.now();
 
-                final DateTime firstDate = _isEndDate
-                    ? fromDate! // End date cannot be before start date
-                    : DateTime(1900); // or any early date you want
+                final DateTime firstDate = isFromPooja
+                    ? DateTime(now.year, now.month, now.day) // today (no past)
+                    : _isEndDate
+                    ? fromDate!
+                    : DateTime(1900);
 
                 final DateTime initialDate =
                     selectedDate != null && selectedDate!.isAfter(firstDate)

@@ -375,6 +375,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             DatePickerField(
               title: AppLocalizations.of(context)!.fromDate,
               selectedDate: viewmodel.selectedStartDate,
+              isFromPooja: true,
               onDatePicked: (date) => setState(() {
                 viewmodel.selectedStartDate = date;
                 viewmodel.selectedEndDate = null;
@@ -383,6 +384,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             DatePickerField(
               title: AppLocalizations.of(context)!.toDate,
               selectedDate: viewmodel.selectedEndDate,
+              isFromPooja: true,
+
               fromDate: viewmodel.selectedStartDate,
               onDatePicked: (date) => setState(() {
                 viewmodel.selectedEndDate = date;
@@ -631,15 +634,23 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.addPujaInkn,
-                  arguments: widget.pujaArgumrnts,
+                final isValid = await viewmodel.validateFormForCreatePoojaEn(
+                  false,
                 );
-                final isUpdate =
-                    widget.pujaArgumrnts != null &&
-                    widget.pujaArgumrnts!.puja_id.isNotEmpty;
-                // final isValid = await viewmodel.validateForm(isUpdate);
+
+                if (isValid) {
+                  Navigator.pushNamed(
+                    context,
+                    StringsRoute.addPujaInkn,
+                    arguments: widget.pujaArgumrnts,
+                  );
+                  final isUpdate =
+                      widget.pujaArgumrnts != null &&
+                      widget.pujaArgumrnts!.puja_id.isNotEmpty;
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message);
+                }
+                //
 
                 // if (viewmodel.pujaCreated) {
                 //   Fluttertoast.showToast(

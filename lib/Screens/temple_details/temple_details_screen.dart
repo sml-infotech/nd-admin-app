@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/arguments/temple_details_arguments.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TempleDetailsScreen extends StatefulWidget {
   final TempleDetailsArguments arguments;
@@ -24,7 +25,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   String? _token;
   String? _role;
 
-  final List<String> tabTitles = ["About", "Map", "Events"];
+  final List<String> tabTitles = ["About", "Map"];
 
   @override
   void initState() {
@@ -146,19 +147,9 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
               ? ColorConstant.buttonColor
               : Colors.grey,
         );
-      case 1:
-        return Image.asset(
-          ImageStrings.mapicon,
-          width: 24,
-          height: 24,
-          color: _selectedTab == index
-              ? ColorConstant.buttonColor
-              : Colors.grey,
-        );
-
       default:
         return Image.asset(
-          ImageStrings.eventicon,
+          ImageStrings.mapicon,
           width: 24,
           height: 24,
           color: _selectedTab == index
@@ -172,10 +163,9 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     switch (index) {
       case 0:
         return aboutTab();
-      case 1:
-        return mapTab(widget);
+
       default:
-        return eventsTab();
+        return mapTab(widget);
     }
   }
 
@@ -184,11 +174,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     padding: const EdgeInsets.all(16.0),
     child: Column(
       children: [
-        // Image.network(
-        //   "https://maps.googleapis.com/maps/api/staticmap?center=Madurai,India&zoom=13&size=600x300&key=YOUR_API_KEY",
-        //   height: 200,
-        //   fit: BoxFit.cover,
-        // ),
+        locationMap(widget: widget),
         const SizedBox(height: 10),
         Text(widget.address),
         const SizedBox(height: 5),
@@ -196,12 +182,37 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.location_on, color: Colors.red),
-            Text("8.2 km"),
+            Text("View on map"),
           ],
         ),
       ],
     ),
   );
+
+  Widget locationMap({required TempleDetailsArguments widget}) {
+    final String mapUrl = widget.google_map_link?.isNotEmpty == true
+        ? widget.google_map_link!
+        : "https://www.google.com/maps/search/?api=1&query="
+              "${Uri.encodeComponent(widget.address)}";
+
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(mapUrl);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          widget.images.isNotEmpty
+              ? widget.images.first
+              : "https://via.placeholder.com/400x200.png?text=View+Location",
+          height: 200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
 
   Widget aboutTab() => Padding(
     key: const ValueKey("About"),
@@ -215,7 +226,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
     child: const Text("Upcoming events go here."),
   );
 
-Widget carouselWidget() {
+  Widget carouselWidget() {
     final images = widget.arguments.images;
 
     if (images.length == 1) {
