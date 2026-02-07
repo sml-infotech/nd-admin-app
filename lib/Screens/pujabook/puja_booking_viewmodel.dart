@@ -426,7 +426,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       );
 
       if (response.code == 200) {
-        message = response.message ?? "Success";
+        message = "Pooja updated successfully";
         print("✅ Puja updated successfully: ${response.toJson()}");
         pujaCreated = true;
         await resetForm();
@@ -467,7 +467,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> resetForm() async {
+Future<void> resetForm() async {
     pujaName.clear();
     description.clear();
     duration.clear();
