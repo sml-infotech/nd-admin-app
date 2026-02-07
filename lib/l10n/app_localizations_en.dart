@@ -477,7 +477,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get descriptionText => 'Description : ';
 
   @override
-  String get cutOffNoticeText => 'Select Cut-off Notice';
+  String get cutOffNoticeText => ' Cut-off Notice';
 
   @override
   String get from => 'From: ';

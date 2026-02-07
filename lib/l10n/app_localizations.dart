@@ -1034,7 +1034,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutOffNoticeText.
   ///
   /// In en, this message translates to:
-  /// **'Select Cut-off Notice'**
+  /// **' Cut-off Notice'**
   String get cutOffNoticeText;
 
   /// No description provided for @from.

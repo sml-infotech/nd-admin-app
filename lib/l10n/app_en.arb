@@ -157,7 +157,7 @@
   "noPujaAvailable": "No pujas available",
   "deitiesText": "Deities: ",
   "descriptionText": "Description : ",
-  "cutOffNoticeText": "Select Cut-off Notice",
+  "cutOffNoticeText": " Cut-off Notice",
   "from": "From: ",
   "to": "To: ",
   "active": "Active",

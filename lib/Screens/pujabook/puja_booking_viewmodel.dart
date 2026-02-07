@@ -19,6 +19,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final TextEditingController deitiesController = TextEditingController();
   final TextEditingController pujaNameInKannadam = TextEditingController();
   final TextEditingController descriptionInKannadam = TextEditingController();
+  final TextEditingController cutOffContoller = TextEditingController();
 
   final PujaService pujaService = PujaService();
   final TempleService templeService = TempleService();
@@ -46,14 +47,12 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   String? pujaId;
 
-  bool bookingCutoff = false;
   bool priestDakshina = false;
   bool specialReq = false;
   bool hideActive = false;
   bool isLoading = false;
   bool isValid = false;
   bool pujaCreated = false;
-  String selectedCutoffOption = '1';
 
   int page = 1;
   final int limit = 10;
@@ -318,7 +317,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         int.parse(maxDevotees.text),
         double.parse(fee.text),
         uploadedImageUrls,
-        cutOffDay ?? 1,
+        cutOffContoller.text.isNotEmpty ? int.parse(cutOffContoller.text) : 1,
         specialReq,
         selectedStartDate.toString(),
         selectedEndDate.toString(),
@@ -467,7 +466,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     }
   }
 
-Future<void> resetForm() async {
+  Future<void> resetForm() async {
     pujaName.clear();
     description.clear();
     duration.clear();
@@ -482,7 +481,6 @@ Future<void> resetForm() async {
     // selectedDeities = "";
     selectedDeityId = "";
 
-    bookingCutoff = false;
     priestDakshina = false;
     specialReq = false;
     hideActive = false;
