@@ -63,6 +63,8 @@ class BookingModel {
   final String? priestDakshina;
   final List<SankalpaDetail> sankalpaDetails;
   final List<PaymentDetail> paymentDetails;
+  final List<String>images;
+
 
   BookingModel({
     required this.bookingId,
@@ -77,6 +79,7 @@ class BookingModel {
     required this.priestDakshina,
     required this.sankalpaDetails,
     required this.paymentDetails,
+    this.images = const [],
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -99,6 +102,9 @@ class BookingModel {
               ?.map((e) => PaymentDetail.fromJson(e as Map<String, dynamic>))
               .toList() ??
           <PaymentDetail>[],
+          images: json['images'] != null
+          ? List<String>.from(json['images'])
+          : [],
     );
   }
 

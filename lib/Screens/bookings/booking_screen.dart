@@ -2,13 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/bookings/bookings_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/pujabook/image_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
-import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/booking_model/booking_response.dart';
 import 'package:provider/provider.dart';
@@ -35,21 +32,6 @@ class _BookingScreenState extends State<BookingScreen> {
     _loadUserData();
   }
 
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('authToken');
-    _role = prefs.getString('userRole');
-
-    if (mounted) setState(() {});
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >
-          _scrollController.position.maxScrollExtent - 200) {
-        if (!vm.isLoadingMore && vm.hasMore) vm.fetchBookings();
-      }
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -67,14 +49,29 @@ class _BookingScreenState extends State<BookingScreen> {
     super.dispose();
   }
 
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    _role = prefs.getString('userRole');
+
+    if (mounted) setState(() {});
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >
+          _scrollController.position.maxScrollExtent - 200) {
+        if (!vm.isLoadingMore && vm.hasMore) {
+          vm.fetchBookings();
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<BookingsViewmodel>(
       builder: (context, vm, child) {
         return FocusDetector(
-          onFocusGained: () async {
-            vm.fetchTemples();
-          },
+          onFocusGained: () => vm.fetchTemples(),
           child: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -96,6 +93,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                   ),
+
                 if (!vm.isLoading && vm.bookings.isEmpty)
                   Center(
                     child: Text(
@@ -131,7 +129,9 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _buildBody(BookingsViewmodel vm) {
-    if (vm.isLoading && vm.bookings.isEmpty) return _buildShimmer();
+    if (vm.isLoading && vm.bookings.isEmpty) {
+      return _buildShimmer();
+    }
 
     return ListView.builder(
       controller: _scrollController,
@@ -166,28 +166,25 @@ class _BookingScreenState extends State<BookingScreen> {
       height: 38,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Row(
         children: List.generate(vm.segments.length, (index) {
-          bool active = index == vm.selectedSegment;
+          final active = index == vm.selectedSegment;
+
           return Expanded(
             child: GestureDetector(
               onTap: () {
                 setState(() => vm.selectedSegment = index);
-                print("_selectedSegment${vm.segments[index].toLowerCase()}");
                 vm.fetchBookings(
                   reset: true,
                   filter: vm.segments[index].toLowerCase(),
                 );
-                // vm.applyBookingFilter(_segments[index].toLowerCase());
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   color: active
                       ? ColorConstant.buttonColor
@@ -199,8 +196,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: TextStyle(
                     fontFamily: font,
                     fontSize: 14,
-                    color: active ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w600,
+                    color: active ? Colors.white : Colors.black87,
                   ),
                 ),
               ),
@@ -219,10 +216,8 @@ class _BookingScreenState extends State<BookingScreen> {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade400),
           borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Text(
@@ -238,9 +233,9 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _buildCard(BookingModel request, int index) {
-    bool isExpanded = vm.expandedIndex == index;
+    final isExpanded = vm.expandedIndex == index;
 
-    Color statusColor = request.bookingStatus.toLowerCase() == "confirmed"
+    final statusColor = request.bookingStatus.toLowerCase() == "confirmed"
         ? Colors.green
         : request.bookingStatus.toLowerCase() == "pending"
         ? Colors.orange
@@ -254,7 +249,6 @@ class _BookingScreenState extends State<BookingScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: Colors.white,
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
@@ -262,14 +256,12 @@ class _BookingScreenState extends State<BookingScreen> {
               offset: Offset(0, 2),
             ),
           ],
+          color: Colors.white,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
-
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
@@ -294,8 +286,8 @@ class _BookingScreenState extends State<BookingScreen> {
                     request.bookingStatus,
                     style: TextStyle(
                       fontFamily: font,
-                      color: statusColor,
                       fontWeight: FontWeight.bold,
+                      color: statusColor,
                     ),
                   ),
                 ),
@@ -303,14 +295,12 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
 
             const SizedBox(height: 10),
-
             _infoRow("Name", request.userName),
             _infoRow("Date", request.pujaDateFormatted),
             _infoRow("Amount", "₹ ${request.totalAmount}"),
 
-            request.bookingStatus.toLowerCase() == "confirmed"
-                ? markedAsCompletedWidget(request.bookingId)
-                : SizedBox(),
+            if (request.bookingStatus.toLowerCase() == "confirmed")
+              markedAsCompletedWidget(request.bookingId),
 
             Align(
               alignment: Alignment.centerRight,
@@ -319,44 +309,32 @@ class _BookingScreenState extends State<BookingScreen> {
                     ? Icons.keyboard_arrow_up_rounded
                     : Icons.keyboard_arrow_down_rounded,
                 size: 26,
-                color: Colors.grey.shade700,
               ),
             ),
 
             if (isExpanded) ...[
-              const Divider(height: 20),
+              const Divider(),
               _infoRow("Phone", request.userPhone),
               _infoRow("Email", request.userEmail),
               _infoRow("Booking ID", request.bookingId),
               _infoRow("Created", request.createdAtFormatted),
-
-              const SizedBox(height: 10),
-
               if (request.paymentDetails.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Payment Details",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: font,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    ...request.paymentDetails.map(
-                      (p) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _infoRow("Payment ID", p.paymentId),
-                          _infoRow("Status", p.paymentStatus),
-                          _infoRow("Txn Date", p.transactionDateFormatted),
-                        ],
-                      ),
-                    ),
-                  ],
+                  children: request.paymentDetails
+                      .map(
+                        (p) => Column(
+                          children: [
+                            _infoRow("Payment ID", p.paymentId),
+                            _infoRow("Status", p.paymentStatus),
+                            _infoRow("Txn Date", p.transactionDateFormatted),
+                          ],
+                        ),
+                      )
+                      .toList(),
                 ),
+              if (request.images.isNotEmpty)
+                poojaImage(request.images.first, request),
             ],
           ],
         ),
@@ -371,7 +349,6 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           Text(
             "$title: ",
-            textAlign: TextAlign.start,
             style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
           ),
           Expanded(
@@ -379,6 +356,48 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget poojaImage(String url, BookingModel request) {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        Text(
+          "Pooja Images",
+          style: TextStyle(
+            fontFamily: font,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: request.images.map((imgUrl) {
+            return GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => Dialog(
+                    child: Image.network(imgUrl, fit: BoxFit.fitWidth),
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  imgUrl,
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -403,22 +422,19 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget markedAsCompletedWidget(String bookingId) {
     return GestureDetector(
-      onTap: () {
-        _openUploadPoojaDialog(bookingId);
-      },
+      onTap: () => _openUploadPoojaDialog(bookingId),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           border: Border.all(color: ColorConstant.buttonColor),
-          color: Colors.white.withOpacity(0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           "Mark as Completed",
           style: TextStyle(
             fontFamily: font,
-            color: ColorConstant.buttonColor,
             fontWeight: FontWeight.bold,
+            color: ColorConstant.buttonColor,
           ),
         ),
       ),
@@ -430,48 +446,25 @@ class _BookingScreenState extends State<BookingScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) {
-        if (!vm.isUploading && vm.uploadCompleted) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          });
-        }
-
         return Consumer<BookingsViewmodel>(
           builder: (context, vm, _) {
-            return Stack(
-              children: [
-                Dialog(
-                  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        titleAndCloseIcon(),
-                        const SizedBox(height: 16),
-                        _buildImagePicker(),
-                        const SizedBox(height: 20),
-                        submitButton(bookingId),
-                      ],
-                    ),
-                  ),
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    titleAndCloseIcon(),
+                    const SizedBox(height: 16),
+                    _buildImagePicker(),
+                    const SizedBox(height: 20),
+                    submitButton(bookingId),
+                  ],
                 ),
-
-                if (vm.isUploading)
-                  Container(
-                    color: Colors.black26,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstant.buttonColor,
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             );
           },
         );
@@ -482,7 +475,6 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget submitButton(String bookingId) {
     return SizedBox(
       width: double.infinity,
-
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstant.buttonColor,
@@ -491,19 +483,15 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         onPressed: () async {
-          if (vm.selectedImages.isEmpty) {
-            await vm.updateBooking(bookingId);
-            Navigator.pop(context);
-          } else {
+          if (vm.selectedImages.isNotEmpty) {
             await vm.uploadSelectedImages(bookingId);
-            await vm.updateBooking(bookingId);
-
-            Navigator.pop(context);
           }
+          await vm.updateBooking(bookingId);
+          Navigator.pop(context);
         },
         child: Text(
           "Mark as Completed",
-          style: TextStyle(fontSize: 16, fontFamily: font, color: Colors.white),
+          style: TextStyle(fontFamily: font, fontSize: 16, color: Colors.white),
         ),
       ),
     );
@@ -512,16 +500,15 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget titleAndCloseIcon() {
     return Row(
       children: [
-        Spacer(),
+        const Spacer(),
         Text(
           "Upload Pooja Image",
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
             fontFamily: font,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
-
         const Spacer(),
         IconButton(
           icon: const Icon(Icons.close),
@@ -538,28 +525,22 @@ class _BookingScreenState extends State<BookingScreen> {
         GestureDetector(
           onTap: vm.pickImages,
           child: Container(
-            width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 14),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.add_a_photo),
                 SizedBox(width: 8),
-                Text(
-                  "Add Images",
-                  style: TextStyle(fontSize: 16, fontFamily: font),
-                ),
+                Text("Add Images"),
               ],
             ),
           ),
         ),
-
         const SizedBox(height: 12),
-
         if (vm.selectedImages.isNotEmpty)
           Wrap(
             spacing: 8,
@@ -582,17 +563,10 @@ class _BookingScreenState extends State<BookingScreen> {
                     right: 4,
                     child: GestureDetector(
                       onTap: () => vm.removeImage(index),
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.black54,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 16,
-                        ),
+                      child: const CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.black54,
+                        child: Icon(Icons.close, size: 14, color: Colors.white),
                       ),
                     ),
                   ),
