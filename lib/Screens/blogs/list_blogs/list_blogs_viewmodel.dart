@@ -96,7 +96,7 @@ String language="kn";
 
 void reset() {
     page = 1;
-    isLoading = true;
+isLoading = true;
     isLoadingMore = false;
     hasMore = true;
     blogs.clear();

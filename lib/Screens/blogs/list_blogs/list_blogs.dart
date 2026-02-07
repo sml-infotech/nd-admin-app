@@ -174,6 +174,8 @@ class _ListBlogsState extends State<ListBlogs> {
   Widget blogCard(Blog blog) {
     return GestureDetector(
       onTap: () {
+        viewmodel.reset();
+
         Navigator.pushNamed(
           context,
           StringsRoute.blog_details,
