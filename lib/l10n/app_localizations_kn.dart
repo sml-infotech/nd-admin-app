@@ -303,6 +303,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get users => 'ಬಳಕೆದಾರರು';
 
   @override
+  String get totalTemples => 'ಒಟ್ಟು ದೇವಾಲಯಗಳು';
+
+  @override
+  String get totalTransactions => 'ಒಟ್ಟು ವ್ಯವಹಾರಗಳು';
+
+  @override
+  String get totalBookings => 'ಒಟ್ಟು ಬುಕ್ಕಿಂಗ್‌ಗಳು';
+
+  @override
+  String get totalUsers => 'ಒಟ್ಟು ಬಳಕೆದಾರರು';
+
+  @override
   String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
 
   @override
@@ -325,6 +337,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get notification => 'ಅಧಿಸೂಚನೆಗಳು';
+
+  @override
+  String get welcome => 'ಮತ್ತೆ ಸ್ವಾಗತ,';
 
   @override
   String get state => 'ರಾಜ್ಯ';

@@ -303,6 +303,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get users => 'Users';
 
   @override
+  String get totalTemples => 'Total Temples';
+
+  @override
+  String get totalTransactions => 'Total Transactions';
+
+  @override
+  String get totalBookings => 'Total Bookings';
+
+  @override
+  String get totalUsers => 'Total Users';
+
+  @override
   String get start_time => 'Start Time';
 
   @override
@@ -325,6 +337,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notification => 'Notifications';
+
+  @override
+  String get welcome => 'Welcome Back,';
 
   @override
   String get state => 'State';

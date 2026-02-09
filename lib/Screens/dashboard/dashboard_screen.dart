@@ -8,6 +8,7 @@ import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart'
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:nammadaiva_dashboard/model/login_model/statictics_model/dashboard-statistics.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
@@ -149,11 +150,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
 
       child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: ColorConstant.buttonColor,
-          elevation: 0,
-          title: nammaDaivaAppBar(),
+        backgroundColor: ColorConstant.buttonColor,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(75),
+          child: dashboardHeader(),
         ),
         body: Container(
           width: double.infinity,
@@ -171,42 +171,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _languageButton('EN', 'en'),
-                        const Text('|'),
-                        _languageButton('KN', 'kn'),
-                        Spacer(),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.notifications,
-                            color: Colors.black87.withOpacity(0.6),
-                          ),
-                        ),
-                      ],
-                    ),
-
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 16, 0, 20),
                       child: Column(
                         children: [
-                          welcomeText(),
-                          const SizedBox(height: 15),
-
-                          if (token != null && role != null) ...[
-                            Text(
-                              userName ?? "",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: font,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
                           if (dashboardViewmodel.isLoading)
                             Wrap(
                               spacing: 12,
@@ -225,55 +193,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               children: [
                                 if (role == "Super Admin" ||
                                     role == "Admin") ...[
-                                  totalTemplesCard(
-                                    dashboardViewmodel
-                                            .dashboardStats
-                                            ?.totalTemples
-                                            .toString() ??
-                                        "0",
-                                    "Total Temples",
-                                    ImageStrings.templeImage,
-                                  ),
-                                  totalTemplesCard(
-                                    dashboardViewmodel
-                                            .dashboardStats
-                                            ?.totalTransactionAmount
-                                            .toString() ??
-                                        "0",
-
-                                    "Total Transactions",
-                                    ImageStrings.sevaimg,
-                                  ),
-                                  totalTemplesCard(
-                                    dashboardViewmodel
-                                            .dashboardStats
-                                            ?.totalBookings
-                                            .toString() ??
-                                        "0",
-
-                                    "Total Bookings",
-                                    ImageStrings.wowtracker,
-                                  ),
-                                  totalTemplesCard(
-                                    dashboardViewmodel
-                                            .dashboardStats
-                                            ?.totalBookings
-                                            .toString() ??
-                                        "0",
-
-                                    "Total Bookings",
-                                    ImageStrings.wowtracker,
-                                  ),
-                                  totalTemplesCard(
-                                    dashboardViewmodel
-                                            .dashboardStats
-                                            ?.totalUsers
-                                            .toString() ??
-                                        "0",
-
-                                    "Total Users",
-                                    ImageStrings.transaction,
-                                  ),
+                                  if (dashboardViewmodel.dashboardStats != null)
+                                    dashboardStatsCard(
+                                      stats: dashboardViewmodel.dashboardStats!,
+                                    ),
                                 ],
                                 containerWidget(
                                   ImageStrings.templeImage,
@@ -403,32 +326,103 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget nammaDaivaAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 24, width: 24),
-        const Spacer(),
-        Text(
-          AppLocalizations.of(context)!.nammaDaivaSmall ??
-              AppLocalizations.of(context)!.nammaDaivaSmall,
-          style: AppTextStyles.appBarTitleStyle,
+  Widget dashboardHeader() {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(top: 50),
+      child: Container(
+        color: ColorConstant.buttonColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              roundedBackground(userName),
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.welcome,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontFamily: font,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          userName ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: font,
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              StringsRoute.notification_screen,
+                            );
+                          },
+                          child: Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          onTap: () => _showLogoutDialog(context),
+                          child: Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _languageButton('EN', 'en'),
+                        const SizedBox(width: 6),
+                        Text('|', style: TextStyle(color: Colors.white)),
+                        const SizedBox(width: 6),
+                        _languageButton('KN', 'kn'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        const Spacer(),
-        IconButton(
-          padding: EdgeInsets.all(0),
-          icon: Image.asset(ImageStrings.logout),
-          onPressed: () async {
-            _showLogoutDialog(context);
-          },
-        ),
-      ],
+      ),
+    );
+  }
+
+  Widget roundedBackground(String? name) {
+    String initial = "";
+    if (name != null && name.isNotEmpty) {
+      initial = name[0].toUpperCase();
+    }
+    return CircleAvatar(
+      radius: 18,
+      backgroundColor: Color(0xffE6F4EC),
+      child: Text(initial),
     );
   }
 
   Widget _languageButton(String label, String code) {
-    return TextButton(
-      onPressed: () async {
+    return GestureDetector(
+      onTap: () async {
         final prefs = await SharedPreferences.getInstance();
 
         Provider.of<LocaleProvider>(
@@ -441,8 +435,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Text(
         label,
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.white,
           fontFamily: font,
+          fontSize: 14,
           fontWeight:
               context.watch<LocaleProvider>().locale.languageCode == code
               ? FontWeight.bold
@@ -452,15 +447,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget totalTemplesCard(String count, String title, String image) {
+  Widget dashboardStatsCard({required DashboardStats stats}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: const EdgeInsets.all(20),
       child: Container(
-        height: 60,
-        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -469,44 +462,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
           children: [
-            Spacer(),
-            Image.asset(image, height: 40, width: 40),
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontFamily: font,
-                    ),
-                  ),
-                  Text(
-                    count,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: font,
-                    ),
-                  ),
-                ],
-              ),
+            Row(
+              children: [
+                _gridItem(
+                  title: AppLocalizations.of(context)!.totalTemples,
+                  count: stats.totalTemples.toString(),
+                  image: ImageStrings.templeImage,
+                ),
+                _verticalDivider(),
+                _gridItem(
+                  title: AppLocalizations.of(context)!.totalTransactions,
+                  count: stats.totalTransactionAmount.toString(),
+                  image: ImageStrings.sevaimg,
+                ),
+              ],
             ),
 
-            Spacer(),
+            _horizontalDivider(),
+
+            Row(
+              children: [
+                _gridItem(
+                  title: AppLocalizations.of(context)!.totalBookings,
+                  count: stats.totalBookings.toString(),
+                  image: ImageStrings.wowtracker,
+                ),
+                _verticalDivider(),
+                _gridItem(
+                  title: AppLocalizations.of(context)!.totalUsers,
+                  count: stats.totalUsers.toString(),
+                  image: ImageStrings.transaction,
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -524,6 +514,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  Widget _gridItem({
+    required String title,
+    required String count,
+    required String image,
+  }) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            Image.asset(image, height: 36, width: 36),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black54,
+                fontFamily: font,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              count,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: font,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _horizontalDivider() {
+    return Divider(
+      indent: 16,
+      thickness: 1,
+      color: Colors.grey[400],
+      endIndent: 16,
+    );
+  }
+
+  Widget _verticalDivider() {
+    return Container(height: 90, width: 1.2, color: Colors.grey[400]);
   }
 
   void _showLogoutDialog(BuildContext context) {
@@ -612,12 +651,15 @@ Widget gridItemShimmer() {
   return Shimmer.fromColors(
     baseColor: Colors.grey.shade300,
     highlightColor: Colors.grey.shade100,
-    child: Container(
-      height: 156,
-      width: 165,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      child: Container(
+        height: 156,
+        width: 165,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     ),
   );

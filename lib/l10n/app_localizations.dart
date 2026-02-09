@@ -683,6 +683,30 @@ abstract class AppLocalizations {
   /// **'Users'**
   String get users;
 
+  /// No description provided for @totalTemples.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Temples'**
+  String get totalTemples;
+
+  /// No description provided for @totalTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Transactions'**
+  String get totalTransactions;
+
+  /// No description provided for @totalBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Bookings'**
+  String get totalBookings;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Users'**
+  String get totalUsers;
+
   /// No description provided for @start_time.
   ///
   /// In en, this message translates to:
@@ -730,6 +754,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notifications'**
   String get notification;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back,'**
+  String get welcome;
 
   /// No description provided for @state.
   ///

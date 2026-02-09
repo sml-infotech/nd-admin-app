@@ -69,7 +69,7 @@ class UrlConstant {
 static String updateBlog = "${baseUrlString()}v1/update-blog";
     static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
         static String updateBooking = "${baseUrlString()}v1/update-booking";
-  static String notificationList = "${baseUrlString()}";
+  static String notificationList = "${baseUrlString()}v1/list-notifications";
   static String fetchDashboardStats = "${baseUrlString()}v1/dashboard-statistics";
 
 
