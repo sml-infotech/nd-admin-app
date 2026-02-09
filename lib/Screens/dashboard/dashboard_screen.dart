@@ -204,12 +204,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 20),
                         ],
 
-                        /// 🔹 Dashboard Grid
                         Wrap(
                           spacing: 12,
                           runSpacing: 12,
                           alignment: WrapAlignment.center,
                           children: [
+                            if (role == "Super Admin" || role == "Admin") ...[
+                              totalTemplesCard(
+                                "200",
+                                "Total Temples",
+                                ImageStrings.templeImage,
+                              ),
+                              totalTemplesCard(
+                                "78",
+                                "Total Sevas",
+                                ImageStrings.sevaimg,
+                              ),
+                              totalTemplesCard(
+                                "120",
+                                "Total Bookings",
+                                ImageStrings.wowtracker,
+                              ),
+                              totalTemplesCard(
+                                "45",
+                                "Total Users",
+                                ImageStrings.transaction,
+                              ),
+                            ],
                             containerWidget(
                               ImageStrings.templeImage,
                               AppLocalizations.of(context)!.templeDetailText,
@@ -385,6 +406,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
               context.watch<LocaleProvider>().locale.languageCode == code
               ? FontWeight.bold
               : FontWeight.normal,
+        ),
+      ),
+    );
+  }
+
+  Widget totalTemplesCard(String count, String title, String image) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: Container(
+        height: 60,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Spacer(),
+            Image.asset(image, height: 40, width: 40),
+            const SizedBox(width: 12),
+
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                      fontFamily: font,
+                    ),
+                  ),
+                  Text(
+                    count,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: font,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Spacer(),
+          ],
         ),
       ),
     );
