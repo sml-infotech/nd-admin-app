@@ -16,4 +16,15 @@ class NotificationService {
       throw Exception('API failed: $e');
     }
   }
+
+  Future<void> markAsRead(String notificationId) async {
+    try {
+      final url = '${UrlConstant.markNotificationRead}/$notificationId';
+      print('Marking notification as read: $url');
+      await apiService.post(url, {});
+    } catch (e) {
+
+    }
+
+}
 }

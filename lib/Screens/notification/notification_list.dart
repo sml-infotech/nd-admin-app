@@ -34,13 +34,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
         body: ListView.builder(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-          itemCount: viewModel.isLoading ? 9 : 10,
+          itemCount: viewModel.isInitialLoading
+              ? 9
+              : viewModel.notifications.isEmpty
+              ? 1
+              : viewModel.notifications.length,
+
           itemBuilder: (context, index) {
-            if (viewModel.isLoading) {
+            if (viewModel.isInitialLoading) {
               return const ShimmerUserCard();
-            } else {
-              return notificationCard(index);
             }
+
+            if (viewModel.notifications.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 280),
+                  child: Text(
+                    "No notifications available",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontFamily: font,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return notificationCard(index);
           },
         ),
       ),
@@ -98,7 +119,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
             ),
-
             notificationListCard(index),
           ],
         ),
@@ -127,43 +147,54 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget notificationListCard(int index) {
-    return Expanded(
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Stack(children: [notificationIcon(), roundedBackground()]),
-        title: Text(
-          "Temple Update",
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            fontFamily: font,
+    return GestureDetector(
+      onTap: () {
+        if (!viewModel.notifications[index].isRead!) {
+          viewModel.markAsRead(viewModel.notifications[index].id!);
+        }
+      },
+      child: Expanded(
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
           ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            "Your booking has been confirmed successfully.",
+          leading: Stack(children: [notificationIcon(), roundedBackground()]),
+          title: Text(
+            viewModel.notifications[index].title ?? "Temple Update",
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
               fontFamily: font,
             ),
           ),
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "2h ago",
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              viewModel.notifications[index].body ??
+                  "Your booking has been confirmed successfully.",
               style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey,
+                fontSize: 13,
+                color: Colors.grey[600],
                 fontFamily: font,
               ),
             ),
-            const SizedBox(height: 6),
-            Icon(Icons.chevron_right, size: 18, color: Colors.grey),
-          ],
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                viewModel.notifications[index].createdAt ?? "2h ago",
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey,
+                  fontFamily: font,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Icon(Icons.chevron_right, size: 18, color: Colors.grey),
+            ],
+          ),
         ),
       ),
     );

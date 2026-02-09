@@ -6,7 +6,8 @@ import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class DashboardViewmodel extends ChangeNotifier {
   UserService userService = UserService();
-bool isLoading = true;
+  bool isLoading = true;
+  bool logoutLoading = false;
   DashboardStats? dashboardStats;
 
   Future<void> postFcmToken(String fcmToken, String device_type) async {
@@ -26,21 +27,21 @@ bool isLoading = true;
   }
 
   Future<void> logout(String fcmToken) async {
-    isLoading = true;
+    logoutLoading = true;
     notifyListeners();
     try {
       var logoutRequest = LogoutRequestModel(fcmToken: fcmToken);
 
       final response = await userService.logout(logoutRequest);
       if (response.code == 201) {
-        isLoading = false;
+        logoutLoading = false;
         print("logoutted");
       } else {
         print("${response.message}");
-        isLoading = false;
+        logoutLoading = false;
       }
     } catch (e) {
-      isLoading = false;
+      logoutLoading = false;
       print(">>>>>>>>>>>>>${e}");
     }
   }

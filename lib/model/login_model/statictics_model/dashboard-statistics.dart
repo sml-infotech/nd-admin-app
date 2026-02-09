@@ -40,14 +40,14 @@ class DashboardStats {
   });
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
-    return DashboardStats(
-      totalTemples: json['total_temples'] as int,
-      totalUsers: json['total_users'] as int,
-      totalBookings: json['total_bookings'] as int,
-      totalTransactionAmount:
-          json['total_transaction_amount'] as int,
-    );
-  }
+  return DashboardStats(
+    totalTemples: json['total_temples'] ?? 0,
+    totalUsers: json['total_users'] ?? 0,
+    totalBookings: json['total_bookings'] ?? 0,
+    totalTransactionAmount: json['total_transaction_amount'] ?? 0,
+  );
+}
+
 
   Map<String, dynamic> toJson() {
     return {

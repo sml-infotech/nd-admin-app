@@ -71,6 +71,7 @@ static String updateBlog = "${baseUrlString()}v1/update-blog";
         static String updateBooking = "${baseUrlString()}v1/update-booking";
   static String notificationList = "${baseUrlString()}v1/list-notifications";
   static String fetchDashboardStats = "${baseUrlString()}v1/dashboard-statistics";
+  static String markNotificationRead = "${baseUrlString()}v1/mark-notifications-read";
 
 
 }

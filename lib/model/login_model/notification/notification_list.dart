@@ -11,20 +11,12 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      success: json['success'] as bool,
-      message: json['message'] as String,
-      data: (json['data'] as List<dynamic>)
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: (json['data'] as List<dynamic>? ?? [])
           .map((e) => NotificationData.fromJson(e))
           .toList(),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.map((e) => e.toJson()).toList(),
-    };
   }
 }
 

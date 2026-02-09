@@ -191,13 +191,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               runSpacing: 12,
                               alignment: WrapAlignment.center,
                               children: [
-                                if (role == "Super Admin" ||
-                                    role == "Admin") ...[
-                                  if (dashboardViewmodel.dashboardStats != null)
-                                    dashboardStatsCard(
-                                      stats: dashboardViewmodel.dashboardStats!,
-                                    ),
-                                ],
+                                if (dashboardViewmodel.dashboardStats != null)
+                                  dashboardStatsCard(
+                                    stats: dashboardViewmodel.dashboardStats!,
+                                  ),
+
                                 containerWidget(
                                   ImageStrings.templeImage,
                                   AppLocalizations.of(
@@ -319,6 +317,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
+
+              if (dashboardViewmodel.logoutLoading)
+                Center(
+                  child: CircularProgressIndicator(
+                    color: ColorConstant.buttonColor,
+                  ),
+                ),
             ],
           ),
         ),
