@@ -667,7 +667,7 @@ class ShimmerUserCard extends StatelessWidget {
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Container(
           height: 70,
           decoration: BoxDecoration(

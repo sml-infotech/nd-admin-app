@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
+import 'package:nammadaiva_dashboard/Screens/notification/notification_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -12,29 +16,34 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  late NotificationListViewmodel viewModel;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: ColorConstant.buttonColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: _buildAppBar(),
+    viewModel = Provider.of<NotificationListViewmodel>(context);
+    return FocusDetector(
+      onFocusGained: () async {
+        await viewModel.fetchNotifications();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: ColorConstant.buttonColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: _buildAppBar(),
+        ),
+        body: ListView.builder(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+          itemCount: viewModel.isLoading ? 9 : 10,
+          itemBuilder: (context, index) {
+            if (viewModel.isLoading) {
+              return const ShimmerUserCard();
+            } else {
+              return notificationCard(index);
+            }
+          },
+        ),
       ),
-      body: SingleChildScrollView(child: 
-      Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 5000,
-            itemBuilder: (context, index) {
-              return notificationCard();
-            },
-          ),
-        ],
-      )),
     );
   }
 
@@ -57,7 +66,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  Widget notificationCard() {
+  Widget notificationCard(int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
       child: Container(
@@ -90,7 +99,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ),
 
-            notificationListCard(),
+            notificationListCard(index),
           ],
         ),
       ),
@@ -117,7 +126,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  Widget notificationListCard() {
+  Widget notificationListCard(int index) {
     return Expanded(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
