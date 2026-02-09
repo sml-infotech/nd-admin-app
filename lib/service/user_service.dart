@@ -12,6 +12,7 @@ import 'package:nammadaiva_dashboard/model/login_model/fcm_post_model/fcm_respon
 import 'package:nammadaiva_dashboard/model/login_model/logout/logout_request_model.dart';
 import 'package:nammadaiva_dashboard/model/login_model/logout/logout_response_modal.dart';
 import 'package:nammadaiva_dashboard/model/login_model/presignedurl/presigned_requestmodel.dart';
+import 'package:nammadaiva_dashboard/model/login_model/statictics_model/dashboard-statistics.dart';
 import 'package:nammadaiva_dashboard/model/login_model/update_payment_status/update_booking.dart';
 import 'package:nammadaiva_dashboard/model/login_model/user_listModel.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
@@ -258,7 +259,7 @@ class UserService {
     }
   }
 
-Future<DeleteS3ModelResponse> updateBooking(
+  Future<DeleteS3ModelResponse> updateBooking(
     BookingCompletionRequest data,
     String bookingId,
   ) async {
@@ -317,6 +318,18 @@ Future<DeleteS3ModelResponse> updateBooking(
       return LogoutResponseModal.fromJson(data);
     } catch (e) {
       print("Auth service decode fails: $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<DashboardStatsResponse> fetchDashBoardData() async {
+    try {
+      final url = UrlConstant.fetchDashboardStats;
+      print('Fetching users: $url');
+      dynamic data = await apiService.get(url);
+      return DashboardStatsResponse.fromJson(data);
+    } catch (e) {
+      print("User service decode fails: $e");
       throw Exception('API failed: $e');
     }
   }

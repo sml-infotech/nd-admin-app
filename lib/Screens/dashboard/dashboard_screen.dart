@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
@@ -13,6 +14,7 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -137,226 +139,265 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    dashboardViewmodel = Provider.of<DashboardViewmodel>(
-      context,
-      listen: false,
-    );
+    dashboardViewmodel = Provider.of<DashboardViewmodel>(context);
 
     AppLocalizations.of(context)!.nammDaivaTitleText;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: ColorConstant.buttonColor,
-        elevation: 0,
-        title: nammaDaivaAppBar(),
-      ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF8F0), Color(0xFFFFF8F0)],
-          ),
+    return FocusDetector(
+      onFocusGained: () async {
+        await dashboardViewmodel.getDashboardData();
+      },
+
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: ColorConstant.buttonColor,
+          elevation: 0,
+          title: nammaDaivaAppBar(),
         ),
-        child: Stack(
-          children: [
-            rightImage(),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      _languageButton('EN', 'en'),
-                      const Text('|'),
-                      _languageButton('KN', 'kn'),
-                      Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.notifications,
-                          color: Colors.black87.withOpacity(0.6),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 16, 0, 20),
-                    child: Column(
+        body: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF8F0), Color(0xFFFFF8F0)],
+            ),
+          ),
+          child: Stack(
+            children: [
+              rightImage(),
+              SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        welcomeText(),
-                        const SizedBox(height: 15),
-
-                        if (token != null && role != null) ...[
-                          Text(
-                            userName ?? "",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: font,
-                            ),
+                        _languageButton('EN', 'en'),
+                        const Text('|'),
+                        _languageButton('KN', 'kn'),
+                        Spacer(),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.notifications,
+                            color: Colors.black87.withOpacity(0.6),
                           ),
-                          const SizedBox(height: 20),
-                        ],
-
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            if (role == "Super Admin" || role == "Admin") ...[
-                              totalTemplesCard(
-                                "200",
-                                "Total Temples",
-                                ImageStrings.templeImage,
-                              ),
-                              totalTemplesCard(
-                                "78",
-                                "Total Sevas",
-                                ImageStrings.sevaimg,
-                              ),
-                              totalTemplesCard(
-                                "120",
-                                "Total Bookings",
-                                ImageStrings.wowtracker,
-                              ),
-                              totalTemplesCard(
-                                "45",
-                                "Total Users",
-                                ImageStrings.transaction,
-                              ),
-                            ],
-                            containerWidget(
-                              ImageStrings.templeImage,
-                              AppLocalizations.of(context)!.templeDetailText,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.templeScreen,
-                              ),
-                            ),
-                            containerWidget(
-                              ImageStrings.sevaimg,
-                              AppLocalizations.of(context)!.sevaText,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.pujaList,
-                              ),
-                            ),
-
-                            if (role == "Super Admin" || role == "Admin")
-                              containerWidget(
-                                ImageStrings.onlineseva,
-                                AppLocalizations.of(context)!.userDetails,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.userDetails,
-                                ),
-                              ),
-
-                            // containerWidget(
-                            //   ImageStrings.ritual,
-                            //   AppLocalizations.of(context)!.updateRequests,
-                            //   () => Navigator.pushNamed(
-                            //     context,
-                            //     StringsRoute.updateRequestsUrl,
-                            //   ),
-                            // ),
-                            containerWidget(
-                              ImageStrings.wowtracker,
-                              AppLocalizations.of(context)!.events,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.eventListScreen,
-                              ),
-                            ),
-
-                            containerWidget(
-                              ImageStrings.wowtracker,
-                              AppLocalizations.of(context)!.bookings,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.bookings,
-                              ),
-                            ),
-
-                            containerWidget(
-                              ImageStrings.ritual,
-                              AppLocalizations.of(context)!.contacts,
-                              () => Navigator.pushNamed(
-                                context,
-                                StringsRoute.contactUs,
-                              ),
-                            ),
-
-                            if (role == "Super Admin")
-                              containerWidget(
-                                ImageStrings.sevaimg,
-                                AppLocalizations.of(context)!.masterTemples,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.master_temple_list,
-                                ),
-                              ),
-
-                            if (role == "Super Admin")
-                              containerWidget(
-                                ImageStrings.sevaimg,
-                                AppLocalizations.of(context)!.mantra,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.mantraList,
-                                ),
-                              ),
-
-                            if (role == "Super Admin")
-                              containerWidget(
-                                ImageStrings.ritual,
-                                AppLocalizations.of(context)!.festivals,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.festivalList,
-                                ),
-                              ),
-
-                            if (role == "Super Admin")
-                              containerWidget(
-                                ImageStrings.ritual,
-                                AppLocalizations.of(context)!.addHighlights,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.highlightUpload,
-                                ),
-                              ),
-
-                            if (role == "Super Admin")
-                              containerWidget(
-                                ImageStrings.sevaimg,
-                                AppLocalizations.of(context)!.blogs,
-                                () => Navigator.pushNamed(
-                                  context,
-                                  StringsRoute.blog_list,
-                                ),
-                              ),
-                          ],
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
 
-            if (dashboardViewmodel.isLoading)
-              Container(
-                color: Colors.black26,
-                child: const Center(child: CircularProgressIndicator()),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 20),
+                      child: Column(
+                        children: [
+                          welcomeText(),
+                          const SizedBox(height: 15),
+
+                          if (token != null && role != null) ...[
+                            Text(
+                              userName ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: font,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                          if (dashboardViewmodel.isLoading)
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              alignment: WrapAlignment.center,
+                              children: List.generate(
+                                6,
+                                (_) => gridItemShimmer(),
+                              ),
+                            )
+                          else if (dashboardViewmodel.dashboardStats != null)
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                if (role == "Super Admin" ||
+                                    role == "Admin") ...[
+                                  totalTemplesCard(
+                                    dashboardViewmodel
+                                            .dashboardStats
+                                            ?.totalTemples
+                                            .toString() ??
+                                        "0",
+                                    "Total Temples",
+                                    ImageStrings.templeImage,
+                                  ),
+                                  totalTemplesCard(
+                                    dashboardViewmodel
+                                            .dashboardStats
+                                            ?.totalTransactionAmount
+                                            .toString() ??
+                                        "0",
+
+                                    "Total Transactions",
+                                    ImageStrings.sevaimg,
+                                  ),
+                                  totalTemplesCard(
+                                    dashboardViewmodel
+                                            .dashboardStats
+                                            ?.totalBookings
+                                            .toString() ??
+                                        "0",
+
+                                    "Total Bookings",
+                                    ImageStrings.wowtracker,
+                                  ),
+                                  totalTemplesCard(
+                                    dashboardViewmodel
+                                            .dashboardStats
+                                            ?.totalBookings
+                                            .toString() ??
+                                        "0",
+
+                                    "Total Bookings",
+                                    ImageStrings.wowtracker,
+                                  ),
+                                  totalTemplesCard(
+                                    dashboardViewmodel
+                                            .dashboardStats
+                                            ?.totalUsers
+                                            .toString() ??
+                                        "0",
+
+                                    "Total Users",
+                                    ImageStrings.transaction,
+                                  ),
+                                ],
+                                containerWidget(
+                                  ImageStrings.templeImage,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.templeDetailText,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.templeScreen,
+                                  ),
+                                ),
+                                containerWidget(
+                                  ImageStrings.sevaimg,
+                                  AppLocalizations.of(context)!.sevaText,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.pujaList,
+                                  ),
+                                ),
+
+                                if (role == "Super Admin" || role == "Admin")
+                                  containerWidget(
+                                    ImageStrings.onlineseva,
+                                    AppLocalizations.of(context)!.userDetails,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.userDetails,
+                                    ),
+                                  ),
+
+                                // containerWidget(
+                                //   ImageStrings.ritual,
+                                //   AppLocalizations.of(context)!.updateRequests,
+                                //   () => Navigator.pushNamed(
+                                //     context,
+                                //     StringsRoute.updateRequestsUrl,
+                                //   ),
+                                // ),
+                                containerWidget(
+                                  ImageStrings.wowtracker,
+                                  AppLocalizations.of(context)!.events,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.eventListScreen,
+                                  ),
+                                ),
+
+                                containerWidget(
+                                  ImageStrings.wowtracker,
+                                  AppLocalizations.of(context)!.bookings,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.bookings,
+                                  ),
+                                ),
+
+                                containerWidget(
+                                  ImageStrings.ritual,
+                                  AppLocalizations.of(context)!.contacts,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.contactUs,
+                                  ),
+                                ),
+
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.sevaimg,
+                                    AppLocalizations.of(context)!.masterTemples,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.master_temple_list,
+                                    ),
+                                  ),
+
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.sevaimg,
+                                    AppLocalizations.of(context)!.mantra,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.mantraList,
+                                    ),
+                                  ),
+
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.ritual,
+                                    AppLocalizations.of(context)!.festivals,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.festivalList,
+                                    ),
+                                  ),
+
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.ritual,
+                                    AppLocalizations.of(context)!.addHighlights,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.highlightUpload,
+                                    ),
+                                  ),
+
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.sevaimg,
+                                    AppLocalizations.of(context)!.blogs,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.blog_list,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -438,12 +479,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black54,
@@ -565,4 +606,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+}
+
+Widget gridItemShimmer() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      height: 156,
+      width: 165,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+  );
 }
