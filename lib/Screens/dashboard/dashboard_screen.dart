@@ -152,7 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Scaffold(
         backgroundColor: ColorConstant.buttonColor,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(75),
+          preferredSize: Size.fromHeight(90),
           child: dashboardHeader(),
         ),
         body: Container(
