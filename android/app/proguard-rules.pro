@@ -20,20 +20,7 @@
 -dontwarn proguard.annotation.Keep
 -dontwarn proguard.annotation.KeepClassMembers
 
-# --- General Application Rules ---
-# Keep all classes in your main application package (broad rule)
--keep class com.sml.risen.models.** { *; }
--keep class com.example.risen.models.** { *; }
 
-# If you have specific model packages, be more granular:
-#-keep class com.sml.risen.model.** { *; }
-#-keep class com.sml.risen.data.model.** { *; }
-# And if your "Church" model is in such a package, make sure it's covered.
-
-# --- Keep Room Type Converters and their anonymous inner classes (CRITICAL for your issue) ---
-#-keep class com.sml.risen.database.Converters { *; }
--keep class com.sml.risen.database.Converters$* { *; }
--keep class com.example.risen.database.Converters$* { *; }
 
 # --- Keep Gson generic type info (IMPORTANT!) ---
 -keepattributes Signature

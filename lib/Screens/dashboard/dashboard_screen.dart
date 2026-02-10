@@ -172,7 +172,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 20),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                       child: Column(
                         children: [
                           if (dashboardViewmodel.isLoading)
@@ -339,7 +339,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               roundedBackground(userName),
               const SizedBox(width: 12),
@@ -359,7 +359,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Row(
                       children: [
                         Text(
-                          userName ?? '',
+                          capitalizeFirst(userName!),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -413,6 +413,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  String capitalizeFirst(String value) {
+    if (value.isEmpty) return '';
+    return value[0].toUpperCase() + value.substring(1).toLowerCase();
+  }
+
   Widget roundedBackground(String? name) {
     String initial = "";
     if (name != null && name.isNotEmpty) {
@@ -454,18 +459,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget dashboardStatsCard({required DashboardStats stats}) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 25),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black.withOpacity(0.1),
+          //     blurRadius: 6,
+          //     offset: const Offset(0, 2),
+          //   ),
+          // ],
         ),
         child: Column(
           children: [
@@ -484,9 +492,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
-
-            _horizontalDivider(),
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [_horizontalDivider(), _horizontalDivider()],
+            ),
             Row(
               children: [
                 _gridItem(
@@ -496,8 +505,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 _verticalDivider(),
                 _gridItem(
-                  title: AppLocalizations.of(context)!.totalUsers,
-                  count: stats.totalUsers.toString(),
+                  title: role == "Super Admin"
+                      ? AppLocalizations.of(context)!.totalUsers
+                      : AppLocalizations.of(context)!.totalPoojas,
+                  count: role == "Super Admin"
+                      ? stats.totalUsers.toString()
+                      : stats.totalPoojas.toString(),
                   image: ImageStrings.transaction,
                 ),
               ],
@@ -558,12 +571,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _horizontalDivider() {
-    return Divider(
-      indent: 16,
-      thickness: 1,
-      color: Colors.grey[400],
-      endIndent: 16,
-    );
+    return Container(height: 1.2, width: 150, color: Colors.grey[400]);
   }
 
   Widget _verticalDivider() {
@@ -657,7 +665,7 @@ Widget gridItemShimmer() {
     baseColor: Colors.grey.shade300,
     highlightColor: Colors.grey.shade100,
     child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(16, 20, 0, 0),
       child: Container(
         height: 156,
         width: 165,

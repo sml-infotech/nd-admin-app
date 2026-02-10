@@ -707,6 +707,12 @@ abstract class AppLocalizations {
   /// **'Total Users'**
   String get totalUsers;
 
+  /// No description provided for @totalPoojas.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Poojas'**
+  String get totalPoojas;
+
   /// No description provided for @start_time.
   ///
   /// In en, this message translates to:

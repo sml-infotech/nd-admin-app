@@ -315,6 +315,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get totalUsers => 'ಒಟ್ಟು ಬಳಕೆದಾರರು';
 
   @override
+  String get totalPoojas => 'ಒಟ್ಟು ಪೂಜೆಗಳು';
+
+  @override
   String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
 
   @override

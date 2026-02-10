@@ -315,6 +315,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalUsers => 'Total Users';
 
   @override
+  String get totalPoojas => 'Total Poojas';
+
+  @override
   String get start_time => 'Start Time';
 
   @override

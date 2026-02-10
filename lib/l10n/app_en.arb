@@ -103,6 +103,7 @@
   "totalTransactions": "Total Transactions",
   "totalBookings": "Total Bookings",
   "totalUsers": "Total Users",
+  "totalPoojas":"Total Poojas",
   "start_time": "Start Time",
   "end_time": "End Time",
   "create": "Create",
