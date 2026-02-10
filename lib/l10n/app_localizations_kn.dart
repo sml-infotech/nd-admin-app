@@ -249,6 +249,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get bookings => 'ಬುಕಿಂಗ್‌ಗಳು';
 
   @override
+  String get optional_temple => 'ದೇವಾಲಯ (ಐಚ್ಛಿಕ)';
+
+  @override
   String get no_bookings_found => 'ಯಾವುದೇ ಬುಕಿಂಗ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
@@ -300,6 +303,21 @@ class AppLocalizationsKn extends AppLocalizations {
   String get users => 'ಬಳಕೆದಾರರು';
 
   @override
+  String get totalTemples => 'ಒಟ್ಟು ದೇವಾಲಯಗಳು';
+
+  @override
+  String get totalTransactions => 'ಒಟ್ಟು ವ್ಯವಹಾರಗಳು';
+
+  @override
+  String get totalBookings => 'ಒಟ್ಟು ಬುಕ್ಕಿಂಗ್‌ಗಳು';
+
+  @override
+  String get totalUsers => 'ಒಟ್ಟು ಬಳಕೆದಾರರು';
+
+  @override
+  String get totalPoojas => 'ಒಟ್ಟು ಪೂಜೆಗಳು';
+
+  @override
   String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
 
   @override
@@ -319,6 +337,12 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get add_benefit => 'ಲಾಭವನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get notification => 'ಅಧಿಸೂಚನೆಗಳು';
+
+  @override
+  String get welcome => 'ಮತ್ತೆ ಸ್ವಾಗತ,';
 
   @override
   String get state => 'ರಾಜ್ಯ';

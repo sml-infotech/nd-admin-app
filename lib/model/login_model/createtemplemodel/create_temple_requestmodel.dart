@@ -79,6 +79,8 @@ class Translation {
   final String description;
   final List<String> deities;
   final String? architecture;
+  final String? taluk;
+  final String? village_name;
 
 Translation({
     required this.languageCode,
@@ -89,6 +91,8 @@ Translation({
     required this.description,
     required this.deities,
     this.architecture,
+    this.taluk,
+    this.village_name,
   });
 factory Translation.fromJson(Map<String, dynamic> json) {
   return Translation(
@@ -102,6 +106,8 @@ factory Translation.fromJson(Map<String, dynamic> json) {
         ? List<String>.from(json['deities'])
         : <String>[],
     architecture: json['architecture'],
+    taluk: json['taluk'],
+    village_name: json['village_name'],
   );
 }
 
@@ -116,6 +122,8 @@ factory Translation.fromJson(Map<String, dynamic> json) {
       'description': description,
       'deities': deities,
       'architecture': architecture,
+      'taluk': taluk,
+      'village_name': village_name,
     };
   }
 }

@@ -24,6 +24,8 @@ class ImageStrings {
     static const String leftImage='assets/leftflower.png';
 
   static const String rightimage='assets/rightflower.png';
+    static const String splashImage='assets/splash.png';
+
 
 
 

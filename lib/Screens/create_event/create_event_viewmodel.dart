@@ -156,10 +156,10 @@ class CreateEventViewmodel extends ChangeNotifier {
   }
 
   Future<bool> validateEvent() async {
-    if (selectedTemple == null) {
-      message = "Please select a temple.";
-      return false;
-    }
+    // if (selectedTemple == null) {
+    //   message = "Please select a temple.";
+    //   return false;
+    // }
     if (eventController.text.isEmpty) {
       message = "Please enter event name.";
       return false;

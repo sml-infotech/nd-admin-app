@@ -150,9 +150,7 @@ class PujaData {
                 .toList()
           : [],
       benefits: json['benefits'] != null
-          ? (json['benefits'] as List)
-                .map((item) => Translation.fromJson(item).description)
-                .toList()
+          ? List<String>.from(json['benefits'])
           : [],
     );
   }

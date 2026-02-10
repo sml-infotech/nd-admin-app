@@ -35,11 +35,11 @@ class _EventListScreenState extends State<EventListScreen> {
       await viewmodel.getTemples();
 
       if (viewmodel.templeData.isNotEmpty) {
-        final firstTemple = viewmodel.templeData.first;
-        viewmodel.setSelectedTemple(firstTemple);
-        viewmodel.selectedTempleId = firstTemple.id;
+        // final firstTemple = viewmodel.templeData.first;
+        // viewmodel.setSelectedTemple(firstTemple);
+        // viewmodel.selectedTempleId = firstTemple.id;
 
-        await viewmodel.fetchEvents(firstTemple.id, true);
+        await viewmodel.fetchEvents("", true);
         setState(() {
           filteredEvents = viewmodel.events;
         });

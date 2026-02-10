@@ -59,7 +59,12 @@ class _UpdateTempleKnState extends State<UpdateTempleKn> {
         knTranslation.description ?? '';
     viewModel.templeCityInKannadam.text = knTranslation.city ?? '';
     viewModel.templeStateInKannadam.text = knTranslation.state ?? '';
+    viewModel.templeArchitectureInKannadam.text =
+        knTranslation.architecture ?? '';
 
+    print(
+      "Prefilled templeArchitectureInKannadam Name in Kannada: ${viewModel.templeArchitectureInKannadam.text}",
+    );
     // Set the TextEditingController for Deities in Kannada
     viewModel.templeDeitiesInKannadam.text = viewModel
         .prefilledTemplesInKannadam
@@ -152,6 +157,19 @@ class _UpdateTempleKnState extends State<UpdateTempleKn> {
                               labelText: "",
                               isFromPassword: false,
                               controller: viewModel.templeStateInKannadam,
+                            ),
+
+                            titleTextWidget(
+                              AppLocalizations.of(context)!.architecture,
+                            ),
+                            const SizedBox(height: 8),
+                            CommonTextField(
+                              hintText: "",
+                              labelText:
+                                  "Enter architecture details in Kannada",
+                              isFromPassword: false,
+                              controller:
+                                  viewModel.templeArchitectureInKannadam,
                             ),
                             titleTextWidget(
                               AppLocalizations.of(context)!.deitiestemple,

@@ -15,6 +15,7 @@ import 'package:nammadaiva_dashboard/Screens/mantra/create_mantra_viewmodel.dart
 import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list_viewmodel.dart';
+import 'package:nammadaiva_dashboard/Screens/notification/notification_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Screens/update_requests/update_request_viewmodel.dart';
@@ -45,7 +46,7 @@ class ProviderWidget extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
     final role = prefs.getString('userRole');
-   
+
     print(">>>>>>>>>>$token");
     print(">>>>>>>>>>>$role");
     return token != null && token.isNotEmpty;
@@ -57,7 +58,7 @@ class ProviderWidget extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LocaleProvider(),),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (context) => LoginViewModel()),
         ChangeNotifierProvider(create: (context) => TempleDetailViewmodel()),
         ChangeNotifierProvider(create: (context) => OtpViewmodel()),
@@ -82,7 +83,10 @@ class ProviderWidget extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CreateMasterViewmodel()),
         ChangeNotifierProvider(create: (_) => CreateBlogViewmodel()),
         ChangeNotifierProvider(create: (_) => ListBlogsViewmodel()),
-        
+        ChangeNotifierProvider(
+          create: (context) => NotificationListViewmodel(),
+        ),
+
         ChangeNotifierProvider(
           create: (context) => MasterTempleListViewmodel(),
         ),
@@ -91,7 +95,6 @@ class ProviderWidget extends StatelessWidget {
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
           return MaterialApp(
-            
             navigatorKey: navigatorKey,
             locale: localeProvider.locale,
             localizationsDelegates: const [

@@ -375,6 +375,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             DatePickerField(
               title: AppLocalizations.of(context)!.fromDate,
               selectedDate: viewmodel.selectedStartDate,
+              isFromPooja: true,
               onDatePicked: (date) => setState(() {
                 viewmodel.selectedStartDate = date;
                 viewmodel.selectedEndDate = null;
@@ -383,6 +384,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             DatePickerField(
               title: AppLocalizations.of(context)!.toDate,
               selectedDate: viewmodel.selectedEndDate,
+              isFromPooja: true,
+
               fromDate: viewmodel.selectedStartDate,
               onDatePicked: (date) => setState(() {
                 viewmodel.selectedEndDate = date;
@@ -493,107 +496,43 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
   }
 
   Widget cutOffDropDown() {
-    return GestureDetector(
-      onTap: () => _showCutOffBottomSheet(context),
-      child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey.shade400),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              viewmodel.selectedCutoffOption,
-              style: TextStyle(
-                fontFamily: font,
-                fontSize: 13,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(width: 6),
-            const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black),
-          ],
-        ),
+    return Expanded(
+      child: CommonTextField(
+        hintText: AppLocalizations.of(context)!.cutOffNoticeText,
+        labelText: AppLocalizations.of(context)!.cutOffNoticeText,
+        controller: viewmodel.cutOffContoller,
+        isFromPassword: false,
+        isFromPhone: true,
       ),
     );
-  }
 
-  void _showCutOffBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        final height = MediaQuery.of(context).size.height * 0.5;
-        return SafeArea(
-          child: SizedBox(
-            height: height,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    cutOffBar(),
-                    const SizedBox(height: 16),
-                    cutOffBarSelectCutOffNoticeText(),
-                    const SizedBox(height: 10),
-                    Divider(color: Colors.grey[300]),
-                    const SizedBox(height: 8),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: viewmodel.cutOffDays.length,
-                      separatorBuilder: (_, __) =>
-                          Divider(color: Colors.grey.shade300),
-                      itemBuilder: (context, index) {
-                        final option = viewmodel.cutOffDays[index];
-                        viewmodel.cutOffDay = int.parse(option);
-                        final isSelected =
-                            viewmodel.selectedCutoffOption == option;
-                        return ListTile(
-                          title: Text(
-                            option,
-                            style: TextStyle(
-                              fontFamily: font,
-                              color: Colors.black,
-                              fontWeight: isSelected ? FontWeight.w600 : null,
-                            ),
-                          ),
-                          trailing: isSelected
-                              ? const Icon(
-                                  Icons.check,
-                                  color: ColorConstant.primaryColor,
-                                )
-                              : null,
-                          onTap: () {
-                            setState(() {
-                              viewmodel.selectedCutoffOption = option;
-                            });
-                            Navigator.pop(context);
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    // GestureDetector(
+    //   onTap: () => _showCutOffBottomSheet(context),
+    //   child: Container(
+    //     height: 38,
+    //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(10),
+    //       border: Border.all(color: Colors.grey.shade400),
+    //       color: Colors.white,
+    //     ),
+    //     child: Row(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: [
+    //         Text(
+    //           viewmodel.selectedCutoffOption,
+    //           style: TextStyle(
+    //             fontFamily: font,
+    //             fontSize: 13,
+    //             color: Colors.black,
+    //           ),
+    //         ),
+    //         const SizedBox(width: 6),
+    //         const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   Widget cutOffBar() {
@@ -631,15 +570,23 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 FocusScope.of(context).unfocus();
-                Navigator.pushNamed(
-                  context,
-                  StringsRoute.addPujaInkn,
-                  arguments: widget.pujaArgumrnts,
+                final isValid = await viewmodel.validateFormForCreatePoojaEn(
+                  false,
                 );
-                final isUpdate =
-                    widget.pujaArgumrnts != null &&
-                    widget.pujaArgumrnts!.puja_id.isNotEmpty;
-                // final isValid = await viewmodel.validateForm(isUpdate);
+
+                if (isValid) {
+                  Navigator.pushNamed(
+                    context,
+                    StringsRoute.addPujaInkn,
+                    arguments: widget.pujaArgumrnts,
+                  );
+                  final isUpdate =
+                      widget.pujaArgumrnts != null &&
+                      widget.pujaArgumrnts!.puja_id.isNotEmpty;
+                } else {
+                  Fluttertoast.showToast(msg: viewmodel.message);
+                }
+                //
 
                 // if (viewmodel.pujaCreated) {
                 //   Fluttertoast.showToast(

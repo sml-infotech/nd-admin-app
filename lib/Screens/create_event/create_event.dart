@@ -258,8 +258,8 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.temple,
-      labelText: AppLocalizations.of(context)!.temple,
+      hintText: AppLocalizations.of(context)!.optional_temple,
+      labelText: AppLocalizations.of(context)!.optional_temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       selectedValue: viewmodel.selectedTemple?.name,
       paddingSize: 16,

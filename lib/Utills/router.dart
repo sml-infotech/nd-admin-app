@@ -24,6 +24,7 @@ import 'package:nammadaiva_dashboard/Screens/mantra/mantra_list.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/create_master_temple_kn.dart';
 import 'package:nammadaiva_dashboard/Screens/master_temple/master_temple_list.dart';
+import 'package:nammadaiva_dashboard/Screens/notification/notification_list.dart';
 import 'package:nammadaiva_dashboard/Screens/otp/otp_screen.dart';
 import 'package:nammadaiva_dashboard/Screens/puja_list/puja_list.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/puja_booking_kn.dart';
@@ -219,7 +220,7 @@ class AppRouter {
           settings: settings,
           builder: (_) => PujaBookingKn(pujaArgumrnts: args),
         );
-     
+
       case StringsRoute.createEventInKn:
         final EventItem? args = settings.arguments as EventItem?;
         return CupertinoPageRoute(
@@ -233,8 +234,7 @@ class AppRouter {
           builder: (_) => CreateFestivalKn(arguments: args),
         );
 
-        
- case StringsRoute.createMantrainKn:
+      case StringsRoute.createMantrainKn:
         UpdateMantraArguments args =
             settings.arguments as UpdateMantraArguments;
         return CupertinoPageRoute(
@@ -257,7 +257,7 @@ class AppRouter {
         BlogDetails? args = settings.arguments as BlogDetails?;
         return CupertinoPageRoute(
           settings: settings,
-          builder: (_) => CreateBlogScreen( blogs: args,),
+          builder: (_) => CreateBlogScreen(blogs: args),
         );
 
       case StringsRoute.blog_list:
@@ -268,6 +268,9 @@ class AppRouter {
         return CupertinoPageRoute(
           builder: (_) => BlogDetailsScreen(slug_name: args),
         );
+
+      case StringsRoute.notification_screen:
+        return CupertinoPageRoute(builder: (_) => NotificationScreen());
       default:
         throw Exception('Route ${settings.name} not implemented');
     }

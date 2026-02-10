@@ -249,6 +249,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookings => 'Bookings';
 
   @override
+  String get optional_temple => 'Temple (Optional)';
+
+  @override
   String get no_bookings_found => 'No Bookings Found';
 
   @override
@@ -300,6 +303,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get users => 'Users';
 
   @override
+  String get totalTemples => 'Total Temples';
+
+  @override
+  String get totalTransactions => 'Total Transactions';
+
+  @override
+  String get totalBookings => 'Total Bookings';
+
+  @override
+  String get totalUsers => 'Total Users';
+
+  @override
+  String get totalPoojas => 'Total Poojas';
+
+  @override
   String get start_time => 'Start Time';
 
   @override
@@ -319,6 +337,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add_benefit => 'Add Benefit';
+
+  @override
+  String get notification => 'Notifications';
+
+  @override
+  String get welcome => 'Welcome Back,';
 
   @override
   String get state => 'State';
@@ -474,7 +498,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get descriptionText => 'Description : ';
 
   @override
-  String get cutOffNoticeText => 'Select Cut-off Notice';
+  String get cutOffNoticeText => ' Cut-off Notice';
 
   @override
   String get from => 'From: ';

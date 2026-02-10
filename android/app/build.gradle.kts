@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -14,7 +13,7 @@ android {
         applicationId = "com.sml.nammadaiva_dashboard"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
+        versionCode = 4
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -26,16 +25,26 @@ android {
             storePassword = "nammadaiva123"
             keyAlias = "nammadaiva"
             keyPassword = "nammadaiva123"
+            storeType = "PKCS12"
         }
     }
 
     buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release") // ✅ FIXED
-            isMinifyEnabled = false
-            isShrinkResources = false
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            setProguardFiles(
+                listOf(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    file("proguard-rules.pro")
+                )
+            )
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

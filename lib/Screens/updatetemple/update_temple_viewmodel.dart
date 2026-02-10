@@ -25,7 +25,7 @@ class UpdateTempleViewmodel extends ChangeNotifier {
   TextEditingController templeLocationInKannadam = TextEditingController();
   TextEditingController templeDescriptionInKannadam = TextEditingController();
   TextEditingController templeDeitiesInKannadam = TextEditingController();
-  TextEditingController templeArchitectureInKannadam = TextEditingController();
+TextEditingController templeArchitectureInKannadam = TextEditingController();
   TextEditingController templeCityInKannadam = TextEditingController();
   TextEditingController templeStateInKannadam = TextEditingController();
 

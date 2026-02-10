@@ -575,6 +575,12 @@ abstract class AppLocalizations {
   /// **'Bookings'**
   String get bookings;
 
+  /// No description provided for @optional_temple.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple (Optional)'**
+  String get optional_temple;
+
   /// No description provided for @no_bookings_found.
   ///
   /// In en, this message translates to:
@@ -677,6 +683,36 @@ abstract class AppLocalizations {
   /// **'Users'**
   String get users;
 
+  /// No description provided for @totalTemples.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Temples'**
+  String get totalTemples;
+
+  /// No description provided for @totalTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Transactions'**
+  String get totalTransactions;
+
+  /// No description provided for @totalBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Bookings'**
+  String get totalBookings;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Users'**
+  String get totalUsers;
+
+  /// No description provided for @totalPoojas.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Poojas'**
+  String get totalPoojas;
+
   /// No description provided for @start_time.
   ///
   /// In en, this message translates to:
@@ -718,6 +754,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Benefit'**
   String get add_benefit;
+
+  /// No description provided for @notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notification;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back,'**
+  String get welcome;
 
   /// No description provided for @state.
   ///
@@ -1028,7 +1076,7 @@ abstract class AppLocalizations {
   /// No description provided for @cutOffNoticeText.
   ///
   /// In en, this message translates to:
-  /// **'Select Cut-off Notice'**
+  /// **' Cut-off Notice'**
   String get cutOffNoticeText;
 
   /// No description provided for @from.

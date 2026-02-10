@@ -19,6 +19,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final TextEditingController deitiesController = TextEditingController();
   final TextEditingController pujaNameInKannadam = TextEditingController();
   final TextEditingController descriptionInKannadam = TextEditingController();
+  final TextEditingController cutOffContoller = TextEditingController();
 
   final PujaService pujaService = PujaService();
   final TempleService templeService = TempleService();
@@ -46,14 +47,12 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   String? pujaId;
 
-  bool bookingCutoff = false;
   bool priestDakshina = false;
   bool specialReq = false;
   bool hideActive = false;
   bool isLoading = false;
   bool isValid = false;
   bool pujaCreated = false;
-  String selectedCutoffOption = '1';
 
   int page = 1;
   final int limit = 10;
@@ -114,6 +113,38 @@ class CreatePujaViewmodel extends ChangeNotifier {
   int? cutOffDay;
 
   List<TimeSlot> timeSlots = [];
+
+  Future<bool> validateFormForCreatePoojaEn(bool isFromUpdate) async {
+    if (selectedTemple == null) {
+      message = "Please select Temple";
+    }
+    //  else if (deities.isEmpty) {
+    //   message = "Please select Deities";
+    // }
+    else if (pujaName.text.trim().isEmpty) {
+      message = "Please enter Puja name";
+    } else if (description.text.trim().isEmpty) {
+      message = "Please enter description";
+    } else if (!selectedDays.containsValue(true)) {
+      message = "Select at least one day";
+    } else if (fee.text.trim().isEmpty || double.tryParse(fee.text) == null) {
+      print("fee.text ${fee.text}");
+      message = "Enter a valid fee";
+    } else if (maxDevotees.text.trim().isEmpty ||
+        int.tryParse(maxDevotees.text) == null) {
+      message = "Enter valid maximum devotees";
+    } else if (selectedStartDate == null) {
+      message = "Please select a start date";
+    } else if (selectedEndDate == null) {
+      message = "Please select an end date";
+    } else if (timeSlots.isEmpty) {
+      message = "Please add at least one time slot";
+    } else {
+      return true;
+    }
+
+    return false;
+  }
 
   Future<bool> validateForm(bool isFromUpdate) async {
     if (selectedTemple == null) {
@@ -278,7 +309,6 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
       final benefitsList = benefitsEn.toList();
 
-
       final response = await pujaService.cretaPuja(
         selectedTempleId ?? "",
         pujaName.text,
@@ -287,7 +317,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         int.parse(maxDevotees.text),
         double.parse(fee.text),
         uploadedImageUrls,
-        cutOffDay ?? 1,
+        cutOffContoller.text.isNotEmpty ? int.parse(cutOffContoller.text) : 1,
         specialReq,
         selectedStartDate.toString(),
         selectedEndDate.toString(),
@@ -323,6 +353,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> removeS3(String filename) async {
     try {
       isLoading = true;
@@ -331,7 +362,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       if (response.code == 200) {
         print("->>> $response");
         message = "success";
-                isLoading = false;
+        isLoading = false;
 
         notifyListeners();
       } else {
@@ -345,6 +376,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> updatepuja() async {
     try {
       isLoading = true;
@@ -393,7 +425,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
       );
 
       if (response.code == 200) {
-        message = response.message ?? "Success";
+        message = "Pooja updated successfully";
         print("✅ Puja updated successfully: ${response.toJson()}");
         pujaCreated = true;
         await resetForm();
@@ -449,7 +481,6 @@ class CreatePujaViewmodel extends ChangeNotifier {
     // selectedDeities = "";
     selectedDeityId = "";
 
-    bookingCutoff = false;
     priestDakshina = false;
     specialReq = false;
     hideActive = false;
