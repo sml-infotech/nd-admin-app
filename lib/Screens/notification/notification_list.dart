@@ -108,18 +108,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
               width: 6,
               height: 90,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(14),
                   bottomLeft: Radius.circular(14),
                 ),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [Color(0xff008031), Color(0xff00B050)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
               ),
             ),
-            notificationListCard(index),
+            Expanded(child: notificationListCard(index)),
           ],
         ),
       ),
@@ -159,7 +159,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
             horizontal: 16,
             vertical: 8,
           ),
-          leading: Stack(children: [notificationIcon(), roundedBackground()]),
+          leading: Stack(
+            children: [
+              notificationIcon(),
+              viewModel.notifications[index].isRead!
+                  ? const SizedBox()
+                  : roundedBackground(),
+            ],
+          ),
           title: Text(
             viewModel.notifications[index].title ?? "Temple Update",
             style: TextStyle(
@@ -168,35 +175,95 @@ class _NotificationScreenState extends State<NotificationScreen> {
               fontFamily: font,
             ),
           ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              viewModel.notifications[index].body ??
-                  "Your booking has been confirmed successfully.",
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-                fontFamily: font,
-              ),
-            ),
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          subtitle: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  viewModel.notifications[index].body ??
+                      "Your booking has been confirmed successfully.",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black,
+                    fontFamily: font,
+                  ),
+                ),
+              ),
+
               Text(
-                viewModel.notifications[index].createdAt ?? "2h ago",
+                formatNotificationTime(
+                  viewModel.notifications[index].createdAt,
+                ),
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.grey,
                   fontFamily: font,
                 ),
               ),
-              const SizedBox(height: 6),
-              Icon(Icons.chevron_right, size: 18, color: Colors.grey),
             ],
           ),
+          // trailing: Column(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       viewModel.notifications[index].createdAt ?? "2h ago",
+          //       style: TextStyle(
+          //         fontSize: 11,
+          //         color: Colors.grey,
+          //         fontFamily: font,
+          //       ),
+          //     ),
+          //     const SizedBox(height: 6),
+          //     Icon(Icons.chevron_right, size: 18, color: Colors.grey),
+          //   ],
+          // ),
         ),
       ),
     );
   }
+}
+
+String formatNotificationTime(String? dateString) {
+  if (dateString == null || dateString.isEmpty) return '';
+
+  final date = DateTime.tryParse(dateString);
+  if (date == null) return '';
+
+  final now = DateTime.now();
+  final diff = now.difference(date);
+
+  if (diff.inSeconds < 60) {
+    return 'Just now';
+  } else if (diff.inMinutes < 60) {
+    return '${diff.inMinutes} min ago';
+  } else if (diff.inHours < 24) {
+    return '${diff.inHours} h ago';
+  } else if (diff.inDays == 1) {
+    return 'Yesterday';
+  } else if (diff.inDays < 7) {
+    return '${diff.inDays} days ago';
+  } else {
+    return '${date.day.toString().padLeft(2, '0')} '
+        '${_monthName(date.month)} ${date.year}';
+  }
+}
+
+String _monthName(int month) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  return months[month - 1];
 }
