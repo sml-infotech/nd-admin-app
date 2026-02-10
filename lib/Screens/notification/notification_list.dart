@@ -22,7 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     viewModel = Provider.of<NotificationListViewmodel>(context);
     return FocusDetector(
       onFocusGained: () async {
-        viewModel.reset();
+        await viewModel.reset();
         await viewModel.fetchNotifications();
       },
       child: Scaffold(
@@ -31,7 +31,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           backgroundColor: ColorConstant.buttonColor,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: _buildAppBar(),
+          title: _buildAppBar(viewModel),
         ),
         body: ListView.builder(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
@@ -69,13 +69,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(NotificationListViewmodel NotificationListViewmodel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            await NotificationListViewmodel.reset();
+            Navigator.pop(context);
+          },
         ),
         const Spacer(),
         Text(
