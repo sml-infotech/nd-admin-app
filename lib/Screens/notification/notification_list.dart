@@ -22,6 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     viewModel = Provider.of<NotificationListViewmodel>(context);
     return FocusDetector(
       onFocusGained: () async {
+        viewModel.reset();
         await viewModel.fetchNotifications();
       },
       child: Scaffold(
