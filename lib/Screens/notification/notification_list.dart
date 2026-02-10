@@ -107,7 +107,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             Container(
               width: 6,
-              height: 90,
+              height: 100,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(14),
