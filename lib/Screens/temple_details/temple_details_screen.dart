@@ -67,7 +67,9 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                   children: [
                     carouselWidget(),
                     const SizedBox(height: 2),
-                    carouselDotWidget(),
+                    if (widget.arguments.images.length > 1) ...[
+                      carouselDotWidget(),
+                    ],
                     templeNameWidget(widget.arguments.name),
                     const SizedBox(height: 8),
                     templeDetailContactWidget(

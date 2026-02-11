@@ -13,7 +13,8 @@ class CommonDropdownField extends StatefulWidget {
   final bool isTempleSelection;
   final double paddingSize;
   final VoidCallback? onLoadMore;
-  final bool isLoadingMore; // New: To show/hide loader at bottom
+  final bool isLoadingMore;
+  final Function? onClose;
 
   const CommonDropdownField({
     super.key,
@@ -28,6 +29,7 @@ class CommonDropdownField extends StatefulWidget {
     required this.paddingSize,
     this.onLoadMore,
     this.isLoadingMore = false,
+    this.onClose,
   });
 
   @override
@@ -99,7 +101,8 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                       : InkWell(
                           onTap: () {
                             setState(() {
-                              selectedNames = ""; // ✅ clear selection
+                              selectedNames = "";
+                              widget.onClose!();
                             });
                           },
                           child: const Icon(Icons.close, color: Colors.black),
@@ -150,6 +153,7 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                             setState(() {
                               _currentValue = "";
                             });
+                            widget.onClose?.call();
                           },
                           child: const Icon(Icons.close, color: Colors.black),
                         ),

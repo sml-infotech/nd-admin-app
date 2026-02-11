@@ -23,7 +23,7 @@ class EventListViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchEvents(String trempleId,bool reset ) async {
+Future<void> fetchEvents(String trempleId,bool reset ) async {
     if (isLoading || isLoadingMore) return;
 
     if (reset) {

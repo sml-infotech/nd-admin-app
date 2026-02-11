@@ -44,31 +44,28 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
       builder: (context, vm, _) {
         final blogDetail = vm.blogDetails;
 
-        if (vm.isLoading || blogDetail == null) {
-          return Scaffold(body: _buildShimmer());
-        }
-
+        /// Translation logic
         Translation? translation;
 
-        if (blogDetail.translations != null &&
-            blogDetail.translations!.isNotEmpty) {
+        if (blogDetail?.translations != null &&
+            blogDetail!.translations!.isNotEmpty) {
           translation = blogDetail.translations!.firstWhere(
             (t) => t.languageCode == 'kn',
             orElse: () => blogDetail.translations!.first,
           );
-        } else {
-          translation = null;
         }
 
-        final title = viewmodel.language == "kn"
-            ? translation?.name ?? blogDetail.name
-            : blogDetail.name;
-        final description = viewmodel.language == "kn"
-            ? translation?.description ?? blogDetail.description
-            : blogDetail.description;
-        final sections = viewmodel.language == "kn"
-            ? translation?.articleSections ?? blogDetail.articleSections
-            : blogDetail.articleSections;
+        final title = vm.language == "kn"
+            ? translation?.name ?? blogDetail?.name ?? ""
+            : blogDetail?.name ?? "";
+
+        final description = vm.language == "kn"
+            ? translation?.description ?? blogDetail?.description ?? ""
+            : blogDetail?.description ?? "";
+
+        final sections = vm.language == "kn"
+            ? translation?.articleSections ?? blogDetail?.articleSections
+            : blogDetail?.articleSections;
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -79,60 +76,66 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
             title: nammaDaivaAppBar(
               title: AppLocalizations.of(context)!.blogs_details,
               onEdit: () {
-                // Navigate to create blog screen
+                if (blogDetail == null) return;
+
                 Navigator.pushNamed(
                   context,
                   StringsRoute.create_blog,
-                  arguments: BlogDetails(
-                    name: blogDetail.name,
-                    description: blogDetail.description,
-                    image: blogDetail.image,
-                    articleSections: blogDetail.articleSections,
-                    translations: blogDetail.translations,
-                    id: blogDetail.id,
-                    slug: blogDetail.slug,
-                    isActive: true,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  ),
+                  arguments: blogDetail,
                 );
               },
             ),
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (blogDetail.image.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      blogDetail.image,
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                const SizedBox(height: 16),
 
-                Text(
-                  title,
-                  style: AppTextStyles.templeNameDetailsStyle.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          /// ✅ Body handles shimmer OR content
+          body: vm.isLoading || blogDetail == null
+              ? _buildShimmer()
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Blog Image
+                      if (blogDetail.image.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            blogDetail.image,
+                            width: double.infinity,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
+                      const SizedBox(height: 16),
+
+                      /// Title
+                      Text(
+                        title,
+                        style: AppTextStyles.templeNameDetailsStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      /// Description
+                      Text(
+                        description,
+                        style: AppTextStyles.templeNameDetailsStyle,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      /// Sections
+                      if (sections != null)
+                        ...sections
+                            .map((section) => _buildSection(section))
+                            .toList(),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
-
-                Text(description, style: AppTextStyles.templeNameDetailsStyle),
-                const SizedBox(height: 24),
-
-                if (sections != null)
-                  ...sections.map((section) => _buildSection(section)).toList(),
-              ],
-            ),
-          ),
         );
       },
     );
@@ -175,9 +178,8 @@ class _BlogDetailsScreenState extends State<BlogDetailsScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
-            
           },
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),

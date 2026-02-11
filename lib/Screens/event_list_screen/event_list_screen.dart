@@ -180,6 +180,11 @@ class _EventListScreenState extends State<EventListScreen> {
             filteredEvents = viewmodel.events;
           });
         },
+        onClose: () {
+          viewmodel.selectedTemple = null;
+          viewmodel.selectedTempleId = null;
+          viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
+        },
       ),
     );
   }
