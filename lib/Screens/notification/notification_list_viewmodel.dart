@@ -62,4 +62,13 @@ class NotificationListViewmodel extends ChangeNotifier {
       print("Error marking notification as read: $e");
     }
   }
+
+  Future<void> reset() async {
+    notifications.clear();
+    page = 1;
+    hasMore = true;
+    isInitialLoading = true;
+    isLoading = true;
+    notifyListeners();
+  }
 }

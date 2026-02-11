@@ -18,13 +18,20 @@ class NotificationService {
   }
 
   Future<void> markAsRead(String notificationId) async {
-    try {
-      final url = '${UrlConstant.markNotificationRead}/$notificationId';
-      print('Marking notification as read: $url');
-      await apiService.post(url, {});
-    } catch (e) {
+  try {
+    final url = UrlConstant.markNotificationRead;
 
-    }
+    final body = {
+      "notification_ids": [notificationId],
+    };
+
+    print('Marking notification as read: $body');
+
+    await apiService.put(url, body);
+  } catch (e) {
+  }
+
+
 
 }
 }

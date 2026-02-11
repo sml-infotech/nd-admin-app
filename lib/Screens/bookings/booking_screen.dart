@@ -335,9 +335,92 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
               if (request.images.isNotEmpty)
                 poojaImage(request.images.first, request),
+              if (request.sankalpaDetails.isNotEmpty)
+                GestureDetector(
+                  onTap: () => _showSankalpaDialog(request.sankalpaDetails),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: ColorConstant.buttonColor),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "View Sankalpa Details",
+                      style: TextStyle(
+                        fontFamily: font,
+                        fontWeight: FontWeight.bold,
+                        color: ColorConstant.buttonColor,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showSankalpaDialog(List<SankalpaDetail> details) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            "Sankalpa Details",
+            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: details.length,
+              separatorBuilder: (_, __) => const Divider(),
+              itemBuilder: (context, index) {
+                final item = details[index];
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildRow("Name", item.name ?? "-"),
+                    _buildRow("Rashi", item.rashi ?? "-"),
+                    _buildRow("Nakshatra", item.nakshatra ?? "-"),
+                    _buildRow("Gothra", item.gothra ?? "-"),
+                  ],
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Close", style: TextStyle(fontFamily: font)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            "$label: ",
+            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: font),
+          ),
+          Expanded(
+            child: Text(value, style: TextStyle(fontFamily: font)),
+          ),
+        ],
       ),
     );
   }
