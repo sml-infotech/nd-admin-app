@@ -142,8 +142,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     dashboardViewmodel = Provider.of<DashboardViewmodel>(context);
 
-    AppLocalizations.of(context)!.nammDaivaTitleText;
-
     return FocusDetector(
       onFocusGained: () async {
         await dashboardViewmodel.getDashboardData();
