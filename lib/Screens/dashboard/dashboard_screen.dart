@@ -205,6 +205,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     context,
                                     StringsRoute.templeScreen,
                                   ),
+                                  false,
+                                ),
+                                containerWidget(
+                                  ImageStrings.wowtracker,
+                                  AppLocalizations.of(context)!.bookings,
+                                  () => Navigator.pushNamed(
+                                    context,
+                                    StringsRoute.bookings,
+                                  ),
+                                  dashboardViewmodel
+                                              .dashboardStats!
+                                              .totalBookings ==
+                                          0
+                                      ? false
+                                      : true,
                                 ),
                                 containerWidget(
                                   ImageStrings.sevaimg,
@@ -213,6 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     context,
                                     StringsRoute.pujaList,
                                   ),
+                                  false,
                                 ),
 
                                 if (role == "Super Admin" || role == "Admin")
@@ -223,6 +239,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.userDetails,
                                     ),
+                                    false,
                                   ),
 
                                 // containerWidget(
@@ -240,15 +257,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     context,
                                     StringsRoute.eventListScreen,
                                   ),
-                                ),
-
-                                containerWidget(
-                                  ImageStrings.wowtracker,
-                                  AppLocalizations.of(context)!.bookings,
-                                  () => Navigator.pushNamed(
-                                    context,
-                                    StringsRoute.bookings,
-                                  ),
+                                  false,
                                 ),
 
                                 containerWidget(
@@ -258,6 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     context,
                                     StringsRoute.contactUs,
                                   ),
+                                  false,
                                 ),
 
                                 if (role == "Super Admin")
@@ -268,6 +278,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.master_temple_list,
                                     ),
+                                    false,
                                   ),
 
                                 if (role == "Super Admin")
@@ -278,6 +289,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.mantraList,
                                     ),
+                                    false,
                                   ),
 
                                 if (role == "Super Admin")
@@ -288,6 +300,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.festivalList,
                                     ),
+                                    false,
                                   ),
 
                                 if (role == "Super Admin")
@@ -298,6 +311,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.highlightUpload,
                                     ),
+                                    false,
                                   ),
 
                                 if (role == "Super Admin")
@@ -308,6 +322,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       context,
                                       StringsRoute.blog_list,
                                     ),
+                                    false,
                                   ),
                               ],
                             ),
@@ -628,7 +643,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget containerWidget(String image, String title, Function()? onTap) {
+  Widget containerWidget(
+    String image,
+    String title,
+    Function()? onTap,
+    bool bookingAvailable,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -648,7 +668,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   title,
-                  style: AppTextStyles.templeNameStyle,
+                  style: bookingAvailable
+                      ? TextStyle(
+                          color: Colors.green,
+                          fontFamily: font,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        )
+                      : AppTextStyles.templeNameStyle,
                   textAlign: TextAlign.center,
                 ),
               ),
