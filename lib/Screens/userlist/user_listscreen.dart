@@ -88,6 +88,8 @@ class _UserListScreenState extends State<UserListScreen> {
         return FocusDetector(
           onFocusGained: () async {
             // viewModel.resetData();
+            viewModel.resetData();
+            await viewModel.getTemples(reset: true);
             await viewModel.getUsers(reset: true);
           },
           child: Scaffold(
@@ -435,9 +437,7 @@ class _UserListScreenState extends State<UserListScreen> {
             ? viewModel.role.text
             : user.role;
 
-        final bool isAgentOrTemple =
-            currentRole.toLowerCase() == 'agent' ||
-            currentRole.toLowerCase() == 'temple';
+        final bool isAgentOrTemple = currentRole.toLowerCase() == 'temple';
 
         return GestureDetector(
           onTap: () {

@@ -27,12 +27,6 @@ class CreateUserViewmodel extends ChangeNotifier {
   final UserService userService = UserService();
   final TempleService templeService = TempleService();
   bool _isDisposed = false;
-  @override
-  void notifyListeners() {
-    if (!_isDisposed) {
-      super.notifyListeners();
-    }
-  }
 
   Future<void> validateUser() async {
     String name = nameController.text.trim();
@@ -108,17 +102,14 @@ class CreateUserViewmodel extends ChangeNotifier {
   }
 
   Future<void> getTemples({bool reset = false}) async {
-    // 1. Prevent multiple simultaneous calls
+    if (_isDisposed) return;
     if (isLoading) return;
 
     if (reset) {
       _templeData.clear();
       templeList.clear();
       page = 1;
-      isLoading = true; // Show main loader for first time/reset
-    } else {
-      // If we are paginating, we use a different flag or just skip main loader
-      // You could add an 'isFetchingMore' bool here if you want a bottom spinner
+      isLoading = true;
     }
 
     notifyListeners();
@@ -126,10 +117,11 @@ class CreateUserViewmodel extends ChangeNotifier {
     try {
       final response = await templeService.getTemples(page: page, limit: limit);
 
+      if (_isDisposed) return; // 🔥 IMPORTANT
+
       if (response.data != null && response.data!.isNotEmpty) {
         _templeData.addAll(response.data!);
 
-        // Map each Temple to a Map with id and name
         templeList = _templeData.map((t) {
           return {
             'id': t.id,
@@ -142,8 +134,10 @@ class CreateUserViewmodel extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error: $e");
     } finally {
-      isLoading = false;
-      notifyListeners();
+      if (!_isDisposed) {
+        isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -174,5 +168,16 @@ class CreateUserViewmodel extends ChangeNotifier {
     selectedTempleId = getTempleIdByName(name ?? "");
     print("Selected Temple: Name=$selectedTempleName, ID=$selectedTempleId");
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    role.dispose();
+    phoneController.dispose();
+    super.dispose();
   }
 }
