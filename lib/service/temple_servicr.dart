@@ -17,7 +17,7 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 class TempleService {
   final HttpApiService apiService = HttpApiService();
   Future<TempleResponse> getTemples({
-    int page = 1,
+int page = 1,
     int limit = 10,
     String search = "",
     String language = "kn",

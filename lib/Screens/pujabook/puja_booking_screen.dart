@@ -154,7 +154,6 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       "Sat": true,
       "Sun": true,
     };
-    
   }
 
   Future<void> _pickImages() async {
@@ -220,7 +219,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
               ],
             ),
             _buildResetButton(),
-            if (viewmodel.isLoading)
+            if (viewmodel.isInitialLoading)
               Positioned.fill(
                 child: Container(
                   color: Colors.black.withOpacity(0.4),
@@ -294,6 +293,11 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
         setState(() {});
       },
+      isLoadingMore: viewmodel.isLoadingMore,
+      onLoadMore: () {
+        viewmodel.getTemples();
+      },
+      refreshListenable: viewmodel,
     );
   }
 

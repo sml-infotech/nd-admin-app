@@ -15,6 +15,7 @@ class CommonDropdownField extends StatefulWidget {
   final VoidCallback? onLoadMore;
   final bool isLoadingMore;
   final Function? onClose;
+  final Listenable? refreshListenable; // Add this
 
   const CommonDropdownField({
     super.key,
@@ -30,6 +31,7 @@ class CommonDropdownField extends StatefulWidget {
     this.onLoadMore,
     this.isLoadingMore = false,
     this.onClose,
+    this.refreshListenable, // Add this
   });
 
   @override
@@ -183,7 +185,6 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        // ✅ Use StatefulBuilder to refresh the internal state of the sheet
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setSheetState) {
             return DraggableScrollableSheet(
@@ -194,17 +195,15 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
               builder: (context, scrollController) {
                 return NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification scrollInfo) {
-                    // Trigger onLoadMore when near the bottom
                     if (scrollInfo.metrics.pixels >=
                         scrollInfo.metrics.maxScrollExtent - 50) {
                       if (!widget.isLoadingMore) {
                         widget.onLoadMore?.call();
-
-                        // ✅ Force the sheet to rebuild to show new items from widget.items
+                        // This triggers the loading spinner immediately
                         setSheetState(() {});
                       }
                     }
-                    return true;
+                    return false;
                   },
                   child: Column(
                     children: [
@@ -221,50 +220,55 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                       ),
                       const Divider(),
                       Expanded(
-                        child: ListView.builder(
-                          controller: scrollController,
-                          // Use widget.items directly; it stays updated because
-                          // the parent screen rebuilds the CommonDropdownField
-                          itemCount:
-                              widget.items.length +
-                              (widget.isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == widget.items.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                        // ✅ THIS IS THE KEY: It listens to your ViewModel updates
+                        child: AnimatedBuilder(
+                          animation:
+                              widget.refreshListenable ?? ChangeNotifier(),
+                          builder: (context, _) {
+                            return ListView.builder(
+                              controller: scrollController,
+                              itemCount:
+                                  widget.items.length +
+                                  (widget.isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == widget.items.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                final item = widget.items[index];
+                                final name = item.toString();
+                                final isSelected = _currentValue == name;
+
+                                return ListTile(
+                                  title: Text(
+                                    name,
+                                    style: TextStyle(
+                                      fontFamily: font,
+                                      fontSize: 15,
+                                      color: isSelected
+                                          ? ColorConstant.primaryColor
+                                          : Colors.black,
+                                    ),
                                   ),
-                                ),
-                              );
-                            }
-
-                            final item = widget.items[index];
-                            final name = item.toString();
-                            final isSelected = _currentValue == name;
-
-                            return ListTile(
-                              title: Text(
-                                name,
-                                style: TextStyle(
-                                  fontFamily: font,
-                                  fontSize: 15,
-                                  color: isSelected
-                                      ? ColorConstant.primaryColor
-                                      : Colors.black,
-                                ),
-                              ),
-                              trailing: isSelected
-                                  ? const Icon(
-                                      Icons.check,
-                                      color: ColorConstant.primaryColor,
-                                    )
-                                  : null,
-                              onTap: () {
-                                setState(() => _currentValue = name);
-                                widget.onChanged?.call(name);
-                                Navigator.pop(context);
+                                  trailing: isSelected
+                                      ? const Icon(
+                                          Icons.check,
+                                          color: ColorConstant.primaryColor,
+                                        )
+                                      : null,
+                                  onTap: () {
+                                    setState(() => _currentValue = name);
+                                    widget.onChanged?.call(name);
+                                    Navigator.pop(context);
+                                  },
+                                );
                               },
                             );
                           },

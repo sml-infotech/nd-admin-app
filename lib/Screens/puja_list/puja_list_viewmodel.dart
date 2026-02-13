@@ -15,7 +15,7 @@ class PujaListViewmodel extends ChangeNotifier {
   List<Temple> templeData = [];
   List<String> templeList = [];
 
-  bool isLoading = true;
+  bool isLoading = false;
   bool isLoadingMore = false;
   bool hasMorePujas = true;
   bool isToggling = false;
@@ -82,6 +82,8 @@ class PujaListViewmodel extends ChangeNotifier {
   }
 
   Future<void> getTemples({bool reset = false}) async {
+    if (isLoading || isFetchingNextPage) return; // ✅ extra protection
+
     if (reset) {
       _currentPage = 1;
       hasNextPage = true;
@@ -105,7 +107,7 @@ class PujaListViewmodel extends ChangeNotifier {
         templeData.addAll(response.data!);
 
         templeList = templeData.map((t) => t.name).toList();
-
+        notifyListeners();
         if (response.data!.length < 20) {
           hasNextPage = false;
         } else {
