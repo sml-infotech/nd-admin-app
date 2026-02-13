@@ -159,7 +159,7 @@ class _TempleScreenState extends State<TempleScreen> {
             onPressed: () async {
               viewModel!.searchController.text = "";
               await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-              await viewModel?.resetAndFetch();
+              await viewModel?.reset();
             },
             icon: const Icon(Icons.add, color: Colors.white),
           )
