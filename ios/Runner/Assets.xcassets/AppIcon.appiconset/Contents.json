@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "NammaDaivaLogo.png",
+      "filename" : "Group115.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "NammaDaivaLogo 1.png",
+      "filename" : "Group115 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "NammaDaivaLogo 2.png",
+      "filename" : "Group115 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
