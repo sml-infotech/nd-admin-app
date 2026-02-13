@@ -15,7 +15,8 @@ class CommonDropdownField extends StatefulWidget {
   final VoidCallback? onLoadMore;
   final bool isLoadingMore;
   final Function? onClose;
-  final Listenable? refreshListenable; // Add this
+  final Listenable? refreshListenable;
+  final bool? isFromPooja;
 
   const CommonDropdownField({
     super.key,
@@ -31,7 +32,8 @@ class CommonDropdownField extends StatefulWidget {
     this.onLoadMore,
     this.isLoadingMore = false,
     this.onClose,
-    this.refreshListenable, // Add this
+    this.refreshListenable,
+    this.isFromPooja,
   });
 
   @override
@@ -150,6 +152,8 @@ class _CommonDropdownFieldState extends State<CommonDropdownField> {
                   ),
                   suffixIcon: (_currentValue?.isEmpty ?? true)
                       ? const Icon(Icons.arrow_drop_down, color: Colors.black)
+                      : widget.isFromPooja == true
+                      ? SizedBox()
                       : InkWell(
                           onTap: () {
                             setState(() {

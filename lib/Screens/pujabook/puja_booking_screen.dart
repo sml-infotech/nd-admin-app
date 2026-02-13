@@ -298,6 +298,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         viewmodel.getTemples();
       },
       refreshListenable: viewmodel,
+      isFromPooja: true,
     );
   }
 
