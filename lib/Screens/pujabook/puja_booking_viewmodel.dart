@@ -490,7 +490,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     fromTime = null;
     toTime = null;
     timeSlots = [];
-    notifyListeners();
+    // notifyListeners();
     deitiesListEn = [];
     selectedDeitiesEn = [];
     selectedDeitiesKn = [];
@@ -511,7 +511,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     cutOffDay = 1;
     deitiesOptionsEn = [];
     deitiesOptionsKn = [];
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setSelectedTemple(Temple temple, {List<String>? initialDeitiesEn}) {

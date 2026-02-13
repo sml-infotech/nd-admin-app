@@ -157,7 +157,7 @@ class PujaListViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset() {
+  Future<void> reset({bool skipNotify = false}) async {
     pujaList = [];
     pujaDataForActive = [];
     templeData = [];
@@ -171,11 +171,14 @@ class PujaListViewmodel extends ChangeNotifier {
     _currentPage = 1;
     _itemsPerPage = 10;
 
-    selectedTemple =null;
+    selectedTemple = null;
     templeId = '';
     message = '';
     isActive = false;
     print(">-------->>>>>");
-    notifyListeners();
+    if (!skipNotify) {
+      notifyListeners();
+    }
+    return;
   }
 }

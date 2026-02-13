@@ -143,6 +143,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
   @override
   void dispose() {
+    super.dispose();
     viewmodel.resetForm();
     viewmodel.selectedDays = {
       "Mon": true,
@@ -153,7 +154,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       "Sat": true,
       "Sun": true,
     };
-    super.dispose();
+    
   }
 
   Future<void> _pickImages() async {
