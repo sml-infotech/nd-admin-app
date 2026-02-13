@@ -499,8 +499,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 _verticalDivider(),
                 _gridItem(
-                  title: AppLocalizations.of(context)!.totalTransactions,
-                  count: stats.totalTransactionAmount.toString(),
+                  title: AppLocalizations.of(context)!.totalPoojas,
+                  count: stats.totalPoojas.toString(),
                   image: ImageStrings.sevaimg,
                 ),
               ],
@@ -516,16 +516,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   count: stats.totalBookings.toString(),
                   image: ImageStrings.wowtracker,
                 ),
-                _verticalDivider(),
-                _gridItem(
-                  title: role == "Super Admin"
-                      ? AppLocalizations.of(context)!.totalUsers
-                      : AppLocalizations.of(context)!.totalPoojas,
-                  count: role == "Super Admin"
-                      ? stats.totalUsers.toString()
-                      : stats.totalPoojas.toString(),
-                  image: ImageStrings.transaction,
-                ),
+                if (role == "Super Admin") ...[
+                  _verticalDivider(),
+                  _gridItem(
+                    title: role == "Super Admin"
+                        ? AppLocalizations.of(context)!.totalUsers
+                        : AppLocalizations.of(context)!.totalPoojas,
+                    count: role == "Super Admin"
+                        ? stats.totalUsers.toString()
+                        : stats.totalPoojas.toString(),
+                    image: ImageStrings.transaction,
+                  ),
+                ],
               ],
             ),
           ],
