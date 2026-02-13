@@ -154,7 +154,7 @@ class _CreateFestivalState extends State<CreateFestival> {
                             ),
                             SizedBox(height: screenHeight * 0.02),
                             dateWidget(),
-                            timePickerWidget(),
+                            // timePickerWidget(),
                             SizedBox(height: screenHeight * 0.02),
                             _buildImagePicker(),
                             SizedBox(height: screenHeight * 0.01),
@@ -273,17 +273,17 @@ class _CreateFestivalState extends State<CreateFestival> {
           selectedDate: viewmodel.selectedStartDate,
           onDatePicked: (date) => setState(() {
             viewmodel.selectedStartDate = date;
-            viewmodel.selectedEndDate = null;
+            print("===========${viewmodel.selectedStartDate}");
           }),
         ),
-        DatePickerField(
-          title: AppLocalizations.of(context)!.toDate,
-          selectedDate: viewmodel.selectedEndDate,
-          fromDate: viewmodel.selectedStartDate,
-          onDatePicked: (date) => setState(() {
-            viewmodel.selectedEndDate = date;
-          }),
-        ),
+        // DatePickerField(
+        //   title: AppLocalizations.of(context)!.toDate,
+        //   selectedDate: viewmodel.selectedEndDate,
+        //   fromDate: viewmodel.selectedStartDate,
+        //   onDatePicked: (date) => setState(() {
+        //     viewmodel.selectedEndDate = date;
+        //   }),
+        // ),
       ],
     );
   }
