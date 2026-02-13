@@ -26,6 +26,13 @@ class CreateUserViewmodel extends ChangeNotifier {
   final int limit = 10;
   final UserService userService = UserService();
   final TempleService templeService = TempleService();
+  bool _isDisposed = false;
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
+  }
 
   Future<void> validateUser() async {
     String name = nameController.text.trim();
@@ -87,16 +94,12 @@ class CreateUserViewmodel extends ChangeNotifier {
       if (response.code == 201) {
         message = response.message!;
         isCreateUserSuccess = true;
-        notifyListeners();
       } else if (response.code == 409) {
         message = response.error ?? "";
-        notifyListeners();
       } else {
         message = "Some error occurred";
-        notifyListeners();
       }
       isLoading = false;
-      notifyListeners();
     } catch (e) {
       message = "Something went wrong";
       isLoading = false;
@@ -104,45 +107,45 @@ class CreateUserViewmodel extends ChangeNotifier {
     }
   }
 
-Future<void> getTemples({bool reset = false}) async {
-  // 1. Prevent multiple simultaneous calls
-  if (isLoading) return; 
+  Future<void> getTemples({bool reset = false}) async {
+    // 1. Prevent multiple simultaneous calls
+    if (isLoading) return;
 
-  if (reset) {
-    _templeData.clear();
-    templeList.clear();
-    page = 1;
-    isLoading = true; // Show main loader for first time/reset
-  } else {
-    // If we are paginating, we use a different flag or just skip main loader
-    // You could add an 'isFetchingMore' bool here if you want a bottom spinner
-  }
-  
-  notifyListeners();
-
-  try {
-    final response = await templeService.getTemples(page: page, limit: limit);
-
-    if (response.data != null && response.data!.isNotEmpty) {
-      _templeData.addAll(response.data!);
-      
-      // Map each Temple to a Map with id and name
-      templeList = _templeData.map((t) {
-        return {
-          'id': t.id,
-          'name': t.name.toString().replaceAll(RegExp(r'[{}]'), '').trim(),
-        };
-      }).toList();
-      
-      page++;
+    if (reset) {
+      _templeData.clear();
+      templeList.clear();
+      page = 1;
+      isLoading = true; // Show main loader for first time/reset
+    } else {
+      // If we are paginating, we use a different flag or just skip main loader
+      // You could add an 'isFetchingMore' bool here if you want a bottom spinner
     }
-  } catch (e) {
-    debugPrint("Error: $e");
-  } finally {
-    isLoading = false;
+
     notifyListeners();
+
+    try {
+      final response = await templeService.getTemples(page: page, limit: limit);
+
+      if (response.data != null && response.data!.isNotEmpty) {
+        _templeData.addAll(response.data!);
+
+        // Map each Temple to a Map with id and name
+        templeList = _templeData.map((t) {
+          return {
+            'id': t.id,
+            'name': t.name.toString().replaceAll(RegExp(r'[{}]'), '').trim(),
+          };
+        }).toList();
+
+        page++;
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
-}
 
   // Get temple ID by name
   String? getTempleIdByName(String name) {

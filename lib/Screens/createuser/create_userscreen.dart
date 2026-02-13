@@ -32,6 +32,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           return FocusDetector(
             onFocusGained: () async {
               await viewModel.getTemples(reset: true);
+              if (!mounted) return;
             },
             child: Scaffold(
               backgroundColor: Colors.white,

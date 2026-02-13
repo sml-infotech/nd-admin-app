@@ -14,7 +14,7 @@ class UserViewModel extends ChangeNotifier {
   final TempleService templeService = TempleService();
   final TextEditingController searchController = TextEditingController();
 
-Timer? _debounce;
+  Timer? _debounce;
   List<UserModel> userData = [];
   List<UserModel> get users => userData;
   List<Map<String, String>> templeList = [];
@@ -54,23 +54,23 @@ Timer? _debounce;
       page = 1;
       hasMore = true;
       userData.clear();
-    }
 
-    if (!hasMore || isLoading || isLoadingMore) return;
-
-    // ✅ separate initial vs pagination states
-    if (page == 1) {
       isLoading = true;
-    } else {
-      isLoadingMore = true;
+      notifyListeners();
     }
-    notifyListeners();
+
+    if (!hasMore || isLoadingMore) return;
+
+    if (page != 1) {
+      isLoadingMore = true;
+      notifyListeners();
+    }
 
     try {
       final response = await authService.getUserDetails(
         page: page,
         pageSize: _pageSize,
-        search: searchController.text
+        search: searchController.text,
       );
 
       final users = response.users ?? [];
@@ -83,13 +83,12 @@ Timer? _debounce;
         hasMore = false;
       }
     } catch (e) {
-      print("⚠️ Error fetching users: $e");
       hasMore = false;
-    } finally {
-      isLoading = false;
-      isLoadingMore = false;
-      notifyListeners();
     }
+
+    isLoading = false;
+    isLoadingMore = false;
+    notifyListeners();
   }
 
   Future<void> fetchMoreUsers() async {
@@ -98,11 +97,11 @@ Timer? _debounce;
     }
   }
 
-void onSearchChanged() {
+  void onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      getUsers(reset: true);  // << FIXED
+      getUsers(reset: true); // << FIXED
     });
   }
 
