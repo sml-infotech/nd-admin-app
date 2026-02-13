@@ -486,7 +486,9 @@ class _PujaListState extends State<PujaList> {
         }
       },
       onClose: () {
-        viewmodel.fetchPujas(reset: false);
+        viewmodel.selectedTemple = null;
+viewmodel.templeId="";
+        viewmodel.fetchPujas(reset: true);
       },
       refreshListenable: viewmodel,
     );

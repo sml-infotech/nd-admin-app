@@ -1,6 +1,7 @@
 import '../create_event/create_eventmodal.dart';
 
 class EventUpdate {
+  String? templeId;
   String name;
   String description;
   String location;
@@ -15,6 +16,7 @@ class EventUpdate {
   final List<CreateEventTranslation> translations;
 
   EventUpdate({
+    this.templeId,
     required this.name,
     required this.description,
     required this.location,
@@ -31,6 +33,7 @@ class EventUpdate {
 
   factory EventUpdate.fromJson(Map<String, dynamic> json) {
     return EventUpdate(
+      templeId: json['temple_id'],
       name: json['name'],
       description: json['description'],
       location: json['location'],
@@ -48,6 +51,7 @@ class EventUpdate {
 
   Map<String, dynamic> toJson() {
     return {
+      'temple_id': templeId,
       'name': name,
       'description': description,
       'location': location,

@@ -24,7 +24,7 @@ class PujaListViewmodel extends ChangeNotifier {
   int _itemsPerPage = 10;
   bool hasNextPage = true;
   String? selectedTemple;
-  String templeId = '';
+String templeId = '';
   String message = '';
   bool? isActive;
 

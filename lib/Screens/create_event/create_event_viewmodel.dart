@@ -27,7 +27,7 @@ class CreateEventViewmodel extends ChangeNotifier {
   List<TimeSlot> timeSlots = [];
   List<Temple> templeData = [];
   Temple? selectedTemple;
-  String selectedTempleId = '';
+  String? selectedTempleId;
   DateTime? selectedStartDate;
   DateTime? selectedEndDate;
   List<String> uploadedImageUrls = [];
@@ -327,6 +327,7 @@ class CreateEventViewmodel extends ChangeNotifier {
       final templeId = selectedTempleId;
 
       final response = await eventService.updateEvents(
+        selectedTempleId?.isEmpty ?? true ? null : selectedTempleId,
         eventId,
         eventController.text,
         knEventNameController.text,
