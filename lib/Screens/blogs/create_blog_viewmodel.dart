@@ -353,7 +353,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
   // Add this variable to track if we are editing
   int? editingIndex;
 
-  void resetEverything() {
+void resetEverything() {
     // 1. Reset Top-Level Blog Info (EN & KN)
     blogName.clear();
     blogDescription.clear();
