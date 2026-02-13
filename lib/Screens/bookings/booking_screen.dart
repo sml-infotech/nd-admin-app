@@ -551,7 +551,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                   ),
                 ),
-                if (vm.isUploading)
+              if (vm.isUploading)
                   Container(
                     color: Colors.black26,
                     child: const Center(

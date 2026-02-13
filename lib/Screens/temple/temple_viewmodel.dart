@@ -112,8 +112,7 @@ class TempleViewModel extends ChangeNotifier {
     isLoadingMore = false;
     hasMore = true;
     page = 1;
-    searchController.clear();
-    limit = 10;
+limit = 10;
     notifyListeners();
   }
 
