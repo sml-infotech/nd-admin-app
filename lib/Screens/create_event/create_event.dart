@@ -33,7 +33,7 @@ class _CreateEventState extends State<CreateEvent> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await viewmodel.getTemples(reset: true);
+    await viewmodel.getTemples(reset: true);
 
       if (widget.event != null) {
         final selectedTempleId = widget.event!.templeId;
@@ -257,25 +257,31 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Widget _buildTempleDropdown() {
-    return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.optional_temple,
-      labelText: AppLocalizations.of(context)!.optional_temple,
-      items: viewmodel.templeData.map((t) => t.name).toList(),
-      selectedValue: viewmodel.selectedTemple?.name,
-      paddingSize: 16,
-      onChanged: (value) {
-        if (value == null) return;
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (t) => t.name == value,
-        );
-        setState(() {
-          viewmodel.selectedTempleId = selectedTemple.id;
-          viewmodel.setSelectedTemple(selectedTemple);
-          viewmodel.notifyListeners();
-        });
-      },
-    );
-  }
+  return CommonDropdownField(
+    // ✅ Pass the viewmodel as the listener
+    refreshListenable: viewmodel, 
+    hintText: AppLocalizations.of(context)!.optional_temple,
+    labelText: AppLocalizations.of(context)!.optional_temple,
+    items: viewmodel.templeData.map((t) => t.name).toList(),
+    selectedValue: viewmodel.selectedTemple?.name,
+    paddingSize: 16,
+    // ✅ Pass the actual boolean loading state
+    isLoadingMore: viewmodel.isFetchingNextPage, 
+    onLoadMore: () {
+      if (!viewmodel.isFetchingNextPage && viewmodel.hasNextPage) {
+        viewmodel.getTemples(reset: false);
+      }
+    },
+    onChanged: (value) {
+      if (value == null) return;
+      final selectedTemple = viewmodel.templeData.firstWhere(
+        (t) => t.name == value,
+      );
+      // Logic to update selection
+      viewmodel.setSelectedTemple(selectedTemple);
+    },
+  );
+}
 
   Widget eventNameTextField() {
     return CommonTextField(

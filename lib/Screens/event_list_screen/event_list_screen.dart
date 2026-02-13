@@ -185,6 +185,11 @@ class _EventListScreenState extends State<EventListScreen> {
           viewmodel.selectedTempleId = null;
           viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
         },
+        isLoadingMore: viewmodel.isLoadingMore,
+        onLoadMore: () {
+          viewmodel.getTemples( );
+        },
+        refreshListenable: viewmodel,
       ),
     );
   }

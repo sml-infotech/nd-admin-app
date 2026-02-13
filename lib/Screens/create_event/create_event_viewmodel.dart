@@ -209,33 +209,56 @@ class CreateEventViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _currentPage = 1;
+  bool hasNextPage = true;
+  bool isLoading = false;
+  bool isFetchingNextPage = false;
   int page = 1;
   final int limit = 10;
-  bool isLoading = false;
   List<String> templeList = [];
+
   Future<void> getTemples({bool reset = false}) async {
-    if (isLoading) return;
-    isLoading = true;
-    notifyListeners();
+    if (isLoading || isFetchingNextPage) return;
 
     if (reset) {
+      _currentPage = 1;
+      hasNextPage = true;
       templeData.clear();
       templeList.clear();
-      page = 1;
+      isLoading = true;
+    } else {
+      if (!hasNextPage) return;
+      isFetchingNextPage = true;
     }
 
-    final response = await templeService.getTemples(page: page, limit: limit);
-
-    if (response.data != null && response.data!.isNotEmpty) {
-      templeData.addAll(response.data!);
-      templeList = templeData.map((t) => t.name).toList();
-      selectedTempleId = templeData.first.id;
-      page++;
-      notifyListeners();
-    }
-
-    isLoading = false;
     notifyListeners();
+
+    try {
+      final response = await templeService.getTemples(
+        page: _currentPage,
+        limit: 10,
+      );
+
+      if (response.data != null && response.data!.isNotEmpty) {
+        templeData.addAll(response.data!);
+
+        templeList = templeData.map((t) => t.name).toList();
+
+        if (response.data!.length < 10) {
+          hasNextPage = false;
+        } else {
+          _currentPage++;
+        }
+      } else {
+        hasNextPage = false;
+      }
+    } catch (e) {
+      debugPrint("API Error: $e");
+    } finally {
+      isLoading = false;
+      isFetchingNextPage = false;
+      notifyListeners(); // ✅ This triggers the AnimatedBuilder in your Dropdown
+    }
   }
 
   Future<void> createEvent() async {
