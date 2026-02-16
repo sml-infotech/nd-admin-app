@@ -154,17 +154,17 @@ class _TempleScreenState extends State<TempleScreen> {
           ),
         ),
 
-        if (role == "Super Admin")
-          IconButton(
-            onPressed: () async {
-              viewModel!.searchController.text = "";
-              await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-              await viewModel?.reset();
-            },
-            icon: const Icon(Icons.add, color: Colors.white),
-          )
-        else
-          const SizedBox(width: 48),
+        // if (role == "Super Admin")
+        //   IconButton(
+        //     onPressed: () async {
+        //       viewModel!.searchController.text = "";
+        //       await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+        //       await viewModel?.reset();
+        //     },
+        //     icon: const Icon(Icons.add, color: Colors.white),
+        //   )
+        // else
+        const SizedBox(width: 48),
       ],
     );
   }
