@@ -2,16 +2,16 @@ import 'dart:convert';
 
 class EventResponseModal {
   String id;
-  String templeId;
+  String? templeId;
   String name;
   String description;
   String location;
   String contactName;
   String contactPhone;
-  DateTime startDate;
-  DateTime endDate;
-  String startTime;
-  String endTime;
+  DateTime? startDate;
+  DateTime? endDate;
+  String? startTime;
+  String? endTime;
   List<String> images;
   bool isActive;
   String createdBy;
@@ -20,16 +20,16 @@ class EventResponseModal {
 
   EventResponseModal({
     required this.id,
-    required this.templeId,
+    this.templeId,
     required this.name,
     required this.description,
     required this.location,
     required this.contactName,
     required this.contactPhone,
-    required this.startDate,
-    required this.endDate,
-    required this.startTime,
-    required this.endTime,
+    this.startDate,
+    this.endDate,
+    this.startTime,
+    this.endTime,
     required this.images,
     required this.isActive,
     required this.createdBy,
@@ -69,8 +69,8 @@ class EventResponseModal {
       'location': location,
       'contact_name': contactName,
       'contact_phone': contactPhone,
-      'start_date': startDate.toIso8601String(),
-      'end_date': endDate.toIso8601String(),
+      'start_date': startDate?.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
       'start_time': startTime,
       'end_time': endTime,
       'images': images,
@@ -104,10 +104,6 @@ class EventUpdateResponse {
 
   // Method to convert the instance into a JSON map
   Map<String, dynamic> toJson() {
-    return {
-      'code': code,
-      'message': message,
-      'data': data.toJson(),
-    };
+    return {'code': code, 'message': message, 'data': data.toJson()};
   }
 }

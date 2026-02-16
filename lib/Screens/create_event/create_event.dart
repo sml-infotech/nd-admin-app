@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Common/time_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
@@ -37,48 +38,44 @@ class _CreateEventState extends State<CreateEvent> {
 
       if (widget.event != null) {
         final selectedTempleId = widget.event!.templeId;
-        final selectedTemple = viewmodel.templeData.firstWhere(
+        final matchedTemple = viewmodel.templeData.firstWhereOrNull(
           (temple) => temple.id == selectedTempleId,
-          orElse: () => viewmodel.templeData.first,
         );
-        if (widget.event!.startTime != null && widget.event!.endTime != null) {
-          viewmodel.timeSlots = [
-            TimeSlot(
-              fromTime: _formatForDisplay(widget.event!.startTime!),
-              toTime: _formatForDisplay(widget.event!.endTime!),
-            ),
-          ];
-        }
 
-        viewmodel.selectedTemple = selectedTemple;
-        viewmodel.selectedTempleId = selectedTemple.id;
-        viewmodel.eventController.text = widget.event!.name;
-        viewmodel.descriptionContoller.text = widget.event!.description!;
-        viewmodel.locationController.text = widget.event!.location!;
-        viewmodel.contactNameController.text = widget.event!.contactName!;
-        viewmodel.contactNumberController.text = widget.event!.contactPhone!;
-        if (widget.event?.translations.isNotEmpty == true) {
-          viewmodel.knLocationController.text =
-              widget.event!.translations.first.location;
-          viewmodel.knContactNameController.text =
-              widget.event!.translations.first.contactName;
-          viewmodel.knEventNameController.text =
-              widget.event!.translations.first.name;
-          viewmodel.knDescriptionContoller.text =
-              widget.event!.translations.first.description;
-        }
-        if (widget.event!.startDate != null) {
-          viewmodel.selectedStartDate = DateTime.parse(
-            widget.event!.startDate!,
-          );
-        }
-        if (widget.event!.endDate != null) {
-          viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
-        }
+        if (matchedTemple != null) {
+          // 2. Update the Viewmodel state so the UI reflects the Name
+          viewmodel.selectedTempleId = matchedTemple.id;
+          viewmodel.setSelectedTemple(matchedTemple);
 
-        if (widget.event!.images != null) {
-          viewmodel.uploadedImageUrls = widget.event!.images!;
+          // Note: If this is in initState, notifyListeners isn't needed yet.
+          // If this is inside a button/method, call viewmodel.notifyListeners();
         }
+      }
+
+      viewmodel.eventController.text = widget.event!.name;
+      viewmodel.descriptionContoller.text = widget.event!.description!;
+      viewmodel.locationController.text = widget.event!.location!;
+      viewmodel.contactNameController.text = widget.event!.contactName!;
+      viewmodel.contactNumberController.text = widget.event!.contactPhone!;
+      if (widget.event?.translations.isNotEmpty == true) {
+        viewmodel.knLocationController.text =
+            widget.event!.translations.first.location;
+        viewmodel.knContactNameController.text =
+            widget.event!.translations.first.contactName;
+        viewmodel.knEventNameController.text =
+            widget.event!.translations.first.name;
+        viewmodel.knDescriptionContoller.text =
+            widget.event!.translations.first.description;
+      }
+      if (widget.event!.startDate != null) {
+        viewmodel.selectedStartDate = DateTime.parse(widget.event!.startDate!);
+      }
+      if (widget.event!.endDate != null) {
+        viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
+      }
+
+      if (widget.event!.images != null) {
+        viewmodel.uploadedImageUrls = widget.event!.images!;
       }
     });
   }
@@ -258,21 +255,33 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
+      // ✅ Pass the viewmodel as the listener
+      refreshListenable: viewmodel,
       hintText: AppLocalizations.of(context)!.optional_temple,
       labelText: AppLocalizations.of(context)!.optional_temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       selectedValue: viewmodel.selectedTemple?.name,
       paddingSize: 16,
+      // ✅ Pass the actual boolean loading state
+      isLoadingMore: viewmodel.isFetchingNextPage,
+      onLoadMore: () {
+        if (!viewmodel.isFetchingNextPage && viewmodel.hasNextPage) {
+          viewmodel.getTemples(reset: false);
+        }
+      },
       onChanged: (value) {
         if (value == null) return;
         final selectedTemple = viewmodel.templeData.firstWhere(
           (t) => t.name == value,
         );
-        setState(() {
-          viewmodel.selectedTempleId = selectedTemple.id;
-          viewmodel.setSelectedTemple(selectedTemple);
-          viewmodel.notifyListeners();
-        });
+        viewmodel.selectedTempleId = viewmodel.templeData
+            .firstWhere((t) => t.name == value)
+            .id;
+        // Logic to update selection
+        viewmodel.setSelectedTemple(selectedTemple);
+      },
+      onClose: () {
+        viewmodel.selectedTempleId = "";
       },
     );
   }

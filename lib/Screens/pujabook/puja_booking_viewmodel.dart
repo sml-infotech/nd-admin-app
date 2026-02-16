@@ -24,6 +24,9 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final PujaService pujaService = PujaService();
   final TempleService templeService = TempleService();
   final UserService userService = UserService();
+  bool hasNextPage = true;
+bool isInitialLoading = false;
+bool isLoadingMore = false;
 
   List<XFile> selectedImages = [];
   List<String> deities = [];
@@ -265,31 +268,42 @@ class CreatePujaViewmodel extends ChangeNotifier {
     return "$hour:$minute:00";
   }
 
-  Future<void> getTemples({bool reset = false}) async {
-    if (isLoading) return;
-    isLoading = true;
-    notifyListeners();
-
-    if (reset) {
-      templeData.clear();
-      templeList.clear();
-      page = 1;
-    }
-
-    final response = await templeService.getTemples(
-      page: page,
-      limit: limit,
-      language: "kn",
-    );
-    if (response.data != null && response.data!.isNotEmpty) {
-      templeData.addAll(response.data!);
-      templeList = templeData.map((t) => t.name).toList();
-      print(">>>>>>>>>>>>${templeData.first.translations}");
-      page++;
-    }
-    isLoading = false;
-    notifyListeners();
+Future<void> getTemples({bool reset = false}) async {
+  if (reset) {
+  if (isInitialLoading) return;
+    isInitialLoading = true;
+  } else {
+    if (isLoadingMore || !hasNextPage) return;
+    isLoadingMore = true;
   }
+
+  notifyListeners();
+
+  if (reset) {
+    templeData.clear();
+    page = 1;
+    hasNextPage = true;
+}
+
+  final response = await templeService.getTemples(
+    page: page,
+    limit: limit,
+    language: "kn",
+  );
+
+  if (response.data != null && response.data!.isNotEmpty) {
+    templeData.addAll(response.data!);
+    page++;
+  } else {
+    hasNextPage = false;
+  }
+
+  isInitialLoading = false;
+  isLoadingMore = false;
+
+  notifyListeners();
+}
+
 
   Future<void> createPuja() async {
     try {
@@ -490,7 +504,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     fromTime = null;
     toTime = null;
     timeSlots = [];
-    notifyListeners();
+    // notifyListeners();
     deitiesListEn = [];
     selectedDeitiesEn = [];
     selectedDeitiesKn = [];
@@ -511,7 +525,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
     cutOffDay = 1;
     deitiesOptionsEn = [];
     deitiesOptionsKn = [];
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setSelectedTemple(Temple temple, {List<String>? initialDeitiesEn}) {

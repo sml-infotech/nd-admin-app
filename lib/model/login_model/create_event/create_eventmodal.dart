@@ -1,5 +1,5 @@
 class CreateEventModal {
-  final String templeId; // required
+  final String? templeId; // required
   final String name; // required
   final String startDate; // required (YYYY-MM-DD)
   final String? description;
@@ -12,7 +12,7 @@ class CreateEventModal {
   final List<String>? images;
   final List<CreateEventTranslation> translations;
   CreateEventModal({
-    required this.templeId,
+     this.templeId,
     required this.name,
     required this.startDate,
     this.description,

@@ -235,7 +235,7 @@ class BookingsViewmodel extends ChangeNotifier {
 
   Future<void> updateBooking(String bookingId) async {
     try {
-      // isLoading = true;
+      isUploading = true;
       notifyListeners();
 
       var data = BookingCompletionRequest(
@@ -256,10 +256,10 @@ class BookingsViewmodel extends ChangeNotifier {
         debugPrint("Failed to update booking: ${response.code}");
       }
 
-      // isLoading = false;
+      isUploading = false;
       notifyListeners();
     } catch (e) {
-      // isLoading = false;
+      isUploading = false;
       notifyListeners();
     }
   }

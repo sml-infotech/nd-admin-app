@@ -210,7 +210,9 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
         children: [
           InkWell(
             onTap: () {
-              viewmodel.resetEverything();
+              if (widget.blogs != null) {
+                // viewmodel.resetEverything();
+              }
               _openArticleSectionBottomSheet(context);
             },
             child: const Text(

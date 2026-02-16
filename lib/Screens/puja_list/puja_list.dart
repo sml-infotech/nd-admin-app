@@ -40,15 +40,22 @@ class _PujaListState extends State<PujaList> {
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      viewmodel.language = prefs.getString('language') ?? 'en';
+    final lang = prefs.getString('language') ?? 'en';
+
+    // Wait for the frame to be ready before calling setState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          viewmodel.language = lang;
+        });
+      }
     });
   }
 
   @override
   void dispose() {
-    viewmodel.reset();
-    print("xcxvfgfdg");
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -76,6 +83,7 @@ class _PujaListState extends State<PujaList> {
         await viewmodel.getTemples(reset: true);
         await viewmodel.fetchPujas(reset: true);
       },
+
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: _buildAppBar(),
@@ -169,6 +177,9 @@ class _PujaListState extends State<PujaList> {
           IconButton(
             iconSize: 20,
             onPressed: () {
+              // Reset viewmodel first to avoid notifyListeners() firing
+              // during the navigation transition (widget tree lock).
+              viewmodel.reset();
               Navigator.pushNamed(
                 context,
                 StringsRoute.addPuja,
@@ -191,7 +202,6 @@ class _PujaListState extends State<PujaList> {
                   benefits: [],
                 ),
               );
-              viewmodel.reset();
             },
             icon: const Icon(Icons.add, color: Colors.white),
           ),
@@ -248,10 +258,10 @@ class _PujaListState extends State<PujaList> {
                           value,
                         );
                         viewmodel.isToggling = false;
-                        if (success) {
-                          setState(() => puja.isActive = value);
-                        } else {
-                          setState(() => puja.isActive = puja.isActive);
+                        if (success && mounted) {
+                          setState(() {
+                            puja.isActive = value;
+                          });
                         }
                       });
                     },
@@ -476,8 +486,11 @@ class _PujaListState extends State<PujaList> {
         }
       },
       onClose: () {
+        viewmodel.selectedTemple = null;
+        viewmodel.templeId = "";
         viewmodel.fetchPujas(reset: true);
       },
+      refreshListenable: viewmodel,
     );
   }
 
