@@ -30,10 +30,10 @@ class FestivalListModal {
   final String name;
   final String description;
   final List<String> deityNames;
-  final DateTime startDate;
-  final DateTime endDate;
-  final String startTime;
-  final String endTime;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? startTime;
+  final String? endTime;
   final List<ImageData> images;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -44,10 +44,10 @@ class FestivalListModal {
     required this.name,
     required this.description,
     required this.deityNames,
-    required this.startDate,
-    required this.endDate,
-    required this.startTime,
-    required this.endTime,
+    this.startDate,
+    this.endDate,
+    this.startTime,
+    this.endTime,
     required this.images,
     required this.createdAt,
     required this.updatedAt,
@@ -61,9 +61,11 @@ class FestivalListModal {
       description: json['description'],
       deityNames: List<String>.from(json['deity_names'].map((x) => x)),
       startDate: DateTime.parse(json['start_date']),
-      endDate: DateTime.parse(json['end_date']),
-      startTime: json['start_time'],
-      endTime: json['end_time'],
+      endDate: json['end_date'] != null
+          ? DateTime.parse(json['end_date'])
+          : null,
+      startTime: json['start_time'] ?? "",
+      endTime: json['end_time'] ?? "",
       images: List<ImageData>.from(
         json['images'].map((x) => ImageData.fromJson(x)),
       ),

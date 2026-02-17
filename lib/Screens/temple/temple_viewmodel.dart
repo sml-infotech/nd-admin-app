@@ -106,15 +106,13 @@ class TempleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset() {
+  Future<void> reset() async {
     temples = [];
     isLoading = true;
     isLoadingMore = false;
     hasMore = true;
     page = 1;
-    searchController.clear();
     limit = 10;
-    notifyListeners();
   }
 
   Future<void> resetAndFetch() async {

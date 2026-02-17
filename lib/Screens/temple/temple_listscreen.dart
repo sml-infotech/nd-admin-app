@@ -36,6 +36,8 @@ class _TempleScreenState extends State<TempleScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    viewModel?.searchController.text = "";
+
     viewModel?.reset();
     super.dispose();
   }
@@ -152,16 +154,17 @@ class _TempleScreenState extends State<TempleScreen> {
           ),
         ),
 
-        if (role == "Super Admin")
-          IconButton(
-            onPressed: () async {
-              await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-              await viewModel?.resetAndFetch();
-            },
-            icon: const Icon(Icons.add, color: Colors.white),
-          )
-        else
-          const SizedBox(width: 48),
+        // if (role == "Super Admin")
+        //   IconButton(
+        //     onPressed: () async {
+        //       viewModel!.searchController.text = "";
+        //       await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
+        //       await viewModel?.reset();
+        //     },
+        //     icon: const Icon(Icons.add, color: Colors.white),
+        //   )
+        // else
+        const SizedBox(width: 48),
       ],
     );
   }
@@ -277,7 +280,6 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          
                           "${language == "kn" ? temple.translations?.first?.village_name ?? temple.village_name : temple.village_name}, ${language == "kn" ? temple.translations?.first?.taluk ?? temple.taluk : temple.taluk}",
                           style: AppTextStyles.templeNameDetailsStyle,
                           maxLines: 1,
@@ -297,7 +299,6 @@ class _TempleScreenState extends State<TempleScreen> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          
                           "${language == "kn"
                               ? temple.translations?.first?.architecture ?? "-"
                               : temple.architecture.isEmpty

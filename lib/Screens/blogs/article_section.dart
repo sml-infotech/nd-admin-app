@@ -62,7 +62,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
           },
         ),
 
-        // List Group UI
         if (viewModel.showListGroupEN) _listGroupUI(),
 
         const SizedBox(height: 16),
@@ -70,7 +69,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
-  // Section Header
   Widget _sectionHeader(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -86,13 +84,11 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
   }
 
   List<Widget> _buildParagraphFields() {
-    // Sort paragraphs by position first
     final sortedControllers = List<TextEditingController>.from(
       viewModel.paragraphControllers,
     );
 
     sortedControllers.sort((a, b) {
-      // If you stored the position in a map, use that, otherwise fallback to index
       final aIndex = viewModel.paragraphPositions[a] ?? 0;
       final bIndex = viewModel.paragraphPositions[b] ?? 0;
       return aIndex.compareTo(bIndex);
@@ -104,7 +100,34 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _label('Paragraph ${index + 1}'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _label('Paragraph ${index + 1}'),
+                if (index > 0)
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        final controllerToRemove = sortedControllers[index];
+                        viewModel.paragraphControllers.remove(
+                          controllerToRemove,
+                        );
+                        viewModel.paragraphPositions.remove(controllerToRemove);
+                        controllerToRemove.dispose();
+                      });
+                    },
+                  ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ), // Optional spacing between label and field
             CommonTextField(
               controller: sortedControllers[index],
               hintText: 'Write Paragraph',
@@ -118,22 +141,44 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     });
   }
 
-  // List Group UI
   Widget _listGroupUI() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
+          color:
+              Colors.grey.shade50, // Slight background to distinguish the group
           border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header with Remove Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "List Group Settings",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: font,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.delete_forever, color: Colors.red),
+                  onPressed: _removeListGroup, // Custom function to clear data
+                ),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+
             _label('List Type'),
             DropdownButtonFormField<String>(
-              // Use a helper to normalize the value so it always matches an item
               value:
                   (viewModel.listTypeEN.toLowerCase() == 'unordered' ||
                       viewModel.listTypeEN == 'Bulleted')
@@ -172,18 +217,55 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
-  // Build List Items
+  void _removeListGroup() {
+    setState(() {
+      viewModel.showListGroupEN = false;
+      viewModel.listHeadingControllerEN.clear();
+      for (var controller in viewModel.listItemControllersEN) {
+        controller.dispose();
+      }
+      viewModel.listItemControllersEN.clear();
+
+      // Reset list type to default
+      viewModel.listTypeEN = 'Numbered';
+    });
+  }
+
   List<Widget> _buildListItems() {
     return List.generate(viewModel.listItemControllersEN.length, (index) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: 12, left: 0, right: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _label('Item ${index + 1}'),
-            TextField(
-              controller: viewModel.listItemControllersEN[index],
-              decoration: _inputDecoration(hint: 'List item'),
+            Row(
+              children: [
+                // The Input Field
+                Expanded(
+                  child: TextField(
+                    controller: viewModel.listItemControllersEN[index],
+                    decoration: _inputDecoration(hint: 'List item'),
+                  ),
+                ),
+
+                // Delete Button (Visible for all except the very first item)
+                if (viewModel.listItemControllersEN.length > 1)
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        // Dispose the controller to free up memory
+                        viewModel.listItemControllersEN[index].dispose();
+                        // Remove it from the list
+                        viewModel.listItemControllersEN.removeAt(index);
+                      });
+                    },
+                  ),
+              ],
             ),
           ],
         ),
@@ -191,7 +273,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     });
   }
 
-  // Label Widget
   Widget _label(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 16, right: 16),
@@ -206,7 +287,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
-  // Text Button
   Widget _textButton({
     required IconData icon,
     required String label,
@@ -222,7 +302,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
-  // Input Decoration
   InputDecoration _inputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
@@ -232,14 +311,12 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
     );
   }
 
-  // Add Paragraph
   void _addParagraph() {
     setState(() {
       viewModel.paragraphControllers.add(TextEditingController());
     });
   }
 
-  // Add List Item
   void _addListItem() {
     setState(() {
       viewModel.listItemControllersEN.add(TextEditingController());

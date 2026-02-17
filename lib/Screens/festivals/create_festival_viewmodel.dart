@@ -22,7 +22,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
   DateTime? selectedEndDate;
   List<String> uploadedImageUrls = [];
   List<XFile> selectedImages = [];
-  String message = '';
+  String? message;
   bool isLoadingMore = false;
   bool eventCreated = false;
   bool eventUpdated = false;
@@ -65,11 +65,11 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     } else if (descriptionContoller.text.trim().isEmpty) {
       message = "Please enter description";
       return false;
-    } else if (selectedStartDate == null) {
+    } else if (selectedStartDate == "") {
       message = "Please select start date";
       return false;
-    } else if (selectedEndDate == null) {
-      message = "Please select end date";
+    } else if (uploadedImageUrls.isEmpty) {
+      message = "Please Select Image";
       return false;
     }
     return true;
@@ -146,7 +146,6 @@ class CreateFestivalViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<void> removeS3(String filename) async {
     try {
       isLoading = true;
@@ -168,6 +167,7 @@ class CreateFestivalViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> createFestival() async {
     try {
       isLoading = true;

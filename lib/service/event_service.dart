@@ -10,7 +10,7 @@ class EventService {
   final HttpApiService apiService = HttpApiService();
 
   Future<CreateEventResponse> createEvent(
-    String templeId,
+    String? templeId,
     String name,
     String knName,
     String start_date,
@@ -62,6 +62,7 @@ class EventService {
   }
 
   Future<EventUpdateResponse> updateEvents(
+    String? templeId,
     String eventId,
     String name,
     String knName,
@@ -79,7 +80,9 @@ class EventService {
     List<String> images,
   ) async {
     try {
+      print("templeIdtempleId${templeId}");
       final createEvent = EventUpdate(
+        templeId: templeId ?? null,
         name: name,
         startDate: start_date,
         description: description,

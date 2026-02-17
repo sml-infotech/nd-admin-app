@@ -209,8 +209,16 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _buildTempleDropdown() {
+    final bool hasSelection =
+        vm.selectedTemple != null && vm.selectedTemple!.isNotEmpty;
+
     return GestureDetector(
-      onTap: () => vm.openTempleBottomSheet(context),
+      onTap: () {
+        if (!hasSelection) {
+          // Only open bottom sheet if no temple is selected
+          vm.openTempleBottomSheet(context);
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
@@ -221,17 +229,19 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Expanded(
               child: Text(
-                vm.selectedTemple ?? "Select Temple",
+                hasSelection ? vm.selectedTemple! : "Select Temple",
                 style: TextStyle(fontSize: 16, fontFamily: font),
               ),
             ),
             if (vm.selectedTemple != null)
+
               GestureDetector(
                 onTap: () async {
                   final oldTemple = vm.selectedTemple;
                   vm.selectedTemple = null;
                   vm.selectedTempleId = null;
                   vm.selectedSegment = 2;
+
                   await vm.fetchBookings(reset: true);
 
                   vm.notifyListeners();

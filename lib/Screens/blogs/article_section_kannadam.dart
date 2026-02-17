@@ -132,7 +132,18 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
     return Column(
       children: [
         TextButton.icon(
-          onPressed: () => setState(() => viewModel.showListGroupKN = true),
+          onPressed: () {
+            // Clear and reset the list items when adding a new list group
+            for (var controller in viewModel.listItemControllersKN) {
+              controller.dispose();
+            }
+            viewModel.listItemControllersKN.clear();
+            viewModel.listItemControllersKN.add(TextEditingController());
+            viewModel.listHeadingControllerKN.clear();
+            viewModel.listTypeKN = 'Numbered';
+            viewModel.showListGroupKN = true;
+            viewModel.notifyListeners();
+          },
           icon: const Icon(Icons.add, color: Colors.pink),
           label: const Text(
             'ಪಟ್ಟಿ ಗುಂಪು ಸೇರಿಸಿ',
@@ -191,7 +202,10 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
                 child: Text('ಬುಲೆಟ್ ಪಟ್ಟಿಗೆ'),
               ),
             ],
-            onChanged: (value) => setState(() => viewModel.listTypeKN = value!),
+            onChanged: (value) {
+              viewModel.listTypeKN = value!;
+              viewModel.notifyListeners();
+            },
           ),
           const SizedBox(height: 12),
           _label('ಪಟ್ಟಿ ಶೀರ್ಷಿಕೆ'),
@@ -264,15 +278,13 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
   }
 
   void _addParagraph() {
-    setState(() {
-      _paragraphControllers.add(TextEditingController());
-    });
+    _paragraphControllers.add(TextEditingController());
+    viewModel.notifyListeners();
   }
 
   void _addListItem() {
-    setState(() {
-      viewModel.listItemControllersKN.add(TextEditingController());
-    });
+    viewModel.listItemControllersKN.add(TextEditingController());
+    viewModel.notifyListeners();
   }
 
   Widget _label(String text) {

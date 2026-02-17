@@ -52,6 +52,7 @@ class _ListBlogsState extends State<ListBlogs> {
   @override
   void dispose() {
     _scrollController.dispose();
+    viewmodel.reset();
     super.dispose();
   }
 

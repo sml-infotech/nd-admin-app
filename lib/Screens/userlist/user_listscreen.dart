@@ -37,7 +37,7 @@ class _UserListScreenState extends State<UserListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadUserData();
       await viewModel.getTemples();
-      await viewModel.getUsers(reset: true);
+      // await viewModel.getUsers(reset: true);
     });
 
     _scrollController.addListener(() {
@@ -88,6 +88,8 @@ class _UserListScreenState extends State<UserListScreen> {
         return FocusDetector(
           onFocusGained: () async {
             // viewModel.resetData();
+            viewModel.resetData();
+            await viewModel.getTemples(reset: true);
             await viewModel.getUsers(reset: true);
           },
           child: Scaffold(
@@ -98,17 +100,18 @@ class _UserListScreenState extends State<UserListScreen> {
               elevation: 0,
               title: _buildAppBar(viewModel),
             ),
-            body: viewModel.isLoading && viewModel.page == 1
-                ? _buildFullShimmerList()
-                : Column(
-                    children: [
-                      SizedBox(height: 10),
-                      userSearchBar(),
-                      SizedBox(height: 10),
-
-                      Expanded(child: _buildUserList(viewModel)),
-                    ],
-                  ),
+            body: Column(
+              children: [
+                SizedBox(height: 10),
+                userSearchBar(),
+                SizedBox(height: 10),
+                Expanded(
+                  child: viewModel.isLoading && viewModel.page == 1
+                      ? _buildFullShimmerList()
+                      : _buildUserList(viewModel),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -153,7 +156,7 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _buildUserList(UserViewModel viewModel) {
-    if (viewModel.userData.isEmpty) {
+    if (viewModel.userData.isEmpty && !viewModel.isLoading) {
       return Center(
         child: Text(
           "No Users Found",
@@ -434,9 +437,7 @@ class _UserListScreenState extends State<UserListScreen> {
             ? viewModel.role.text
             : user.role;
 
-        final bool isAgentOrTemple =
-            currentRole.toLowerCase() == 'agent' ||
-            currentRole.toLowerCase() == 'temple';
+        final bool isAgentOrTemple = currentRole.toLowerCase() == 'temple';
 
         return GestureDetector(
           onTap: () {

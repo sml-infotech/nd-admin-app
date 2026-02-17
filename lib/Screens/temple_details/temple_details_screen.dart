@@ -358,33 +358,34 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
           ),
 
           const Spacer(),
-          GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                StringsRoute.updateTempleDetails,
-                arguments: TempleDetailsArguments(
-                  templeId: widget.arguments.templeId,
-                  name: widget.arguments.name,
-                  address: widget.arguments.address,
-                  city: widget.arguments.city,
-                  state: widget.arguments.state,
-                  pincode: widget.arguments.pincode,
-                  architecture: widget.arguments.architecture,
-                  phoneNumber: widget.arguments.phoneNumber,
-                  email: widget.arguments.email,
-                  description: widget.arguments.description,
-                  deities: widget.arguments.deities,
-                  images: widget.arguments.images,
-                  translations: widget.arguments.translations,
-                ),
-              );
-            },
-            child: Text(
-              AppLocalizations.of(context)!.edit,
-              style: AppTextStyles.appBarTitleStyle,
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     Navigator.pushNamed(
+          //       context,
+          //       StringsRoute.updateTempleDetails,
+          //       arguments: TempleDetailsArguments(
+          //         templeId: widget.arguments.templeId,
+          //         name: widget.arguments.name,
+          //         address: widget.arguments.address,
+          //         city: widget.arguments.city,
+          //         state: widget.arguments.state,
+          //         pincode: widget.arguments.pincode,
+          //         architecture: widget.arguments.architecture,
+          //         phoneNumber: widget.arguments.phoneNumber,
+          //         email: widget.arguments.email,
+          //         description: widget.arguments.description,
+          //         deities: widget.arguments.deities,
+          //         images: widget.arguments.images,
+          //         translations: widget.arguments.translations,
+          //       ),
+          //     );
+          //   },
+          //   child: Text(
+          //     AppLocalizations.of(context)!.edit,
+          //     style: AppTextStyles.appBarTitleStyle,
+          //   ),
+          // ),
+          const SizedBox(width: 48),
         ],
       ),
     );

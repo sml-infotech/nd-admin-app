@@ -366,7 +366,18 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
                 FocusScope.of(context).unfocus();
                 final isValid = await viewmodel.validateFestivalKn();
                 if (!isValid) {
-                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  if (viewmodel.message != null &&
+                      viewmodel.message!.isNotEmpty) {
+                    Fluttertoast.showToast(
+                      msg: viewmodel.message!,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.black54,
+                      textColor: Colors.white,
+                      fontSize: 14.0,
+                    );
+                  }
+
                   return;
                 }
                 if (widget.arguments != null) {
@@ -382,7 +393,17 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
                   viewmodel.eventCreated = false;
                   viewmodel.eventUpdated = false;
                 } else {
-                  Fluttertoast.showToast(msg: viewmodel.message ?? "");
+                  if (viewmodel.message != null &&
+                      viewmodel.message!.isNotEmpty) {
+                    Fluttertoast.showToast(
+                      msg: viewmodel.message!,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.black54,
+                      textColor: Colors.white,
+                      fontSize: 14.0,
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(

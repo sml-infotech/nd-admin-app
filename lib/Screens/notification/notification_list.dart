@@ -157,72 +157,50 @@ class _NotificationScreenState extends State<NotificationScreen> {
           viewModel.markAsRead(viewModel.notifications[index].id!);
         }
       },
-      child: Expanded(
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+      // REMOVED Expanded from here
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Stack(
+          children: [
+            notificationIcon(),
+            viewModel.notifications[index].isRead!
+                ? const SizedBox()
+                : roundedBackground(),
+          ],
+        ),
+        title: Text(
+          viewModel.notifications[index].title ?? "Temple Update",
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            fontFamily: font,
           ),
-          leading: Stack(
-            children: [
-              notificationIcon(),
-              viewModel.notifications[index].isRead!
-                  ? const SizedBox()
-                  : roundedBackground(),
-            ],
-          ),
-          title: Text(
-            viewModel.notifications[index].title ?? "Temple Update",
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              fontFamily: font,
-            ),
-          ),
-          subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  viewModel.notifications[index].body ??
-                      "Your booking has been confirmed successfully.",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black,
-                    fontFamily: font,
-                  ),
-                ),
-              ),
-
-              Text(
-                formatNotificationTime(
-                  viewModel.notifications[index].createdAt,
-                ),
+        ),
+        subtitle: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                viewModel.notifications[index].body ??
+                    "Your booking has been confirmed successfully.",
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey,
+                  fontSize: 13,
+                  color: Colors.black,
                   fontFamily: font,
                 ),
               ),
-            ],
-          ),
-          // trailing: Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     Text(
-          //       viewModel.notifications[index].createdAt ?? "2h ago",
-          //       style: TextStyle(
-          //         fontSize: 11,
-          //         color: Colors.grey,
-          //         fontFamily: font,
-          //       ),
-          //     ),
-          //     const SizedBox(height: 6),
-          //     Icon(Icons.chevron_right, size: 18, color: Colors.grey),
-          //   ],
-          // ),
+            ),
+            Text(
+              formatNotificationTime(viewModel.notifications[index].createdAt),
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey,
+                fontFamily: font,
+              ),
+            ),
+          ],
         ),
       ),
     );
