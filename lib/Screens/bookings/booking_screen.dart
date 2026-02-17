@@ -225,10 +225,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 style: TextStyle(fontSize: 16, fontFamily: font),
               ),
             ),
-<<<<<<< Updated upstream
-            const Icon(Icons.arrow_drop_down),
-=======
-            if (hasSelection)
+            if (vm.selectedTemple != null)
               GestureDetector(
                 onTap: () async {
                   final oldTemple = vm.selectedTemple;
@@ -243,7 +240,6 @@ class _BookingScreenState extends State<BookingScreen> {
               )
             else
               const Icon(Icons.arrow_drop_down),
->>>>>>> Stashed changes
           ],
         ),
       ),
