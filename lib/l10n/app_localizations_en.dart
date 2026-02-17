@@ -483,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toTime => 'To Time';
 
   @override
-  String get fromDate => 'From Date';
+  String get fromDate => 'Date';
 
   @override
   String get toDate => 'To Date';

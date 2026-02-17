@@ -27,7 +27,7 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
     color: Colors.white,
     fontFamily: font,
-);
+  );
 
   static final TextStyle welcomeStyle = TextStyle(
     fontSize: 16,
@@ -45,7 +45,14 @@ class AppTextStyles {
 
   static final TextStyle templeNameDetailsStyle = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+    fontFamily: font,
+  );
+
+  static final TextStyle templeNameDetailsStyleTitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
     color: Colors.black,
     fontFamily: font,
   );

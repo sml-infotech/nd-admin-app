@@ -225,7 +225,25 @@ class _BookingScreenState extends State<BookingScreen> {
                 style: TextStyle(fontSize: 16, fontFamily: font),
               ),
             ),
+<<<<<<< Updated upstream
             const Icon(Icons.arrow_drop_down),
+=======
+            if (hasSelection)
+              GestureDetector(
+                onTap: () async {
+                  final oldTemple = vm.selectedTemple;
+                  vm.selectedTemple = null;
+                  vm.selectedTempleId = null;
+                  vm.selectedSegment = 2;
+                  await vm.fetchBookings(reset: true);
+
+                  vm.notifyListeners();
+                },
+                child: const Icon(Icons.close, size: 20),
+              )
+            else
+              const Icon(Icons.arrow_drop_down),
+>>>>>>> Stashed changes
           ],
         ),
       ),

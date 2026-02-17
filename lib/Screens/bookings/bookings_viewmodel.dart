@@ -246,7 +246,7 @@ class BookingsViewmodel extends ChangeNotifier {
       final response = await userService.updateBooking(data, bookingId);
       uploadedImageUrls.clear();
       if (response.code == 200) {
-        await reset();
+        await reset1();
         uploadCompleted = true;
         Future.delayed(const Duration(seconds: 1), () {
           fetchBookings(reset: true);
@@ -272,6 +272,27 @@ class BookingsViewmodel extends ChangeNotifier {
     isUpdating = false;
     isUploading = false;
     templeData = [];
+    selectedTemple = null;
+    selectedTempleId = null;
+    selectedSegment = 2;
+    page = 1;
+    expandedIndex = null;
+    uploadedImageUrls = [];
+    selectedImages = [];
+    bookings.clear();
+    hasMore = true;
+    notifyListeners();
+    userRole = null;
+    notifyListeners();
+  }
+
+  Future<void> reset1() async {
+    bookings = [];
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+    isUpdating = false;
+    isUploading = false;
     selectedTemple = null;
     selectedTempleId = null;
     selectedSegment = 2;

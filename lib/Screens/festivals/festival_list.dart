@@ -194,10 +194,7 @@ class FestivalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String festivalDate = _formatDateRange(
-      festival.startDate,
-      festival.endDate,
-    );
+    String festivalDate = _formatDateRange(festival.startDate);
 
     return GestureDetector(
       onTap: () {
@@ -403,13 +400,13 @@ Widget dateWidget(String festivalDate) {
   );
 }
 
-String _formatDateRange(DateTime? startDate, DateTime? endDate) {
-  if (startDate == null || endDate == null) {
+String _formatDateRange(DateTime? startDate) {
+  if (startDate == null) {
     return "No Date";
   }
   String start = DateFormat('MMM d').format(startDate);
-  String end = DateFormat('MMM d').format(endDate);
-  return "$start - $end";
+
+  return "$start ";
 }
 
 void _showDeleteConfirmationSheet(

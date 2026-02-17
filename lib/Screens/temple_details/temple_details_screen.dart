@@ -302,7 +302,10 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
       alignment: Alignment.topLeft,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(templeName, style: AppTextStyles.templeNameDetailsStyle),
+        child: Text(
+          templeName,
+          style: AppTextStyles.templeNameDetailsStyleTitle,
+        ),
       ),
     );
   }

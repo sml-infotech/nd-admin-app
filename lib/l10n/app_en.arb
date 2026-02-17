@@ -159,7 +159,7 @@
   "priestText": "Priest Dakshina (Optional)",
   "fromTime": "From Time",
   "toTime": "To Time",
-  "fromDate": "From Date",
+  "fromDate": "Date",
   "toDate": "To Date",
   "noPujaAvailable": "No pujas available",
   "deitiesText": "Deities: ",
