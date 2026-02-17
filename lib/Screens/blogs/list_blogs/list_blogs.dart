@@ -73,10 +73,13 @@ class _ListBlogsState extends State<ListBlogs> {
         ),
         body: Column(
           children: [
-            SizedBox(height: 16),
-            if (viewmodel.isLoading) Expanded(child: _buildShimmer()),
+            const SizedBox(height: 16),
 
-            if (viewmodel.blogs.isNotEmpty)
+            // 1️⃣ Initial loading shimmer
+            if (viewmodel.isLoading && viewmodel.blogs.isEmpty)
+              Expanded(child: _buildShimmer())
+            // 2️⃣ Blog list (with pagination loader)
+            else if (viewmodel.blogs.isNotEmpty)
               Expanded(
                 child: ListView.separated(
                   controller: _scrollController,
@@ -91,9 +94,9 @@ class _ListBlogsState extends State<ListBlogs> {
                     return blogCard(viewmodel.blogs[index]);
                   },
                 ),
-              ),
-
-            if (!viewmodel.isLoading && viewmodel.blogs.isEmpty)
+              )
+            // 3️⃣ Empty state
+            else
               Expanded(
                 child: Center(
                   child: Text(

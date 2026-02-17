@@ -741,17 +741,20 @@ Widget _buildFullWidthButton({
   required String text,
   required VoidCallback onPressed,
 }) {
-  return SizedBox(
-    width: double.infinity,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: ColorConstant.buttonColor,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 16, fontFamily: font, color: Colors.white),
+  return Padding(
+    padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
+    child: SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorConstant.buttonColor,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(fontSize: 16, fontFamily: font, color: Colors.white),
+        ),
       ),
     ),
   );

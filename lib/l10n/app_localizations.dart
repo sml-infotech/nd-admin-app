@@ -99,7 +99,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'NAMMA DAIVA'**
-String get nammDaivaTitleText;
+  String get nammDaivaTitleText;
 
   /// No description provided for @userName.
   ///
@@ -1046,7 +1046,7 @@ String get nammDaivaTitleText;
   /// No description provided for @fromDate.
   ///
   /// In en, this message translates to:
-  /// **'From Date'**
+  /// **'Date'**
   String get fromDate;
 
   /// No description provided for @toDate.

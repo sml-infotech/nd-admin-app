@@ -233,12 +233,14 @@ class _BookingScreenState extends State<BookingScreen> {
                 style: TextStyle(fontSize: 16, fontFamily: font),
               ),
             ),
-            if (hasSelection)
+            if (vm.selectedTemple != null)
+
               GestureDetector(
                 onTap: () async {
                   final oldTemple = vm.selectedTemple;
                   vm.selectedTemple = null;
                   vm.selectedTempleId = null;
+                  vm.selectedSegment = 2;
 
                   await vm.fetchBookings(reset: true);
 
