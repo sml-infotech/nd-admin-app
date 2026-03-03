@@ -170,12 +170,9 @@ class _EventListScreenState extends State<EventListScreen> {
           final selectedTemple = uniqueTemples.firstWhere(
             (t) => t.name == value,
           );
-
           viewmodel.setSelectedTemple(selectedTemple);
           viewmodel.selectedTempleId = selectedTemple.id;
-
           await viewmodel.fetchEvents(selectedTemple.id, true);
-
           setState(() {
             filteredEvents = viewmodel.events;
           });

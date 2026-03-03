@@ -25,8 +25,6 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   String? _token;
   String? _role;
 
-  final List<String> tabTitles = ["About", "Map"];
-
   @override
   void initState() {
     super.initState();
@@ -103,6 +101,10 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   }
 
   Widget contentWidgets() {
+    final tabTitles = [
+      AppLocalizations.of(context)!.tabAbout,
+      AppLocalizations.of(context)!.tabMap,
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Row(

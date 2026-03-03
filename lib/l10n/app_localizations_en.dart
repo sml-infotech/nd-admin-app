@@ -318,7 +318,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalPoojas => 'Total Poojas';
 
   @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
   String get start_time => 'Start Time';
+
+  @override
+  String get tabAbout => 'About';
+
+  @override
+  String get tabMap => 'Map';
 
   @override
   String get end_time => 'End Time';
@@ -391,9 +406,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requested => 'Requested';
-
-  @override
-  String get cancel => 'Cancel';
 
   @override
   String get submitAllApprovals => 'Submit';

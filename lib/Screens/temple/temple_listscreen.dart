@@ -172,20 +172,28 @@ class _TempleScreenState extends State<TempleScreen> {
   Widget _templeCard(Temple temple) {
     return GestureDetector(
       onTap: () {
+        final locale = Localizations.localeOf(context).languageCode;
+
+        final translation =
+            (locale == 'kn' &&
+                temple.translations != null &&
+                temple.translations!.isNotEmpty)
+            ? temple.translations!.first
+            : null;
         Navigator.pushNamed(
           context,
           StringsRoute.templeDetail,
           arguments: TempleDetailsArguments(
-            name: temple.name,
-            address: temple.address,
-            city: temple.city,
-            state: temple.state,
+            name: translation?.name ?? temple.name,
+            address: translation?.address ?? temple.address,
+            city: translation?.city ?? temple.city,
+            state: translation?.state ?? temple.state,
             pincode: temple.pincode,
-            architecture: temple.architecture,
+            architecture: translation?.architecture ?? temple.architecture,
             phoneNumber: temple.phoneNumber,
             email: temple.email,
-            description: temple.description,
-            deities: temple.deities ?? [],
+            description: translation?.description ?? temple.description,
+            deities: translation?.deities ?? temple.deities ?? [],
             images: temple.images ?? [],
             templeId: temple.id,
             translations: temple.translations ?? [],

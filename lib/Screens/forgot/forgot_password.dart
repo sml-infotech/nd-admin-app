@@ -121,12 +121,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget forgotImage() {
-    return Image.asset(
-      ImageStrings.loginImage,
-      height: 70,
-      width: 70,
-      fit: BoxFit.contain,
-    );
+    return Image.asset(ImageStrings.logo, fit: BoxFit.cover);
   }
 
   Widget forgotSubText() {

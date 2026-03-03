@@ -24,7 +24,7 @@ class PujaListViewmodel extends ChangeNotifier {
   int _itemsPerPage = 10;
   bool hasNextPage = true;
   String? selectedTemple;
-String templeId = '';
+  String templeId = '';
   String message = '';
   bool? isActive;
 
@@ -81,54 +81,48 @@ String templeId = '';
     await fetchPujas(reset: false);
   }
 
-  Future<void> getTemples({bool reset = false}) async {
-    if (isLoading || isFetchingNextPage) return; // ✅ extra protection
+ Future<void> getTemples({bool reset = false}) async {
+  if (isLoading || isFetchingNextPage) return;
 
-    if (reset) {
-      _currentPage = 1;
-      hasNextPage = true;
-      templeData.clear();
-      templeList.clear();
-      isLoading = true;
-    } else {
-      if (!hasNextPage || isFetchingNextPage) return;
-      isFetchingNextPage = true;
-    }
+  if (reset) {
+    _currentPage = 1;
+    hasNextPage = true;
+    templeData.clear();
+    templeList.clear();
+    isLoading = true;
+  } else {
+    if (!hasNextPage) return;
+    isFetchingNextPage = true;
+    _currentPage++; // ✅ increment only once here
+  }
 
-    notifyListeners();
+  notifyListeners();
 
-    try {
-      final response = await templeService.getTemples(
-        page: _currentPage,
-        limit: 20,
-      );
+  try {
+    final response = await templeService.getTemples(
+      page: _currentPage,
+      limit: 10,
+    );
 
-      if (response.data != null && response.data!.isNotEmpty) {
-        templeData.addAll(response.data!);
+    if (response.data != null && response.data!.isNotEmpty) {
+      templeData.addAll(response.data!);
+      templeList = templeData.map((t) => t.name).toList();
 
-        templeList = templeData.map((t) => t.name).toList();
-        notifyListeners();
-        if (response.data!.length < 20) {
-          hasNextPage = false;
-        } else {
-          _currentPage++;
-        }
-
-        if (templeData.isNotEmpty) {
-          // templeId = templeData.first.id;
-          // selectedTemple = templeData.first.name;
-        }
-      } else {
+      // ✅ If less than limit, no more pages
+      if (response.data!.length < 10) {
         hasNextPage = false;
       }
-    } catch (e) {
-      debugPrint("Error fetching temples: $e");
-    } finally {
-      isLoading = false;
-      isFetchingNextPage = false;
-      notifyListeners();
+    } else {
+      hasNextPage = false;
     }
+  } catch (e) {
+    debugPrint("Error fetching temples: $e");
+  } finally {
+    isLoading = false;
+    isFetchingNextPage = false;
+    notifyListeners();
   }
+}
 
   Future<bool> toggleActivate(String pujaId, bool toggle) async {
     try {

@@ -318,7 +318,22 @@ class AppLocalizationsKn extends AppLocalizations {
   String get totalPoojas => 'ಒಟ್ಟು ಪೂಜೆಗಳು';
 
   @override
+  String get logout => 'ಲಾಗ್ ಔಟ್';
+
+  @override
+  String get logoutConfirm => 'ನೀವು ಖಚಿತವಾಗಿಯೂ ಲಾಗ್ ಔಟ್ ಮಾಡಲು ಬಯಸುತ್ತೀರಾ?';
+
+  @override
+  String get cancel => 'ರದ್ದು ಮಾಡಿ';
+
+  @override
   String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
+
+  @override
+  String get tabAbout => 'ವಿವರಗಳು';
+
+  @override
+  String get tabMap => 'ನಕ್ಷೆ';
 
   @override
   String get end_time => 'ಅಂತ್ಯ ಸಮಯ';
@@ -391,9 +406,6 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get requested => 'ಅನುರೋಧಿಸಲಾಗಿದೆ';
-
-  @override
-  String get cancel => 'ರದ್ದು ಮಾಡಿ';
 
   @override
   String get submitAllApprovals => 'ಸಮರ್ಪಿಸಿ';

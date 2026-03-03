@@ -713,11 +713,41 @@ abstract class AppLocalizations {
   /// **'Total Poojas'**
   String get totalPoojas;
 
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @start_time.
   ///
   /// In en, this message translates to:
   /// **'Start Time'**
   String get start_time;
+
+  /// No description provided for @tabAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get tabAbout;
+
+  /// No description provided for @tabMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get tabMap;
 
   /// No description provided for @end_time.
   ///
@@ -862,12 +892,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Requested'**
   String get requested;
-
-  /// No description provided for @cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
 
   /// No description provided for @submitAllApprovals.
   ///

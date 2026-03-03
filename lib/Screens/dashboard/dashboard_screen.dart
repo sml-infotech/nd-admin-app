@@ -7,6 +7,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
 import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/statictics_model/dashboard-statistics.dart';
 import 'package:provider/provider.dart';
@@ -599,9 +600,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Logout", style: TextStyle(fontFamily: font)),
+          title: Text(
+            AppLocalizations.of(context)!.logout,
+            style: TextStyle(fontFamily: font),
+          ),
           content: Text(
-            "Are you sure you want to logout?",
+            AppLocalizations.of(context)!.logoutConfirm,
             style: TextStyle(fontFamily: font),
           ),
           actions: [
@@ -609,7 +613,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel", style: TextStyle(fontFamily: font)),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: TextStyle(fontFamily: font),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -625,7 +632,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
 
               child: Text(
-                "Logout",
+                AppLocalizations.of(context)!.logout,
                 style: TextStyle(fontFamily: font, color: Colors.white),
               ),
             ),
