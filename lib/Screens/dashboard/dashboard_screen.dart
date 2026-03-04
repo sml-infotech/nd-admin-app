@@ -175,13 +175,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         children: [
                           if (dashboardViewmodel.isLoading)
-                            Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              alignment: WrapAlignment.center,
-                              children: List.generate(
-                                6,
-                                (_) => gridItemShimmer(),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                              child: Center(
+                                child: Wrap(
+                                  spacing: 12,
+                                  runSpacing: 12,
+                                  alignment: WrapAlignment.center,
+                                  children: List.generate(
+                                  8,
+                                    (_) => Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: gridItemShimmer(),
+                                    ),
+                                  ),
+                                ),
                               ),
                             )
                           else if (dashboardViewmodel.dashboardStats != null)
@@ -258,16 +267,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                   false,
                                 ),
-
-                                containerWidget(
-                                  ImageStrings.ritual,
-                                  AppLocalizations.of(context)!.contacts,
-                                  () => Navigator.pushNamed(
-                                    context,
-                                    StringsRoute.contactUs,
+                                if (role == "Super Admin")
+                                  containerWidget(
+                                    ImageStrings.ritual,
+                                    AppLocalizations.of(context)!.contacts,
+                                    () => Navigator.pushNamed(
+                                      context,
+                                      StringsRoute.contactUs,
+                                    ),
+                                    false,
                                   ),
-                                  false,
-                                ),
 
                                 if (role == "Super Admin")
                                   containerWidget(
@@ -695,19 +704,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 Widget gridItemShimmer() {
-  return Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 0, 0),
-      child: Container(
-        height: 156,
-        width: 165,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+  return Container(
+    height: 156,
+    width: 165,
+    decoration: BoxDecoration(
+      color: Colors.grey[300],
+      borderRadius: BorderRadius.circular(10),
     ),
   );
 }

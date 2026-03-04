@@ -78,7 +78,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                     templeDetailContactWidget(
                       AppLocalizations.of(context)!.email,
                       widget.arguments.email,
-                      ImageStrings.phone,
+                      ImageStrings.email,
                     ),
                     contentWidgets(),
                     AnimatedSwitcher(

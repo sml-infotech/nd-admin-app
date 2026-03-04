@@ -77,6 +77,7 @@ flutter:
     - assets/rightflower.png
     - assets/logo.png
     - assets/splash.png
+    - assets/email.png
 
   fonts:
     - family: Nunito

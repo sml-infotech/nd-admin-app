@@ -162,6 +162,12 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                             "Selected Temple IDs: $ids",
                                           );
                                         },
+                                        onClose: () {
+                                          viewModel.selectedTempleId = "";
+                                          viewModel.selectedTempleIds = [];
+                                          viewModel.selectedTempleName = "";
+                                          viewModel.notifyListeners();
+                                        },
                                         isTempleSelection: true,
                                         paddingSize: 20,
                                       ),

@@ -184,7 +184,7 @@ class _EventListScreenState extends State<EventListScreen> {
         },
         isLoadingMore: viewmodel.isLoadingMore,
         onLoadMore: () {
-          viewmodel.getTemples( );
+          viewmodel.getTemples();
         },
         refreshListenable: viewmodel,
       ),
@@ -432,7 +432,7 @@ class _EventListScreenState extends State<EventListScreen> {
         const Icon(Icons.calendar_today, color: Colors.grey, size: 18),
         const SizedBox(width: 6),
         Text(
-          "From ${_formatDate(startDate)} to ${_formatDate(endDate)}",
+          "From ${_formatDate(startDate)}  ${endDate.isNotEmpty ? 'to ${_formatDate(endDate)}' : ''}",
           style: TextStyle(fontSize: 14, fontFamily: font),
         ),
       ],

@@ -300,18 +300,18 @@ class _TempleScreenState extends State<TempleScreen> {
                   Row(
                     children: [
                       const Icon(
-                        Icons.account_balance,
+                        Icons.temple_hindu,
                         size: 18,
                         color: ColorConstant.buttonColor,
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${language == "kn"
-                              ? temple.translations?.first?.architecture ?? "-"
-                              : temple.architecture.isEmpty
-                              ? "-"
-                              : temple.architecture}",
+                          language == "kn"
+                              ? formatDeities(
+                                  temple.translations?.first?.deities,
+                                )
+                              : formatDeities(temple.deities),
 
                           maxLines: 2,
                           style: AppTextStyles.templeNameDetailsStyle,
@@ -382,6 +382,11 @@ class _TempleScreenState extends State<TempleScreen> {
         ),
       ),
     );
+  }
+
+  String formatDeities(List<String>? deities) {
+    if (deities == null || deities.isEmpty) return "-";
+    return deities.where((e) => e.trim().isNotEmpty).join(", ");
   }
 
   Widget templeSearchBar() {

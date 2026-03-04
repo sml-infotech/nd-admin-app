@@ -30,8 +30,7 @@ class _AddHighlightInKannadamState extends State<AddHighlightInKannadam> {
         centerTitle: true,
       ),
       body: FocusDetector(
-        onFocusGained: () async {
-        },
+        onFocusGained: () async {},
         child: Stack(
           children: [
             Column(
@@ -131,32 +130,31 @@ class _AddHighlightInKannadamState extends State<AddHighlightInKannadam> {
       ),
     );
   }
-Future<void> _handleUpload() async {
-  final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
 
-  if (viewModel.pickedFile == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("No media selected from previous screen"))
-    );
-    return;
+  Future<void> _handleUpload() async {
+    final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
+
+    if (viewModel.pickedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No media selected from previous screen")),
+      );
+      return;
+    }
+
+    // Use the helper from ViewModel
+    final bool isVideo = viewModel.isVideo(viewModel.pickedFile!.path);
+
+    // Call the upload logic
+    final bool success = await viewModel.addMedia([
+      viewModel.pickedFile!.path,
+    ], isVideo);
+
+    if (success) {
+      viewModel.clearUploadData();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
+      Navigator.pop(context);
+    }
   }
-
-  // Use the helper from ViewModel
-  final bool isVideo = viewModel.isVideo(viewModel.pickedFile!.path);
-
-  // Call the upload logic
-  final bool success = await viewModel.addMedia(
-    [viewModel.pickedFile!.path], 
-    isVideo
-  );
-
-  if (success) {
-    viewModel.clearUploadData();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Upload Successful!"))
-    );
-    // Go back to the main list
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-}
 }

@@ -12,12 +12,9 @@ class ContactViewModel extends ChangeNotifier {
 
   final UserService userService = UserService();
 
-  ContactViewModel() {
-    fetchContacts();
-  }
+  Future<void> fetchContacts({bool forceRefresh = false}) async {
+    if (!forceRefresh && contacts.isNotEmpty) return;
 
-  // --- INITIAL FETCH ---
-  Future<void> fetchContacts() async {
     try {
       isLoading = true;
       notifyListeners();
@@ -26,19 +23,15 @@ class ContactViewModel extends ChangeNotifier {
 
       contacts = response.data;
       currentPage = response.page;
-
-      // If totalCount > fetched items → more pages exist
-      hasMore = (response.totalCount > contacts.length);
+      hasMore = response.totalCount > contacts.length;
     } catch (e) {
-      // You may add error states here
-      rethrow;
+      print("Error: $e");
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  // --- PAGINATION FETCH ---
   Future<void> fetchMore() async {
     if (isLoadingMore || !hasMore) return;
 
@@ -58,7 +51,6 @@ class ContactViewModel extends ChangeNotifier {
       // Check if more pages exist
       final totalFetched = contacts.length;
       hasMore = totalFetched < response.totalCount;
-
     } catch (e) {
       rethrow;
     } finally {
@@ -67,33 +59,44 @@ class ContactViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> markMessageAsRead(String contactId) async {
+    try {
+      final response = await userService.markAsRead(contactId);
 
-Future<void> markMessageAsRead(String contactId) async {
-  try {
-    final response = await userService.markAsRead(contactId);
+      // Update your contacts list if you have one
+      int index = contacts.indexWhere((c) => c.id == contactId);
+      if (index != -1 && response.data.isNotEmpty) {
+        final updated = response.data.firstWhere(
+          (c) => c.id == contactId,
+          orElse: () => response.data.first,
+        );
+        contacts[index] = updated;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Failed to mark read: $e");
+    }
+  }
 
-    // Update your contacts list if you have one
-    int index = contacts.indexWhere((c) => c.id == contactId);
-    if (index != -1 && response.data.isNotEmpty) {
-      final updated = response.data.firstWhere((c) => c.id == contactId, orElse: () => response.data.first);
-      contacts[index] = updated;
+  void updateContact(ContactData updatedData) {
+    // Find the index of the contact with the same ID
+    int index = contacts.indexWhere((c) => c.id == updatedData.id);
+
+    if (index != -1) {
+      // Replace the old contact with the updated one
+      contacts[index] = updatedData;
+
+      // Notify listeners so the UI rebuilds
       notifyListeners();
     }
-  } catch (e) {
-    print("Failed to mark read: $e");
   }
-}
-void updateContact(ContactData updatedData) {
-  // Find the index of the contact with the same ID
-  int index = contacts.indexWhere((c) => c.id == updatedData.id);
 
-  if (index != -1) {
-    // Replace the old contact with the updated one
-    contacts[index] = updatedData;
-
-    // Notify listeners so the UI rebuilds
+  void reset() {
+    contacts = [];
+    currentPage = 1;
+    hasMore = true;
+    isLoading = true;
+    print("ContactViewModel reset");
     notifyListeners();
   }
-}
-
 }

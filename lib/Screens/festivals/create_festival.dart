@@ -60,12 +60,8 @@ class _CreateFestivalState extends State<CreateFestival> {
 
     viewmodel.deities = args.deities;
 
-    viewmodel.selectedStartDate = args.startDate != null
-        ? DateTime.parse(args.startDate!)
-        : null;
-    viewmodel.selectedEndDate = args.endDate != null
-        ? DateTime.parse(args.endDate!)
-        : null;
+    viewmodel.selectedStartDate = _safeParseDate(args.startDate);
+    viewmodel.selectedEndDate = _safeParseDate(args.endDate);
 
     if (args.startTime != null && args.endTime != null) {
       viewmodel.timeSlots = [
@@ -76,15 +72,6 @@ class _CreateFestivalState extends State<CreateFestival> {
     viewmodel.uploadedImageUrls = List<String>.from(args.imageUrls ?? []);
 
     viewmodel.notifyListeners();
-  }
-
-  String _formatForDisplay(String time) {
-    try {
-      final parsed = DateFormat("HH:mm:ss").parse(time);
-      return DateFormat("hh:mm a").format(parsed);
-    } catch (_) {
-      return time;
-    }
   }
 
   @override
@@ -286,6 +273,27 @@ class _CreateFestivalState extends State<CreateFestival> {
         // ),
       ],
     );
+  }
+
+  DateTime? _safeParseDate(String? date) {
+    if (date == null || date.isEmpty) return null;
+
+    try {
+      // Try ISO format first
+      return DateTime.parse(date);
+    } catch (_) {
+      try {
+        // Try common formats (change if needed)
+        return DateFormat("dd-MM-yyyy").parse(date);
+      } catch (_) {
+        try {
+          return DateFormat("dd/MM/yyyy").parse(date);
+        } catch (_) {
+          print("Invalid date format received: $date");
+          return null;
+        }
+      }
+    }
   }
 
   Widget eventNameTextField() {

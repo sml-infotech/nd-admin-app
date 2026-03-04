@@ -36,7 +36,7 @@ class _UserListScreenState extends State<UserListScreen> {
     viewModel = context.read<UserViewModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadUserData();
-      await viewModel.getTemples();
+      // await viewModel.getTemples();
       // await viewModel.getUsers(reset: true);
     });
 
