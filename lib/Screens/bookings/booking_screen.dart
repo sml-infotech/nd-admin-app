@@ -229,12 +229,13 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Expanded(
               child: Text(
-                hasSelection ? vm.selectedTemple! : "Select Temple",
+                hasSelection
+                    ? vm.selectedTemple!
+                    : AppLocalizations.of(context)!.select_temple,
                 style: TextStyle(fontSize: 16, fontFamily: font),
               ),
             ),
             if (vm.selectedTemple != null)
-
               GestureDetector(
                 onTap: () async {
                   final oldTemple = vm.selectedTemple;
@@ -319,9 +320,15 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
 
             const SizedBox(height: 10),
-            _infoRow("Name", request.userName),
-            _infoRow("Date", request.pujaDateFormatted),
-            _infoRow("Amount", "₹ ${request.totalAmount}"),
+            _infoRow(AppLocalizations.of(context)!.name, request.userName),
+            _infoRow(
+              AppLocalizations.of(context)!.date,
+              request.pujaDateFormatted,
+            ),
+            _infoRow(
+              AppLocalizations.of(context)!.amount,
+              "₹ ${request.totalAmount}",
+            ),
 
             if (request.bookingStatus.toLowerCase() == "confirmed")
               markedAsCompletedWidget(request.bookingId),
@@ -338,10 +345,16 @@ class _BookingScreenState extends State<BookingScreen> {
 
             if (isExpanded) ...[
               const Divider(),
-              _infoRow("Phone", request.userPhone),
-              _infoRow("Email", request.userEmail),
-              _infoRow("Booking ID", request.bookingId),
-              _infoRow("Created", request.createdAtFormatted),
+              _infoRow(AppLocalizations.of(context)!.phone, request.userPhone),
+              _infoRow(AppLocalizations.of(context)!.email, request.userEmail),
+              _infoRow(
+                AppLocalizations.of(context)!.booking_id,
+                request.bookingId,
+              ),
+              _infoRow(
+                AppLocalizations.of(context)!.created,
+                request.createdAtFormatted,
+              ),
               if (request.paymentDetails.isNotEmpty)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,9 +362,18 @@ class _BookingScreenState extends State<BookingScreen> {
                       .map(
                         (p) => Column(
                           children: [
-                            _infoRow("Payment ID", p.paymentId),
-                            _infoRow("Status", p.paymentStatus),
-                            _infoRow("Txn Date", p.transactionDateFormatted),
+                            _infoRow(
+                              AppLocalizations.of(context)!.payment_id,
+                              p.paymentId,
+                            ),
+                            _infoRow(
+                              AppLocalizations.of(context)!.status,
+                              p.paymentStatus,
+                            ),
+                            _infoRow(
+                              AppLocalizations.of(context)!.transaction_date,
+                              p.transactionDateFormatted,
+                            ),
                           ],
                         ),
                       )
@@ -372,7 +394,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      "View Sankalpa Details",
+                      AppLocalizations.of(context)!.view_sankalpa_details,
                       style: TextStyle(
                         fontFamily: font,
                         fontWeight: FontWeight.bold,
@@ -397,7 +419,7 @@ class _BookingScreenState extends State<BookingScreen> {
             borderRadius: BorderRadius.circular(16),
           ),
           title: Text(
-            "Sankalpa Details",
+            AppLocalizations.of(context)!.sankalpa_details,
             style: TextStyle(fontWeight: FontWeight.bold, fontFamily: font),
           ),
           content: SizedBox(
@@ -412,10 +434,22 @@ class _BookingScreenState extends State<BookingScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildRow("Name", item.name ?? "-"),
-                    _buildRow("Rashi", item.rashi ?? "-"),
-                    _buildRow("Nakshatra", item.nakshatra ?? "-"),
-                    _buildRow("Gothra", item.gothra ?? "-"),
+                    _buildRow(
+                      AppLocalizations.of(context)!.name,
+                      item.name ?? "-",
+                    ),
+                    _buildRow(
+                      AppLocalizations.of(context)!.rashi,
+                      item.rashi ?? "-",
+                    ),
+                    _buildRow(
+                      AppLocalizations.of(context)!.nakshatra,
+                      item.nakshatra ?? "-",
+                    ),
+                    _buildRow(
+                      AppLocalizations.of(context)!.gothra,
+                      item.gothra ?? "-",
+                    ),
                   ],
                 );
               },
@@ -424,7 +458,10 @@ class _BookingScreenState extends State<BookingScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("Close", style: TextStyle(fontFamily: font)),
+              child: Text(
+                AppLocalizations.of(context)!.close,
+                style: TextStyle(fontFamily: font),
+              ),
             ),
           ],
         );
@@ -471,7 +508,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         const SizedBox(height: 10),
         Text(
-          "Pooja Images",
+          AppLocalizations.of(context)!.pooja_images,
           style: TextStyle(
             fontFamily: font,
             fontWeight: FontWeight.bold,
@@ -537,7 +574,7 @@ class _BookingScreenState extends State<BookingScreen> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          "Mark as Complete",
+          AppLocalizations.of(context)!.mark_as_complete,
           style: TextStyle(
             fontFamily: font,
             fontWeight: FontWeight.bold,
@@ -610,7 +647,7 @@ class _BookingScreenState extends State<BookingScreen> {
           Navigator.pop(context);
         },
         child: Text(
-          "Mark as Completed",
+          AppLocalizations.of(context)!.mark_as_completed,
           style: TextStyle(fontFamily: font, fontSize: 16, color: Colors.white),
         ),
       ),
@@ -622,7 +659,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         const Spacer(),
         Text(
-          "Upload Pooja Image",
+          AppLocalizations.of(context)!.upload_pooja_image,
           style: TextStyle(
             fontFamily: font,
             fontWeight: FontWeight.bold,

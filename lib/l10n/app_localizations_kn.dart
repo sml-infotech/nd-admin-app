@@ -141,7 +141,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addDeities => 'ದೇವತೆಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
-  String get phone => 'ದೂರವಾಣಿ';
+  String get phone => 'ಫೋನ್';
 
   @override
   String get message => 'ಸಂದೇಶ';
@@ -258,7 +258,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get no_media_selected => 'ಮಾಧ್ಯಮ ಆಯ್ಕೆಮಾಡಿಲ್ಲ';
 
   @override
-  String get created => 'ರಚಿಸಲಾಗಿದೆ:';
+  String get created => 'ರಚಿಸಲಾಗಿದೆ';
 
   @override
   String get active_highlights => 'ಸಕ್ರಿಯ ಹೈಲೈಟ್ಸ್';
@@ -360,6 +360,60 @@ class AppLocalizationsKn extends AppLocalizations {
   String get welcome => 'ಮತ್ತೆ ಸ್ವಾಗತ,';
 
   @override
+  String get select_temple => 'ದೇವಾಲಯ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get name => 'ಹೆಸರು';
+
+  @override
+  String get rashi => 'ರಾಶಿ';
+
+  @override
+  String get nakshatra => 'ನಕ್ಷತ್ರ';
+
+  @override
+  String get gothra => 'ಗೋತ್ರ';
+
+  @override
+  String get date => 'ದಿನಾಂಕ';
+
+  @override
+  String get amount => 'ಮೊತ್ತ';
+
+  @override
+  String get booking_id => 'ಬುಕಿಂಗ್ ಐಡಿ';
+
+  @override
+  String get payment_id => 'ಪಾವತಿ ಐಡಿ';
+
+  @override
+  String get transaction_date => 'ವಹಿವಾಟು ದಿನಾಂಕ';
+
+  @override
+  String get view_sankalpa_details => 'ಸಂಕಲ್ಪ ವಿವರಗಳನ್ನು ನೋಡಿ';
+
+  @override
+  String get sankalpa_details => 'ಸಂಕಲ್ಪ ವಿವರಗಳು';
+
+  @override
+  String get close => 'ಮುಚ್ಚು';
+
+  @override
+  String get pooja_images => 'ಪೂಜೆ ಚಿತ್ರಗಳು';
+
+  @override
+  String get mark_as_complete => 'ಪೂರ್ಣವಾಗಿದೆ ಎಂದು ಗುರುತುಮಾಡಿ';
+
+  @override
+  String get upload_pooja_image => 'ಪೂಜೆ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get add_images => 'ಚಿತ್ರಗಳನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get mark_as_completed => 'ಪೂರ್ಣವಾಗಿದೆ ಎಂದು ಗುರುತುಮಾಡಿ';
+
+  @override
   String get state => 'ರಾಜ್ಯ';
 
   @override
@@ -454,9 +508,6 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get selectSlot => 'ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ';
-
-  @override
-  String get date => 'ದಿನಾಂಕ';
 
   @override
   String get enterPuja => 'ಪೂಜಾ/ಸೇವಾ ಸಮಯವನ್ನು ನಮೂದಿಸಿ';

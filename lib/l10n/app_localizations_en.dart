@@ -258,7 +258,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no_media_selected => 'No Media Selected';
 
   @override
-  String get created => 'Created:';
+  String get created => 'Created';
 
   @override
   String get active_highlights => 'Active Highlights';
@@ -360,6 +360,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome => 'Welcome Back,';
 
   @override
+  String get select_temple => 'Select Temple';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get nakshatra => 'Nakshatra';
+
+  @override
+  String get gothra => 'Gothra';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get booking_id => 'Booking ID';
+
+  @override
+  String get payment_id => 'Payment ID';
+
+  @override
+  String get transaction_date => 'Transaction Date';
+
+  @override
+  String get view_sankalpa_details => 'View Sankalpa Details';
+
+  @override
+  String get sankalpa_details => 'Sankalpa Details';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get pooja_images => 'Pooja Images';
+
+  @override
+  String get mark_as_complete => 'Mark as Complete';
+
+  @override
+  String get upload_pooja_image => 'Upload Pooja Image';
+
+  @override
+  String get add_images => 'Add Images';
+
+  @override
+  String get mark_as_completed => 'Mark as Completed';
+
+  @override
   String get state => 'State';
 
   @override
@@ -454,9 +508,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectSlot => 'Select Slot';
-
-  @override
-  String get date => 'Date';
 
   @override
   String get enterPuja => 'Enter Pooja / Seva duration time';

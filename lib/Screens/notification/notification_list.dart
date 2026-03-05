@@ -4,6 +4,7 @@ import 'package:nammadaiva_dashboard/Screens/notification/notification_list_view
 import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
+import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -156,8 +157,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         if (!viewModel.notifications[index].isRead!) {
           viewModel.markAsRead(viewModel.notifications[index].id!);
         }
+        Navigator.pushNamed(context, StringsRoute.bookings);
       },
-      // REMOVED Expanded from here
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Stack(

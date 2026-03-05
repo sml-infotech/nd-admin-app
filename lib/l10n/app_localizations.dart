@@ -596,7 +596,7 @@ abstract class AppLocalizations {
   /// No description provided for @created.
   ///
   /// In en, this message translates to:
-  /// **'Created:'**
+  /// **'Created'**
   String get created;
 
   /// No description provided for @active_highlights.
@@ -797,6 +797,114 @@ abstract class AppLocalizations {
   /// **'Welcome Back,'**
   String get welcome;
 
+  /// No description provided for @select_temple.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Temple'**
+  String get select_temple;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @rashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi'**
+  String get rashi;
+
+  /// No description provided for @nakshatra.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatra'**
+  String get nakshatra;
+
+  /// No description provided for @gothra.
+  ///
+  /// In en, this message translates to:
+  /// **'Gothra'**
+  String get gothra;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @booking_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID'**
+  String get booking_id;
+
+  /// No description provided for @payment_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment ID'**
+  String get payment_id;
+
+  /// No description provided for @transaction_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Date'**
+  String get transaction_date;
+
+  /// No description provided for @view_sankalpa_details.
+  ///
+  /// In en, this message translates to:
+  /// **'View Sankalpa Details'**
+  String get view_sankalpa_details;
+
+  /// No description provided for @sankalpa_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Sankalpa Details'**
+  String get sankalpa_details;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @pooja_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Pooja Images'**
+  String get pooja_images;
+
+  /// No description provided for @mark_as_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Complete'**
+  String get mark_as_complete;
+
+  /// No description provided for @upload_pooja_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Pooja Image'**
+  String get upload_pooja_image;
+
+  /// No description provided for @add_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Images'**
+  String get add_images;
+
+  /// No description provided for @mark_as_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Completed'**
+  String get mark_as_completed;
+
   /// No description provided for @state.
   ///
   /// In en, this message translates to:
@@ -988,12 +1096,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Slot'**
   String get selectSlot;
-
-  /// No description provided for @date.
-  ///
-  /// In en, this message translates to:
-  /// **'Date'**
-  String get date;
 
   /// No description provided for @enterPuja.
   ///
