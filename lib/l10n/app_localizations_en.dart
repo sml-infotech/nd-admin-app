@@ -546,7 +546,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toTime => 'To Time';
 
   @override
-  String get fromDate => 'Date';
+  String get fromDate => ' Date';
+
+  @override
+  String get fromDate_ => 'From Date';
 
   @override
   String get toDate => 'To Date';

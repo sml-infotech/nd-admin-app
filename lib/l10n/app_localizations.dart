@@ -1172,8 +1172,14 @@ abstract class AppLocalizations {
   /// No description provided for @fromDate.
   ///
   /// In en, this message translates to:
-  /// **'Date'**
+  /// **' Date'**
   String get fromDate;
+
+  /// No description provided for @fromDate_.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date'**
+  String get fromDate_;
 
   /// No description provided for @toDate.
   ///

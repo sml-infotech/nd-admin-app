@@ -549,6 +549,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get fromDate => 'ಹಿಂದಿನ ದಿನಾಂಕ';
 
   @override
+  String get fromDate_ => 'ಇಂದಿನ ದಿನಾಂಕ';
+
+  @override
   String get toDate => 'ಗೆಂದು ದಿನಾಂಕ';
 
   @override

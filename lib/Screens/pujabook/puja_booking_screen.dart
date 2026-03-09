@@ -379,7 +379,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
         Row(
           children: [
             DatePickerField(
-              title: AppLocalizations.of(context)!.fromDate,
+              title: AppLocalizations.of(context)!.fromDate_,
               selectedDate: viewmodel.selectedStartDate,
               isFromPooja: true,
               onDatePicked: (date) => setState(() {

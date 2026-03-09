@@ -82,72 +82,80 @@ class _EventListScreenState extends State<EventListScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return FocusDetector(
-      onFocusGained: () async {
-        if (viewmodel.selectedTempleId != null) {
-          await viewmodel.fetchEvents(viewmodel.selectedTempleId!, true);
-          setState(() {
-            filteredEvents = viewmodel.events;
-          });
-        }
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
       },
-      child: Consumer<EventListViewmodel>(
-        builder: (context, viewmodel, child) => Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: ColorConstant.buttonColor,
-            elevation: 0,
-            title: nammaDaivaAppBar(),
-          ),
-          body: viewmodel.isLoading && viewmodel.events.isEmpty
-              ? _buildShimmer()
-              : Column(
-                  children: [
-                    SizedBox(height: screenHeight * 0.02),
-                    _buildTempleDropdown(),
-                    SizedBox(height: 12),
-                    if (!viewmodel.events.isEmpty) ...[searchBar()],
-                    SizedBox(height: 12),
-                    !filteredEvents.isEmpty
-                        ? Expanded(
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount:
-                                  filteredEvents.length +
-                                  (viewmodel.isLoadingMore ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index == filteredEvents.length) {
-                                  return const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(),
+      behavior: HitTestBehavior.translucent,
+      child: FocusDetector(
+        onFocusGained: () async {
+          if (viewmodel.selectedTempleId != null) {
+            await viewmodel.fetchEvents(viewmodel.selectedTempleId!, true);
+            setState(() {
+              filteredEvents = viewmodel.events;
+            });
+          }
+        },
+        child: Consumer<EventListViewmodel>(
+          builder: (context, viewmodel, child) => Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: ColorConstant.buttonColor,
+              elevation: 0,
+              title: nammaDaivaAppBar(),
+            ),
+            body: viewmodel.isLoading && viewmodel.events.isEmpty
+                ? _buildShimmer()
+                : Column(
+                    children: [
+                      SizedBox(height: screenHeight * 0.02),
+                      _buildTempleDropdown(),
+                      SizedBox(height: 12),
+                      if (!viewmodel.events.isEmpty) ...[searchBar()],
+                      SizedBox(height: 12),
+                      !filteredEvents.isEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount:
+                                    filteredEvents.length +
+                                    (viewmodel.isLoadingMore ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == filteredEvents.length) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 8,
                                       ),
-                                    ),
-                                  );
-                                }
-                                final event = filteredEvents[index];
-                                return buildEventCard(event);
-                              },
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              "No events found.",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black54,
-                                fontFamily: font,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  final event = filteredEvents[index];
+                                  return buildEventCard(event);
+                                },
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                "No events found.",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                  fontFamily: font,
+                                ),
                               ),
                             ),
-                          ),
-                  ],
-                ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );
@@ -316,7 +324,10 @@ class _EventListScreenState extends State<EventListScreen> {
               const SizedBox(height: 8),
               fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
               const SizedBox(height: 8),
-              fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
+
+              if ((event.startTime ?? '').isNotEmpty ||
+                  (event.endTime ?? '').isNotEmpty)
+                fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
               const Divider(height: 24),
               descriptionTitleText(),
               const SizedBox(height: 6),
