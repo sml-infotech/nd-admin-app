@@ -23,7 +23,11 @@ class EventListViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> fetchEvents(String trempleId,bool reset ) async {
+  Future<void> fetchEvents(
+    String templeId,
+    bool reset, {
+    String query = "",
+  }) async {
     if (isLoading || isLoadingMore) return;
 
     if (reset) {
@@ -37,13 +41,15 @@ Future<void> fetchEvents(String trempleId,bool reset ) async {
     } else {
       isLoadingMore = true;
     }
+
     notifyListeners();
 
     try {
       final response = await eventService.fetchEventes(
         page: page,
         limit: limit,
-        temple_id: trempleId ?? '',
+        temple_id: templeId,
+        search: query, // send search query to API
       );
 
       events.addAll(response.events);
@@ -89,19 +95,19 @@ Future<void> fetchEvents(String trempleId,bool reset ) async {
     notifyListeners();
   }
 
-  void  reset() {
-      page = 1;
-   int limit = 10;
-   isLoading = false;
-   isLoadingMore = false;
-   hasMore = true;
-   eventService = EventService();
-   templeService = TempleService();
-  events = [];
- templeData = [];
-   selectedTempleId="";
-  selectedTemple = null;
-  templeList = [];
+  void reset() {
+    page = 1;
+    int limit = 10;
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+    eventService = EventService();
+    templeService = TempleService();
+    events = [];
+    templeData = [];
+    selectedTempleId = "";
+    selectedTemple = null;
+    templeList = [];
     notifyListeners();
   }
 }

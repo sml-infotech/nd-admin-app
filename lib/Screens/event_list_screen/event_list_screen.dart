@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
@@ -24,6 +26,7 @@ class _EventListScreenState extends State<EventListScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<EventItem> filteredEvents = [];
   String? language;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -34,16 +37,11 @@ class _EventListScreenState extends State<EventListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await viewmodel.getTemples();
 
-      if (viewmodel.templeData.isNotEmpty) {
-        // final firstTemple = viewmodel.templeData.first;
-        // viewmodel.setSelectedTemple(firstTemple);
-        // viewmodel.selectedTempleId = firstTemple.id;
-
-        await viewmodel.fetchEvents("", true);
-        setState(() {
-          filteredEvents = viewmodel.events;
-        });
-      }
+      // Fetch all events initially
+      await viewmodel.fetchEvents("", true);
+      setState(() {
+        filteredEvents = viewmodel.events;
+      });
     });
 
     _scrollController.addListener(() {
@@ -52,26 +50,36 @@ class _EventListScreenState extends State<EventListScreen> {
           !viewmodel.isLoadingMore &&
           viewmodel.hasMore &&
           !viewmodel.isLoading) {
-        viewmodel.fetchEvents(viewmodel.selectedTempleId!, false);
+        viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", false);
       }
     });
 
-    _searchController.addListener(() {
-      final query = _searchController.text.toLowerCase();
-      setState(() {
-        filteredEvents = viewmodel.events
-            .where(
-              (event) =>
-                  event.name.toLowerCase().contains(query) ||
-                  (event.description?.toLowerCase().contains(query) ?? false),
-            )
-            .toList();
-      });
-    });
+    // _searchController.addListener(() {
+    //   final query = _searchController.text.trim();
+
+    //   if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    //   _debounce = Timer(const Duration(milliseconds: 500), () async {
+    //     if (query.isNotEmpty) {
+    //       await viewmodel.fetchEvents(
+    //         viewmodel.selectedTempleId ?? "",
+    //         true,
+    //         query: query,
+    //       );
+    //     } else {
+    //       // If search is cleared, show all events
+    //       // await viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
+    //     }
+    //     setState(() {
+    //       filteredEvents = viewmodel.events;
+    //     });
+    //   });
+    // });
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _scrollController.dispose();
     _searchController.dispose();
     viewmodel.reset();
@@ -83,18 +91,14 @@ class _EventListScreenState extends State<EventListScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.translucent,
       child: FocusDetector(
         onFocusGained: () async {
-          if (viewmodel.selectedTempleId != null) {
-            await viewmodel.fetchEvents(viewmodel.selectedTempleId!, true);
-            setState(() {
-              filteredEvents = viewmodel.events;
-            });
-          }
+          await viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
+          setState(() {
+            filteredEvents = viewmodel.events;
+          });
         },
         child: Consumer<EventListViewmodel>(
           builder: (context, viewmodel, child) => Scaffold(
@@ -112,9 +116,9 @@ class _EventListScreenState extends State<EventListScreen> {
                       SizedBox(height: screenHeight * 0.02),
                       _buildTempleDropdown(),
                       SizedBox(height: 12),
-                      if (!viewmodel.events.isEmpty) ...[searchBar()],
+                      searchBar(),
                       SizedBox(height: 12),
-                      !filteredEvents.isEmpty
+                      filteredEvents.isNotEmpty
                           ? Expanded(
                               child: ListView.builder(
                                 controller: _scrollController,
@@ -174,7 +178,6 @@ class _EventListScreenState extends State<EventListScreen> {
         paddingSize: 0,
         onChanged: (value) async {
           if (value == null) return;
-
           final selectedTemple = uniqueTemples.firstWhere(
             (t) => t.name == value,
           );
@@ -185,15 +188,16 @@ class _EventListScreenState extends State<EventListScreen> {
             filteredEvents = viewmodel.events;
           });
         },
-        onClose: () {
+        onClose: () async {
           viewmodel.selectedTemple = null;
           viewmodel.selectedTempleId = null;
-          viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
+          await viewmodel.fetchEvents("", true);
+          setState(() {
+            filteredEvents = viewmodel.events;
+          });
         },
         isLoadingMore: viewmodel.isLoadingMore,
-        onLoadMore: () {
-          viewmodel.getTemples();
-        },
+        onLoadMore: () => viewmodel.getTemples(),
         refreshListenable: viewmodel,
       ),
     );
@@ -221,6 +225,33 @@ class _EventListScreenState extends State<EventListScreen> {
             vertical: 0,
           ),
         ),
+        onChanged: (query) {
+          query = query.trim();
+          _searchController.text = query;
+          // Cancel previous debounce timer if still active
+          if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+          // Start new debounce timer
+          _debounce = Timer(const Duration(milliseconds: 500), () async {
+            if (query.isNotEmpty) {
+              // Call API only if query is not empty
+              await viewmodel.fetchEvents(
+                viewmodel.selectedTempleId ?? "",
+                true,
+                query: query,
+              );
+            } else {
+              // Optional: reset to all events if search is empty
+              await viewmodel.fetchEvents(
+                viewmodel.selectedTempleId ?? "",
+                true,
+              );
+            }
+            setState(() {
+              filteredEvents = viewmodel.events;
+            });
+          });
+        },
       ),
     );
   }
@@ -260,31 +291,29 @@ class _EventListScreenState extends State<EventListScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           AppLocalizations.of(context)!.events,
           style: AppTextStyles.appBarTitleStyle,
         ),
-
         const Spacer(),
         IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, StringsRoute.createEvent);
-          },
-          icon: Icon(Icons.add, color: Colors.white),
+          onPressed: () =>
+              Navigator.pushNamed(context, StringsRoute.createEvent),
+          icon: const Icon(Icons.add, color: Colors.white),
         ),
       ],
     );
   }
 
+  // ---------------------- Event Card Widgets ----------------------
+
   Widget buildEventCard(EventItem event) {
     return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Card(
         color: Colors.white,
         elevation: 4,
@@ -302,16 +331,14 @@ class _EventListScreenState extends State<EventListScreen> {
                         ? event.translations.first.name
                         : event.name,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        StringsRoute.createEvent,
-                        arguments: event,
-                      );
-                    },
-                    icon: Icon(Icons.edit),
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      StringsRoute.createEvent,
+                      arguments: event,
+                    ),
+                    icon: const Icon(Icons.edit),
                   ),
                 ],
               ),
@@ -324,7 +351,6 @@ class _EventListScreenState extends State<EventListScreen> {
               const SizedBox(height: 8),
               fromAndEndDateText(event.startDate ?? '', event.endDate ?? ''),
               const SizedBox(height: 8),
-
               if ((event.startTime ?? '').isNotEmpty ||
                   (event.endTime ?? '').isNotEmpty)
                 fromTimeEndTime(event.startTime ?? '', event.endTime ?? ''),
@@ -404,127 +430,101 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  Widget eventTitle(String title) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          fontFamily: font,
-        ),
-      ),
-    );
-  }
-
-  Widget locationText(String location) {
-    return Row(
-      children: [
-        const Icon(Icons.location_on, color: Colors.grey, size: 20),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            location,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-              fontFamily: font,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget fromAndEndDateText(String startDate, String endDate) {
-    return Row(
-      children: [
-        const Icon(Icons.calendar_today, color: Colors.grey, size: 18),
-        const SizedBox(width: 6),
-        Text(
-          "From ${_formatDate(startDate)}  ${endDate.isNotEmpty ? 'to ${_formatDate(endDate)}' : ''}",
-          style: TextStyle(fontSize: 14, fontFamily: font),
-        ),
-      ],
-    );
-  }
-
-  Widget fromTimeEndTime(String startTime, String endTime) {
-    return Row(
-      children: [
-        const Icon(Icons.access_time, color: Colors.grey, size: 18),
-        const SizedBox(width: 6),
-        Text(
-          "${startTime} - ${endTime}",
-          style: TextStyle(fontSize: 14, fontFamily: font),
-        ),
-      ],
-    );
-  }
-
-  Widget descriptionTitleText() {
-    return Text(
-      AppLocalizations.of(context)!.eventDescription,
+  Widget eventTitle(String title) => SizedBox(
+    width: MediaQuery.of(context).size.width * 0.7,
+    child: Text(
+      title,
       style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
         fontFamily: font,
       ),
-    );
-  }
+    ),
+  );
 
-  Widget descriptionText(String description) {
-    return Text(
-      description,
-      style: TextStyle(fontSize: 14, color: Colors.black87, fontFamily: font),
-    );
-  }
-
-  Widget contactNameText() {
-    return Text(
-      AppLocalizations.of(context)!.contactInformation,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        fontFamily: font,
-      ),
-    );
-  }
-
-  Widget contactName(String contactName) {
-    return Row(
-      children: [
-        const Icon(Icons.person, size: 18, color: Colors.grey),
-        const SizedBox(width: 6),
-        Text(
-          contactName,
+  Widget locationText(String location) => Row(
+    children: [
+      const Icon(Icons.location_on, color: Colors.grey, size: 20),
+      const SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          location,
           style: TextStyle(
             fontSize: 14,
             color: Colors.black87,
             fontFamily: font,
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
-  Widget contactPhone(String contactPhone) {
-    return Row(
-      children: [
-        const Icon(Icons.phone, size: 18, color: Colors.grey),
-        const SizedBox(width: 6),
-        Text(
-          contactPhone,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black87,
-            fontFamily: font,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget fromAndEndDateText(String startDate, String endDate) => Row(
+    children: [
+      const Icon(Icons.calendar_today, color: Colors.grey, size: 18),
+      const SizedBox(width: 6),
+      Text(
+        "From ${_formatDate(startDate)}  ${endDate.isNotEmpty ? 'to ${_formatDate(endDate)}' : ''}",
+        style: TextStyle(fontSize: 14, fontFamily: font),
+      ),
+    ],
+  );
+
+  Widget fromTimeEndTime(String startTime, String endTime) => Row(
+    children: [
+      const Icon(Icons.access_time, color: Colors.grey, size: 18),
+      const SizedBox(width: 6),
+      Text(
+        "$startTime - $endTime",
+        style: TextStyle(fontSize: 14, fontFamily: font),
+      ),
+    ],
+  );
+
+  Widget descriptionTitleText() => Text(
+    AppLocalizations.of(context)!.eventDescription,
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontFamily: font,
+    ),
+  );
+
+  Widget descriptionText(String description) => Text(
+    description,
+    style: TextStyle(fontSize: 14, color: Colors.black87, fontFamily: font),
+  );
+
+  Widget contactNameText() => Text(
+    AppLocalizations.of(context)!.contactInformation,
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontFamily: font,
+    ),
+  );
+
+  Widget contactName(String contactName) => Row(
+    children: [
+      const Icon(Icons.person, size: 18, color: Colors.grey),
+      const SizedBox(width: 6),
+      Text(
+        contactName,
+        style: TextStyle(fontSize: 14, color: Colors.black87, fontFamily: font),
+      ),
+    ],
+  );
+
+  Widget contactPhone(String contactPhone) => Row(
+    children: [
+      const Icon(Icons.phone, size: 18, color: Colors.grey),
+      const SizedBox(width: 6),
+      Text(
+        contactPhone,
+        style: TextStyle(fontSize: 14, color: Colors.black87, fontFamily: font),
+      ),
+    ],
+  );
 
   String _formatDate(String? dateStr) {
     if (dateStr == null) return '';

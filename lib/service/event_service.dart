@@ -121,6 +121,7 @@ class EventService {
     int page = 1,
     int limit = 10,
     String temple_id = '',
+    String search = '',
   }) async {
     try {
       final url =
@@ -128,9 +129,11 @@ class EventService {
           '?page=$page'
           '&limit=$limit'
           '&language=kn'
-          '${temple_id != null && temple_id.isNotEmpty ? '&temple_id=$temple_id' : ''}';
+          '${temple_id.isNotEmpty ? '&temple_id=$temple_id' : ''}'
+          '${search.isNotEmpty ? '&search=$search' : ''}';
 
       print('Fetching fetchEventes: $url');
+
       dynamic data = await apiService.get(url);
       return EventListResponse.fromJson(data);
     } catch (e) {
