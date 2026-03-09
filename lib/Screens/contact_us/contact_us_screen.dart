@@ -26,12 +26,12 @@ class _ContactCardState extends State<ContactCard> {
   bool _isExpanded = false;
   late ContactViewModel vm;
 
-  @override
-  void dispose() {
-    vm.reset();
-    super.dispose();
-    print("ContactCard for ${widget.data.id} disposed");
-  }
+  // @override
+  // void dispose() {
+  //   vm.reset();
+  //   super.dispose();
+  //   print("ContactCard for ${widget.data.id} disposed");
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,18 +54,12 @@ class _ContactCardState extends State<ContactCard> {
         ),
         child: InkWell(
           onTap: () async {
-            setState(() => _isExpanded = !_isExpanded);
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
 
             if (!widget.data.isRead) {
-              try {
-                await vm.markMessageAsRead(widget.data.id);
-
-                vm.updateContact(widget.data.copyWith(isRead: true));
-              } catch (e) {
-                print("Failed to mark as read: $e");
-              }
-            } else {
-              print("dfsdfsdfsdf??????????");
+              await vm.markMessageAsRead(widget.data.id);
             }
           },
 

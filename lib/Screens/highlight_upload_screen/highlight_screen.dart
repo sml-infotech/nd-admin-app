@@ -129,30 +129,36 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
         backgroundColor: ColorConstant.buttonColor,
         centerTitle: true,
       ),
-      body: FocusDetector(
-        onFocusGained: () async {
-          // await viewModel.fetchHighlights();
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
         },
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                const SizedBox(height: 15),
-                Expanded(child: uploadContentWidget(viewModel)),
-              ],
-            ),
-            if (viewModel.isLoading)
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.4),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: ColorConstant.buttonColor,
+        behavior: HitTestBehavior.translucent,
+        child: FocusDetector(
+          onFocusGained: () async {
+            // await viewModel.fetchHighlights();
+          },
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Expanded(child: uploadContentWidget(viewModel)),
+                ],
+              ),
+              if (viewModel.isLoading)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstant.buttonColor,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

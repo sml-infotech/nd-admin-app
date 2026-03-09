@@ -32,7 +32,7 @@ class ContactViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchMore() async {
+Future<void> fetchMore() async {
     if (isLoadingMore || !hasMore) return;
 
     try {
@@ -59,25 +59,27 @@ class ContactViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> markMessageAsRead(String contactId) async {
-    try {
-      final response = await userService.markAsRead(contactId);
+Future<void> markMessageAsRead(String contactId) async {
+  try {
+    final response = await userService.markAsRead(contactId);
 
-      // Update your contacts list if you have one
-      int index = contacts.indexWhere((c) => c.id == contactId);
-      if (index != -1 && response.data.isNotEmpty) {
-        final updated = response.data.firstWhere(
-          (c) => c.id == contactId,
-          orElse: () => response.data.first,
-        );
+    int index = contacts.indexWhere((c) => c.id == contactId);
+
+    if (index != -1 && response.data.isNotEmpty) {
+      final updated = response.data.firstWhere(
+        (c) => c.id == contactId,
+        orElse: () => response.data.first,
+      );
+
+      if (contacts[index] != updated) {
         contacts[index] = updated;
         notifyListeners();
       }
-    } catch (e) {
-      print("Failed to mark read: $e");
     }
+  } catch (e) {
+    debugPrint("Failed to mark read: $e");
   }
-
+}
   void updateContact(ContactData updatedData) {
     // Find the index of the contact with the same ID
     int index = contacts.indexWhere((c) => c.id == updatedData.id);

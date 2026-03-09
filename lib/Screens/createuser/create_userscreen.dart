@@ -158,6 +158,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                                           setState(() {
                                             viewModel.selectedTempleIds = ids;
                                           });
+                                          print(
+                                            "Selected Temple IDs: ${viewModel.selectedTempleIds}",
+                                          );
                                           debugPrint(
                                             "Selected Temple IDs: $ids",
                                           );

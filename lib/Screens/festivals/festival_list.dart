@@ -202,7 +202,10 @@ class FestivalCard extends StatelessWidget {
           context,
           StringsRoute.festivalDetailsScreen,
           arguments: FestivalArgument(
-            name: festival.name,
+            name: language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.name
+                : festival.name,
+
             startDate: festival.startDate != null
                 ? DateFormat('yyyy-MM-dd').format(festival.startDate!)
                 : '',
@@ -211,8 +214,14 @@ class FestivalCard extends StatelessWidget {
                 : '',
             startTime: festival.startTime ?? '',
             endTime: festival.endTime ?? '',
-            description: festival.description,
-            deities: festival.deityNames,
+            description:
+                language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.description
+                : festival.description,
+            deities:
+                language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.deities ?? []
+                : festival.deityNames,
             imageUrls: festival.images.map((e) => e.url).toList(),
             translation: festival.translations,
           ),

@@ -596,6 +596,9 @@ class _UserListScreenState extends State<UserListScreen> {
                               FocusScope.of(context).unfocus();
                               viewModel.editLoading = true;
                             });
+                            print(
+                              "📝 Updating user ${user.id} with name: ${fullNameController.text}, isActive: $isActive, role: ${viewModel.role.text}, selectedTemples: ${viewModel.selectedTempleIds}",
+                            );
                             await viewModel.editUser(
                               user.id,
                               fullNameController.text,

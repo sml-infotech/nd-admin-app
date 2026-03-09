@@ -99,6 +99,7 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
                   const SizedBox(height: 12),
                   startDateEndDateWidget(),
                   const SizedBox(height: 16),
+
                   startTimeEndTimeWidget(),
                   const SizedBox(height: 16),
                   deities(),
@@ -120,7 +121,7 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
 
   Widget descriptionTitleWidget() {
     return Text(
-      "Description",
+      AppLocalizations.of(context)!.description,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
@@ -166,16 +167,23 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
   }
 
   Widget startTimeEndTimeWidget() {
-    return Row(
-      children: [
-        const Icon(Icons.access_time, size: 16),
-        const SizedBox(width: 8),
-        Text(
-          "${widget.arguments.startTime} - ${widget.arguments.endTime}",
-          style: TextStyle(fontSize: 14, fontFamily: font, color: Colors.grey),
-        ),
-      ],
-    );
+    return widget.arguments.startTime.isNotEmpty &&
+            widget.arguments.endTime.isNotEmpty
+        ? Row(
+            children: [
+              const Icon(Icons.access_time, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                "${widget.arguments.startTime} - ${widget.arguments.endTime}",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: font,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          )
+        : SizedBox.shrink();
   }
 
   Widget nammaDaivaAppBar() {
@@ -200,7 +208,7 @@ class _FestivalDetailsScreenState extends State<FestivalDetailsScreen> {
 
   Widget deities() {
     return Text(
-      "Deities :",
+      " ${AppLocalizations.of(context)!.deities} :",
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
