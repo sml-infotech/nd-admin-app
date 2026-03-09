@@ -331,7 +331,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       Expanded(
                         child: Text(
                           "${language == "kn" ? temple.translations?.first?.address ?? temple.address : temple.address}, ${temple.pincode}",
-                          style: AppTextStyles.templeNameDetailsAddressStyle,
+                          style: AppTextStyles.templeNameDetailsStyle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
