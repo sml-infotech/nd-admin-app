@@ -156,8 +156,8 @@ class PujaListViewmodel extends ChangeNotifier {
   Future<void> reset({bool skipNotify = false}) async {
     pujaList = [];
     pujaDataForActive = [];
-    templeData = [];
-    templeList = [];
+    // templeData = [];
+    // templeList = [];
 
     isLoading = true;
     isLoadingMore = false;

@@ -81,13 +81,11 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Consumer<UserViewModel>(
       builder: (context, viewModel, _) {
         return FocusDetector(
           onFocusGained: () async {
-            // viewModel.resetData();
             viewModel.resetData();
             await viewModel.getTemples(reset: true);
             await viewModel.getUsers(reset: true);
@@ -149,7 +147,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Widget _buildFullShimmerList() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(0),
       itemCount: 9,
       itemBuilder: (context, index) => const ShimmerUserCard(),
     );
