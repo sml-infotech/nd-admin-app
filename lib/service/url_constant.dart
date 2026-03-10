@@ -4,11 +4,11 @@ var environment = Server.stage;
 String baseUrlString() {
   switch (environment) {
     case Server.dev:
-      return "";
-    case Server.stage:
       return "https://s7jij3mes9.execute-api.ap-south-1.amazonaws.com/Prod/api/";
-      
-      //  "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
+    case Server.stage:
+      return "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
+    // "https://s7jij3mes9.execute-api.ap-south-1.amazonaws.com/Prod/api/";
+
     case Server.prod:
       return "";
   }
@@ -68,12 +68,12 @@ class UrlConstant {
   static String editHighlight = "${baseUrlString()}v1/edit-highlight";
   static String getBlogs = "${baseUrlString()}v1/list-blogs";
   static String blogDetails = "${baseUrlString()}v1/blog-details";
-static String updateBlog = "${baseUrlString()}v1/update-blog";
-    static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
-        static String updateBooking = "${baseUrlString()}v1/update-booking";
+  static String updateBlog = "${baseUrlString()}v1/update-blog";
+  static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
+  static String updateBooking = "${baseUrlString()}v1/update-booking";
   static String notificationList = "${baseUrlString()}v1/list-notifications";
-  static String fetchDashboardStats = "${baseUrlString()}v1/dashboard-statistics";
-  static String markNotificationRead = "${baseUrlString()}v1/mark-notifications-read";
-
-
+  static String fetchDashboardStats =
+      "${baseUrlString()}v1/dashboard-statistics";
+  static String markNotificationRead =
+      "${baseUrlString()}v1/mark-notifications-read";
 }
