@@ -1025,11 +1025,29 @@ abstract class AppLocalizations {
   /// **'Location'**
   String get eventLocation;
 
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @addPuja.
   ///
   /// In en, this message translates to:
   /// **'Add Pooja / Seva'**
   String get addPuja;
+
+  /// No description provided for @deleteFestivalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Festival'**
+  String get deleteFestivalTitle;
+
+  /// No description provided for @deleteFestivalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete'**
+  String get deleteFestivalMessage;
 
   /// No description provided for @updatePuja.
   ///

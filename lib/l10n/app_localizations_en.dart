@@ -474,7 +474,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventLocation => 'Location';
 
   @override
+  String get delete => 'Delete';
+
+  @override
   String get addPuja => 'Add Pooja / Seva';
+
+  @override
+  String get deleteFestivalTitle => 'Delete Festival';
+
+  @override
+  String get deleteFestivalMessage => 'Are you sure you want to delete';
 
   @override
   String get updatePuja => 'Update Pooja';

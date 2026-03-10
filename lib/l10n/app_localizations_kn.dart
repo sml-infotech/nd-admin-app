@@ -474,7 +474,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get eventLocation => 'ಸ್ಥಳ';
 
   @override
+  String get delete => 'ಅಳಿಸಿ';
+
+  @override
   String get addPuja => 'ಪೂಜಾ/ಸೇವಾ ಸೇರಿಸಿ';
+
+  @override
+  String get deleteFestivalTitle => 'ಹಬ್ಬವನ್ನು ಅಳಿಸಿ';
+
+  @override
+  String get deleteFestivalMessage => 'ನೀವು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ';
 
   @override
   String get updatePuja => 'ಪೂಜಾ/ಸೇವಾ ಅಪ್ಡೇಟ್ ಮಾಡಿ';
