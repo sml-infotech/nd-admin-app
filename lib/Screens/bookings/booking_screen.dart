@@ -156,7 +156,7 @@ class _BookingScreenState extends State<BookingScreen> {
           return _buildCard(vm.bookings[index - 2], index - 2);
         }
 
-        return _loadingMore();
+        // return _loadingMore();
       },
     );
   }

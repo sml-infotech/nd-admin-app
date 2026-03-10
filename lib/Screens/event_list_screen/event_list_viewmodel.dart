@@ -51,7 +51,7 @@ class EventListViewmodel extends ChangeNotifier {
         page: eventPage,
         limit: limit,
         temple_id: templeId,
-        search: query, // send search query to API
+        search: query, 
       );
 
       events.addAll(response.events);
