@@ -33,11 +33,8 @@ class _EventListScreenState extends State<EventListScreen> {
     super.initState();
     _loadUserData();
     viewmodel = Provider.of<EventListViewmodel>(context, listen: false);
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await viewmodel.getTemples();
-
-      // Fetch all events initially
+      await viewmodel.getTemples(reset: true);
       await viewmodel.fetchEvents("", true);
       setState(() {
         filteredEvents = viewmodel.events;
@@ -54,27 +51,7 @@ class _EventListScreenState extends State<EventListScreen> {
       }
     });
 
-    // _searchController.addListener(() {
-    //   final query = _searchController.text.trim();
-
-    //   if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    //   _debounce = Timer(const Duration(milliseconds: 500), () async {
-    //     if (query.isNotEmpty) {
-    //       await viewmodel.fetchEvents(
-    //         viewmodel.selectedTempleId ?? "",
-    //         true,
-    //         query: query,
-    //       );
-    //     } else {
-    //       // If search is cleared, show all events
-    //       // await viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", true);
-    //     }
-    //     setState(() {
-    //       filteredEvents = viewmodel.events;
-    //     });
-    //   });
-    // });
+  
   }
 
   @override
@@ -166,8 +143,7 @@ class _EventListScreenState extends State<EventListScreen> {
   }
 
   Widget _buildTempleDropdown() {
-    var uniqueTemples = viewmodel.templeData.toSet().toList();
-
+    var uniqueTemples = viewmodel.templeData;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: CommonDropdownField(
@@ -176,28 +152,42 @@ class _EventListScreenState extends State<EventListScreen> {
         items: uniqueTemples.map((t) => t.name).toList(),
         selectedValue: viewmodel.selectedTemple?.name,
         paddingSize: 0,
+
         onChanged: (value) async {
           if (value == null) return;
+
           final selectedTemple = uniqueTemples.firstWhere(
             (t) => t.name == value,
           );
+
           viewmodel.setSelectedTemple(selectedTemple);
           viewmodel.selectedTempleId = selectedTemple.id;
+
           await viewmodel.fetchEvents(selectedTemple.id, true);
+
           setState(() {
             filteredEvents = viewmodel.events;
           });
         },
+
         onClose: () async {
           viewmodel.selectedTemple = null;
           viewmodel.selectedTempleId = null;
+
           await viewmodel.fetchEvents("", true);
+
           setState(() {
             filteredEvents = viewmodel.events;
           });
         },
+
         isLoadingMore: viewmodel.isLoadingMore,
-        onLoadMore: () => viewmodel.getTemples(),
+        onLoadMore: () async {
+          if (!viewmodel.isLoadingMore) {
+            await viewmodel.getTemples();
+          }
+        },
+
         refreshListenable: viewmodel,
       ),
     );

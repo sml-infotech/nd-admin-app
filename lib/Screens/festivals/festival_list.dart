@@ -243,7 +243,6 @@ class FestivalCard extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
-                      // Background Image
                       Container(
                         width: double.infinity,
                         height: 200,
