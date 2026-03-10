@@ -6,7 +6,9 @@ String baseUrlString() {
     case Server.dev:
       return "";
     case Server.stage:
-      return "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
+      return "https://s7jij3mes9.execute-api.ap-south-1.amazonaws.com/Prod/api/";
+      
+      //  "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
     case Server.prod:
       return "";
   }
