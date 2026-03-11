@@ -508,4 +508,36 @@ void resetEverything() {
       notifyListeners();
     }
   }
+
+
+  void resetSectionFields() {
+  // Title
+  sectionTitle.clear();
+  sectionTitleKn.clear();
+
+  // Paragraphs
+  paragraphControllers = [TextEditingController()];
+  paragraphControllersKN = [TextEditingController()];
+
+  paragraphPositions.clear();
+  paragraphPositionsKN.clear();
+
+  // Lists
+  showListGroupEN = false;
+  showListGroupKN = false;
+
+  listTypeEN = 'Numbered';
+  listTypeKN = 'Numbered';
+
+  listHeadingControllerEN.clear();
+  listHeadingControllerKN.clear();
+
+  listItemControllersEN = [TextEditingController()];
+  listItemControllersKN = [TextEditingController()];
+
+  // Reset edit mode
+  editingIndex = null;
+
+  notifyListeners();
+}
 }

@@ -37,10 +37,8 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
         ),
         const SizedBox(height: 24),
 
-        // Paragraph Fields
         ..._buildParagraphFields(),
 
-        // Add Paragraph Button
         _textButton(
           icon: Icons.add,
           label: 'Add Paragraph',
@@ -49,7 +47,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
 
         const SizedBox(height: 24),
 
-        // Add List Group Button
         _textButton(
           icon: Icons.add,
           label: 'Add List Group',
