@@ -73,7 +73,8 @@ class PujaData {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<PujaTimeSlot> timeSlots;
-  bool? isActive;
+bool? isActive;
+  bool? requiresPrasadAddress;
   final List<Translation>? translations;
   final List<String> benefits;
 
@@ -95,6 +96,7 @@ class PujaData {
     required this.updatedAt,
     required this.timeSlots,
     this.isActive,
+    this.requiresPrasadAddress,
     required this.translations,
     required this.benefits,
   });
@@ -144,6 +146,7 @@ class PujaData {
                 .toList()
           : [],
       isActive: json['is_active'],
+      requiresPrasadAddress: json['requires_prasad_address'] as bool?,
       translations: json['translations'] != null
           ? (json['translations'] as List)
                 .map((item) => Translation.fromJson(item))
@@ -174,6 +177,7 @@ class PujaData {
       'updated_at': updatedAt.toIso8601String(),
       'time_slots': timeSlots.map((slot) => slot.toJson()).toList(),
       'is_active': isActive,
+      'requires_prasad_address': requiresPrasadAddress,
       'translations': translations?.map((t) => t.toJson()).toList(),
       'benefits': benefits,
     };

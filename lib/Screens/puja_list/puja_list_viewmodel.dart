@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/toggleprasadaddressmodel/toggle_prasad_address_model.dart';
 import 'package:nammadaiva_dashboard/service/puja_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
@@ -27,6 +28,7 @@ class PujaListViewmodel extends ChangeNotifier {
   String templeId = '';
   String message = '';
   bool? isActive;
+  bool? isPrasadAvailable;
 
   Future<void> fetchPujas({bool reset = false}) async {
     try {
@@ -81,48 +83,48 @@ class PujaListViewmodel extends ChangeNotifier {
     await fetchPujas(reset: false);
   }
 
- Future<void> getTemples({bool reset = false}) async {
-  if (isLoading || isFetchingNextPage) return;
+  Future<void> getTemples({bool reset = false}) async {
+    if (isLoading || isFetchingNextPage) return;
 
-  if (reset) {
-    _currentPage = 1;
-    hasNextPage = true;
-    templeData.clear();
-    templeList.clear();
-    isLoading = true;
-  } else {
-    if (!hasNextPage) return;
-    isFetchingNextPage = true;
-    _currentPage++; // ✅ increment only once here
-  }
+    if (reset) {
+      _currentPage = 1;
+      hasNextPage = true;
+      templeData.clear();
+      templeList.clear();
+      isLoading = true;
+    } else {
+      if (!hasNextPage) return;
+      isFetchingNextPage = true;
+      _currentPage++; // ✅ increment only once here
+    }
 
-  notifyListeners();
+    notifyListeners();
 
-  try {
-    final response = await templeService.getTemples(
-      page: _currentPage,
-      limit: 10,
-    );
+    try {
+      final response = await templeService.getTemples(
+        page: _currentPage,
+        limit: 10,
+      );
 
-    if (response.data != null && response.data!.isNotEmpty) {
-      templeData.addAll(response.data!);
-      templeList = templeData.map((t) => t.name).toList();
+      if (response.data != null && response.data!.isNotEmpty) {
+        templeData.addAll(response.data!);
+        templeList = templeData.map((t) => t.name).toList();
 
-      // ✅ If less than limit, no more pages
-      if (response.data!.length < 10) {
+        // ✅ If less than limit, no more pages
+        if (response.data!.length < 10) {
+          hasNextPage = false;
+        }
+      } else {
         hasNextPage = false;
       }
-    } else {
-      hasNextPage = false;
+    } catch (e) {
+      debugPrint("Error fetching temples: $e");
+    } finally {
+      isLoading = false;
+      isFetchingNextPage = false;
+      notifyListeners();
     }
-  } catch (e) {
-    debugPrint("Error fetching temples: $e");
-  } finally {
-    isLoading = false;
-    isFetchingNextPage = false;
-    notifyListeners();
   }
-}
 
   Future<bool> toggleActivate(String pujaId, bool toggle) async {
     try {
@@ -140,6 +142,46 @@ class PujaListViewmodel extends ChangeNotifier {
         return false;
       }
     } catch (e) {
+      message = "Something went wrong: $e";
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> togglePrasadAvailable(String pujaId, bool toggle) async {
+    try {
+      // Find the puja and update locally first
+      final pujaIndex = pujaList.indexWhere((puja) => puja.id == pujaId);
+      if (pujaIndex == -1) {
+        message = "Puja not found";
+        notifyListeners();
+        return false;
+      }
+
+      // Update the local puja
+      pujaList[pujaIndex].requiresPrasadAddress = toggle;
+      notifyListeners();
+
+      // Make API call
+      final response = await pujaService.togglePrasadAddress(pujaId, toggle);
+
+      if (response.code == 200) {
+        message = response.message ?? "Updated successfully";
+        notifyListeners();
+        return true;
+      } else {
+        // Revert on failure
+        pujaList[pujaIndex].requiresPrasadAddress = !toggle;
+        message = response.message ?? "Some error occurred";
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      // Find and revert on error
+      final pujaIndex = pujaList.indexWhere((puja) => puja.id == pujaId);
+      if (pujaIndex != -1) {
+        pujaList[pujaIndex].requiresPrasadAddress = !toggle;
+      }
       message = "Something went wrong: $e";
       notifyListeners();
       return false;

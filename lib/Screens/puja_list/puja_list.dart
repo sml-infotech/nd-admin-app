@@ -295,6 +295,8 @@ class _PujaListState extends State<PujaList> {
                     .toList(),
               ),
               SizedBox(height: 8),
+              availablePrasad(puja),
+              // SizedBox(height: 8),
               availableTimeSlotsTitle(),
               SizedBox(height: 8),
               availableTimeSlots(activeTimes: formattedTimes),
@@ -305,6 +307,34 @@ class _PujaListState extends State<PujaList> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget availablePrasad(PujaData puja) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+      child: Row(
+        children: [
+          Text(
+            AppLocalizations.of(context)!.availablePrasad,
+            style: AppTextStyles.templeNameDetailsStyle.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          SmallToggleSwitch(
+            value: puja.requiresPrasadAddress ?? false,
+            onChanged: (v) {
+              setState(() {
+                viewmodel.togglePrasadAvailable(
+                  viewmodel.pujaList.first.id,
+                  !(puja.requiresPrasadAddress ?? false),
+                );
+              });
+            },
+          ),
+        ],
       ),
     );
   }
@@ -650,7 +680,7 @@ class _PujaListState extends State<PujaList> {
     );
   }
 
-  Widget availableTimeSlotsTitle() {
+Widget availableTimeSlotsTitle() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(

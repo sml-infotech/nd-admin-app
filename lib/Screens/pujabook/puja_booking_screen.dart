@@ -500,7 +500,12 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
           child: CheckBoxRow(
             label: AppLocalizations.of(context)!.availablePrasad,
             value: viewmodel.isPrasadAvailable,
-            onChanged: (v) => setState(() => viewmodel.isPrasadAvailable = v!),
+            onChanged: (v){
+              setState(() {
+                viewmodel.isPrasadAvailable = !viewmodel.isPrasadAvailable;
+                print("Prasad availability changed: ${viewmodel.isPrasadAvailable}");
+              });
+            },
           ),
         ),
       ],

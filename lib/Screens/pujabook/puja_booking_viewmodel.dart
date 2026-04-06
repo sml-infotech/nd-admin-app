@@ -25,8 +25,8 @@ class CreatePujaViewmodel extends ChangeNotifier {
   final TempleService templeService = TempleService();
   final UserService userService = UserService();
   bool hasNextPage = true;
-bool isInitialLoading = false;
-bool isLoadingMore = false;
+  bool isInitialLoading = false;
+  bool isLoadingMore = false;
 
   List<XFile> selectedImages = [];
   List<String> deities = [];
@@ -54,7 +54,7 @@ bool isLoadingMore = false;
   bool specialReq = false;
   bool isPrasadAvailable = false;
   bool hideActive = false;
-bool isLoading = false;
+  bool isLoading = false;
   bool isValid = false;
   bool pujaCreated = false;
 
@@ -269,42 +269,41 @@ bool isLoading = false;
     return "$hour:$minute:00";
   }
 
-Future<void> getTemples({bool reset = false}) async {
-  if (reset) {
-  if (isInitialLoading) return;
-    isInitialLoading = true;
-  } else {
-    if (isLoadingMore || !hasNextPage) return;
-    isLoadingMore = true;
+  Future<void> getTemples({bool reset = false}) async {
+    if (reset) {
+      if (isInitialLoading) return;
+      isInitialLoading = true;
+    } else {
+      if (isLoadingMore || !hasNextPage) return;
+      isLoadingMore = true;
+    }
+
+    notifyListeners();
+
+    if (reset) {
+      templeData.clear();
+      page = 1;
+      hasNextPage = true;
+    }
+
+    final response = await templeService.getTemples(
+      page: page,
+      limit: limit,
+      language: "kn",
+    );
+
+    if (response.data != null && response.data!.isNotEmpty) {
+      templeData.addAll(response.data!);
+      page++;
+    } else {
+      hasNextPage = false;
+    }
+
+    isInitialLoading = false;
+    isLoadingMore = false;
+
+    notifyListeners();
   }
-
-  notifyListeners();
-
-  if (reset) {
-    templeData.clear();
-    page = 1;
-    hasNextPage = true;
-}
-
-  final response = await templeService.getTemples(
-    page: page,
-    limit: limit,
-    language: "kn",
-  );
-
-  if (response.data != null && response.data!.isNotEmpty) {
-    templeData.addAll(response.data!);
-    page++;
-  } else {
-    hasNextPage = false;
-  }
-
-  isInitialLoading = false;
-  isLoadingMore = false;
-
-  notifyListeners();
-}
-
 
   Future<void> createPuja() async {
     try {
@@ -339,7 +338,7 @@ Future<void> getTemples({bool reset = false}) async {
         requestDays,
         timeSlots,
         benefitsList,
-      isPrasadAvailable,
+        isPrasadAvailable,
         [
           Translation(
             languageCode: "kn",
@@ -429,7 +428,7 @@ Future<void> getTemples({bool reset = false}) async {
         requestDays,
         timeSlots,
         benefitsEn.toList(),
-   isPrasadAvailable,
+        isPrasadAvailable,
         [
           Translation(
             languageCode: "kn",

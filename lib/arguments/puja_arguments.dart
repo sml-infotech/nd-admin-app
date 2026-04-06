@@ -19,7 +19,7 @@ class PujaArguments {
   final List<Translation>? translations;
   final List<String> benefits;
 
-  PujaArguments({
+PujaArguments({
     required this.templeId,
     required this.puja_id,
     required this.puja_name,

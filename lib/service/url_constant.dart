@@ -76,4 +76,6 @@ class UrlConstant {
       "${baseUrlString()}v1/dashboard-statistics";
   static String markNotificationRead =
       "${baseUrlString()}v1/mark-notifications-read";
+  static String togglePrasadAddressUrl(String pujaId) =>
+      "${baseUrlString()}v1/puja/$pujaId/toggle-prasad-address";
 }
