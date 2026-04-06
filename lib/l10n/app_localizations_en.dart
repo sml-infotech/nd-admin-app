@@ -447,6 +447,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templeemail => 'Temple Email';
 
   @override
+  String get availablePrasad => 'Available Prasad';
+
+  @override
   String get deitiestemple => 'Deities';
 
   @override
@@ -502,6 +505,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboard => 'Dashboard';
+
+  @override
+  String get prasad_delivery_address => 'Prasad Delivery Address';
 
   @override
   String get updateRequests => 'Requests';

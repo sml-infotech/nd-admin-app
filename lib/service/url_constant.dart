@@ -1,6 +1,6 @@
 enum Server { dev, stage, prod }
 
-var environment = Server.stage;
+var environment = Server.dev;
 String baseUrlString() {
   switch (environment) {
     case Server.dev:

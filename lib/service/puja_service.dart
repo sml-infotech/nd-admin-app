@@ -23,6 +23,7 @@ class PujaService {
     List<String> days,
     List<TimeSlot> time_slots,
     List<String> benefits,
+bool puja_prasad_addresses,
     List<Translation> translations,
   ) async {
     try {
@@ -41,6 +42,7 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
+        puja_prasad_addresses: puja_prasad_addresses,
         translations: translations,
       );
 
@@ -92,6 +94,7 @@ class PujaService {
     List<String> days,
     List<TimeSlot> time_slots,
     List<String> benefits,
+    bool puja_prasad_addresses,
     List<Translation> translations,
   ) async {
     try {
@@ -111,6 +114,7 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
+        puja_prasad_addresses: puja_prasad_addresses,
         translations: translations,
       );
 

@@ -52,8 +52,9 @@ bool isLoadingMore = false;
 
   bool priestDakshina = false;
   bool specialReq = false;
+  bool isPrasadAvailable = false;
   bool hideActive = false;
-  bool isLoading = false;
+bool isLoading = false;
   bool isValid = false;
   bool pujaCreated = false;
 
@@ -338,6 +339,7 @@ Future<void> getTemples({bool reset = false}) async {
         requestDays,
         timeSlots,
         benefitsList,
+      isPrasadAvailable,
         [
           Translation(
             languageCode: "kn",
@@ -427,6 +429,7 @@ Future<void> getTemples({bool reset = false}) async {
         requestDays,
         timeSlots,
         benefitsEn.toList(),
+   isPrasadAvailable,
         [
           Translation(
             languageCode: "kn",

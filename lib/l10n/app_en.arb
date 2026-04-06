@@ -151,6 +151,7 @@
   "templedescription": "Temple Description",
   "templephonenumber": "Temple Phone Number",
   "templeemail": "Temple Email",
+  "availablePrasad":"Available Prasad",
   "deitiestemple": "Deities",
   "templearchitecture": "Temple Architecture",
   "editImages": "Edit Images",
@@ -171,6 +172,8 @@
   "searchTemples": "Search Temples...",
   "pujaList": "Poojas",
   "dashboard": "Dashboard",
+    "prasad_delivery_address": "Prasad Delivery Address",
+
   "updateRequests": "Requests",
   "fee": "Fee: ",
   "addSevaAndPuja": "Add Seva / Pooja name",

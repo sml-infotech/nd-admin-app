@@ -971,6 +971,12 @@ abstract class AppLocalizations {
   /// **'Temple Email'**
   String get templeemail;
 
+  /// No description provided for @availablePrasad.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Prasad'**
+  String get availablePrasad;
+
   /// No description provided for @deitiestemple.
   ///
   /// In en, this message translates to:
@@ -1084,6 +1090,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dashboard'**
   String get dashboard;
+
+  /// No description provided for @prasad_delivery_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Prasad Delivery Address'**
+  String get prasad_delivery_address;
 
   /// No description provided for @updateRequests.
   ///

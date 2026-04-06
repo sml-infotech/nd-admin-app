@@ -209,6 +209,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                             _buildImagePicker(),
                             const SizedBox(height: 10),
                             _buildCheckboxSection(),
+                            const SizedBox(height: 10),
+                            prasadAddress(),
                             const SizedBox(height: 60),
                           ],
                         ),
@@ -483,6 +485,22 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
             label: AppLocalizations.of(context)!.specialReq,
             value: viewmodel.specialReq,
             onChanged: (v) => setState(() => viewmodel.specialReq = v!),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget prasadAddress() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(8, 0, 20, 0),
+          child: CheckBoxRow(
+            label: AppLocalizations.of(context)!.availablePrasad,
+            value: viewmodel.isPrasadAvailable,
+            onChanged: (v) => setState(() => viewmodel.isPrasadAvailable = v!),
           ),
         ),
       ],

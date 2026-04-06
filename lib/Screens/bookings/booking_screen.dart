@@ -403,6 +403,37 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                   ),
                 ),
+
+              if (request.prasadAddress != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  "${AppLocalizations.of(context)!.prasad_delivery_address} :",
+                  style: TextStyle(
+                    fontFamily: font,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 4),
+
+                _infoRow(
+                  "${AppLocalizations.of(context)!.address}",
+                  (request.prasadAddress!.addressLine1 ?? "") +
+                      "," +
+                      (request.prasadAddress!.addressLine2 ?? "") +
+                      "," +
+                      (request.prasadAddress!.city ?? "") +
+                      "," +
+                      (request.prasadAddress!.state ?? "") +
+                      "," +
+                      (request.prasadAddress!.pincode ?? ""),
+                ),
+
+                _infoRow(
+                  AppLocalizations.of(context)!.phone,
+                  request.prasadAddress!.phoneNumber,
+                ),
+              ],
             ],
           ],
         ),
@@ -491,6 +522,8 @@ class _BookingScreenState extends State<BookingScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "$title: ",

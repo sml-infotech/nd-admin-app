@@ -134,7 +134,8 @@
   "role": "ಪಾತ್ರ",
   "temples": "ದೇಗುಲಗಳು",
   "selectTemples": "ದೇಗುಲವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-  "temple": "ದೇಗುಲ",
+"temple": "ದೇಗುಲ",
+  "availablePrasad": "ಲಭ್ಯವಿರುವ ಪ್ರಸಾದ",
   "create": "ಸೃಷ್ಟಿಸಿ",
   "uploadFromExcel": "ಎಕ್ಸೆಲ್‌ನಿಂದ ದೇಗುಲಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
   "editUser": "ಬಳಕೆದಾರ ಸಂಪಾದಿಸಿ",
@@ -158,6 +159,8 @@
   "templearchitecture": "ದೇಗುಲ ವಿನ್ಯಾಸ",
   "editImages": "ಚಿತ್ರಗಳನ್ನು ಸಂಪಾದಿಸಿ",
   "currentStatus": "ಪ್ರಸ್ತುತ",
+"prasad_delivery_address": "ಪ್ರಸಾದ ವಿತರಣೆ ವಿಳಾಸ",
+
   "requested": "ಅನುರೋಧಿಸಲಾಗಿದೆ",
   "cancel": "ರದ್ದು ಮಾಡಿ",
   "submitAllApprovals": "ಸಮರ್ಪಿಸಿ",

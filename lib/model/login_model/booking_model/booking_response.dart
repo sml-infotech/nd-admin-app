@@ -63,7 +63,8 @@ class BookingModel {
   final String? priestDakshina;
   final List<SankalpaDetail> sankalpaDetails;
   final List<PaymentDetail> paymentDetails;
-  final List<String>images;
+final PrasadAddress? prasadAddress;  
+final List<String>images;
 
 
   BookingModel({
@@ -79,6 +80,7 @@ class BookingModel {
     required this.priestDakshina,
     required this.sankalpaDetails,
     required this.paymentDetails,
+     this.prasadAddress,
     this.images = const [],
   });
 
@@ -105,6 +107,9 @@ class BookingModel {
           images: json['images'] != null
           ? List<String>.from(json['images'])
           : [],
+          prasadAddress: json['prasad_address'] != null
+          ? PrasadAddress.fromJson(json['prasad_address'])
+          : null,
     );
   }
 
@@ -178,4 +183,43 @@ final String paymentStatus;
 
   // ---------- Getter for formatted transaction date ----------
   String get transactionDateFormatted => _formatIsoDate(transactionDate);
+}
+class PrasadAddress {
+  final String city;
+  final String state;
+  final String pincode;
+  final String phoneNumber;
+  final String addressLine1;
+  final String? addressLine2;
+
+  PrasadAddress({
+    required this.city,
+    required this.state,
+    required this.pincode,
+    required this.phoneNumber,
+    required this.addressLine1,
+    this.addressLine2,
+  });
+
+  factory PrasadAddress.fromJson(Map<String, dynamic> json) {
+    return PrasadAddress(
+      city: json['city'] ?? "",
+      state: json['state'] ?? "",
+      pincode: json['pincode'] ?? "",
+      phoneNumber: json['phone_number'] ?? "",
+      addressLine1: json['address_line1'] ?? "",
+      addressLine2: json['address_line2'],
+    );
+  }
+
+  // 🔥 Helper for UI
+  String get fullAddress {
+    return [
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode
+    ].where((e) => e != null && e.toString().trim().isNotEmpty).join(", ");
+  }
 }

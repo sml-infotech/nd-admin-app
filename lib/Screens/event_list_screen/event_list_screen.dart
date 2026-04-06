@@ -26,6 +26,7 @@ class _EventListScreenState extends State<EventListScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<EventItem> filteredEvents = [];
   String? language;
+  String? role;
   Timer? _debounce;
 
   @override
@@ -50,8 +51,6 @@ class _EventListScreenState extends State<EventListScreen> {
         viewmodel.fetchEvents(viewmodel.selectedTempleId ?? "", false);
       }
     });
-
-  
   }
 
   @override
@@ -119,7 +118,7 @@ class _EventListScreenState extends State<EventListScreen> {
                                     );
                                   }
                                   final event = filteredEvents[index];
-                                  return buildEventCard(event);
+                                  return buildEventCard(event, role: role);
                                 },
                               ),
                             )
@@ -301,7 +300,7 @@ class _EventListScreenState extends State<EventListScreen> {
 
   // ---------------------- Event Card Widgets ----------------------
 
-  Widget buildEventCard(EventItem event) {
+  Widget buildEventCard(EventItem event, {String? role}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Card(
@@ -322,14 +321,15 @@ class _EventListScreenState extends State<EventListScreen> {
                         : event.name,
                   ),
                   const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.pushNamed(
-                      context,
-                      StringsRoute.createEvent,
-                      arguments: event,
+                  if (role == "Super Admin")
+                    IconButton(
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        StringsRoute.createEvent,
+                        arguments: event,
+                      ),
+                      icon: const Icon(Icons.edit),
                     ),
-                    icon: const Icon(Icons.edit),
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -527,6 +527,7 @@ class _EventListScreenState extends State<EventListScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       language = prefs.getString('language') ?? 'en';
+      role = prefs.getString('userRole');
     });
   }
 }
