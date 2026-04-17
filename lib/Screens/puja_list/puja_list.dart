@@ -177,8 +177,6 @@ class _PujaListState extends State<PujaList> {
           IconButton(
             iconSize: 20,
             onPressed: () {
-              // Reset viewmodel first to avoid notifyListeners() firing
-              // during the navigation transition (widget tree lock).
               viewmodel.reset();
               Navigator.pushNamed(
                 context,
@@ -270,7 +268,6 @@ class _PujaListState extends State<PujaList> {
                   editButton(puja),
                 ],
               ),
-              // isActiveTextWidget(isActive),
               buildDeities(puja),
               descriptionWidget(puja),
               SizedBox(height: 8),
@@ -457,7 +454,6 @@ class _PujaListState extends State<PujaList> {
             TextSpan(
               text: filteredNames.isNotEmpty ? filteredNames.join(', ') : '---',
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
-                // Optional: change color if it's '---'
                 color: filteredNames.isNotEmpty ? null : Colors.grey,
               ),
             ),
