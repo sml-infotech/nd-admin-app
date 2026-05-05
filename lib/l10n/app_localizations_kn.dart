@@ -138,6 +138,15 @@ class AppLocalizationsKn extends AppLocalizations {
   String get edit => 'ಸಂಪಾದಿಸಿ';
 
   @override
+  String get puja_cost => 'ಪೂಜೆಯ ವೆಚ್ಚ';
+
+  @override
+  String get priest_dakshina => 'ಪೂಜಾರಿಯ ದಕ್ಷಿಣೆ';
+
+  @override
+  String get delivery_charges => 'ಅಂಚೆ ಶುಲ್ಕ';
+
+  @override
   String get addDeities => 'ದೇವತೆಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
@@ -378,7 +387,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get date => 'ದಿನಾಂಕ';
 
   @override
-  String get amount => 'ಮೊತ್ತ';
+  String get amount => 'ಒಟ್ಟು ಮೊತ್ತ';
 
   @override
   String get booking_id => 'ಬುಕಿಂಗ್ ಐಡಿ';
@@ -607,6 +616,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get noAvailableSlot => 'ಲಭ್ಯವಿರುವ ಸಮಯ ಸ್ಲಾಟ್ ಇಲ್ಲ';
+
+  @override
+  String get convenience_fees => 'ಸೌಲಭ್ಯ ಶುಲ್ಕ';
 
   @override
   String get hideDetails => 'ವಿವರಗಳನ್ನು ಮುಚ್ಚಿ';

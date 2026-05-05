@@ -353,6 +353,24 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @puja_cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Puja Cost'**
+  String get puja_cost;
+
+  /// No description provided for @priest_dakshina.
+  ///
+  /// In en, this message translates to:
+  /// **'Priest dakshina'**
+  String get priest_dakshina;
+
+  /// No description provided for @delivery_charges.
+  ///
+  /// In en, this message translates to:
+  /// **'Postal Charges'**
+  String get delivery_charges;
+
   /// No description provided for @addDeities.
   ///
   /// In en, this message translates to:
@@ -836,7 +854,7 @@ abstract class AppLocalizations {
   /// No description provided for @amount.
   ///
   /// In en, this message translates to:
-  /// **'Amount'**
+  /// **'Total Amount'**
   String get amount;
 
   /// No description provided for @booking_id.
@@ -1294,6 +1312,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No available time slots'**
   String get noAvailableSlot;
+
+  /// No description provided for @convenience_fees.
+  ///
+  /// In en, this message translates to:
+  /// **'Convenience Fees'**
+  String get convenience_fees;
 
   /// No description provided for @hideDetails.
   ///

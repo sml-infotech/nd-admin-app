@@ -54,6 +54,7 @@ class _BookingScreenState extends State<BookingScreen> {
     _token = prefs.getString('authToken');
     _role = prefs.getString('userRole');
 
+    print("Loaded user data: token=$_token, role=$_role");
     if (mounted) setState(() {});
 
     _scrollController.addListener(() {
@@ -325,9 +326,31 @@ class _BookingScreenState extends State<BookingScreen> {
               AppLocalizations.of(context)!.date,
               request.pujaDateFormatted,
             ),
+
+            _infoRow(
+              AppLocalizations.of(context)!.puja_cost,
+              "₹ ${request.pujaFeeDisplay}",
+            ),
+            _infoRow(
+              AppLocalizations.of(context)!.priest_dakshina,
+              "₹ ${request.priestDakshinaDisplay}",
+            ),
+            _infoRow(
+              AppLocalizations.of(context)!.delivery_charges,
+              "₹ ${request.prasadDeliveryChargesDisplay}",
+            ),
+            _role != "Super Admin"
+                ? SizedBox.shrink()
+                : _infoRow(
+                    AppLocalizations.of(context)!.convenience_fees,
+                    "₹ ${request.convenienceFeeDisplay}",
+                  ),
+
             _infoRow(
               AppLocalizations.of(context)!.amount,
-              "₹ ${request.totalAmount}",
+              _role == "Super Admin"
+                  ? "₹ ${request.totalAmount}"
+                  : "₹ ${(double.parse(request.totalAmount) - double.parse(request.priestDakshinaDisplay)).toStringAsFixed(2)}",
             ),
 
             if (request.bookingStatus.toLowerCase() == "confirmed")

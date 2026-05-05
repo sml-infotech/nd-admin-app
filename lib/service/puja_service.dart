@@ -14,7 +14,7 @@ class PujaService {
     String pujaName,
     List<String> deitiesName,
     String description,
-    int maximumNoOfDevotees,
+int maximumNoOfDevotees,
     double fees,
     List<String> sample_images,
     int booking_cutoff_notice,
@@ -25,6 +25,7 @@ class PujaService {
     List<TimeSlot> time_slots,
     List<String> benefits,
     bool requires_prasad_address,
+    String prasad_delivery_charges,
     List<Translation> translations,
   ) async {
     try {
@@ -44,6 +45,7 @@ class PujaService {
         timeSlots: time_slots,
         benefits: benefits,
         requires_prasad_address: requires_prasad_address,
+        prasad_delivery_charges: prasad_delivery_charges,
         translations: translations,
       );
 
@@ -64,6 +66,7 @@ class PujaService {
       print("{  'benefits': ${benefits.map((b) => b).toList()} }");
       print("Translations: ${translations.map((t) => t.toJson()).toList()}");
       print("Requires Prasad Address: $requires_prasad_address");
+      print("Prasad Delivery Charges: $prasad_delivery_charges");
       print("-------------------------------------------------------------");
 
       final data = await apiService.post(
@@ -97,6 +100,7 @@ class PujaService {
     List<TimeSlot> time_slots,
     List<String> benefits,
     bool requires_prasad_address,
+    String prasad_delivery_charges,
     List<Translation> translations,
   ) async {
     try {
@@ -117,6 +121,7 @@ class PujaService {
         timeSlots: time_slots,
         benefits: benefits,
         requires_prasad_address: requires_prasad_address,
+        prasad_delivery_charges: prasad_delivery_charges,
         translations: translations,
       );
 
@@ -135,6 +140,10 @@ class PujaService {
       print("To Date: $toDate");
       print("Days: $days");
       print("Time Slots: ${time_slots.map((e) => e.toJson()).toList()}");
+      print("{  'benefits': ${benefits.map((b) => b).toList()} }");
+      print("Translations: ${translations.map((t) => t.toJson()).toList()}");
+      print("Requires Prasad Address: $requires_prasad_address");
+      print("Prasad Delivery Charges: $prasad_delivery_charges");
       print("-------------------------------------------------------------");
 
       final data = await apiService.put(

@@ -66,6 +66,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
 
   // KN
   final TextEditingController benefitControllerKn = TextEditingController();
+  final TextEditingController prasadDeliveryCharges = TextEditingController();
   List<String> benefitsKn = [];
 
   void addBenefit(String text, {required bool isKannada}) {
@@ -339,6 +340,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         timeSlots,
         benefitsList,
         isPrasadAvailable,
+        prasadDeliveryCharges.text,
         [
           Translation(
             languageCode: "kn",
@@ -429,6 +431,7 @@ class CreatePujaViewmodel extends ChangeNotifier {
         timeSlots,
         benefitsEn.toList(),
         isPrasadAvailable,
+        prasadDeliveryCharges.text,
         [
           Translation(
             languageCode: "kn",

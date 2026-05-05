@@ -43,7 +43,7 @@ class UrlConstant {
   static String createEventUrl = "${baseUrlString()}v1/create-event";
   static String getEventsUrl = "${baseUrlString()}v1/list-events";
   static String updateEvent = "${baseUrlString()}v1/update-event";
-  static String bookingList = "${baseUrlString()}v1/list-bookings";
+  static String bookingList = "${baseUrlString()}v2/list-bookings";
   static String contact_us = "${baseUrlString()}v1/list-contact-us-messages";
   static String mark_as_read = "${baseUrlString()}v1/contact-us";
   static String master_temples = "${baseUrlString()}v1/list-master-temples";

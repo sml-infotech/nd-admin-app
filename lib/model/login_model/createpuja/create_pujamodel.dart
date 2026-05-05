@@ -17,6 +17,7 @@ class Puja {
   final List<String> days;
   final List<TimeSlot> timeSlots;
   final bool requires_prasad_address;
+  final String prasad_delivery_charges;
   final List<Translation> translations;
 
   Puja({
@@ -36,6 +37,7 @@ class Puja {
     required this.days,
     required this.timeSlots,
     required this.requires_prasad_address,
+    required this.prasad_delivery_charges,
     required this.translations,
   });
 
@@ -76,6 +78,8 @@ class Puja {
               .toList() ??
           [],
       requires_prasad_address: json['requires_prasad_address'] as bool? ?? false,
+      prasad_delivery_charges: json['prasad_delivery_charges'] as String? ?? '',
+
       translations: (json['translations'] as List<dynamic>?)
               ?.map((t) => Translation.fromJson(t as Map<String, dynamic>))
               .toList() ??
@@ -101,6 +105,7 @@ class Puja {
       'days': days,
       'time_slots': timeSlots.map((t) => t.toJson()).toList(),
       'requires_prasad_address': requires_prasad_address,
+      'prasad_delivery_charges': prasad_delivery_charges,
       'translations': translations.map((t) => t.toJson()).toList(),
     };
   }

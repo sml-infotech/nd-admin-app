@@ -138,6 +138,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get puja_cost => 'Puja Cost';
+
+  @override
+  String get priest_dakshina => 'Priest dakshina';
+
+  @override
+  String get delivery_charges => 'Postal Charges';
+
+  @override
   String get addDeities => 'Add Deities';
 
   @override
@@ -378,7 +387,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get date => 'Date';
 
   @override
-  String get amount => 'Amount';
+  String get amount => 'Total Amount';
 
   @override
   String get booking_id => 'Booking ID';
@@ -607,6 +616,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAvailableSlot => 'No available time slots';
+
+  @override
+  String get convenience_fees => 'Convenience Fees';
 
   @override
   String get hideDetails => 'Hide Details';

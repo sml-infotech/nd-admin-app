@@ -1,5 +1,7 @@
 // booking_response.dart (add/update these classes)
 
+import 'package:nammadaiva_dashboard/generated/l10n.dart';
+
 String _formatIsoDate(String? iso) {
   if (iso == null || iso.isEmpty) return "-";
   try {
@@ -65,6 +67,10 @@ class BookingModel {
   final List<PaymentDetail> paymentDetails;
 final PrasadAddress? prasadAddress;  
 final List<String>images;
+final int? puja_fee;
+final int? prasad_delivery_charges; 
+final String? convenience_fee;
+final String? priest_dakshina; // alias for bookingId
 
 
   BookingModel({
@@ -82,6 +88,10 @@ final List<String>images;
     required this.paymentDetails,
      this.prasadAddress,
     this.images = const [],
+      this.puja_fee,
+        this.prasad_delivery_charges,
+        this.convenience_fee,
+        this.priest_dakshina,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -110,6 +120,10 @@ final List<String>images;
           prasadAddress: json['prasad_address'] != null
           ? PrasadAddress.fromJson(json['prasad_address'])
           : null,
+          puja_fee: json['puja_fee'],
+          prasad_delivery_charges: json['prasad_delivery_charges'],
+          convenience_fee: json['convenience_fee'],
+          priest_dakshina: json['priest_dakshina'],
     );
   }
 
@@ -118,12 +132,16 @@ final List<String>images;
   String get createdAtFormatted => _formatIsoDate(createdAt);
   String get totalAmountDisplay => totalAmount.isEmpty ? "-" : totalAmount;
   String get bookingStatusDisplay => bookingStatus.isEmpty ? "-" : bookingStatus;
+  int get pujaFeeDisplay => puja_fee ?? 0;
+  int get prasadDeliveryChargesDisplay => prasad_delivery_charges ?? 0;
+  String get convenienceFeeDisplay => convenience_fee?.isEmpty ?? true ? "-" : convenience_fee!;
   // alias names your UI might call
   String get bookingIdDisplay => bookingId;
   String get userPhoneDisplay => userPhone;
   String get userEmailDisplay => userEmail;
   // convenience: if you used different property names earlier
   String get pujaDateShort => pujaDateFormatted;
+  String get priestDakshinaDisplay => priest_dakshina?.isEmpty ?? true ? "-" : priest_dakshina!;
   // (you can add more helpers as needed)
 }
 

@@ -496,18 +496,29 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(8, 0, 20, 0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 20, 0),
           child: CheckBoxRow(
             label: AppLocalizations.of(context)!.availablePrasad,
             value: viewmodel.isPrasadAvailable,
-            onChanged: (v){
+            onChanged: (v) {
               setState(() {
-                viewmodel.isPrasadAvailable = !viewmodel.isPrasadAvailable;
-                print("Prasad availability changed: ${viewmodel.isPrasadAvailable}");
+                viewmodel.isPrasadAvailable = v ?? false;
               });
             },
           ),
         ),
+        const SizedBox(height: 10),
+
+        if (viewmodel.isPrasadAvailable)
+          CommonTextField(
+            hintText: "Prasad Price",
+            labelText:  "Prasad Price",
+            controller: viewmodel.prasadDeliveryCharges,
+            isFromPassword: false,
+            isFromPhone: true,
+          )
+        else
+          const SizedBox(),
       ],
     );
   }
