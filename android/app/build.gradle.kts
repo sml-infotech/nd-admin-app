@@ -13,7 +13,7 @@ android {
         applicationId = "com.sml.nammadaiva_dashboard"
         minSdk = 24
         targetSdk = 35
-        versionCode = 19
+        versionCode = 22
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

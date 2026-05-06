@@ -333,7 +333,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             _infoRow(
               AppLocalizations.of(context)!.priest_dakshina,
-              "₹ ${request.priestDakshinaDisplay}",
+              "₹ ${formatAmount(request.priestDakshinaDisplay)}",
             ),
             _infoRow(
               AppLocalizations.of(context)!.delivery_charges,
@@ -349,8 +349,8 @@ class _BookingScreenState extends State<BookingScreen> {
             _infoRow(
               AppLocalizations.of(context)!.amount,
               _role == "Super Admin"
-                  ? "₹ ${request.totalAmount}"
-                  : "₹ ${(double.parse(request.totalAmount) - double.parse(request.priestDakshinaDisplay)).toStringAsFixed(2)}",
+                  ? "₹ ${formatAmount(request.totalAmount)}"
+                  : "₹ ${formatAmount((double.parse(request.totalAmount) - double.parse(request.convenienceFeeDisplay)).toString())}",
             ),
 
             if (request.bookingStatus.toLowerCase() == "confirmed")
@@ -522,6 +522,15 @@ class _BookingScreenState extends State<BookingScreen> {
         );
       },
     );
+  }
+
+  String formatAmount(String value) {
+    double amount = double.parse(value);
+    return amount % 1 == 0
+        ? amount
+              .toInt()
+              .toString() // 200.00 -> 200
+        : amount.toStringAsFixed(2); // keep decimals if needed
   }
 
   Widget _buildRow(String label, String value) {

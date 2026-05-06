@@ -511,8 +511,8 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
 
         if (viewmodel.isPrasadAvailable)
           CommonTextField(
-            hintText: "Prasad Price",
-            labelText:  "Prasad Price",
+            hintText: AppLocalizations.of(context)!.delivery_charges,
+            labelText: AppLocalizations.of(context)!.delivery_charges,
             controller: viewmodel.prasadDeliveryCharges,
             isFromPassword: false,
             isFromPhone: true,

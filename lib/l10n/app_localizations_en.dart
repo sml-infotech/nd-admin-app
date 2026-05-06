@@ -456,7 +456,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templeemail => 'Temple Email';
 
   @override
-  String get availablePrasad => 'Available Prasad';
+  String get availablePrasad => 'Address for the Prasad to be delivered';
 
   @override
   String get deitiestemple => 'Deities';

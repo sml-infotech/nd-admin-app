@@ -992,7 +992,7 @@ abstract class AppLocalizations {
   /// No description provided for @availablePrasad.
   ///
   /// In en, this message translates to:
-  /// **'Available Prasad'**
+  /// **'Address for the Prasad to be delivered'**
   String get availablePrasad;
 
   /// No description provided for @deitiestemple.

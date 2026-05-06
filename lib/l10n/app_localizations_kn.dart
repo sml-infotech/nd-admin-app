@@ -456,7 +456,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get templeemail => 'ದೇಗುಲ ಇಮೇಲ್';
 
   @override
-  String get availablePrasad => 'ಲಭ್ಯವಿರುವ ಪ್ರಸಾದ';
+  String get availablePrasad => 'ಪ್ರಸಾದ ವಿತರಣೆಗಾಗಿ ವಿಳಾಸ';
 
   @override
   String get deitiestemple => 'ದೇವತೆಗಳು';
