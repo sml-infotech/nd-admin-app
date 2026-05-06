@@ -19,7 +19,7 @@ class UpdateImagepickerWidget extends StatelessWidget {
 
     if (pickedFiles.isNotEmpty) {
       final imagePaths = pickedFiles.map((e) => e.path).toList();
-      await viewModel.addImages(imagePaths); // Use Provider instance directly
+      await viewModel.addImages(imagePaths); 
     }
   }
 

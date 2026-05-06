@@ -213,16 +213,7 @@ class _DeitiesDropdownState extends State<DeitiesDropdown> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label
-          // Text(
-          //   "Deities",
-          //   style: TextStyle(
-          //     fontFamily: font,
-          //     color: Colors.black,
-          //     fontSize: 14,
-          //     fontWeight: FontWeight.w500,
-          //   ),
-          // ),
+        
           const SizedBox(height: 8),
 
           // Dropdown-style display

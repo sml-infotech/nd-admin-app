@@ -217,20 +217,16 @@ class _EventListScreenState extends State<EventListScreen> {
         onChanged: (query) {
           query = query.trim();
           _searchController.text = query;
-          // Cancel previous debounce timer if still active
           if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-          // Start new debounce timer
           _debounce = Timer(const Duration(milliseconds: 500), () async {
             if (query.isNotEmpty) {
-              // Call API only if query is not empty
               await viewmodel.fetchEvents(
                 viewmodel.selectedTempleId ?? "",
                 true,
                 query: query,
               );
             } else {
-              // Optional: reset to all events if search is empty
               await viewmodel.fetchEvents(
                 viewmodel.selectedTempleId ?? "",
                 true,
@@ -298,7 +294,6 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  // ---------------------- Event Card Widgets ----------------------
 
   Widget buildEventCard(EventItem event, {String? role}) {
     return Padding(

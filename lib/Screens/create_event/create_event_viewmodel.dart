@@ -7,9 +7,6 @@ import 'package:nammadaiva_dashboard/service/event_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
-// Compatibility extension: provide startTime / endTime getters expected by the viewmodel.
-// If your TimeSlot class actually exposes differently-named fields (e.g. `from`, `to`, `start`, `end`),
-// update these getters to return the correct underlying values.
 
 class CreateEventViewmodel extends ChangeNotifier {
   TempleService templeService = TempleService();
@@ -156,10 +153,7 @@ class CreateEventViewmodel extends ChangeNotifier {
   }
 
   Future<bool> validateEvent() async {
-    // if (selectedTemple == null) {
-    //   message = "Please select a temple.";
-    //   return false;
-    // }
+  
     if (eventController.text.isEmpty) {
       message = "Please enter event name.";
       return false;
@@ -172,14 +166,7 @@ class CreateEventViewmodel extends ChangeNotifier {
       message = "Please enter location.";
       return false;
     }
-    // if (contactNameController.text.isEmpty) {
-    //   message = "Please enter contact name.";
-    //   return false;
-    // }
-    // if (contactNumberController.text.isEmpty) {
-    //   message = "Please enter contact number.";
-    //   return false;
-    // }
+   
     if (selectedStartDate == null) {
       message = "Please select start date.";
       return false;
@@ -257,7 +244,7 @@ class CreateEventViewmodel extends ChangeNotifier {
     } finally {
       isLoading = false;
       isFetchingNextPage = false;
-      notifyListeners(); // ✅ This triggers the AnimatedBuilder in your Dropdown
+      notifyListeners();
     }
   }
 

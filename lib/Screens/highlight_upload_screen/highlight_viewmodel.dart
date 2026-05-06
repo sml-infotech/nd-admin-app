@@ -53,7 +53,6 @@ class HighlightViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Initialize and manage video
   Future<void> initializeVideo(String path) async {
     await disposeVideo(); // Clear existing
     videoController = VideoPlayerController.file(File(path));
@@ -141,16 +140,13 @@ Future<void> fetchHighlights({bool refresh = false}) async {
   }
 
   void clearUploadData() {
-    // Clear Text Controllers
     titleController.clear();
     descriptionController.clear();
     titleControllerInKannadam.clear();
     descriptionControllerInKannadam.clear();
 
-    // Clear Media State
     pickedFile = null;
 
-    // Dispose and nullify video controller if it exists
     if (videoController != null) {
       videoController!.dispose();
       videoController = null;
@@ -161,7 +157,6 @@ Future<void> fetchHighlights({bool refresh = false}) async {
   }
 
   Future<void> _processUpload(XFile file, bool isVideo) async {
-    // 1️⃣ Upload main file (video / image)
     final presignedResponse = await userService.presignedUrl(
       "highlights/${file.name}",
       file.path,
@@ -181,7 +176,6 @@ Future<void> fetchHighlights({bool refresh = false}) async {
 
     String? thumbnailUrl;
 
-    // 2️⃣ If video → generate + upload thumbnail
     if (isVideo) {
       final thumbnailFile = await generateVideoThumbnail(file);
 
@@ -201,7 +195,6 @@ Future<void> fetchHighlights({bool refresh = false}) async {
       }
     }
 
-    // 3️⃣ Create highlight
     await _createHighlight(
       presignedResponse.url!.split('?').first.trim(),
       isVideo,

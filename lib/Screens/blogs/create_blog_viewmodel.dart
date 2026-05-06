@@ -13,7 +13,6 @@ import 'package:nammadaiva_dashboard/service/blog_service.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
 class CreateBlogViewmodel extends ChangeNotifier {
-  // -------------------- BLOG CONTROLLERS --------------------
   TextEditingController blogName = TextEditingController();
   TextEditingController blogDescription = TextEditingController();
   TextEditingController blogNameKN = TextEditingController();
@@ -24,10 +23,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
   TextEditingController sectionTitleKn = TextEditingController();
 
   List<TextEditingController> paragraphControllers = [TextEditingController()];
-  // List<TextEditingController> paragraphControllersKN = [
-  //   TextEditingController(),
-  // ];
-
+  
   bool isOnlyListEditing = false; // Add this variable
   bool showListGroupEN = false;
   bool showListGroupKN = false;
@@ -41,11 +37,9 @@ class CreateBlogViewmodel extends ChangeNotifier {
   List<TextEditingController> listItemControllersEN = [TextEditingController()];
   List<TextEditingController> listItemControllersKN = [TextEditingController()];
 
-  // -------------------- DATA --------------------
   List<ArticleSection> articleSectionsEN = [];
   List<ArticleSection> articleSectionsKN = [];
 
-  // -------------------- IMAGE --------------------
   File? selectedImage;
   String? uploadedImageUrl;
   bool isImageUploading = false;
@@ -61,28 +55,22 @@ class CreateBlogViewmodel extends ChangeNotifier {
   List<ArticleSection> addedSectionsEN = [];
   List<ArticleSection> addedSectionsKN = [];
   void finalizeSection() {
-    // Check if we have data to save
     if (articleSectionsEN.isNotEmpty && articleSectionsKN.isNotEmpty) {
       final enSection = articleSectionsEN.last;
       final knSection = articleSectionsKN.last;
 
       if (editingIndex != null) {
-        // EDIT MODE: Overwrite the existing item at this index
         addedSectionsEN[editingIndex!] = enSection;
         addedSectionsKN[editingIndex!] = knSection;
 
-        // Reset the index so the next one isn't accidentally treated as an edit
         editingIndex = null;
       } else {
-        // ADD MODE: Only if index is null
         addedSectionsEN.add(enSection);
         addedSectionsKN.add(knSection);
       }
 
-      // Clean up temporary working data
       articleSectionsEN.clear();
       articleSectionsKN.clear();
-      // resetEverything();
 
       notifyListeners();
     }
@@ -117,7 +105,6 @@ class CreateBlogViewmodel extends ChangeNotifier {
     }
   }
   void saveFullSectionKN(List<TextEditingController> paragraphCtrls) {
-    // Build paragraphs
     final paragraphs = paragraphCtrls
         .where((c) => c.text.trim().isNotEmpty)
         .map(
@@ -128,7 +115,7 @@ class CreateBlogViewmodel extends ChangeNotifier {
         )
         .toList();
 
-    // Build lists (if shown)
+   
     List<SectionList> lists = [];
     if (showListGroupKN) {
       lists.add(
@@ -178,24 +165,19 @@ class CreateBlogViewmodel extends ChangeNotifier {
   void addParagraphKN() {
     final newController = TextEditingController();
 
-    // 1. Add to the controller list
     paragraphControllersKN.add(newController);
 
-    // 2. Track the position (use current length as the position)
     paragraphPositionsKN[newController] = paragraphControllersKN.length;
 
-    // 3. Refresh the UI
     notifyListeners();
   }
 
   void prefillBlogData(BlogDetails blog) {
-    // 1. Basic Blog Info (English)
     blogName.text = blog.name;
     blogDescription.text = blog.description;
     uploadedImageUrl = blog.image;
     sectionTitle.text = blog.name;
 
-    // 2. Find Kannada Translation safely
     final knTranslation = blog.translations.firstWhere(
       (t) => t.languageCode == 'kn',
       orElse: () => Translation(
@@ -210,29 +192,25 @@ class CreateBlogViewmodel extends ChangeNotifier {
     blogNameKN.text = knTranslation.name ?? '';
     blogDescriptionKN.text = knTranslation.description ?? '';
     sectionTitleKn.text =
-        knTranslation.name ?? ''; // Or a specific field if available
+        knTranslation.name ?? '';
 
-    // 3. Setup Article Sections
     articleSectionsEN = List<ArticleSection>.from(blog.articleSections);
     articleSectionsKN = List<ArticleSection>.from(
       knTranslation.articleSections,
     );
 
-    // 4. Prefill Paragraphs (EN)
     _prefillParagraphs(
       articleSectionsEN,
       paragraphControllers,
       paragraphPositions,
     );
 
-    // 5. Prefill Paragraphs (KN)
     _prefillParagraphs(
       articleSectionsKN,
       paragraphControllersKN,
       paragraphPositionsKN,
     );
 
-    // 6. Prefill Lists (EN)
     _prefillLists(
       articleSectionsEN,
       (show) => showListGroupEN = show,
@@ -241,7 +219,6 @@ class CreateBlogViewmodel extends ChangeNotifier {
       listItemControllersEN,
     );
 
-    // 7. Prefill Lists (KN)
     _prefillLists(
       articleSectionsKN,
       (show) => showListGroupKN = show,
@@ -253,7 +230,6 @@ class CreateBlogViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Helper for Paragraphs to keep code clean and sorted
   void _prefillParagraphs(
     List<ArticleSection> sections,
     List<TextEditingController> controllers,
@@ -265,7 +241,6 @@ class CreateBlogViewmodel extends ChangeNotifier {
     positions.clear();
     for (var section in sections) {
       if (section.paragraphs != null) {
-        // Sort by position
         section.paragraphs!.sort(
           (a, b) => (a.position ?? 0).compareTo(b.position ?? 0),
         );
@@ -350,41 +325,33 @@ class CreateBlogViewmodel extends ChangeNotifier {
     }
   }
 
-  // Add this variable to track if we are editing
   int? editingIndex;
 
 void resetEverything() {
-    // 1. Reset Top-Level Blog Info (EN & KN)
     blogName.clear();
     blogDescription.clear();
     blogNameKN.clear();
     blogDescriptionKN.clear();
 
-    // 2. Reset Image State
     selectedImage = null;
     uploadedImageUrl = null;
     isImageUploading = false;
 
-    // 3. Clear all stored sections
     addedSectionsEN.clear();
     addedSectionsKN.clear();
     articleSectionsEN.clear();
     articleSectionsKN.clear();
 
-    // 4. Reset Editing State
     editingIndex = null;
 
-    // 5. Reset Working Section Controllers
     sectionTitle.clear();
     sectionTitleKn.clear();
 
-    // Reset Paragraphs to a single empty field
     paragraphControllers = [TextEditingController()];
     paragraphControllersKN = [TextEditingController()];
     paragraphPositions.clear();
     paragraphPositionsKN.clear();
 
-    // 6. Reset List Group State
     showListGroupEN = false;
     showListGroupKN = false;
     listTypeEN = 'Numbered';
@@ -394,38 +361,33 @@ void resetEverything() {
     listItemControllersEN = [TextEditingController()];
     listItemControllersKN = [TextEditingController()];
 
-    // 7. Reset Loading/Messages
     isLoading = false;
     message = null;
 
     notifyListeners();
   }
 
-  // Inside CreateBlogViewmodel
 
   void prefillSectionForEdit(int index) {
     editingIndex = index;
     final en = addedSectionsEN[index];
     final kn = addedSectionsKN[index];
 
-    // --- English Prefill ---
     sectionTitle.text = en.title ?? '';
 
-    // Paragraphs
     paragraphControllers = en.paragraphs?.isNotEmpty == true
         ? en.paragraphs!
               .map((p) => TextEditingController(text: p.text))
               .toList()
         : [TextEditingController()];
 
-    // Lists (EN)
+   
     if (en.lists != null && en.lists!.isNotEmpty) {
       final list = en.lists!.first;
       showListGroupEN = true;
       listTypeEN = list.listType ?? 'Numbered';
       listHeadingControllerEN.text = list.heading ?? '';
 
-      // Crucial: Clear and Map points to new controllers
       listItemControllersEN = list.points?.isNotEmpty == true
           ? list.points!
                 .map((p) => TextEditingController(text: p.text))
@@ -437,17 +399,15 @@ void resetEverything() {
       listItemControllersEN = [TextEditingController()];
     }
 
-    // --- Kannada Prefill ---
     sectionTitleKn.text = kn.title ?? '';
 
-    // Paragraphs
+  
     paragraphControllersKN = kn.paragraphs?.isNotEmpty == true
         ? kn.paragraphs!
               .map((p) => TextEditingController(text: p.text))
               .toList()
         : [TextEditingController()];
 
-    // Lists (KN)
     if (kn.lists != null && kn.lists!.isNotEmpty) {
       final listKn = kn.lists!.first;
       showListGroupKN = true;
@@ -511,18 +471,15 @@ void resetEverything() {
 
 
   void resetSectionFields() {
-  // Title
   sectionTitle.clear();
   sectionTitleKn.clear();
 
-  // Paragraphs
   paragraphControllers = [TextEditingController()];
   paragraphControllersKN = [TextEditingController()];
 
   paragraphPositions.clear();
   paragraphPositionsKN.clear();
 
-  // Lists
   showListGroupEN = false;
   showListGroupKN = false;
 
@@ -535,7 +492,6 @@ void resetEverything() {
   listItemControllersEN = [TextEditingController()];
   listItemControllersKN = [TextEditingController()];
 
-  // Reset edit mode
   editingIndex = null;
 
   notifyListeners();

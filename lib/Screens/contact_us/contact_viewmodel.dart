@@ -48,7 +48,6 @@ Future<void> fetchMore() async {
         currentPage = response.page;
       }
 
-      // Check if more pages exist
       final totalFetched = contacts.length;
       hasMore = totalFetched < response.totalCount;
     } catch (e) {
@@ -81,14 +80,11 @@ Future<void> markMessageAsRead(String contactId) async {
   }
 }
   void updateContact(ContactData updatedData) {
-    // Find the index of the contact with the same ID
     int index = contacts.indexWhere((c) => c.id == updatedData.id);
 
     if (index != -1) {
-      // Replace the old contact with the updated one
       contacts[index] = updatedData;
 
-      // Notify listeners so the UI rebuilds
       notifyListeners();
     }
   }

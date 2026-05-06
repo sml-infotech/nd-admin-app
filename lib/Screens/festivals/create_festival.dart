@@ -263,14 +263,6 @@ class _CreateFestivalState extends State<CreateFestival> {
             print("===========${viewmodel.selectedStartDate}");
           }),
         ),
-        // DatePickerField(
-        //   title: AppLocalizations.of(context)!.toDate,
-        //   selectedDate: viewmodel.selectedEndDate,
-        //   fromDate: viewmodel.selectedStartDate,
-        //   onDatePicked: (date) => setState(() {
-        //     viewmodel.selectedEndDate = date;
-        //   }),
-        // ),
       ],
     );
   }
@@ -279,7 +271,6 @@ class _CreateFestivalState extends State<CreateFestival> {
     if (date == null || date.isEmpty) return null;
 
     try {
-      // Try ISO format first
       return DateTime.parse(date);
     } catch (_) {
       try {
@@ -391,21 +382,6 @@ class _CreateFestivalState extends State<CreateFestival> {
                   StringsRoute.createFestivalKn,
                   arguments: widget.arguments,
                 );
-                // if (widget.arguments != null) {
-                //   await viewmodel.updateFestival(widget.arguments!.festivalId!);
-                // } else {
-                //   await viewmodel.createFestival();
-                // }
-                //
-                // if (viewmodel.eventUpdated || viewmodel.eventCreated) {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                //   Navigator.pop(context);
-                //   viewmodel.reset();
-                //   viewmodel.eventCreated = false;
-                //   viewmodel.eventUpdated = false;
-                // } else {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                // }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,

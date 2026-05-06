@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nammadaiva_dashboard/Common/common_textfields.dart';
 import 'package:nammadaiva_dashboard/Common/time_picker.dart';
 import 'package:nammadaiva_dashboard/Screens/create_event/create_event_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/createuser/role_drop_down.dart';
 import 'package:nammadaiva_dashboard/Screens/pujabook/date_picker.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart' show ColorConstant;
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
@@ -24,45 +23,7 @@ class _CreateEventKnState extends State<CreateEventKn> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   await viewmodel.getTemples(reset: true);
-    //
-    //   if (widget.event != null) {
-    //     final selectedTempleId = widget.event!.templeId;
-    //     final selectedTemple = viewmodel.templeData.firstWhere(
-    //       (temple) => temple.id == selectedTempleId,
-    //       orElse: () => viewmodel.templeData.first,
-    //     );
-    //     if (widget.event!.startTime != null && widget.event!.endTime != null) {
-    //       viewmodel.timeSlots = [
-    //         TimeSlot(
-    //           fromTime: _formatForDisplay(widget.event!.startTime!),
-    //           toTime: _formatForDisplay(widget.event!.endTime!),
-    //         ),
-    //       ];
-    //     }
-    //
-    //     viewmodel.selectedTemple = selectedTemple;
-    //     viewmodel.selectedTempleId = selectedTemple.id;
-    //     viewmodel.eventController.text = widget.event!.name;
-    //     viewmodel.descriptionContoller.text = widget.event!.description!;
-    //     viewmodel.locationController.text = widget.event!.location!;
-    //     viewmodel.contactNameController.text = widget.event!.contactName!;
-    //     viewmodel.contactNumberController.text = widget.event!.contactPhone!;
-    //     if (widget.event!.startDate != null) {
-    //       viewmodel.selectedStartDate = DateTime.parse(
-    //         widget.event!.startDate!,
-    //       );
-    //     }
-    //     if (widget.event!.endDate != null) {
-    //       viewmodel.selectedEndDate = DateTime.parse(widget.event!.endDate!);
-    //     }
-    //
-    //     if (widget.event!.images != null) {
-    //       viewmodel.uploadedImageUrls = widget.event!.images!;
-    //     }
-    //   }
-    // });
+    
   }
 
   @override
@@ -105,8 +66,7 @@ class _CreateEventKnState extends State<CreateEventKn> {
                         physics: const BouncingScrollPhysics(),
                         child: Column(
                           children: [
-                            // SizedBox(height: screenHeight * 0.02),
-                            // _buildTempleDropdown(),
+                          
                             SizedBox(height: screenHeight * 0.02),
                             eventNameTextField(),
                             SizedBox(height: screenHeight * 0.02),
@@ -142,36 +102,7 @@ class _CreateEventKnState extends State<CreateEventKn> {
     );
   }
 
-  // Widget _buildImagePicker() {
-  //   final uploadedCount = viewmodel.uploadedImageUrls.length;
-  //
-  //   final allImages = [
-  //     ...viewmodel.uploadedImageUrls,
-  //     ...viewmodel.selectedImages.map((e) => e.path),
-  //   ];
-  //
-  //   return MultiImagePickerSection(
-  //     imagePaths: allImages,
-  //     onAddImages: _pickImages,
-  //     onRemoveImage: (index) {
-  //       if (index >= uploadedCount) {
-  //         final localIndex = index - uploadedCount;
-  //         viewmodel.removeImage(localIndex);
-  //       } else {
-  //         viewmodel.uploadedImageUrls.removeAt(index);
-  //         viewmodel.notifyListeners();
-  //       }
-  //     },
-  //   );
-  // }
-
-  // Future<void> _pickImages() async {
-  //   final pickedFiles = await _picker.pickMultiImage();
-  //   if (pickedFiles.isNotEmpty) {
-  //     final imagePaths = pickedFiles.map((e) => e.path).toList();
-  //     viewmodel.addImages(imagePaths);
-  //   }
-  // }
+  
 
   Widget timePickerWidget() {
     return Padding(
@@ -214,26 +145,7 @@ class _CreateEventKnState extends State<CreateEventKn> {
     );
   }
 
-  Widget _buildTempleDropdown() {
-    return CommonDropdownField(
-      hintText: AppLocalizations.of(context)!.temple,
-      labelText: AppLocalizations.of(context)!.temple,
-      items: viewmodel.templeData.map((t) => t.name).toList(),
-      selectedValue: viewmodel.selectedTemple?.name,
-      paddingSize: 16,
-      onChanged: (value) {
-        if (value == null) return;
-        final selectedTemple = viewmodel.templeData.firstWhere(
-          (t) => t.name == value,
-        );
-        setState(() {
-          viewmodel.selectedTempleId = selectedTemple.id;
-          viewmodel.setSelectedTemple(selectedTemple);
-          viewmodel.notifyListeners();
-        });
-      },
-    );
-  }
+  
 
   Widget eventNameTextField() {
     return CommonTextField(

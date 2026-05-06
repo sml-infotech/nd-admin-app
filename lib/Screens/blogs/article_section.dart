@@ -124,7 +124,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
             ),
             const SizedBox(
               height: 8,
-            ), // Optional spacing between label and field
+            ),
             CommonTextField(
               controller: sortedControllers[index],
               hintText: 'Write Paragraph',
@@ -145,14 +145,13 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color:
-              Colors.grey.shade50, // Slight background to distinguish the group
+              Colors.grey.shade50,  
           border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with Remove Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -167,7 +166,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
                 IconButton(
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.delete_forever, color: Colors.red),
-                  onPressed: _removeListGroup, // Custom function to clear data
+                  onPressed: _removeListGroup, 
                 ),
               ],
             ),
@@ -199,10 +198,8 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
             ),
             const SizedBox(height: 16),
 
-            // List Items
             ..._buildListItems(),
 
-            // Add List Item Button
             _textButton(
               icon: Icons.add,
               label: 'Add Item',
@@ -223,7 +220,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
       }
       viewModel.listItemControllersEN.clear();
 
-      // Reset list type to default
       viewModel.listTypeEN = 'Numbered';
     });
   }
@@ -238,7 +234,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
             _label('Item ${index + 1}'),
             Row(
               children: [
-                // The Input Field
                 Expanded(
                   child: TextField(
                     controller: viewModel.listItemControllersEN[index],
@@ -246,7 +241,6 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
                   ),
                 ),
 
-                // Delete Button (Visible for all except the very first item)
                 if (viewModel.listItemControllersEN.length > 1)
                   IconButton(
                     icon: const Icon(
@@ -255,9 +249,7 @@ class _ArticleSectionUIState extends State<ArticleSectionUI> {
                     ),
                     onPressed: () {
                       setState(() {
-                        // Dispose the controller to free up memory
                         viewModel.listItemControllersEN[index].dispose();
-                        // Remove it from the list
                         viewModel.listItemControllersEN.removeAt(index);
                       });
                     },

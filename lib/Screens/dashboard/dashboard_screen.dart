@@ -2,12 +2,9 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:nammadaiva_dashboard/Screens/dashboard/dashboard_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/local_provider.dart';
-import 'package:nammadaiva_dashboard/Utills/notification_service.dart';
-import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/statictics_model/dashboard-statistics.dart';
 import 'package:provider/provider.dart';
@@ -36,33 +33,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _loadUserData();
     _requestNotificationPermission();
     _getFcmToken();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _initPushNotifications();
-    // });
+    
   }
 
-  // Future<void> _initPushNotifications() async {
-  //   final settings = await FirebaseMessaging.instance.requestPermission(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //   );
-
-  //   if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-  //       settings.authorizationStatus == AuthorizationStatus.provisional) {
-  //     try {
-  //       var token = await FirebaseMessaging.instance.getAPNSToken();
-  //       print("token: $token");
-  //       var token1 = await FirebaseMessaging.instance.getToken();
-
-  //       print("token1111$token1");
-  //     } catch (e) {
-  //       print(">>>>>>>>>>>>>>>>1111${e}");
-  //     }
-  //   } else {
-  //     print("❌ Notification permission denied");
-  //   }
-  // }
+  
 
   Future<void> _requestNotificationPermission() async {
     final messaging = FirebaseMessaging.instance;
@@ -250,14 +224,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     false,
                                   ),
 
-                                // containerWidget(
-                                //   ImageStrings.ritual,
-                                //   AppLocalizations.of(context)!.updateRequests,
-                                //   () => Navigator.pushNamed(
-                                //     context,
-                                //     StringsRoute.updateRequestsUrl,
-                                //   ),
-                                // ),
+                             
                                 containerWidget(
                                   ImageStrings.wowtracker,
                                   AppLocalizations.of(context)!.events,
@@ -490,13 +457,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),
           ),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.1),
-          //     blurRadius: 6,
-          //     offset: const Offset(0, 2),
-          //   ),
-          // ],
+         
         ),
         child: Column(
           children: [

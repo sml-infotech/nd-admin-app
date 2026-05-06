@@ -8,7 +8,6 @@ import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
-import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/highlight_model/active_list_responsemodel.dart';
 import 'package:video_player/video_player.dart';
@@ -331,32 +330,7 @@ class _HighLightsUploaderScreenState extends State<HighLightsUploaderScreen> {
     );
   }
 
-  // Future<void> _handleUpload() async {
-  //   if (_pickedFile == null) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(const SnackBar(content: Text("Select a file first")));
-  //     return;
-  //   }
 
-  //   final viewModel = Provider.of<HighlightViewmodel>(context, listen: false);
-  //   final bool isVideo = _checkIsVideo(_pickedFile!.path);
-
-  //   final bool success = await viewModel.addMedia([_pickedFile!.path], isVideo);
-
-  //   if (!success) return;
-
-  //   setState(() {
-  //     _pickedFile = null;
-  //     _videoController?.pause();
-  //     _videoController?.dispose();
-  //     _videoController = null;
-  //   });
-
-  //   ScaffoldMessenger.of(
-  //     context,
-  //   ).showSnackBar(const SnackBar(content: Text("Upload Successful!")));
-  // }
 
   Widget _buildPreview() {
     final controller = viewModel.videoController;

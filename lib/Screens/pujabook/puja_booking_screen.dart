@@ -546,33 +546,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
       ),
     );
 
-    // GestureDetector(
-    //   onTap: () => _showCutOffBottomSheet(context),
-    //   child: Container(
-    //     height: 38,
-    //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    //     decoration: BoxDecoration(
-    //       borderRadius: BorderRadius.circular(10),
-    //       border: Border.all(color: Colors.grey.shade400),
-    //       color: Colors.white,
-    //     ),
-    //     child: Row(
-    //       mainAxisSize: MainAxisSize.min,
-    //       children: [
-    //         Text(
-    //           viewmodel.selectedCutoffOption,
-    //           style: TextStyle(
-    //             fontFamily: font,
-    //             fontSize: 13,
-    //             color: Colors.black,
-    //           ),
-    //         ),
-    //         const SizedBox(width: 6),
-    //         const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black),
-    //       ],
-    //     ),
-    //   ),
-    // );
+ 
   }
 
   Widget cutOffBar() {
@@ -626,18 +600,7 @@ class _PujaBookingScreenState extends State<PujaBookingScreen> {
                 } else {
                   Fluttertoast.showToast(msg: viewmodel.message);
                 }
-                //
-
-                // if (viewmodel.pujaCreated) {
-                //   Fluttertoast.showToast(
-                //     msg: viewmodel.message ?? "Puja created successfully.",
-                //   );
-                //   Navigator.pop(context);
-                // } else {
-                //   Fluttertoast.showToast(
-                //     msg: viewmodel.message ?? "Failed to create puja.",
-                //   );
-                // }
+               
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,

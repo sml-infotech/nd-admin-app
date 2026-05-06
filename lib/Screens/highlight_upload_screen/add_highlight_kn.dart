@@ -141,10 +141,8 @@ class _AddHighlightInKannadamState extends State<AddHighlightInKannadam> {
       return;
     }
 
-    // Use the helper from ViewModel
     final bool isVideo = viewModel.isVideo(viewModel.pickedFile!.path);
 
-    // Call the upload logic
     final bool success = await viewModel.addMedia([
       viewModel.pickedFile!.path,
     ], isVideo);

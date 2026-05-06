@@ -257,20 +257,7 @@ class _CreateMantraScreenState extends State<CreateMantraScreen> {
                   Fluttertoast.showToast(msg: viewmodel.message ?? "");
                   viewmodel.message = "";
                 }
-                //   if (widget.updateMantra!.mantra.isEmpty) {
-                //     await viewmodel.createMantra();
-                //   } else {
-                //     await viewmodel.updateMantra(
-                //       widget.updateMantra!.mantraID!,
-                //     );
-                //   }
-                //   if (viewmodel.isCompleted) {
-                //     Navigator.pop(context);
-                //   }
-                //   viewmodel.isLoading = false;
-                // }
-
-                // Fluttertoast.showToast(msg: viewmodel.message ?? "");
+               
                 viewmodel.message = "";
               },
               style: ElevatedButton.styleFrom(

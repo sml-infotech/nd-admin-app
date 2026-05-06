@@ -157,7 +157,6 @@ class _BookingScreenState extends State<BookingScreen> {
           return _buildCard(vm.bookings[index - 2], index - 2);
         }
 
-        // return _loadingMore();
       },
     );
   }
@@ -216,7 +215,6 @@ class _BookingScreenState extends State<BookingScreen> {
     return GestureDetector(
       onTap: () {
         if (!hasSelection) {
-          // Only open bottom sheet if no temple is selected
           vm.openTempleBottomSheet(context);
         }
       },
@@ -529,8 +527,8 @@ class _BookingScreenState extends State<BookingScreen> {
     return amount % 1 == 0
         ? amount
               .toInt()
-              .toString() // 200.00 -> 200
-        : amount.toStringAsFixed(2); // keep decimals if needed
+              .toString() 
+        : amount.toStringAsFixed(2); 
   }
 
   Widget _buildRow(String label, String value) {

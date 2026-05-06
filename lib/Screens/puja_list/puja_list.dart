@@ -435,7 +435,6 @@ class _PujaListState extends State<PujaList> {
         ? puja.translations!.first.deityNames ?? []
         : puja.deitiesName ?? [];
 
-    // Remove any empty strings from the list
     final filteredNames = displayNames
         .where((name) => name.trim().isNotEmpty)
         .toList();

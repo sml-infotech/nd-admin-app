@@ -1,18 +1,14 @@
-// booking_response.dart (add/update these classes)
 
-import 'package:nammadaiva_dashboard/generated/l10n.dart';
 
 String _formatIsoDate(String? iso) {
   if (iso == null || iso.isEmpty) return "-";
   try {
     final dt = DateTime.parse(iso).toLocal();
-    // Format as dd/MM/yyyy — you can change to any format you like
     final day = dt.day.toString().padLeft(2, '0');
     final month = dt.month.toString().padLeft(2, '0');
     final year = dt.year.toString();
     return "$day/$month/$year";
   } catch (e) {
-    // fallback: try to return first 10 chars (YYYY-MM-DD)
     return iso.length >= 10 ? iso.substring(0, 10) : iso;
   }
 }
@@ -58,10 +54,10 @@ class BookingModel {
   final String userPhone;
   final String userEmail;
   final String pujaName;
-  final String pujaDate; // ISO string
+  final String pujaDate; 
   final String totalAmount;
   final String bookingStatus;
-  final String createdAt; // ISO string
+  final String createdAt; 
   final String? priestDakshina;
   final List<SankalpaDetail> sankalpaDetails;
   final List<PaymentDetail> paymentDetails;
@@ -70,7 +66,8 @@ final List<String>images;
 final int? puja_fee;
 final int? prasad_delivery_charges; 
 final String? convenience_fee;
-final String? priest_dakshina; // alias for bookingId
+final String? priest_dakshina; 
+
 
 
   BookingModel({
@@ -127,7 +124,6 @@ final String? priest_dakshina; // alias for bookingId
     );
   }
 
-  // ---------- Helpful getters for UI ----------
   String get pujaDateFormatted => _formatIsoDate(pujaDate);
   String get createdAtFormatted => _formatIsoDate(createdAt);
   String get totalAmountDisplay => totalAmount.isEmpty ? "-" : totalAmount;
@@ -135,14 +131,11 @@ final String? priest_dakshina; // alias for bookingId
   int get pujaFeeDisplay => puja_fee ?? 0;
   int get prasadDeliveryChargesDisplay => prasad_delivery_charges ?? 0;
   String get convenienceFeeDisplay => convenience_fee?.isEmpty ?? true ? "-" : convenience_fee!;
-  // alias names your UI might call
   String get bookingIdDisplay => bookingId;
   String get userPhoneDisplay => userPhone;
   String get userEmailDisplay => userEmail;
-  // convenience: if you used different property names earlier
   String get pujaDateShort => pujaDateFormatted;
   String get priestDakshinaDisplay => priest_dakshina?.isEmpty ?? true ? "-" : priest_dakshina!;
-  // (you can add more helpers as needed)
 }
 
 class SankalpaDetail {
@@ -175,7 +168,7 @@ class PaymentDetail {
   final int amount;
   final String paymentId;
 final String paymentStatus;
-  final String transactionDate; // ISO string
+  final String transactionDate; 
   final String razorpayOrderId;
   final String? razorpayPaymentId;
 
@@ -199,7 +192,6 @@ final String paymentStatus;
     );
   }
 
-  // ---------- Getter for formatted transaction date ----------
   String get transactionDateFormatted => _formatIsoDate(transactionDate);
 }
 class PrasadAddress {
@@ -230,7 +222,6 @@ class PrasadAddress {
     );
   }
 
-  // 🔥 Helper for UI
   String get fullAddress {
     return [
       addressLine1,

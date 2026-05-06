@@ -3,9 +3,9 @@ import 'package:nammadaiva_dashboard/model/login_model/master_temple/post_master
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
 class CreateMasterViewmodel extends ChangeNotifier {
-  bool isLoading = false; // API call loader
-  bool isExcelLoading = false; // Excel upload loader
-  bool showExcelPopup = false; // Popup visibility
+  bool isLoading = false; 
+  bool isExcelLoading = false;
+  bool showExcelPopup = false;
 
   String message = '';
   bool isCreateUserSuccess = false;
@@ -49,9 +49,7 @@ class CreateMasterViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// -----------------------------
-  /// POST API
-  /// -----------------------------
+
   Future<void> createMasterTemple() async {
     if (excelTemples.isEmpty) {
       message = "Add at least one temple";
@@ -84,9 +82,7 @@ class CreateMasterViewmodel extends ChangeNotifier {
     }
   }
 
-  /// -----------------------------
-  /// EXCEL POPUP CONTROLS
-  /// -----------------------------
+
   void setExcelLoading(bool value) {
     isExcelLoading = value;
     notifyListeners();
@@ -99,7 +95,6 @@ class CreateMasterViewmodel extends ChangeNotifier {
 
   void closeExcelPopup() {
     showExcelPopup = false;
-    // excelTemples.clear();
 
     notifyListeners();
   }

@@ -321,15 +321,7 @@ class _CreateMasterTempleState extends State<CreateMasterTemple> {
               vm.city.text.isNotEmpty &&
               vm.state.text.isNotEmpty &&
               vm.pincode.text.isNotEmpty) {
-            // vm.excelTemples.add(
-            //   MasterTemple(
-            //     templeName: vm.templeName.text ?? "",
-            //     address: vm.address.text ?? "",
-            //     city: vm.city.text ?? "",
-            //     state: vm.state.text ?? "",
-            //     pincode: vm.pincode.text ?? "",
-            //   ),
-            // );
+          
 
             Navigator.pushNamed(
               context,
@@ -402,16 +394,7 @@ class _CreateMasterTempleState extends State<CreateMasterTemple> {
       for (int i = 1; i < rows.length; i++) {
         var row = rows[i];
 
-        // vm.excelTemples.add(
-        //   MasterTemple(
-        //     templeName: row[0]?.value.toString() ?? "",
-        //     address: row[1]?.value.toString() ?? "",
-        //     city: row[2]?.value.toString() ?? "",
-        //     state: row[3]?.value.toString() ?? "",
-        //     pincode: row[4]?.value.toString() ?? "",
-
-        //   ),
-        // );
+     
       }
 
       vm.setExcelLoading(false);

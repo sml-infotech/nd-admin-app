@@ -27,8 +27,6 @@ class _MasterTempleListState extends State<MasterTempleList> {
   void initState() {
     super.initState();
 
-    // final vm = context.read<MasterTempleListViewmodel>();
-    // vm.fetchTemples(reset: true);
     _loadUserData();
     _controller.addListener(() {
       final vm = context.read<MasterTempleListViewmodel>();
