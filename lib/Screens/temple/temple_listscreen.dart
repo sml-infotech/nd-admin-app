@@ -154,16 +154,7 @@ class _TempleScreenState extends State<TempleScreen> {
           ),
         ),
 
-        // if (role == "Super Admin")
-        //   IconButton(
-        //     onPressed: () async {
-        //       viewModel!.searchController.text = "";
-        //       await Navigator.pushNamed(context, StringsRoute.addTempleScreen);
-        //       await viewModel?.reset();
-        //     },
-        //     icon: const Icon(Icons.add, color: Colors.white),
-        //   )
-        // else
+     
         const SizedBox(width: 48),
       ],
     );
@@ -172,20 +163,28 @@ class _TempleScreenState extends State<TempleScreen> {
   Widget _templeCard(Temple temple) {
     return GestureDetector(
       onTap: () {
+        final locale = Localizations.localeOf(context).languageCode;
+
+        final translation =
+            (locale == 'kn' &&
+                temple.translations != null &&
+                temple.translations!.isNotEmpty)
+            ? temple.translations!.first
+            : null;
         Navigator.pushNamed(
           context,
           StringsRoute.templeDetail,
           arguments: TempleDetailsArguments(
-            name: temple.name,
-            address: temple.address,
-            city: temple.city,
-            state: temple.state,
+            name: translation?.name ?? temple.name,
+            address: translation?.address ?? temple.address,
+            city: translation?.city ?? temple.city,
+            state: translation?.state ?? temple.state,
             pincode: temple.pincode,
-            architecture: temple.architecture,
+            architecture: translation?.architecture ?? temple.architecture,
             phoneNumber: temple.phoneNumber,
             email: temple.email,
-            description: temple.description,
-            deities: temple.deities ?? [],
+            description: translation?.description ?? temple.description,
+            deities: translation?.deities ?? temple.deities ?? [],
             images: temple.images ?? [],
             templeId: temple.id,
             translations: temple.translations ?? [],
@@ -292,18 +291,18 @@ class _TempleScreenState extends State<TempleScreen> {
                   Row(
                     children: [
                       const Icon(
-                        Icons.account_balance,
+                        Icons.temple_hindu,
                         size: 18,
                         color: ColorConstant.buttonColor,
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          "${language == "kn"
-                              ? temple.translations?.first?.architecture ?? "-"
-                              : temple.architecture.isEmpty
-                              ? "-"
-                              : temple.architecture}",
+                          language == "kn"
+                              ? formatDeities(
+                                  temple.translations?.first?.deities,
+                                )
+                              : formatDeities(temple.deities),
 
                           maxLines: 2,
                           style: AppTextStyles.templeNameDetailsStyle,
@@ -323,7 +322,7 @@ class _TempleScreenState extends State<TempleScreen> {
                       Expanded(
                         child: Text(
                           "${language == "kn" ? temple.translations?.first?.address ?? temple.address : temple.address}, ${temple.pincode}",
-                          style: AppTextStyles.templeNameDetailsAddressStyle,
+                          style: AppTextStyles.templeNameDetailsStyle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -374,6 +373,11 @@ class _TempleScreenState extends State<TempleScreen> {
         ),
       ),
     );
+  }
+
+  String formatDeities(List<String>? deities) {
+    if (deities == null || deities.isEmpty) return "-";
+    return deities.where((e) => e.trim().isNotEmpty).join(", ");
   }
 
   Widget templeSearchBar() {

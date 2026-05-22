@@ -138,10 +138,19 @@ class AppLocalizationsKn extends AppLocalizations {
   String get edit => 'ಸಂಪಾದಿಸಿ';
 
   @override
+  String get puja_cost => 'ಪೂಜೆಯ ವೆಚ್ಚ';
+
+  @override
+  String get priest_dakshina => 'ಪೂಜಾರಿಯ ದಕ್ಷಿಣೆ';
+
+  @override
+  String get delivery_charges => 'ಅಂಚೆ ಶುಲ್ಕ';
+
+  @override
   String get addDeities => 'ದೇವತೆಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
-  String get phone => 'ದೂರವಾಣಿ';
+  String get phone => 'ಫೋನ್';
 
   @override
   String get message => 'ಸಂದೇಶ';
@@ -258,7 +267,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get no_media_selected => 'ಮಾಧ್ಯಮ ಆಯ್ಕೆಮಾಡಿಲ್ಲ';
 
   @override
-  String get created => 'ರಚಿಸಲಾಗಿದೆ:';
+  String get created => 'ರಚಿಸಲಾಗಿದೆ';
 
   @override
   String get active_highlights => 'ಸಕ್ರಿಯ ಹೈಲೈಟ್ಸ್';
@@ -318,7 +327,22 @@ class AppLocalizationsKn extends AppLocalizations {
   String get totalPoojas => 'ಒಟ್ಟು ಪೂಜೆಗಳು';
 
   @override
+  String get logout => 'ಲಾಗ್ ಔಟ್';
+
+  @override
+  String get logoutConfirm => 'ನೀವು ಖಚಿತವಾಗಿಯೂ ಲಾಗ್ ಔಟ್ ಮಾಡಲು ಬಯಸುತ್ತೀರಾ?';
+
+  @override
+  String get cancel => 'ರದ್ದು ಮಾಡಿ';
+
+  @override
   String get start_time => 'ಪ್ರಾರಂಭ ಸಮಯ';
+
+  @override
+  String get tabAbout => 'ವಿವರಗಳು';
+
+  @override
+  String get tabMap => 'ನಕ್ಷೆ';
 
   @override
   String get end_time => 'ಅಂತ್ಯ ಸಮಯ';
@@ -343,6 +367,60 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get welcome => 'ಮತ್ತೆ ಸ್ವಾಗತ,';
+
+  @override
+  String get select_temple => 'ದೇವಾಲಯ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get name => 'ಹೆಸರು';
+
+  @override
+  String get rashi => 'ರಾಶಿ';
+
+  @override
+  String get nakshatra => 'ನಕ್ಷತ್ರ';
+
+  @override
+  String get gothra => 'ಗೋತ್ರ';
+
+  @override
+  String get date => 'ದಿನಾಂಕ';
+
+  @override
+  String get amount => 'ಒಟ್ಟು ಮೊತ್ತ';
+
+  @override
+  String get booking_id => 'ಬುಕಿಂಗ್ ಐಡಿ';
+
+  @override
+  String get payment_id => 'ಪಾವತಿ ಐಡಿ';
+
+  @override
+  String get transaction_date => 'ವಹಿವಾಟು ದಿನಾಂಕ';
+
+  @override
+  String get view_sankalpa_details => 'ಸಂಕಲ್ಪ ವಿವರಗಳನ್ನು ನೋಡಿ';
+
+  @override
+  String get sankalpa_details => 'ಸಂಕಲ್ಪ ವಿವರಗಳು';
+
+  @override
+  String get close => 'ಮುಚ್ಚು';
+
+  @override
+  String get pooja_images => 'ಪೂಜೆ ಚಿತ್ರಗಳು';
+
+  @override
+  String get mark_as_complete => 'ಪೂರ್ಣವಾಗಿದೆ ಎಂದು ಗುರುತುಮಾಡಿ';
+
+  @override
+  String get upload_pooja_image => 'ಪೂಜೆ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get add_images => 'ಚಿತ್ರಗಳನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get mark_as_completed => 'ಪೂರ್ಣವಾಗಿದೆ ಎಂದು ಗುರುತುಮಾಡಿ';
 
   @override
   String get state => 'ರಾಜ್ಯ';
@@ -378,6 +456,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get templeemail => 'ದೇಗುಲ ಇಮೇಲ್';
 
   @override
+  String get availablePrasad => 'ಪ್ರಸಾದ ವಿತರಣೆಗಾಗಿ ವಿಳಾಸ';
+
+  @override
   String get deitiestemple => 'ದೇವತೆಗಳು';
 
   @override
@@ -393,9 +474,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get requested => 'ಅನುರೋಧಿಸಲಾಗಿದೆ';
 
   @override
-  String get cancel => 'ರದ್ದು ಮಾಡಿ';
-
-  @override
   String get submitAllApprovals => 'ಸಮರ್ಪಿಸಿ';
 
   @override
@@ -408,7 +486,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get eventLocation => 'ಸ್ಥಳ';
 
   @override
+  String get delete => 'ಅಳಿಸಿ';
+
+  @override
   String get addPuja => 'ಪೂಜಾ/ಸೇವಾ ಸೇರಿಸಿ';
+
+  @override
+  String get deleteFestivalTitle => 'ಹಬ್ಬವನ್ನು ಅಳಿಸಿ';
+
+  @override
+  String get deleteFestivalMessage => 'ನೀವು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ';
 
   @override
   String get updatePuja => 'ಪೂಜಾ/ಸೇವಾ ಅಪ್ಡೇಟ್ ಮಾಡಿ';
@@ -429,6 +516,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get dashboard => 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್';
 
   @override
+  String get prasad_delivery_address => 'ಪ್ರಸಾದ ವಿತರಣೆ ವಿಳಾಸ';
+
+  @override
   String get updateRequests => 'ಅನುರೋಧಗಳನ್ನು ಅಪ್ಡೇಟ್ ಮಾಡಿ';
 
   @override
@@ -442,9 +532,6 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get selectSlot => 'ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ';
-
-  @override
-  String get date => 'ದಿನಾಂಕ';
 
   @override
   String get enterPuja => 'ಪೂಜಾ/ಸೇವಾ ಸಮಯವನ್ನು ನಮೂದಿಸಿ';
@@ -484,6 +571,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get fromDate => 'ಹಿಂದಿನ ದಿನಾಂಕ';
+
+  @override
+  String get fromDate_ => 'ಇಂದಿನ ದಿನಾಂಕ';
 
   @override
   String get toDate => 'ಗೆಂದು ದಿನಾಂಕ';
@@ -526,6 +616,9 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get noAvailableSlot => 'ಲಭ್ಯವಿರುವ ಸಮಯ ಸ್ಲಾಟ್ ಇಲ್ಲ';
+
+  @override
+  String get convenience_fees => 'ಸೌಲಭ್ಯ ಶುಲ್ಕ';
 
   @override
   String get hideDetails => 'ವಿವರಗಳನ್ನು ಮುಚ್ಚಿ';

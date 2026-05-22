@@ -49,8 +49,7 @@ flutter_launcher_icons:
   image_path: assets/logo.png
 flutter:
   uses-material-design: true
-  generate: true   # <-- REQUIRED FOR gen-l10n TO WORK
-
+  generate: true  
   assets:
     - assets/loginImage.png
     - assets/temple.png
@@ -77,6 +76,7 @@ flutter:
     - assets/rightflower.png
     - assets/logo.png
     - assets/splash.png
+    - assets/email.png
 
   fonts:
     - family: Nunito

@@ -202,7 +202,10 @@ class FestivalCard extends StatelessWidget {
           context,
           StringsRoute.festivalDetailsScreen,
           arguments: FestivalArgument(
-            name: festival.name,
+            name: language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.name
+                : festival.name,
+
             startDate: festival.startDate != null
                 ? DateFormat('yyyy-MM-dd').format(festival.startDate!)
                 : '',
@@ -211,8 +214,14 @@ class FestivalCard extends StatelessWidget {
                 : '',
             startTime: festival.startTime ?? '',
             endTime: festival.endTime ?? '',
-            description: festival.description,
-            deities: festival.deityNames,
+            description:
+                language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.description
+                : festival.description,
+            deities:
+                language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.deities ?? []
+                : festival.deityNames,
             imageUrls: festival.images.map((e) => e.url).toList(),
             translation: festival.translations,
           ),
@@ -234,7 +243,6 @@ class FestivalCard extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
-                      // Background Image
                       Container(
                         width: double.infinity,
                         height: 200,
@@ -254,7 +262,12 @@ class FestivalCard extends StatelessWidget {
                       Positioned(
                         top: 10,
                         right: 16,
-                        child: editAndDeleteIcon(context, viewmodel, festival),
+                        child: editAndDeleteIcon(
+                          context,
+                          viewmodel,
+                          festival,
+                          language,
+                        ),
                       ),
                       Positioned(
                         bottom: 0,
@@ -331,6 +344,7 @@ Widget editAndDeleteIcon(
   BuildContext context,
   CreateFestivalViewmodel viewmodel,
   FestivalListModal festival,
+  String language,
 ) {
   return Row(
     children: [
@@ -365,7 +379,10 @@ Widget editAndDeleteIcon(
           _showDeleteConfirmationSheet(
             context,
             festivalId: festival.id,
-            festivalName: festival.name,
+            festivalName:
+                language == "kn" && festival.translations.isNotEmpty == true
+                ? festival.translations.first.name
+                : festival.name,
             viewmodel: viewmodel,
           );
         },
@@ -431,7 +448,7 @@ void _showDeleteConfirmationSheet(
             const SizedBox(height: 12),
 
             Text(
-              "Delete Festival",
+              AppLocalizations.of(context)!.deleteFestivalTitle,
               style: AppTextStyles.appBarTitleStyle.copyWith(
                 color: Colors.black,
               ),
@@ -440,7 +457,7 @@ void _showDeleteConfirmationSheet(
             const SizedBox(height: 10),
 
             Text(
-              "Are you sure you want to delete \"$festivalName\"?",
+              "${AppLocalizations.of(context)!.deleteFestivalMessage} \"$festivalName\"?",
               textAlign: TextAlign.center,
               style: AppTextStyles.templeContactStyle.copyWith(
                 color: Colors.black87,
@@ -461,7 +478,7 @@ void _showDeleteConfirmationSheet(
                       ),
                     ),
                     child: Text(
-                      "Cancel",
+                      AppLocalizations.of(context)!.cancel,
                       style: AppTextStyles.buttonTextStyle.copyWith(
                         color: ColorConstant.buttonColor,
                       ),
@@ -481,7 +498,10 @@ void _showDeleteConfirmationSheet(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text("Delete", style: AppTextStyles.buttonTextStyle),
+                    child: Text(
+                      AppLocalizations.of(context)!.delete,
+                      style: AppTextStyles.buttonTextStyle,
+                    ),
                   ),
                 ),
               ],

@@ -8,7 +8,7 @@ class CommonTextField extends StatefulWidget {
   final bool isFromPassword;
   final TextEditingController controller;
   final bool? isFromPhone;
-  final bool? isFromDescription; // new flag for multi-line text
+  final bool? isFromDescription; 
 
   const CommonTextField({
     super.key,

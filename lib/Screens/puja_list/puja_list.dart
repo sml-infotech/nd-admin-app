@@ -177,8 +177,6 @@ class _PujaListState extends State<PujaList> {
           IconButton(
             iconSize: 20,
             onPressed: () {
-              // Reset viewmodel first to avoid notifyListeners() firing
-              // during the navigation transition (widget tree lock).
               viewmodel.reset();
               Navigator.pushNamed(
                 context,
@@ -270,7 +268,6 @@ class _PujaListState extends State<PujaList> {
                   editButton(puja),
                 ],
               ),
-              // isActiveTextWidget(isActive),
               buildDeities(puja),
               descriptionWidget(puja),
               SizedBox(height: 8),
@@ -295,6 +292,8 @@ class _PujaListState extends State<PujaList> {
                     .toList(),
               ),
               SizedBox(height: 8),
+              availablePrasad(puja),
+              // SizedBox(height: 8),
               availableTimeSlotsTitle(),
               SizedBox(height: 8),
               availableTimeSlots(activeTimes: formattedTimes),
@@ -305,6 +304,34 @@ class _PujaListState extends State<PujaList> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget availablePrasad(PujaData puja) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+      child: Row(
+        children: [
+          Text(
+            AppLocalizations.of(context)!.availablePrasad,
+            style: AppTextStyles.templeNameDetailsStyle.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          SmallToggleSwitch(
+            value: puja.requiresPrasadAddress ?? false,
+            onChanged: (v) {
+              setState(() {
+                viewmodel.togglePrasadAvailable(
+                  viewmodel.pujaList.first.id,
+                  !(puja.requiresPrasadAddress ?? false),
+                );
+              });
+            },
+          ),
+        ],
       ),
     );
   }
@@ -408,7 +435,6 @@ class _PujaListState extends State<PujaList> {
         ? puja.translations!.first.deityNames ?? []
         : puja.deitiesName ?? [];
 
-    // Remove any empty strings from the list
     final filteredNames = displayNames
         .where((name) => name.trim().isNotEmpty)
         .toList();
@@ -427,7 +453,6 @@ class _PujaListState extends State<PujaList> {
             TextSpan(
               text: filteredNames.isNotEmpty ? filteredNames.join(', ') : '---',
               style: AppTextStyles.templeNameDetailsStyle.copyWith(
-                // Optional: change color if it's '---'
                 color: filteredNames.isNotEmpty ? null : Colors.grey,
               ),
             ),
@@ -650,7 +675,7 @@ class _PujaListState extends State<PujaList> {
     );
   }
 
-  Widget availableTimeSlotsTitle() {
+Widget availableTimeSlotsTitle() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 0, 0),
       child: Text(

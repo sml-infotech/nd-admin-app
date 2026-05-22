@@ -15,7 +15,7 @@ class BenefitInputWidget extends StatefulWidget {
   });
 
   @override
-  State<BenefitInputWidget> createState() => _BenefitInputWidgetState();
+State<BenefitInputWidget> createState() => _BenefitInputWidgetState();
 }
 
 class _BenefitInputWidgetState extends State<BenefitInputWidget> {
@@ -68,7 +68,10 @@ class _BenefitInputWidgetState extends State<BenefitInputWidget> {
           children: List.generate(
             benefits.length,
             (index) => Chip(
-              label: Text(benefits[index]),
+              label: Text(
+                benefits[index],
+                style: TextStyle(color: Colors.black, fontFamily: font),
+              ),
               onDeleted: () => removeBenefit(index),
             ),
           ),

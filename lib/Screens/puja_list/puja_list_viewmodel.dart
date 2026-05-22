@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/model/login_model/pujalist/puja_list_response.dart';
 import 'package:nammadaiva_dashboard/model/login_model/temple/temple_listmodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/toggleprasadaddressmodel/toggle_prasad_address_model.dart';
 import 'package:nammadaiva_dashboard/service/puja_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 
@@ -24,9 +25,10 @@ class PujaListViewmodel extends ChangeNotifier {
   int _itemsPerPage = 10;
   bool hasNextPage = true;
   String? selectedTemple;
-String templeId = '';
+  String templeId = '';
   String message = '';
   bool? isActive;
+  bool? isPrasadAvailable;
 
   Future<void> fetchPujas({bool reset = false}) async {
     try {
@@ -82,7 +84,7 @@ String templeId = '';
   }
 
   Future<void> getTemples({bool reset = false}) async {
-    if (isLoading || isFetchingNextPage) return; // ✅ extra protection
+    if (isLoading || isFetchingNextPage) return;
 
     if (reset) {
       _currentPage = 1;
@@ -91,8 +93,9 @@ String templeId = '';
       templeList.clear();
       isLoading = true;
     } else {
-      if (!hasNextPage || isFetchingNextPage) return;
+      if (!hasNextPage) return;
       isFetchingNextPage = true;
+      _currentPage++; // ✅ increment only once here
     }
 
     notifyListeners();
@@ -100,23 +103,16 @@ String templeId = '';
     try {
       final response = await templeService.getTemples(
         page: _currentPage,
-        limit: 20,
+        limit: 10,
       );
 
       if (response.data != null && response.data!.isNotEmpty) {
         templeData.addAll(response.data!);
-
         templeList = templeData.map((t) => t.name).toList();
-        notifyListeners();
-        if (response.data!.length < 20) {
-          hasNextPage = false;
-        } else {
-          _currentPage++;
-        }
 
-        if (templeData.isNotEmpty) {
-          // templeId = templeData.first.id;
-          // selectedTemple = templeData.first.name;
+        // ✅ If less than limit, no more pages
+        if (response.data!.length < 10) {
+          hasNextPage = false;
         }
       } else {
         hasNextPage = false;
@@ -152,6 +148,46 @@ String templeId = '';
     }
   }
 
+  Future<bool> togglePrasadAvailable(String pujaId, bool toggle) async {
+    try {
+      // Find the puja and update locally first
+      final pujaIndex = pujaList.indexWhere((puja) => puja.id == pujaId);
+      if (pujaIndex == -1) {
+        message = "Puja not found";
+        notifyListeners();
+        return false;
+      }
+
+      // Update the local puja
+      pujaList[pujaIndex].requiresPrasadAddress = toggle;
+      notifyListeners();
+
+      // Make API call
+      final response = await pujaService.togglePrasadAddress(pujaId, toggle);
+
+      if (response.code == 200) {
+        message = response.message ?? "Updated successfully";
+        notifyListeners();
+        return true;
+      } else {
+        // Revert on failure
+        pujaList[pujaIndex].requiresPrasadAddress = !toggle;
+        message = response.message ?? "Some error occurred";
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      // Find and revert on error
+      final pujaIndex = pujaList.indexWhere((puja) => puja.id == pujaId);
+      if (pujaIndex != -1) {
+        pujaList[pujaIndex].requiresPrasadAddress = !toggle;
+      }
+      message = "Something went wrong: $e";
+      notifyListeners();
+      return false;
+    }
+  }
+
   void resetPagination() {
     _currentPage = 1;
     hasMorePujas = true;
@@ -162,8 +198,8 @@ String templeId = '';
   Future<void> reset({bool skipNotify = false}) async {
     pujaList = [];
     pujaDataForActive = [];
-    templeData = [];
-    templeList = [];
+    // templeData = [];
+    // templeList = [];
 
     isLoading = true;
     isLoadingMore = false;

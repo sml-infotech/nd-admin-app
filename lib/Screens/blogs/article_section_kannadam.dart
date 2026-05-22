@@ -91,26 +91,22 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
   }
 
   List<Widget> _buildParagraphFieldsKN() {
-    // 1. Create a local list of controllers from the ViewModel
     final sortedControllers = List<TextEditingController>.from(
       viewModel.paragraphControllersKN,
     );
 
-    // 2. Sort the controllers based on the positions stored in the Map
     sortedControllers.sort((a, b) {
       final aPos = viewModel.paragraphPositionsKN[a] ?? 0;
       final bPos = viewModel.paragraphPositionsKN[b] ?? 0;
       return aPos.compareTo(bPos);
     });
 
-    // 3. Generate the UI list
     return List.generate(sortedControllers.length, (index) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Dynamic label showing the paragraph number in Kannada context
             _label('ಪ್ಯಾರಾಗ್ರಾಫ್ ${index + 1}'),
             const SizedBox(height: 8),
             CommonTextField(
@@ -119,9 +115,8 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
               labelText: 'ಪ್ಯಾರಾಗ್ರಾಫ್ ${index + 1}',
               isFromPassword: false,
               isFromDescription:
-                  true, // Assuming this enables multiline/tall box
+                  true, 
             ),
-            // Optional: Add a delete button here if you want to allow removing paragraphs
           ],
         ),
       );
@@ -133,7 +128,6 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
       children: [
         TextButton.icon(
           onPressed: () {
-            // Clear and reset the list items when adding a new list group
             for (var controller in viewModel.listItemControllersKN) {
               controller.dispose();
             }
@@ -160,7 +154,6 @@ class _CreateBlogScreenKannadaState extends State<CreateBlogScreenKannada> {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: TextButton.icon(
         onPressed: () {
-          // Correct way: Call the function we created in the ViewModel
           viewModel.addParagraphKN();
         },
         icon: const Icon(Icons.add, color: Colors.pink),

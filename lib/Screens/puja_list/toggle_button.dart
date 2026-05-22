@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SmallToggleSwitch extends StatefulWidget {
-  final bool value; // ✅ current value from parent
+  final bool value; 
   final ValueChanged<bool> onChanged;
 
   const SmallToggleSwitch({
@@ -20,14 +20,14 @@ class _SmallToggleSwitchState extends State<SmallToggleSwitch> {
   @override
   void initState() {
     super.initState();
-    isOn = widget.value; // ✅ initialize with parent value
+    isOn = widget.value; 
   }
 
   @override
   void didUpdateWidget(covariant SmallToggleSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
-      setState(() => isOn = widget.value); // ✅ update when parent changes
+      setState(() => isOn = widget.value); 
     }
   }
 
@@ -39,7 +39,7 @@ class _SmallToggleSwitchState extends State<SmallToggleSwitch> {
         value: isOn,
         onChanged: (value) {
           setState(() => isOn = value);
-          widget.onChanged(value); // ✅ notify parent
+          widget.onChanged(value); 
         },
         activeColor: Colors.green,
         inactiveThumbColor: Colors.grey,

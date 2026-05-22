@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createtemplemodel/create_temple_requestmodel.dart';
-import 'package:nammadaiva_dashboard/service/auth_service.dart';
 import 'package:nammadaiva_dashboard/service/temple_servicr.dart';
 import 'package:nammadaiva_dashboard/service/user_service.dart';
 
@@ -272,11 +271,7 @@ class AddTempleViewmodel extends ChangeNotifier {
         await addTempleApi();
         notifyListeners();
       }
-      // else if(response.code==409){
-      //   isLoading=false;
-      //   message = response.message ?? "user not Found";
-      //   notifyListeners();
-      // }
+   
       else {
         isLoading = false;
         notifyListeners();

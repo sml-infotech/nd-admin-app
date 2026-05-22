@@ -41,10 +41,7 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
 
     viewmodel = Provider.of<CreateFestivalViewmodel>(context);
 
-    // if (widget.arguments != null && !_isPrefilled) {
-    //   _prefillData(widget.arguments!);
-    //   _isPrefilled = true;
-    // }
+
   }
 
   void _prefillData(FestivalArgument args) {
@@ -83,7 +80,6 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
   @override
   void dispose() {
     super.dispose();
-    // viewmodel.reset();
   }
 
   @override
@@ -144,14 +140,7 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
                                 hintText: "Add Deity",
                               ),
                             ),
-                            // SizedBox(height: screenHeight * 0.02),
-                            // dateWidget(),
-                            // timePickerWidget(),
-                            // SizedBox(height: screenHeight * 0.02),
-                            // _buildImagePicker(),
-                            // SizedBox(height: screenHeight * 0.01),
-                            // isActiveCheckbox(),
-                            // SizedBox(height: screenHeight * 0.10),
+                           
                           ],
                         ),
                       ),
@@ -207,36 +196,9 @@ class _CreateFestivalKnState extends State<CreateFestivalKn> {
     );
   }
 
-  Widget _buildImagePicker() {
-    final uploadedCount = viewmodel.uploadedImageUrls.length;
 
-    final allImages = [
-      ...viewmodel.uploadedImageUrls,
-      ...viewmodel.selectedImages.map((e) => e.path),
-    ];
 
-    return MultiImagePickerSection(
-      imagePaths: allImages,
-      onAddImages: _pickImages,
-      onRemoveImage: (index) {
-        if (index >= uploadedCount) {
-          final localIndex = index - uploadedCount;
-          viewmodel.removeImage(localIndex);
-        } else {
-          viewmodel.uploadedImageUrls.removeAt(index);
-          viewmodel.notifyListeners();
-        }
-      },
-    );
-  }
-
-  Future<void> _pickImages() async {
-    final pickedFiles = await _picker.pickMultiImage();
-    if (pickedFiles.isNotEmpty) {
-      final imagePaths = pickedFiles.map((e) => e.path).toList();
-      viewmodel.addImages(imagePaths);
-    }
-  }
+  
 
   Widget timePickerWidget() {
     return Padding(

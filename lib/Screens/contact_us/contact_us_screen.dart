@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:intl/intl.dart';
 import 'package:nammadaiva_dashboard/Screens/contact_us/contact_viewmodel.dart';
-import 'package:nammadaiva_dashboard/Screens/userlist/user_listscreen.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, Fonts, StringConstant, font;
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart'
@@ -23,67 +23,68 @@ class ContactCard extends StatefulWidget {
 
 class _ContactCardState extends State<ContactCard> {
   bool _isExpanded = false;
+  late ContactViewModel vm;
+
+
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.read<ContactViewModel>();
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10),
-        ],
-      ),
-      child: InkWell(
-        onTap: () async {
-          setState(() => _isExpanded = !_isExpanded);
-
-          if (!widget.data.isRead) {
-            try {
-              await vm.markMessageAsRead(widget.data.id);
-
-              vm.updateContact(widget.data.copyWith(isRead: true));
-            } catch (e) {
-              print("Failed to mark as read: $e");
-            }
-          } else {
-            print("dfsdfsdfsdf??????????");
-          }
-        },
-
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    contactName(),
-                    const SizedBox(height: 4),
-                    dateWidget(widget.data.createdAt),
-                    const SizedBox(height: 4),
-                    contactEmail(),
-                  ],
-                ),
-                Icon(
-                  _isExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: widget.data.isRead ? Colors.black : Colors.red,
-                  size: 28,
-                ),
-              ],
-            ),
-            expandedWidget(),
+    vm = Provider.of<ContactViewModel>(context, listen: false);
+    return FocusDetector(
+      onFocusGained: () {
+        vm.fetchContacts();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10),
           ],
+        ),
+        child: InkWell(
+          onTap: () async {
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+
+            if (!widget.data.isRead) {
+              await vm.markMessageAsRead(widget.data.id);
+            }
+          },
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      contactName(),
+                      const SizedBox(height: 4),
+                      dateWidget(widget.data.createdAt),
+                      const SizedBox(height: 4),
+                      contactEmail(),
+                    ],
+                  ),
+                  Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: widget.data.isRead ? Colors.black : Colors.red,
+                    size: 28,
+                  ),
+                ],
+              ),
+              expandedWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -138,13 +139,13 @@ class _ContactCardState extends State<ContactCard> {
       firstChild: const SizedBox(),
       secondChild: Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: contactDetails(widget,context),
+        child: contactDetails(widget, context),
       ),
     );
   }
 }
 
-Widget contactDetails(ContactCard widget,BuildContext context) {
+Widget contactDetails(ContactCard widget, BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -193,83 +194,97 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    final vm = context.read<ContactViewModel>();
+    vm.reset();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: ColorConstant.buttonColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: _buildAppBar(context),
-      ),
-      body: Consumer<ContactViewModel>(
-        builder: (_, vm, __) {
-          if (vm.isLoading) {
-            return _buildShimmer();
-          }
+    return FocusDetector(
+      onFocusGained: () {
+        context.read<ContactViewModel>().fetchContacts(forceRefresh: true);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: ColorConstant.buttonColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: _buildAppBar(context),
+        ),
+        body: Consumer<ContactViewModel>(
+          builder: (_, vm, __) {
+            if (vm.isLoading) {
+              return _buildShimmer();
+            }
 
-          return ListView.builder(
-            controller: scrollController,
-            itemCount: vm.contacts.length + (vm.isLoadingMore ? 1 : 0),
-            itemBuilder: (_, index) {
-              if (index < vm.contacts.length) {
-                return ContactCard(data: vm.contacts[index]);
-              }
+            return ListView.builder(
+              controller: scrollController,
+              itemCount: vm.contacts.length + (vm.isLoadingMore ? 1 : 0),
+              itemBuilder: (_, index) {
+                if (index < vm.contacts.length) {
+                  return ContactCard(data: vm.contacts[index]);
+                }
 
-              return const Padding(
-                padding: EdgeInsets.all(20),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorConstant.buttonColor,
+                return const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: ColorConstant.buttonColor,
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
+}
 
-  Widget _buildAppBar(context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Image.asset(ImageStrings.backbutton),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const Spacer(),
-        Text(
-          AppLocalizations.of(context)!.contacts,
-          style: AppTextStyles.appBarTitleStyle,
-        ),
-        const Spacer(),
-        const SizedBox(width: 48),
-      ],
-    );
-  }
+Widget _buildAppBar(context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      IconButton(
+        icon: Image.asset(ImageStrings.backbutton),
+        onPressed: () => Navigator.pop(context),
+      ),
+      const Spacer(),
+      Text(
+        AppLocalizations.of(context)!.contacts,
+        style: AppTextStyles.appBarTitleStyle,
+      ),
+      const Spacer(),
+      const SizedBox(width: 48),
+    ],
+  );
+}
 
-  Widget _buildShimmer() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView.separated(
-        itemCount: 8,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (_, __) => Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          child: Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(12),
-            ),
+Widget _buildShimmer() {
+  return Padding(
+    padding: const EdgeInsets.all(16),
+    child: ListView.separated(
+      itemCount: 8,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (_, __) => Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 String formatApiDate(String apiDate) {

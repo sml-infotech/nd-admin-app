@@ -60,12 +60,8 @@ class _CreateFestivalState extends State<CreateFestival> {
 
     viewmodel.deities = args.deities;
 
-    viewmodel.selectedStartDate = args.startDate != null
-        ? DateTime.parse(args.startDate!)
-        : null;
-    viewmodel.selectedEndDate = args.endDate != null
-        ? DateTime.parse(args.endDate!)
-        : null;
+    viewmodel.selectedStartDate = _safeParseDate(args.startDate);
+    viewmodel.selectedEndDate = _safeParseDate(args.endDate);
 
     if (args.startTime != null && args.endTime != null) {
       viewmodel.timeSlots = [
@@ -76,15 +72,6 @@ class _CreateFestivalState extends State<CreateFestival> {
     viewmodel.uploadedImageUrls = List<String>.from(args.imageUrls ?? []);
 
     viewmodel.notifyListeners();
-  }
-
-  String _formatForDisplay(String time) {
-    try {
-      final parsed = DateFormat("HH:mm:ss").parse(time);
-      return DateFormat("hh:mm a").format(parsed);
-    } catch (_) {
-      return time;
-    }
   }
 
   @override
@@ -276,16 +263,28 @@ class _CreateFestivalState extends State<CreateFestival> {
             print("===========${viewmodel.selectedStartDate}");
           }),
         ),
-        // DatePickerField(
-        //   title: AppLocalizations.of(context)!.toDate,
-        //   selectedDate: viewmodel.selectedEndDate,
-        //   fromDate: viewmodel.selectedStartDate,
-        //   onDatePicked: (date) => setState(() {
-        //     viewmodel.selectedEndDate = date;
-        //   }),
-        // ),
       ],
     );
+  }
+
+  DateTime? _safeParseDate(String? date) {
+    if (date == null || date.isEmpty) return null;
+
+    try {
+      return DateTime.parse(date);
+    } catch (_) {
+      try {
+        // Try common formats (change if needed)
+        return DateFormat("dd-MM-yyyy").parse(date);
+      } catch (_) {
+        try {
+          return DateFormat("dd/MM/yyyy").parse(date);
+        } catch (_) {
+          print("Invalid date format received: $date");
+          return null;
+        }
+      }
+    }
   }
 
   Widget eventNameTextField() {
@@ -383,21 +382,6 @@ class _CreateFestivalState extends State<CreateFestival> {
                   StringsRoute.createFestivalKn,
                   arguments: widget.arguments,
                 );
-                // if (widget.arguments != null) {
-                //   await viewmodel.updateFestival(widget.arguments!.festivalId!);
-                // } else {
-                //   await viewmodel.createFestival();
-                // }
-                //
-                // if (viewmodel.eventUpdated || viewmodel.eventCreated) {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                //   Navigator.pop(context);
-                //   viewmodel.reset();
-                //   viewmodel.eventCreated = false;
-                //   viewmodel.eventUpdated = false;
-                // } else {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                // }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,

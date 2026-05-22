@@ -6,7 +6,7 @@ class LocaleProvider extends ChangeNotifier {
 
   Locale get locale => _locale;
 
-  LocaleProvider() {
+LocaleProvider() {
     loadSavedLanguage(); // 🔥 AUTO LOAD
   }
 

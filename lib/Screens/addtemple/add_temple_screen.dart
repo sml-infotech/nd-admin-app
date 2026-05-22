@@ -11,7 +11,6 @@ import 'package:nammadaiva_dashboard/Screens/addtemple/temple_input_widget.dart'
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 import 'package:nammadaiva_dashboard/Utills/image_strings.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AddTempleScreen extends StatefulWidget {
   const AddTempleScreen({super.key});

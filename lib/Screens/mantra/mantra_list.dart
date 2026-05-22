@@ -238,6 +238,7 @@ Widget titleAndContent(
         const SizedBox(height: 4),
         Text(
           displayMantra,
+          maxLines: 4,
           style: TextStyle(
             fontSize: 14,
             fontFamily: font,

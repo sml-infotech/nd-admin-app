@@ -61,8 +61,8 @@ class _DaysSelectorState extends State<DaysSelector> {
         return GestureDetector(
           onTap: () => toggleDay(day),
           child: AnimatedContainer(
-            width: 30,
-            height: 30,
+            width: 35,
+            height: 35,
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
             decoration: BoxDecoration(
@@ -71,7 +71,7 @@ class _DaysSelectorState extends State<DaysSelector> {
             ),
             child: Center(
               child: Text(
-                day,
+                day.substring(0, 1),
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   color: isSelected ? Colors.white : Colors.black87,

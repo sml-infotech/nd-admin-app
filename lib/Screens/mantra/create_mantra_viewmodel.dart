@@ -27,9 +27,7 @@ class CreateMantraViewmodel extends ChangeNotifier {
   final userService = UserService();
 
   bool validateForm() {
-    print(
-      "Validating: ${mantraName.text}, ${mantra.text}, $selectedImage, $uploadedImageUrl",
-    );
+  
     if (mantraName.text.isEmpty) {
       message = "Please fill Mantra Name";
       return false;
@@ -113,10 +111,8 @@ class CreateMantraViewmodel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final imageUrl = presignedUrl.split('?').first;
-        print("✅ Uploaded successfully: $imageUrl");
         return imageUrl;
       } else {
-        print("❌ Upload failed: ${response.statusCode}");
         return null;
       }
     } catch (e) {

@@ -25,8 +25,6 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   String? _token;
   String? _role;
 
-  final List<String> tabTitles = ["About", "Map"];
-
   @override
   void initState() {
     super.initState();
@@ -43,10 +41,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(">>>>>>${widget.arguments.address}");
-    print(">>>>>>${widget.arguments.architecture}");
-    print(">>>>>>${widget.arguments.city}");
-    print(">>>>>>1111${widget.arguments.images}");
+   
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -80,7 +75,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
                     templeDetailContactWidget(
                       AppLocalizations.of(context)!.email,
                       widget.arguments.email,
-                      ImageStrings.phone,
+                      ImageStrings.email,
                     ),
                     contentWidgets(),
                     AnimatedSwitcher(
@@ -103,6 +98,10 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
   }
 
   Widget contentWidgets() {
+    final tabTitles = [
+      AppLocalizations.of(context)!.tabAbout,
+      AppLocalizations.of(context)!.tabMap,
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Row(
@@ -358,33 +357,7 @@ class _TempleDetailsScreenState extends State<TempleDetailsScreen> {
           ),
 
           const Spacer(),
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.pushNamed(
-          //       context,
-          //       StringsRoute.updateTempleDetails,
-          //       arguments: TempleDetailsArguments(
-          //         templeId: widget.arguments.templeId,
-          //         name: widget.arguments.name,
-          //         address: widget.arguments.address,
-          //         city: widget.arguments.city,
-          //         state: widget.arguments.state,
-          //         pincode: widget.arguments.pincode,
-          //         architecture: widget.arguments.architecture,
-          //         phoneNumber: widget.arguments.phoneNumber,
-          //         email: widget.arguments.email,
-          //         description: widget.arguments.description,
-          //         deities: widget.arguments.deities,
-          //         images: widget.arguments.images,
-          //         translations: widget.arguments.translations,
-          //       ),
-          //     );
-          //   },
-          //   child: Text(
-          //     AppLocalizations.of(context)!.edit,
-          //     style: AppTextStyles.appBarTitleStyle,
-          //   ),
-          // ),
+      
           const SizedBox(width: 48),
         ],
       ),

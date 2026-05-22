@@ -88,23 +88,14 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
       from.minute,
     );
 
-    // disallow past times if selecting for today
     if (selectedStart.isBefore(now) &&
         DateUtils.isSameDay(selectedStart, now)) {
       Fluttertoast.showToast(msg: "Start time cannot be in the past");
       return;
     }
 
-    // If a global start/end (widget.startTime/widget.endTime) are provided,
-    // ensure selected start lies within that range (if applicable)
-    // if (widget.startTime != null &&
-    //     widget.endTime != null &&
-    //     (selectedStart.isBefore(widget.startTime!) || selectedStart.isAfter(widget.endTime!))) {
-    //   Fluttertoast.showToast(msg: "Selected start time must be within the allowed date range");
-    //   return;
-    // }
+    
 
-    // pick end time (default +1 hour)
     final defaultEndHour = (from.hour + 1) % 24;
     final defaultEnd = from.replacing(hour: defaultEndHour);
 
@@ -123,22 +114,12 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
       to.minute,
     );
 
-    // ensure end > start
     if (!selectedEnd.isAfter(selectedStart)) {
       Fluttertoast.showToast(msg: "End time must be after start time");
       return;
     }
 
-    // If global start/end provided, ensure selected end is within range
-    // if (widget.startTime != null &&
-    //     widget.endTime != null &&
-    //     (selectedEnd.isBefore(widget.startTime!) ||
-    //         selectedEnd.isAfter(widget.endTime!))) {
-    //   Fluttertoast.showToast(
-    //     msg: "Selected end time must be within the allowed date range",
-    //   );
-    //   return;
-    // }
+
 
     final slot = TimeSlot(
       fromTime: _formatTimeOfDay(from),

@@ -1,16 +1,14 @@
-// booking_response.dart (add/update these classes)
+
 
 String _formatIsoDate(String? iso) {
   if (iso == null || iso.isEmpty) return "-";
   try {
     final dt = DateTime.parse(iso).toLocal();
-    // Format as dd/MM/yyyy — you can change to any format you like
     final day = dt.day.toString().padLeft(2, '0');
     final month = dt.month.toString().padLeft(2, '0');
     final year = dt.year.toString();
     return "$day/$month/$year";
   } catch (e) {
-    // fallback: try to return first 10 chars (YYYY-MM-DD)
     return iso.length >= 10 ? iso.substring(0, 10) : iso;
   }
 }
@@ -56,14 +54,20 @@ class BookingModel {
   final String userPhone;
   final String userEmail;
   final String pujaName;
-  final String pujaDate; // ISO string
+  final String pujaDate; 
   final String totalAmount;
   final String bookingStatus;
-  final String createdAt; // ISO string
+  final String createdAt; 
   final String? priestDakshina;
   final List<SankalpaDetail> sankalpaDetails;
   final List<PaymentDetail> paymentDetails;
-  final List<String>images;
+final PrasadAddress? prasadAddress;  
+final List<String>images;
+final int? puja_fee;
+final int? prasad_delivery_charges; 
+final String? convenience_fee;
+final String? priest_dakshina; 
+
 
 
   BookingModel({
@@ -79,7 +83,12 @@ class BookingModel {
     required this.priestDakshina,
     required this.sankalpaDetails,
     required this.paymentDetails,
+     this.prasadAddress,
     this.images = const [],
+      this.puja_fee,
+        this.prasad_delivery_charges,
+        this.convenience_fee,
+        this.priest_dakshina,
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -105,21 +114,28 @@ class BookingModel {
           images: json['images'] != null
           ? List<String>.from(json['images'])
           : [],
+          prasadAddress: json['prasad_address'] != null
+          ? PrasadAddress.fromJson(json['prasad_address'])
+          : null,
+          puja_fee: json['puja_fee'],
+          prasad_delivery_charges: json['prasad_delivery_charges'],
+          convenience_fee: json['convenience_fee'],
+          priest_dakshina: json['priest_dakshina'],
     );
   }
 
-  // ---------- Helpful getters for UI ----------
   String get pujaDateFormatted => _formatIsoDate(pujaDate);
   String get createdAtFormatted => _formatIsoDate(createdAt);
   String get totalAmountDisplay => totalAmount.isEmpty ? "-" : totalAmount;
   String get bookingStatusDisplay => bookingStatus.isEmpty ? "-" : bookingStatus;
-  // alias names your UI might call
+  int get pujaFeeDisplay => puja_fee ?? 0;
+  int get prasadDeliveryChargesDisplay => prasad_delivery_charges ?? 0;
+  String get convenienceFeeDisplay => convenience_fee?.isEmpty ?? true ? "-" : convenience_fee!;
   String get bookingIdDisplay => bookingId;
   String get userPhoneDisplay => userPhone;
   String get userEmailDisplay => userEmail;
-  // convenience: if you used different property names earlier
   String get pujaDateShort => pujaDateFormatted;
-  // (you can add more helpers as needed)
+  String get priestDakshinaDisplay => priest_dakshina?.isEmpty ?? true ? "-" : priest_dakshina!;
 }
 
 class SankalpaDetail {
@@ -152,7 +168,7 @@ class PaymentDetail {
   final int amount;
   final String paymentId;
 final String paymentStatus;
-  final String transactionDate; // ISO string
+  final String transactionDate; 
   final String razorpayOrderId;
   final String? razorpayPaymentId;
 
@@ -176,6 +192,43 @@ final String paymentStatus;
     );
   }
 
-  // ---------- Getter for formatted transaction date ----------
   String get transactionDateFormatted => _formatIsoDate(transactionDate);
+}
+class PrasadAddress {
+  final String city;
+  final String state;
+  final String pincode;
+  final String phoneNumber;
+  final String addressLine1;
+  final String? addressLine2;
+
+  PrasadAddress({
+    required this.city,
+    required this.state,
+    required this.pincode,
+    required this.phoneNumber,
+    required this.addressLine1,
+    this.addressLine2,
+  });
+
+  factory PrasadAddress.fromJson(Map<String, dynamic> json) {
+    return PrasadAddress(
+      city: json['city'] ?? "",
+      state: json['state'] ?? "",
+      pincode: json['pincode'] ?? "",
+      phoneNumber: json['phone_number'] ?? "",
+      addressLine1: json['address_line1'] ?? "",
+      addressLine2: json['address_line2'],
+    );
+  }
+
+  String get fullAddress {
+    return [
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode
+    ].where((e) => e != null && e.toString().trim().isNotEmpty).join(", ");
+  }
 }

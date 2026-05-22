@@ -16,7 +16,6 @@ import 'package:nammadaiva_dashboard/model/login_model/event_list_modal/event_li
 import 'package:provider/provider.dart';
 
 import '../../Utills/string_routes.dart';
-import '../../model/login_model/createpuja/create_pujamodel.dart';
 
 class CreateEvent extends StatefulWidget {
   final EventItem? event;
@@ -43,12 +42,8 @@ class _CreateEventState extends State<CreateEvent> {
         );
 
         if (matchedTemple != null) {
-          // 2. Update the Viewmodel state so the UI reflects the Name
           viewmodel.selectedTempleId = matchedTemple.id;
           viewmodel.setSelectedTemple(matchedTemple);
-
-          // Note: If this is in initState, notifyListeners isn't needed yet.
-          // If this is inside a button/method, call viewmodel.notifyListeners();
         }
       }
 
@@ -255,14 +250,12 @@ class _CreateEventState extends State<CreateEvent> {
 
   Widget _buildTempleDropdown() {
     return CommonDropdownField(
-      // ✅ Pass the viewmodel as the listener
       refreshListenable: viewmodel,
       hintText: AppLocalizations.of(context)!.optional_temple,
       labelText: AppLocalizations.of(context)!.optional_temple,
       items: viewmodel.templeData.map((t) => t.name).toList(),
       selectedValue: viewmodel.selectedTemple?.name,
       paddingSize: 16,
-      // ✅ Pass the actual boolean loading state
       isLoadingMore: viewmodel.isFetchingNextPage,
       onLoadMore: () {
         if (!viewmodel.isFetchingNextPage && viewmodel.hasNextPage) {
@@ -277,7 +270,6 @@ class _CreateEventState extends State<CreateEvent> {
         viewmodel.selectedTempleId = viewmodel.templeData
             .firstWhere((t) => t.name == value)
             .id;
-        // Logic to update selection
         viewmodel.setSelectedTemple(selectedTemple);
       },
       onClose: () {
@@ -380,19 +372,7 @@ class _CreateEventState extends State<CreateEvent> {
                   StringsRoute.createEventInKn,
                   arguments: widget.event,
                 );
-                // if (widget.event?.id != null) {
-                //   await viewmodel.updateEvent(widget.event!.id);
-                // } else {
-                //   await viewmodel.createEvent();
-                // }
-                // if (viewmodel.eventUpdated || viewmodel.eventCreated) {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                //   Navigator.pop(context);
-                //   viewmodel.eventCreated = false;
-                //   viewmodel.eventUpdated = false;
-                // } else {
-                //   Fluttertoast.showToast(msg: viewmodel.message ?? "");
-                // }
+               
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorConstant.buttonColor,

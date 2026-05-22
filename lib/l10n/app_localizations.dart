@@ -353,6 +353,24 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @puja_cost.
+  ///
+  /// In en, this message translates to:
+  /// **'Puja Cost'**
+  String get puja_cost;
+
+  /// No description provided for @priest_dakshina.
+  ///
+  /// In en, this message translates to:
+  /// **'Priest dakshina'**
+  String get priest_dakshina;
+
+  /// No description provided for @delivery_charges.
+  ///
+  /// In en, this message translates to:
+  /// **'Postal Charges'**
+  String get delivery_charges;
+
   /// No description provided for @addDeities.
   ///
   /// In en, this message translates to:
@@ -596,7 +614,7 @@ abstract class AppLocalizations {
   /// No description provided for @created.
   ///
   /// In en, this message translates to:
-  /// **'Created:'**
+  /// **'Created'**
   String get created;
 
   /// No description provided for @active_highlights.
@@ -713,11 +731,41 @@ abstract class AppLocalizations {
   /// **'Total Poojas'**
   String get totalPoojas;
 
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @start_time.
   ///
   /// In en, this message translates to:
   /// **'Start Time'**
   String get start_time;
+
+  /// No description provided for @tabAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get tabAbout;
+
+  /// No description provided for @tabMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get tabMap;
 
   /// No description provided for @end_time.
   ///
@@ -766,6 +814,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome Back,'**
   String get welcome;
+
+  /// No description provided for @select_temple.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Temple'**
+  String get select_temple;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @rashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi'**
+  String get rashi;
+
+  /// No description provided for @nakshatra.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatra'**
+  String get nakshatra;
+
+  /// No description provided for @gothra.
+  ///
+  /// In en, this message translates to:
+  /// **'Gothra'**
+  String get gothra;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get amount;
+
+  /// No description provided for @booking_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID'**
+  String get booking_id;
+
+  /// No description provided for @payment_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment ID'**
+  String get payment_id;
+
+  /// No description provided for @transaction_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Date'**
+  String get transaction_date;
+
+  /// No description provided for @view_sankalpa_details.
+  ///
+  /// In en, this message translates to:
+  /// **'View Sankalpa Details'**
+  String get view_sankalpa_details;
+
+  /// No description provided for @sankalpa_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Sankalpa Details'**
+  String get sankalpa_details;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @pooja_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Pooja Images'**
+  String get pooja_images;
+
+  /// No description provided for @mark_as_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Complete'**
+  String get mark_as_complete;
+
+  /// No description provided for @upload_pooja_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Pooja Image'**
+  String get upload_pooja_image;
+
+  /// No description provided for @add_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Images'**
+  String get add_images;
+
+  /// No description provided for @mark_as_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Completed'**
+  String get mark_as_completed;
 
   /// No description provided for @state.
   ///
@@ -833,6 +989,12 @@ abstract class AppLocalizations {
   /// **'Temple Email'**
   String get templeemail;
 
+  /// No description provided for @availablePrasad.
+  ///
+  /// In en, this message translates to:
+  /// **'Address for the Prasad to be delivered'**
+  String get availablePrasad;
+
   /// No description provided for @deitiestemple.
   ///
   /// In en, this message translates to:
@@ -863,12 +1025,6 @@ abstract class AppLocalizations {
   /// **'Requested'**
   String get requested;
 
-  /// No description provided for @cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
-
   /// No description provided for @submitAllApprovals.
   ///
   /// In en, this message translates to:
@@ -893,11 +1049,29 @@ abstract class AppLocalizations {
   /// **'Location'**
   String get eventLocation;
 
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @addPuja.
   ///
   /// In en, this message translates to:
   /// **'Add Pooja / Seva'**
   String get addPuja;
+
+  /// No description provided for @deleteFestivalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Festival'**
+  String get deleteFestivalTitle;
+
+  /// No description provided for @deleteFestivalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete'**
+  String get deleteFestivalMessage;
 
   /// No description provided for @updatePuja.
   ///
@@ -935,6 +1109,12 @@ abstract class AppLocalizations {
   /// **'Dashboard'**
   String get dashboard;
 
+  /// No description provided for @prasad_delivery_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Prasad Delivery Address'**
+  String get prasad_delivery_address;
+
   /// No description provided for @updateRequests.
   ///
   /// In en, this message translates to:
@@ -964,12 +1144,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Slot'**
   String get selectSlot;
-
-  /// No description provided for @date.
-  ///
-  /// In en, this message translates to:
-  /// **'Date'**
-  String get date;
 
   /// No description provided for @enterPuja.
   ///
@@ -1046,8 +1220,14 @@ abstract class AppLocalizations {
   /// No description provided for @fromDate.
   ///
   /// In en, this message translates to:
-  /// **'Date'**
+  /// **' Date'**
   String get fromDate;
+
+  /// No description provided for @fromDate_.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date'**
+  String get fromDate_;
 
   /// No description provided for @toDate.
   ///
@@ -1132,6 +1312,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No available time slots'**
   String get noAvailableSlot;
+
+  /// No description provided for @convenience_fees.
+  ///
+  /// In en, this message translates to:
+  /// **'Convenience Fees'**
+  String get convenience_fees;
 
   /// No description provided for @hideDetails.
   ///

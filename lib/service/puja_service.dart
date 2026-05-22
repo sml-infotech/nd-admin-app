@@ -2,6 +2,7 @@ import 'package:nammadaiva_dashboard/generated/l10n.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujamodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/createpuja/create_pujaresponsemodel.dart';
 import 'package:nammadaiva_dashboard/model/login_model/toggleactivemodel/toggle_active_model.dart';
+import 'package:nammadaiva_dashboard/model/login_model/toggleprasadaddressmodel/toggle_prasad_address_model.dart';
 import 'package:nammadaiva_dashboard/service/http_service.dart';
 import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
@@ -13,7 +14,7 @@ class PujaService {
     String pujaName,
     List<String> deitiesName,
     String description,
-    int maximumNoOfDevotees,
+int maximumNoOfDevotees,
     double fees,
     List<String> sample_images,
     int booking_cutoff_notice,
@@ -23,6 +24,8 @@ class PujaService {
     List<String> days,
     List<TimeSlot> time_slots,
     List<String> benefits,
+    bool requires_prasad_address,
+    String prasad_delivery_charges,
     List<Translation> translations,
   ) async {
     try {
@@ -41,6 +44,8 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
+        requires_prasad_address: requires_prasad_address,
+        prasad_delivery_charges: prasad_delivery_charges,
         translations: translations,
       );
 
@@ -60,6 +65,8 @@ class PujaService {
       print("Time Slots: ${time_slots.map((e) => e.toJson()).toList()}");
       print("{  'benefits': ${benefits.map((b) => b).toList()} }");
       print("Translations: ${translations.map((t) => t.toJson()).toList()}");
+      print("Requires Prasad Address: $requires_prasad_address");
+      print("Prasad Delivery Charges: $prasad_delivery_charges");
       print("-------------------------------------------------------------");
 
       final data = await apiService.post(
@@ -92,6 +99,8 @@ class PujaService {
     List<String> days,
     List<TimeSlot> time_slots,
     List<String> benefits,
+    bool requires_prasad_address,
+    String prasad_delivery_charges,
     List<Translation> translations,
   ) async {
     try {
@@ -111,6 +120,8 @@ class PujaService {
         days: days,
         timeSlots: time_slots,
         benefits: benefits,
+        requires_prasad_address: requires_prasad_address,
+        prasad_delivery_charges: prasad_delivery_charges,
         translations: translations,
       );
 
@@ -129,6 +140,10 @@ class PujaService {
       print("To Date: $toDate");
       print("Days: $days");
       print("Time Slots: ${time_slots.map((e) => e.toJson()).toList()}");
+      print("{  'benefits': ${benefits.map((b) => b).toList()} }");
+      print("Translations: ${translations.map((t) => t.toJson()).toList()}");
+      print("Requires Prasad Address: $requires_prasad_address");
+      print("Prasad Delivery Charges: $prasad_delivery_charges");
       print("-------------------------------------------------------------");
 
       final data = await apiService.put(
@@ -171,6 +186,36 @@ class PujaService {
       return PujaDeactivateResponse.fromJson(data);
     } catch (e) {
       print("❌ toggle: API request failed -> $e");
+      throw Exception('API failed: $e');
+    }
+  }
+
+  Future<TogglePrasadAddressResponse> togglePrasadAddress(
+    String pujaId,
+    bool requiresPrasadAddress,
+  ) async {
+    try {
+      final togglePrasad = TogglePrasadAddressModel(
+        puja_id: pujaId,
+        requires_prasad_address: requiresPrasadAddress,
+      );
+
+      print(
+        "📦 ------------------- TOGGLE PRASAD ADDRESS REQUEST -------------------",
+      );
+      print("Puja ID: $pujaId");
+      print("Requires Prasad Address: $requiresPrasadAddress");
+
+      final data = await apiService.put(
+        UrlConstant.togglePrasadAddressUrl(pujaId),
+        togglePrasad.toJson(),
+      );
+
+      print("✅ TOGGLE PRASAD ADDRESS RESPONSE: $data");
+
+      return TogglePrasadAddressResponse.fromJson(data);
+    } catch (e) {
+      print("❌ Toggle Prasad Address: API request failed -> $e");
       throw Exception('API failed: $e');
     }
   }

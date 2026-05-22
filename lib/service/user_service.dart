@@ -20,7 +20,7 @@ import 'package:nammadaiva_dashboard/service/url_constant.dart';
 
 class UserService {
   final HttpApiService apiService = HttpApiService();
-  Future<UserResponse> createUser(
+Future<UserResponse> createUser(
     String name,
     String email,
     String password,

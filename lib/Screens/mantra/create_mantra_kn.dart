@@ -155,7 +155,6 @@ class _CreateMantraInKannadamState extends State<CreateMantraInKannadam> {
                   viewmodel.isLoading = false;
                 }
 
-                // Fluttertoast.showToast(msg: viewmodel.message ?? "");
                 viewmodel.message = "";
               },
               style: ElevatedButton.styleFrom(

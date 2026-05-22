@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart';
 
 class TempleInputWidget extends StatefulWidget {
-  final List<String> list; // Pass the specific list (English or Kannada)
+  final List<String> list; 
   final Function(String) onAdd;
   final Function(int) onRemove;
   final String hintText;
@@ -20,7 +20,6 @@ class TempleInputWidget extends StatefulWidget {
 }
 
 class _TempleInputWidgetState extends State<TempleInputWidget> {
-  // Local controller so typing in English doesn't show up in Kannada field
   final TextEditingController _localController = TextEditingController();
 
   void _internalAdd() {

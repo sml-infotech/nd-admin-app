@@ -19,16 +19,13 @@ class MultiImagePickerSection extends StatelessWidget {
   });
 
   Future<void> _handleAddImages(BuildContext context) async {
-    // 🛑 Check for permission first
     final status = await Permission.photos.request(); // For iOS
     final storageStatus = await Permission.storage.request(); // For Android
 
     if (status.isGranted || storageStatus.isGranted) {
-      // ✅ Permission granted → trigger image picker
       await onAddImages();
     } else if (status.isPermanentlyDenied ||
         storageStatus.isPermanentlyDenied) {
-      // ⚠️ Permanently denied → show alert with settings option
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -49,7 +46,6 @@ class MultiImagePickerSection extends StatelessWidget {
         ),
       );
     } else {
-      // 🚫 Permission denied temporarily
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Storage permission is required to upload images.'),
@@ -72,7 +68,6 @@ class MultiImagePickerSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Upload Button Box
           GestureDetector(
             onTap: () => _handleAddImages(context),
             child: Container(
@@ -95,7 +90,6 @@ class MultiImagePickerSection extends StatelessWidget {
             ),
           ),
 
-          // Display Selected Images
           if (imagePaths.isNotEmpty) ...[
             const SizedBox(height: 10),
             SizedBox(

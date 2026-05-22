@@ -6,7 +6,9 @@ import 'package:nammadaiva_dashboard/service/temple_servicr.dart'
     show TempleService;
 
 class EventListViewmodel extends ChangeNotifier {
-  int page = 1;
+  int templePage = 1;
+  int eventPage = 1;
+
   final int limit = 10;
   bool isLoading = false;
   bool isLoadingMore = false;
@@ -23,27 +25,33 @@ class EventListViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> fetchEvents(String trempleId,bool reset ) async {
+  Future<void> fetchEvents(
+    String templeId,
+    bool reset, {
+    String query = "",
+  }) async {
     if (isLoading || isLoadingMore) return;
 
     if (reset) {
       events.clear();
-      page = 1;
+      eventPage = 1;
       hasMore = true;
     }
 
-    if (page == 1) {
+    if (eventPage == 1) {
       isLoading = true;
     } else {
       isLoadingMore = true;
     }
+
     notifyListeners();
 
     try {
       final response = await eventService.fetchEventes(
-        page: page,
+        page: eventPage,
         limit: limit,
-        temple_id: trempleId ?? '',
+        temple_id: templeId,
+        search: query, 
       );
 
       events.addAll(response.events);
@@ -51,7 +59,7 @@ Future<void> fetchEvents(String trempleId,bool reset ) async {
       if (response.events.length < limit) {
         hasMore = false;
       } else {
-        page++;
+        eventPage++;
       }
     } catch (e) {
       print("Error fetching events: $e");
@@ -65,43 +73,42 @@ Future<void> fetchEvents(String trempleId,bool reset ) async {
 
   List<String> templeList = [];
   Future<void> getTemples({bool reset = false}) async {
-    if (isLoading) return;
+    if (isLoadingMore) return;
     isLoading = true;
-    notifyListeners();
-
     if (reset) {
+      templePage = 1;
       templeData.clear();
-      templeList.clear();
-      page = 1;
     }
 
-    final response = await templeService.getTemples();
+    isLoadingMore = true;
+    notifyListeners();
+
+    final response = await templeService.getTemples(page: templePage);
 
     if (response.data != null && response.data!.isNotEmpty) {
       templeData.addAll(response.data!);
-      // templeList = templeData.map((t) => t.name).toList();
-      // selectedTempleId = templeData.first.id;
-      page++;
-      notifyListeners();
+      templePage++;
     }
 
+    isLoadingMore = false;
     isLoading = false;
     notifyListeners();
   }
 
-  void  reset() {
-      page = 1;
-   int limit = 10;
-   isLoading = false;
-   isLoadingMore = false;
-   hasMore = true;
-   eventService = EventService();
-   templeService = TempleService();
-  events = [];
- templeData = [];
-   selectedTempleId="";
-  selectedTemple = null;
-  templeList = [];
+  void reset() {
+    templePage = 1;
+    eventPage = 1;
+    int limit = 10;
+    isLoading = false;
+    isLoadingMore = false;
+    hasMore = true;
+    eventService = EventService();
+    templeService = TempleService();
+    events = [];
+    templeData = [];
+    selectedTempleId = "";
+    selectedTemple = null;
+    templeList = [];
     notifyListeners();
   }
 }

@@ -7,7 +7,6 @@ import 'package:nammadaiva_dashboard/Screens/blogs/article_section.dart';
 import 'package:nammadaiva_dashboard/Screens/blogs/create_blog_viewmodel.dart';
 import 'package:nammadaiva_dashboard/Utills/constant.dart'
     show ColorConstant, font;
-import 'package:nammadaiva_dashboard/Utills/string_routes.dart';
 import 'package:nammadaiva_dashboard/Utills/styles.dart';
 import 'package:nammadaiva_dashboard/l10n/app_localizations.dart';
 import 'package:nammadaiva_dashboard/model/login_model/blog_model/blog_detail_res_model.dart'
@@ -87,9 +86,8 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        // 1. Prefill data
                         vm.prefillSectionForEdit(index);
-                        // 2. Open Bottom Sheet
+                        
                         _openArticleSectionBottomSheet(context);
                       },
                       child: _buildSectionPreviewTile(
@@ -211,7 +209,7 @@ class _CreateBlogScreenState extends State<CreateBlogScreen> {
           InkWell(
             onTap: () {
               if (widget.blogs != null) {
-                // viewmodel.resetEverything();
+                viewmodel.resetSectionFields();
               }
               _openArticleSectionBottomSheet(context);
             },

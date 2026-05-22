@@ -1,12 +1,14 @@
 enum Server { dev, stage, prod }
 
-var environment = Server.stage;
+var environment = Server.dev;
 String baseUrlString() {
   switch (environment) {
     case Server.dev:
-      return "";
+      return "https://s7jij3mes9.execute-api.ap-south-1.amazonaws.com/Prod/api/";
     case Server.stage:
       return "https://w83sadhrvk.execute-api.ap-southeast-2.amazonaws.com/Prod/api/";
+    // "https://s7jij3mes9.execute-api.ap-south-1.amazonaws.com/Prod/api/";
+
     case Server.prod:
       return "";
   }
@@ -41,7 +43,7 @@ class UrlConstant {
   static String createEventUrl = "${baseUrlString()}v1/create-event";
   static String getEventsUrl = "${baseUrlString()}v1/list-events";
   static String updateEvent = "${baseUrlString()}v1/update-event";
-  static String bookingList = "${baseUrlString()}v1/list-bookings";
+  static String bookingList = "${baseUrlString()}v2/list-bookings";
   static String contact_us = "${baseUrlString()}v1/list-contact-us-messages";
   static String mark_as_read = "${baseUrlString()}v1/contact-us";
   static String master_temples = "${baseUrlString()}v1/list-master-temples";
@@ -66,12 +68,14 @@ class UrlConstant {
   static String editHighlight = "${baseUrlString()}v1/edit-highlight";
   static String getBlogs = "${baseUrlString()}v1/list-blogs";
   static String blogDetails = "${baseUrlString()}v1/blog-details";
-static String updateBlog = "${baseUrlString()}v1/update-blog";
-    static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
-        static String updateBooking = "${baseUrlString()}v1/update-booking";
+  static String updateBlog = "${baseUrlString()}v1/update-blog";
+  static String removeS3 = "${baseUrlString()}v1/delete-s3-file";
+  static String updateBooking = "${baseUrlString()}v1/update-booking";
   static String notificationList = "${baseUrlString()}v1/list-notifications";
-  static String fetchDashboardStats = "${baseUrlString()}v1/dashboard-statistics";
-  static String markNotificationRead = "${baseUrlString()}v1/mark-notifications-read";
-
-
+  static String fetchDashboardStats =
+      "${baseUrlString()}v1/dashboard-statistics";
+  static String markNotificationRead =
+      "${baseUrlString()}v1/mark-notifications-read";
+  static String togglePrasadAddressUrl(String pujaId) =>
+      "${baseUrlString()}v1/puja/$pujaId/toggle-prasad-address";
 }
